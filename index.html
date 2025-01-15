@@ -117,12 +117,78 @@
       transform: scale(1.02);
     }
 
-    /* INSTAGRAM GALLERY */
+    /* INSTAGRAM SLIDESHOW */
+    .slideshow-container {
+      position: relative;
+      max-width: 600px;
+      margin: 2rem auto;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
+    }
+
+    .mySlides {
+      display: none;
+    }
+
+    .mySlides img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.5s ease;
+    }
+
+    .mySlides img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Caption text */
+    .caption {
+      text-align: center;
+      padding: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1rem;
+      color: #ccc;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    /* Next & previous buttons */
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      width: auto;
+      padding: 16px;
+      margin-top: -22px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      transition: 0.3s ease;
+      border-radius: 0 3px 3px 0;
+      user-select: none;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    /* Position the "next button" to the right */
+    .next {
+      right: 0;
+      border-radius: 3px 0 0 3px;
+    }
+
+    /* On hover, add a lighter background */
+    .prev:hover, .next:hover {
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    /* GALLERY */
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
       padding: 1rem;
+      max-width: 900px;
+      margin: 2rem auto;
     }
 
     .gallery img {
@@ -168,6 +234,52 @@
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
       color: #ccc;
+    }
+
+    /* BLOG FORM */
+    .blog-form {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #fff;
+      border-radius: 8px;
+    }
+
+    .blog-form h3 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .blog-form form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .blog-form input, .blog-form textarea {
+      padding: 10px;
+      border: 1px solid #fff;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .blog-form button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #1DA1F2;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .blog-form button:hover {
+      background-color: #0d8de1;
     }
 
     /* FOOTER */
@@ -246,6 +358,11 @@
       .blog-section h2 {
         font-size: 1.5rem;
       }
+
+      .prev, .next {
+        font-size: 16px;
+        padding: 12px;
+      }
     }
   </style>
 </head>
@@ -283,54 +400,179 @@
     </p>
   </div>
 
-  <!-- INSTAGRAM GALLERY -->
+  <!-- INSTAGRAM SLIDESHOW -->
+  <div class="slideshow-container">
+    <!-- Slide 1 -->
+    <div class="mySlides">
+      <img src="instagram1.png" alt="1">
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="mySlides">
+      <img src="instagram2.png" alt="2">
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="mySlides">
+      <img src="instagram3.png" alt="3">
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="mySlides">
+      <img src="instagram4.png" alt="4">
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="mySlides">
+      <img src="instagram5.png" alt="5">
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="mySlides">
+      <img src="instagram6.png" alt="6">
+    </div>
+
+    <!-- Slide 7 -->
+    <div class="mySlides">
+      <img src="instagram7.png" alt="7">
+    </div>
+
+    <!-- Slide 8 -->
+    <div class="mySlides">
+      <img src="instagram8.png" alt="8">
+    </div>
+
+    <!-- Slide 9 -->
+    <div class="mySlides">
+      <img src="instagram9.png" alt="9">
+    </div>
+
+    <!-- Slide 10 -->
+    <div class="mySlides">
+      <img src="instagram10.png" alt="10">
+    </div>
+
+    <!-- Slide 11 -->
+    <div class="mySlides">
+      <img src="instagram11.png" alt="11">
+    </div>
+
+    <!-- Slide 12 -->
+    <div class="mySlides">
+      <img src="instagram12.png" alt="12">
+    </div>
+
+    <!-- Slide 13 -->
+    <div class="mySlides">
+      <img src="instagram13.png" alt="13">
+    </div>
+
+    <!-- Slide 14 -->
+    <div class="mySlides">
+      <img src="instagram14.png" alt="14">
+    </div>
+
+    <!-- Slide 15 -->
+    <div class="mySlides">
+      <img src="instagram15.png" alt="15">
+    </div>
+
+    <!-- Slide 16 -->
+    <div class="mySlides">
+      <img src="instagram16.png" alt="16">
+    </div>
+
+    <!-- Slide 17 -->
+    <div class="mySlides">
+      <img src="instagram17.png" alt="17">
+    </div>
+
+    <!-- Slide 18 -->
+    <div class="mySlides">
+      <img src="instagram18.png" alt="18">
+    </div>
+
+    <!-- Slide 19 -->
+    <div class="mySlides">
+      <img src="instagram19.png" alt="19">
+    </div>
+
+    <!-- Slide 20 -->
+    <div class="mySlides">
+      <img src="instagram20.png" alt="20">
+    </div>
+
+    <!-- Slide 21 -->
+    <div class="mySlides">
+      <img src="instagram21.png" alt="21">
+    </div>
+
+    <!-- Slide 22 -->
+    <div class="mySlides">
+      <img src="instagram22.png" alt="22">
+    </div>
+
+    <!-- Slide 23 -->
+    <div class="mySlides">
+      <img src="instagram23.png" alt="23">
+    </div>
+
+    <!-- Caption -->
+    <div class="caption">pov</div>
+
+    <!-- Next and previous buttons -->
+    <a class="prev">&#10094;</a>
+    <a class="next">&#10095;</a>
+  </div>
+
+  <!-- GALLERY -->
   <div class="gallery">
     <!-- Slide 1 -->
-    <img src="images/instagram1" alt="1" loading="lazy">
+    <img src="instagram1.png" alt="1" loading="lazy">
     <!-- Slide 2 -->
-    <img src="images/instagram2" alt="2" loading="lazy">
+    <img src="instagram2.png" alt="2" loading="lazy">
     <!-- Slide 3 -->
-    <img src="images/instagram3" alt="3" loading="lazy">
+    <img src="instagram3.png" alt="3" loading="lazy">
     <!-- Slide 4 -->
-    <img src="images/instagram4" alt="4" loading="lazy">
+    <img src="instagram4.png" alt="4" loading="lazy">
     <!-- Slide 5 -->
-    <img src="images/instagram5" alt="5" loading="lazy">
+    <img src="instagram5.png" alt="5" loading="lazy">
     <!-- Slide 6 -->
-    <img src="images/instagram6" alt="6" loading="lazy">
+    <img src="instagram6.png" alt="6" loading="lazy">
     <!-- Slide 7 -->
-    <img src="images/instagram7" alt="7" loading="lazy">
+    <img src="instagram7.png" alt="7" loading="lazy">
     <!-- Slide 8 -->
-    <img src="images/instagram8" alt="8" loading="lazy">
+    <img src="instagram8.png" alt="8" loading="lazy">
     <!-- Slide 9 -->
-    <img src="images/instagram9" alt="9" loading="lazy">
+    <img src="instagram9.png" alt="9" loading="lazy">
     <!-- Slide 10 -->
-    <img src="images/instagram10" alt="10" loading="lazy">
+    <img src="instagram10.png" alt="10" loading="lazy">
     <!-- Slide 11 -->
-    <img src="images/instagram11" alt="11" loading="lazy">
+    <img src="instagram11.png" alt="11" loading="lazy">
     <!-- Slide 12 -->
-    <img src="images/instagram12" alt="12" loading="lazy">
+    <img src="instagram12.png" alt="12" loading="lazy">
     <!-- Slide 13 -->
-    <img src="images/instagram13" alt="13" loading="lazy">
+    <img src="instagram13.png" alt="13" loading="lazy">
     <!-- Slide 14 -->
-    <img src="images/instagram14" alt="14" loading="lazy">
+    <img src="instagram14.png" alt="14" loading="lazy">
     <!-- Slide 15 -->
-    <img src="images/instagram15" alt="15" loading="lazy">
+    <img src="instagram15.png" alt="15" loading="lazy">
     <!-- Slide 16 -->
-    <img src="images/instagram16" alt="16" loading="lazy">
+    <img src="instagram16.png" alt="16" loading="lazy">
     <!-- Slide 17 -->
-    <img src="images/instagram17" alt="17" loading="lazy">
+    <img src="instagram17.png" alt="17" loading="lazy">
     <!-- Slide 18 -->
-    <img src="images/instagram18" alt="18" loading="lazy">
+    <img src="instagram18.png" alt="18" loading="lazy">
     <!-- Slide 19 -->
-    <img src="images/instagram19" alt="19" loading="lazy">
+    <img src="instagram19.png" alt="19" loading="lazy">
     <!-- Slide 20 -->
-    <img src="images/instagram20" alt="20" loading="lazy">
+    <img src="instagram20.png" alt="20" loading="lazy">
     <!-- Slide 21 -->
-    <img src="images/instagram21" alt="21" loading="lazy">
+    <img src="instagram21.png" alt="21" loading="lazy">
     <!-- Slide 22 -->
-    <img src="images/instagram22" alt="22" loading="lazy">
+    <img src="instagram22.png" alt="22" loading="lazy">
     <!-- Slide 23 -->
-    <img src="images/instagram23" alt="23" loading="lazy">
+    <img src="instagram23.png" alt="23" loading="lazy">
   </div>
 
   <!-- Lightbox Container -->
@@ -344,31 +586,21 @@
   <div class="blog-section">
     <h2>Blog</h2>
     
-    <!-- Blog Post 1 -->
-    <div class="blog-post">
-      <h3>Blog Post Title 1</h3>
-      <p>
-        This is a summary of your first blog post. You can add more content here to describe your thoughts, experiences, or any topic you want to share.
-      </p>
+    <!-- Blog Post Placeholder -->
+    <!-- New posts will appear here -->
+    <div id="blog-posts">
+      <!-- Dynamic blog posts will be inserted here -->
     </div>
     
-    <!-- Blog Post 2 -->
-    <div class="blog-post">
-      <h3>Blog Post Title 2</h3>
-      <p>
-        This is a summary of your second blog post. Continue adding blog posts as needed to keep your audience engaged and informed.
-      </p>
+    <!-- Blog Submission Form -->
+    <div class="blog-form">
+      <h3>Submit a Blog Post</h3>
+      <form id="blog-form">
+        <input type="text" id="title" name="title" placeholder="Post Title" required>
+        <textarea id="content" name="content" rows="5" placeholder="Your post content..." required></textarea>
+        <button type="submit">Submit Post</button>
+      </form>
     </div>
-    
-    <!-- Blog Post 3 -->
-    <div class="blog-post">
-      <h3>Blog Post Title 3</h3>
-      <p>
-        This is a summary of your third blog post. Keep your blog updated with fresh content regularly to attract more visitors.
-      </p>
-    </div>
-    
-    <!-- Add more blog posts as needed -->
   </div>
 
   <!-- MUSIC SECTION -->
@@ -391,6 +623,50 @@
   <!-- Script to keep the year current -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Slideshow Script -->
+  <script>
+    let slideIndex = 0;
+    const slides = document.getElementsByClassName("mySlides");
+    const prev = document.querySelector(".prev");
+    const next = document.querySelector(".next");
+    let slideInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
+
+    function showSlides(n) {
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) {slideIndex = 1}    
+      slides[slideIndex-1].style.display = "block";  
+    }
+
+    function nextSlide() {
+      showSlides();
+    }
+
+    function prevSlideFunc() {
+      slideIndex -= 2;
+      if (slideIndex < 0) {slideIndex = slides.length - 1}
+      showSlides();
+    }
+
+    // Initialize slideshow
+    showSlides();
+
+    // Button event listeners
+    next.addEventListener('click', () => {
+      nextSlide();
+      clearInterval(slideInterval);
+      slideInterval = setInterval(nextSlide, 3000);
+    });
+
+    prev.addEventListener('click', () => {
+      prevSlideFunc();
+      clearInterval(slideInterval);
+      slideInterval = setInterval(nextSlide, 3000);
+    });
   </script>
 
   <!-- Lightbox Script -->
@@ -422,6 +698,84 @@
     window.addEventListener('click', (e) => {
       if (e.target == lightbox) {
         lightbox.style.display = 'none';
+      }
+    });
+  </script>
+
+  <!-- Firebase SDKs -->
+  <!-- Include Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    // TODO: Replace the following with your app's Firebase project configuration
+    // You can find this information in your Firebase project settings
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- Blog Script -->
+  <script>
+    const blogForm = document.getElementById('blog-form');
+    const blogPostsContainer = document.getElementById('blog-posts');
+
+    // Function to render a blog post
+    function renderPost(post) {
+      const postDiv = document.createElement('div');
+      postDiv.classList.add('blog-post');
+
+      const title = document.createElement('h3');
+      title.textContent = post.title;
+
+      const content = document.createElement('p');
+      content.textContent = post.content;
+
+      postDiv.appendChild(title);
+      postDiv.appendChild(content);
+
+      blogPostsContainer.prepend(postDiv); // Add newest post at the top
+    }
+
+    // Fetch existing blog posts from Firestore
+    db.collection("blogPosts").orderBy("timestamp", "desc").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        renderPost(doc.data());
+      });
+    }).catch((error) => {
+      console.error("Error fetching blog posts: ", error);
+    });
+
+    // Handle blog form submission
+    blogForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+
+      if (title && content) {
+        db.collection("blogPosts").add({
+          title: title,
+          content: content,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then((docRef) => {
+          console.log("Blog post added with ID: ", docRef.id);
+          renderPost({ title: title, content: content });
+          blogForm.reset();
+        })
+        .catch((error) => {
+          console.error("Error adding blog post: ", error);
+        });
       }
     });
   </script>
