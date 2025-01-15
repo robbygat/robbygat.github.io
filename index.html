@@ -63,6 +63,12 @@
       color: #1DA1F2; /* Example: Twitter Blue */
     }
 
+    /* Corrected Twitter (X) Icon */
+    .header a.twitter-icon::before {
+      content: "\f099"; /* Font Awesome Twitter Icon */
+      font-family: "Font Awesome 5 Brands";
+    }
+
     /* PAGE TITLE */
     h1 {
       text-align: center;
@@ -76,6 +82,7 @@
       position: relative;
       z-index: 1;
       transition: transform 0.5s ease;
+      animation: fadeInDown 1s ease-out;
     }
 
     h1:hover {
@@ -90,6 +97,11 @@
       font-family: 'Roboto', sans-serif;
       font-size: 1.2rem;
       transition: color 0.3s ease;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      /* For animation */
+      min-height: 1.5em;
     }
 
     .tagline:hover {
@@ -149,6 +161,9 @@
     .mySlides {
       display: none;
       animation: fadeIn 1s ease-in-out;
+      position: absolute;
+      width: 100%;
+      height: 100%;
     }
 
     .mySlides img {
@@ -468,6 +483,37 @@
       }
     }
 
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Tagline Shake Animation */
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    .shake {
+      animation: shake 0.5s;
+      animation-iteration-count: 2;
+    }
+
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
@@ -500,7 +546,8 @@
 <body>
   <!-- HEADER / SOCIAL MEDIA BUTTONS -->
   <div class="header">
-    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+    <!-- Corrected Twitter (X) Button -->
+    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="twitter-icon"></a>
     <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
     <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
     <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
@@ -510,7 +557,7 @@
   <h1>robbygat.com</h1>
 
   <!-- TAGLINE -->
-  <div class="tagline">
+  <div class="tagline" id="tagline">
     linguist, photographer, musician, actor, journalist, model
   </div>
 
@@ -908,6 +955,30 @@
           console.error("Error adding blog post: ", error);
         });
       }
+    });
+  </script>
+
+  <!-- Tagline Animation Script -->
+  <script>
+    const tagline = document.getElementById('tagline');
+
+    function animateTagline() {
+      // Add shake class
+      tagline.classList.add('shake');
+
+      // After animation, change text to 'UNEMPLOYED'
+      setTimeout(() => {
+        tagline.textContent = 'UNEMPLOYED';
+        tagline.style.textTransform = 'uppercase';
+        tagline.classList.remove('shake');
+        tagline.style.color = '#FF6347'; /* Change color for emphasis */
+      }, 1000); // Duration matches the shake animation
+    }
+
+    // Trigger the animation after the page loads
+    window.addEventListener('load', () => {
+      // Delay the animation to let users see the initial tagline
+      setTimeout(animateTagline, 3000); // 3 seconds after load
     });
   </script>
 </body>
