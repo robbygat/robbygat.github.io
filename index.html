@@ -63,16 +63,9 @@
       color: #1DA1F2; /* Example: Twitter Blue */
     }
 
-    /* Corrected Twitter (X) Icon */
-    .header a.twitter-icon::before {
-      content: "\f099"; /* Font Awesome Twitter Icon */
-      font-family: "Font Awesome 5 Brands";
-    }
-
     /* PAGE TITLE */
     h1 {
       text-align: center;
-      /* Removed text-transform: uppercase */
       letter-spacing: 1px;
       margin: 2rem auto 1rem auto;
       font-size: 3rem;
@@ -100,7 +93,6 @@
       position: relative;
       display: inline-block;
       overflow: hidden;
-      /* For animation */
       min-height: 1.5em;
     }
 
@@ -546,8 +538,7 @@
 <body>
   <!-- HEADER / SOCIAL MEDIA BUTTONS -->
   <div class="header">
-    <!-- Corrected Twitter (X) Button -->
-    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="twitter-icon"></a>
+    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="fab fa-x-twitter"></a>
     <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
     <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
     <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
