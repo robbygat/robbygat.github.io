@@ -21,17 +21,17 @@
     }
 
     body {
-      /* White background, black text */
-      background-color: #fff;
-      color: #000;
+      /* Black background, white text */
+      background-color: #000;
+      color: #fff;
       font-family: 'EB Garamond', serif;
       line-height: 1.6;
 
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='200'%3E%3Ctext x='0' y='150' font-family='EB Garamond' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='EB Garamond' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
       background-attachment: fixed; /* Keeps background fixed during scroll */
-      background-size: cover;
+      background-size: contain;
     }
 
     /* HEADER / SOCIAL MEDIA BUTTONS */
@@ -40,15 +40,15 @@
       justify-content: center;
       gap: 20px;
       padding: 20px 0;
-      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
     }
 
     .header a {
-      color: #000;
+      color: #fff;
       text-decoration: none;
       font-family: 'Roboto', sans-serif;
       font-size: 1.5rem;
@@ -107,7 +107,7 @@
       height: auto;
       filter: grayscale(100%);
       transition: filter 0.3s ease, transform 0.3s ease;
-      border: 2px solid #000;
+      border: 2px solid #fff;
       padding: 5px;
     }
 
@@ -117,108 +117,116 @@
       transform: scale(1.02);
     }
 
-    /* INSTAGRAM SLIDESHOW */
-    .slideshow-container {
-      position: relative;
-      max-width: 900px;
-      margin: 2rem auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    /* INSTAGRAM GALLERY */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      padding: 1rem;
     }
 
-    .mySlides {
-      display: none;
-    }
-
-    .mySlides img {
+    .gallery img {
       width: 100%;
       height: auto;
       cursor: pointer;
-      transition: transform 0.5s ease;
+      transition: transform 0.3s ease;
+      border: 2px solid #fff;
     }
 
-    .mySlides img:hover {
+    .gallery img:hover {
       transform: scale(1.05);
     }
 
-    /* Caption text */
-    .caption {
-      text-align: center;
-      padding: 10px;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.1rem;
-      color: #666;
-      background-color: #f9f9f9;
-    }
-
-    /* Next & previous buttons */
-    .prev, .next {
-      cursor: pointer;
-      position: absolute;
-      top: 50%;
-      width: auto;
-      padding: 16px;
-      margin-top: -22px;
-      color: #000;
-      font-weight: bold;
-      font-size: 18px;
-      transition: 0.3s ease;
-      border-radius: 0 3px 3px 0;
-      user-select: none;
-      background-color: rgba(255,255,255,0.7);
-    }
-
-    /* Position the "next button" to the right */
-    .next {
-      right: 0;
-      border-radius: 3px 0 0 3px;
-    }
-
-    /* On hover, add a darker background */
-    .prev:hover, .next:hover {
-      background-color: rgba(255,255,255,1);
-    }
-
-    /* MUSIC SECTION */
-    .music-section {
-      text-align: center;
-      margin: 3rem 0;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid #ccc;
+    /* BLOG SECTION */
+    .blog-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #fff;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .music-section h2 {
+    .blog-section h2 {
+      text-align: center;
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
-      color: #000;
     }
 
-    .music-section a {
-      color: #1DB954; /* Spotify Green */
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: color 0.3s ease, transform 0.3s ease;
+    .blog-post {
+      margin-bottom: 2rem;
     }
 
-    .music-section a:hover {
-      color: #1ed760;
-      transform: scale(1.05);
+    .blog-post h3 {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .blog-post p {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      color: #ccc;
     }
 
     /* FOOTER */
     footer {
       text-align: center;
       margin: 2rem 0;
-      border-top: 1px solid #ccc;
+      border-top: 1px solid #fff;
       padding-top: 1rem;
       font-family: 'Roboto', sans-serif;
-      color: #666;
+      color: #ccc;
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+    }
+
+    .close {
+      position: absolute;
+      top: 30px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
     }
 
     /* Responsive Design */
@@ -235,13 +243,8 @@
         font-size: 1rem;
       }
 
-      .music-section h2 {
+      .blog-section h2 {
         font-size: 1.5rem;
-      }
-
-      .prev, .next {
-        font-size: 16px;
-        padding: 12px;
       }
     }
   </style>
@@ -280,73 +283,92 @@
     </p>
   </div>
 
-  <!-- INSTAGRAM SLIDESHOW -->
-  <div class="slideshow-container">
-    <!-- Slides -->
-    <!-- Repeat this block for each Instagram image -->
-    <!-- Example for 23 images -->
-    <!-- Ensure all images are placed in the 'images/' folder and named accordingly -->
-    <!-- Slide Template -->
-    <!--
-    <div class="mySlides">
-      <a href="https://instagram.com/p/POST_ID/" target="_blank">
-        <img src="images/instagram1.png" alt="Instagram Post 1">
-      </a>
-    </div>
-    -->
-
-    <!-- Generating 23 slides -->
-    <!-- For brevity, I'll include the first 5 slides as examples. You can replicate the pattern for all 23. -->
-
+  <!-- INSTAGRAM GALLERY -->
+  <div class="gallery">
     <!-- Slide 1 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/DEwqGb2yhEx/" target="_blank">
-        <img src="images/instagram1.png" alt="Instagram Post 1">
-      </a>
-    </div>
-
+    <img src="images/instagram1.png" alt="1" loading="lazy">
     <!-- Slide 2 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/DDhul_cy-cV/" target="_blank">
-        <img src="images/instagram2.png" alt="Instagram Post 2">
-      </a>
-    </div>
-
+    <img src="images/instagram2.png" alt="2" loading="lazy">
     <!-- Slide 3 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/DBlf5l1Sy_F/" target="_blank">
-        <img src="images/instagram3.png" alt="Instagram Post 3">
-      </a>
-    </div>
-
+    <img src="images/instagram3.png" alt="3" loading="lazy">
     <!-- Slide 4 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/POST_ID_4/" target="_blank">
-        <img src="images/instagram4.png" alt="Instagram Post 4">
-      </a>
-    </div>
-
+    <img src="images/instagram4.png" alt="4" loading="lazy">
     <!-- Slide 5 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/POST_ID_5/" target="_blank">
-        <img src="images/instagram5.png" alt="Instagram Post 5">
-      </a>
-    </div>
-
-    <!-- Continue adding slides up to instagram23.png -->
+    <img src="images/instagram5.png" alt="5" loading="lazy">
+    <!-- Slide 6 -->
+    <img src="images/instagram6.png" alt="6" loading="lazy">
+    <!-- Slide 7 -->
+    <img src="images/instagram7.png" alt="7" loading="lazy">
+    <!-- Slide 8 -->
+    <img src="images/instagram8.png" alt="8" loading="lazy">
+    <!-- Slide 9 -->
+    <img src="images/instagram9.png" alt="9" loading="lazy">
+    <!-- Slide 10 -->
+    <img src="images/instagram10.png" alt="10" loading="lazy">
+    <!-- Slide 11 -->
+    <img src="images/instagram11.png" alt="11" loading="lazy">
+    <!-- Slide 12 -->
+    <img src="images/instagram12.png" alt="12" loading="lazy">
+    <!-- Slide 13 -->
+    <img src="images/instagram13.png" alt="13" loading="lazy">
+    <!-- Slide 14 -->
+    <img src="images/instagram14.png" alt="14" loading="lazy">
+    <!-- Slide 15 -->
+    <img src="images/instagram15.png" alt="15" loading="lazy">
+    <!-- Slide 16 -->
+    <img src="images/instagram16.png" alt="16" loading="lazy">
+    <!-- Slide 17 -->
+    <img src="images/instagram17.png" alt="17" loading="lazy">
+    <!-- Slide 18 -->
+    <img src="images/instagram18.png" alt="18" loading="lazy">
+    <!-- Slide 19 -->
+    <img src="images/instagram19.png" alt="19" loading="lazy">
+    <!-- Slide 20 -->
+    <img src="images/instagram20.png" alt="20" loading="lazy">
+    <!-- Slide 21 -->
+    <img src="images/instagram21.png" alt="21" loading="lazy">
+    <!-- Slide 22 -->
+    <img src="images/instagram22.png" alt="22" loading="lazy">
     <!-- Slide 23 -->
-    <div class="mySlides">
-      <a href="https://instagram.com/p/POST_ID_23/" target="_blank">
-        <img src="images/instagram23.png" alt="Instagram Post 23">
-      </a>
+    <img src="images/instagram23.png" alt="23" loading="lazy">
+  </div>
+
+  <!-- Lightbox Container -->
+  <div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+    <div id="lightbox-caption"></div>
+  </div>
+
+  <!-- BLOG SECTION -->
+  <div class="blog-section">
+    <h2>Blog</h2>
+    
+    <!-- Blog Post 1 -->
+    <div class="blog-post">
+      <h3>Blog Post Title 1</h3>
+      <p>
+        This is a summary of your first blog post. You can add more content here to describe your thoughts, experiences, or any topic you want to share.
+      </p>
     </div>
-
-    <!-- Caption -->
-    <div class="caption">pov</div>
-
-    <!-- Next and previous buttons -->
-    <a class="prev">&#10094;</a>
-    <a class="next">&#10095;</a>
+    
+    <!-- Blog Post 2 -->
+    <div class="blog-post">
+      <h3>Blog Post Title 2</h3>
+      <p>
+        This is a summary of your second blog post. Continue adding blog posts as needed to keep your audience engaged and informed.
+      </p>
+    </div>
+    
+    <!-- Blog Post 3 -->
+    <div class="blog-post">
+      <h3>Blog Post Title 3</h3>
+      <p>
+        This is a summary of your third blog post. Keep your blog updated with fresh content regularly to attract more visitors.
+      </p>
+    </div>
+    
+    <!-- Add more blog posts as needed -->
   </div>
 
   <!-- MUSIC SECTION -->
@@ -364,48 +386,43 @@
     &copy; <span id="year"></span> robbygat.com
   </footer>
 
-  <!-- Small script to keep the year current -->
+  <!-- Scripts -->
+
+  <!-- Script to keep the year current -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
-  <!-- Slideshow Script -->
+  <!-- Lightbox Script -->
   <script>
-    let slideIndex = 0;
-    const slides = document.getElementsByClassName("mySlides");
-    const prev = document.querySelector(".prev");
-    const next = document.querySelector(".next");
-    let autoSlide = setInterval(nextSlide, 5000);
+    // Get lightbox elements
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.querySelector('.close');
 
-    function showSlides(n) {
-      for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";  
-      }
-      slides[n].style.display = "block";  
-    }
+    // Get all images in the gallery
+    const galleryImages = document.querySelectorAll('.gallery img');
 
-    function nextSlide() {
-      slideIndex = (slideIndex + 1) % slides.length;
-      showSlides(slideIndex);
-    }
-
-    function prevSlide() {
-      slideIndex = (slideIndex - 1 + slides.length) % slides.length;
-      showSlides(slideIndex);
-    }
-
-    // Initialize slideshow
-    showSlides(slideIndex);
-
-    // Button event listeners
-    next.addEventListener('click', () => {
-      nextSlide();
-      clearInterval(autoSlide);
+    // Add click event to each image
+    galleryImages.forEach(img => {
+      img.addEventListener('click', () => {
+        lightbox.style.display = 'block';
+        lightboxImg.src = img.src;
+        lightboxCaption.textContent = img.alt;
+      });
     });
 
-    prev.addEventListener('click', () => {
-      prevSlide();
-      clearInterval(autoSlide);
+    // Close the lightbox when the close button is clicked
+    closeBtn.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+    });
+
+    // Close the lightbox when clicking outside the image
+    window.addEventListener('click', (e) => {
+      if (e.target == lightbox) {
+        lightbox.style.display = 'none';
+      }
     });
   </script>
 </body>
