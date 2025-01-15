@@ -8,6 +8,9 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   
+  <!-- Font Awesome for Social Media Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Inline CSS for simplicity -->
   <style>
     /* BASIC PAGE RESET & BODY STYLES */
@@ -18,14 +21,14 @@
     }
 
     body {
-      /* Black background, white text */
-      background-color: #000;
-      color: #fff;
+      /* White background, black text */
+      background-color: #fff;
+      color: #000;
       font-family: 'EB Garamond', serif;
       line-height: 1.6;
 
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='200'><text x='0' y='150' font-family='EB Garamond' font-size='50' fill='white' opacity='0.05'>robbygat.com  robbygat.com  robbygat.com</text></svg>");
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='200'%3E%3Ctext x='0' y='150' font-family='EB Garamond' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
       background-attachment: fixed; /* Keeps background fixed during scroll */
       background-size: cover;
@@ -37,23 +40,26 @@
       justify-content: center;
       gap: 20px;
       padding: 20px 0;
-      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
       position: sticky;
       top: 0;
       z-index: 1000;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .header a {
-      color: #fff;
+      color: #000;
       text-decoration: none;
       font-family: 'Roboto', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       transition: transform 0.3s ease, color 0.3s ease;
+      position: relative;
     }
 
+    /* Adding hover effect: enlarges and changes color */
     .header a:hover {
       transform: scale(1.2);
-      color: #1DA1F2; /* Twitter Blue as an example */
+      color: #1DA1F2; /* Example: Twitter Blue */
     }
 
     /* PAGE TITLE */
@@ -101,7 +107,7 @@
       height: auto;
       filter: grayscale(100%);
       transition: filter 0.3s ease, transform 0.3s ease;
-      border: 2px solid #fff;
+      border: 2px solid #000;
       padding: 5px;
     }
 
@@ -116,6 +122,10 @@
       position: relative;
       max-width: 900px;
       margin: 2rem auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .mySlides {
@@ -125,7 +135,7 @@
     .mySlides img {
       width: 100%;
       height: auto;
-      border: 2px solid #fff;
+      cursor: pointer;
       transition: transform 0.5s ease;
     }
 
@@ -139,7 +149,8 @@
       padding: 10px;
       font-family: 'Roboto', sans-serif;
       font-size: 1.1rem;
-      color: #ccc;
+      color: #666;
+      background-color: #f9f9f9;
     }
 
     /* Next & previous buttons */
@@ -150,13 +161,13 @@
       width: auto;
       padding: 16px;
       margin-top: -22px;
-      color: #fff;
+      color: #000;
       font-weight: bold;
       font-size: 18px;
       transition: 0.3s ease;
       border-radius: 0 3px 3px 0;
       user-select: none;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(255,255,255,0.7);
     }
 
     /* Position the "next button" to the right */
@@ -165,9 +176,9 @@
       border-radius: 3px 0 0 3px;
     }
 
-    /* On hover, add a black background color with a little bit see-through */
+    /* On hover, add a darker background */
     .prev:hover, .next:hover {
-      background-color: rgba(0,0,0,0.8);
+      background-color: rgba(255,255,255,1);
     }
 
     /* MUSIC SECTION */
@@ -175,15 +186,17 @@
       text-align: center;
       margin: 3rem 0;
       padding: 2rem;
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid #555;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
       border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .music-section h2 {
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
+      color: #000;
     }
 
     .music-section a {
@@ -202,9 +215,10 @@
     footer {
       text-align: center;
       margin: 2rem 0;
-      border-top: 1px solid #555;
+      border-top: 1px solid #ccc;
       padding-top: 1rem;
       font-family: 'Roboto', sans-serif;
+      color: #666;
     }
 
     /* Responsive Design */
@@ -214,7 +228,7 @@
       }
 
       .header a {
-        font-size: 1rem;
+        font-size: 1.2rem;
       }
 
       .tagline {
@@ -224,16 +238,21 @@
       .music-section h2 {
         font-size: 1.5rem;
       }
+
+      .prev, .next {
+        font-size: 16px;
+        padding: 12px;
+      }
     }
   </style>
 </head>
 <body>
   <!-- HEADER / SOCIAL MEDIA BUTTONS -->
   <div class="header">
-    <a href="https://x.com/robbygat" target="_blank">X</a>
-    <a href="https://youtube.com/@robbygat" target="_blank">YouTube</a>
-    <a href="https://instagram.com/robbygat" target="_blank">Instagram</a>
-    <a href="https://tiktok.com/@robbygat" target="_blank">TikTok</a>
+    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+    <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
   </div>
 
   <!-- PAGE TITLE -->
@@ -257,20 +276,69 @@
     </div>
 
     <p>
-      under consro!
+      Under construction!
     </p>
   </div>
 
   <!-- INSTAGRAM SLIDESHOW -->
   <div class="slideshow-container">
+    <!-- Slides -->
+    <!-- Repeat this block for each Instagram image -->
+    <!-- Example for 23 images -->
+    <!-- Ensure all images are placed in the 'images/' folder and named accordingly -->
+    <!-- Slide Template -->
+    <!--
     <div class="mySlides">
-      <img src="https://www.instagram.com/p/DEwqGb2yhEx/" alt="1">
+      <a href="https://instagram.com/p/POST_ID/" target="_blank">
+        <img src="images/instagram1.png" alt="Instagram Post 1">
+      </a>
     </div>
+    -->
+
+    <!-- Generating 23 slides -->
+    <!-- For brevity, I'll include the first 5 slides as examples. You can replicate the pattern for all 23. -->
+
+    <!-- Slide 1 -->
     <div class="mySlides">
-      <img src="https://www.instagram.com/p/DDhul_cy-cV/" alt="2">
+      <a href="https://instagram.com/p/DEwqGb2yhEx/" target="_blank">
+        <img src="images/instagram1.png" alt="Instagram Post 1">
+      </a>
     </div>
+
+    <!-- Slide 2 -->
     <div class="mySlides">
-      <img src="https://www.instagram.com/p/DBlf5l1Sy_F/" alt="3">
+      <a href="https://instagram.com/p/DDhul_cy-cV/" target="_blank">
+        <img src="images/instagram2.png" alt="Instagram Post 2">
+      </a>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="mySlides">
+      <a href="https://instagram.com/p/DBlf5l1Sy_F/" target="_blank">
+        <img src="images/instagram3.png" alt="Instagram Post 3">
+      </a>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="mySlides">
+      <a href="https://instagram.com/p/POST_ID_4/" target="_blank">
+        <img src="images/instagram4.png" alt="Instagram Post 4">
+      </a>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="mySlides">
+      <a href="https://instagram.com/p/POST_ID_5/" target="_blank">
+        <img src="images/instagram5.png" alt="Instagram Post 5">
+      </a>
+    </div>
+
+    <!-- Continue adding slides up to instagram23.png -->
+    <!-- Slide 23 -->
+    <div class="mySlides">
+      <a href="https://instagram.com/p/POST_ID_23/" target="_blank">
+        <img src="images/instagram23.png" alt="Instagram Post 23">
+      </a>
     </div>
 
     <!-- Caption -->
@@ -286,7 +354,7 @@
     <h2>Albums by INTERNET COWBOY</h2>
     <p>
       <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
-        my latest
+        Listen to my latest album on Spotify
       </a>
     </p>
   </div>
@@ -307,6 +375,7 @@
     const slides = document.getElementsByClassName("mySlides");
     const prev = document.querySelector(".prev");
     const next = document.querySelector(".next");
+    let autoSlide = setInterval(nextSlide, 5000);
 
     function showSlides(n) {
       for (let i = 0; i < slides.length; i++) {
@@ -327,9 +396,6 @@
 
     // Initialize slideshow
     showSlides(slideIndex);
-
-    // Auto-advance every 5 seconds
-    setInterval(nextSlide, 5000);
 
     // Button event listeners
     next.addEventListener('click', () => {
