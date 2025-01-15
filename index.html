@@ -88,16 +88,22 @@
       font-style: italic;
       margin: 0 0 2rem 0;
       font-family: 'Roboto', sans-serif;
-      font-size: 1.2rem;
+      font-size: 2rem;
       transition: color 0.3s ease;
       position: relative;
       display: inline-block;
       overflow: hidden;
-      min-height: 1.5em;
+      min-height: 2.5em;
+      color: red;
+      text-decoration: line-through;
+      animation: crossOut 2s forwards;
     }
 
-    .tagline:hover {
-      color: #1DA1F2;
+    .tagline.unemployed {
+      text-decoration: none;
+      color: red;
+      font-size: 3rem;
+      animation: fadeInUnemployed 2s forwards;
     }
 
     /* MAIN CONTENT WRAPPER */
@@ -141,7 +147,7 @@
     /* INSTAGRAM SLIDESHOW */
     .slideshow-container {
       position: relative;
-      max-width: 600px;
+      max-width: 800px;
       margin: 2rem auto;
       border: 1px solid #000;
       border-radius: 8px;
@@ -153,7 +159,7 @@
     .mySlides {
       display: none;
       animation: fadeIn 1s ease-in-out;
-      position: absolute;
+      position: relative;
       width: 100%;
       height: 100%;
     }
@@ -210,30 +216,6 @@
     /* On hover, add a darker background */
     .prev:hover, .next:hover {
       background-color: rgba(255,255,255,1);
-    }
-
-    /* GALLERY */
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      padding: 1rem;
-      max-width: 900px;
-      margin: 2rem auto;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    .gallery img {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      border: 2px solid #000;
-      border-radius: 8px;
-    }
-
-    .gallery img:hover {
-      transform: scale(1.05);
     }
 
     /* BLOG SECTION */
@@ -486,7 +468,27 @@
       }
     }
 
-    /* Tagline Shake Animation */
+    /* Tagline Cross-Out and Unemployed Animation */
+    @keyframes crossOut {
+      0% { text-decoration: line-through; }
+      100% { text-decoration: line-through; }
+    }
+
+    @keyframes fadeOut {
+      from {opacity: 1;}
+      to {opacity: 0;}
+    }
+
+    @keyframes fadeInUnemployed {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .shake {
+      animation: shake 0.5s;
+      animation-iteration-count: 2;
+    }
+
     @keyframes shake {
       0% { transform: translate(1px, 1px) rotate(0deg); }
       10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -501,11 +503,6 @@
       100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
 
-    .shake {
-      animation: shake 0.5s;
-      animation-iteration-count: 2;
-    }
-
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
@@ -517,7 +514,7 @@
       }
 
       .tagline {
-        font-size: 1rem;
+        font-size: 1.5rem;
       }
 
       .blog-section h2, .music-section h2 {
@@ -532,13 +529,17 @@
       .slideshow-container {
         max-width: 100%;
       }
+
+      .tagline.unemployed {
+        font-size: 2.5rem;
+      }
     }
   </style>
 </head>
 <body>
   <!-- HEADER / SOCIAL MEDIA BUTTONS -->
   <div class="header">
-    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="fab fa-x-twitter"></a>
+    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="fab fa-twitter"></a>
     <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
     <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
     <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
@@ -692,56 +693,6 @@
     <!-- Next and previous buttons -->
     <a class="prev">&#10094;</a>
     <a class="next">&#10095;</a>
-  </div>
-
-  <!-- GALLERY -->
-  <div class="gallery">
-    <!-- Slide 1 -->
-    <img src="instagram1.png" alt="1" loading="lazy">
-    <!-- Slide 2 -->
-    <img src="instagram2.png" alt="2" loading="lazy">
-    <!-- Slide 3 -->
-    <img src="instagram3.png" alt="3" loading="lazy">
-    <!-- Slide 4 -->
-    <img src="instagram4.png" alt="4" loading="lazy">
-    <!-- Slide 5 -->
-    <img src="instagram5.png" alt="5" loading="lazy">
-    <!-- Slide 6 -->
-    <img src="instagram6.png" alt="6" loading="lazy">
-    <!-- Slide 7 -->
-    <img src="instagram7.png" alt="7" loading="lazy">
-    <!-- Slide 8 -->
-    <img src="instagram8.png" alt="8" loading="lazy">
-    <!-- Slide 9 -->
-    <img src="instagram9.png" alt="9" loading="lazy">
-    <!-- Slide 10 -->
-    <img src="instagram10.png" alt="10" loading="lazy">
-    <!-- Slide 11 -->
-    <img src="instagram11.png" alt="11" loading="lazy">
-    <!-- Slide 12 -->
-    <img src="instagram12.png" alt="12" loading="lazy">
-    <!-- Slide 13 -->
-    <img src="instagram13.png" alt="13" loading="lazy">
-    <!-- Slide 14 -->
-    <img src="instagram14.png" alt="14" loading="lazy">
-    <!-- Slide 15 -->
-    <img src="instagram15.png" alt="15" loading="lazy">
-    <!-- Slide 16 -->
-    <img src="instagram16.png" alt="16" loading="lazy">
-    <!-- Slide 17 -->
-    <img src="instagram17.png" alt="17" loading="lazy">
-    <!-- Slide 18 -->
-    <img src="instagram18.png" alt="18" loading="lazy">
-    <!-- Slide 19 -->
-    <img src="instagram19.png" alt="19" loading="lazy">
-    <!-- Slide 20 -->
-    <img src="instagram20.png" alt="20" loading="lazy">
-    <!-- Slide 21 -->
-    <img src="instagram21.png" alt="21" loading="lazy">
-    <!-- Slide 22 -->
-    <img src="instagram22.png" alt="22" loading="lazy">
-    <!-- Slide 23 -->
-    <img src="instagram23.png" alt="23" loading="lazy">
   </div>
 
   <!-- Lightbox Container -->
@@ -954,22 +905,22 @@
     const tagline = document.getElementById('tagline');
 
     function animateTagline() {
-      // Add shake class
-      tagline.classList.add('shake');
+      // Cross out the current text
+      tagline.style.transition = 'all 0.5s ease-out';
+      tagline.style.textDecoration = 'line-through';
+      tagline.style.opacity = '0';
 
-      // After animation, change text to 'UNEMPLOYED'
+      // After the cross-out, replace with 'UNEMPLOYED'
       setTimeout(() => {
         tagline.textContent = 'UNEMPLOYED';
-        tagline.style.textTransform = 'uppercase';
-        tagline.classList.remove('shake');
-        tagline.style.color = '#FF6347'; /* Change color for emphasis */
-      }, 1000); // Duration matches the shake animation
+        tagline.classList.add('unemployed');
+        tagline.style.opacity = '1';
+      }, 500);
     }
 
-    // Trigger the animation after the page loads
+    // Trigger the animation immediately after page loads
     window.addEventListener('load', () => {
-      // Delay the animation to let users see the initial tagline
-      setTimeout(animateTagline, 3000); // 3 seconds after load
+      animateTagline();
     });
   </script>
 </body>
