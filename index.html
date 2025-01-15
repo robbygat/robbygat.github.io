@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Enforce HTTPS by upgrading insecure requests -->
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>robbygat.com</title>
   
@@ -12,12 +10,6 @@
   
   <!-- Font Awesome for Social Media Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- AOS Library for Scroll Animations -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  
-  <!-- particles.js Library for Particle Background -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   
   <!-- Inline CSS for simplicity -->
   <style>
@@ -34,22 +26,12 @@
       color: #000;
       font-family: 'Lora', serif;
       line-height: 1.6;
-      position: relative;
-      overflow-x: hidden;
 
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
       background-attachment: fixed; /* Keeps background fixed during scroll */
       background-size: contain;
-      transition: background-color 0.5s, color 0.5s;
-    }
-
-    /* Dark Mode */
-    body.dark-mode {
-      background-color: #121212;
-      color: #e0e0e0;
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
     }
 
     /* HEADER / SOCIAL MEDIA BUTTONS */
@@ -66,11 +48,6 @@
       transition: background-color 0.3s ease;
     }
 
-    body.dark-mode .header {
-      background-color: rgba(18, 18, 18, 0.95);
-      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
-    }
-
     .header a {
       color: #000;
       text-decoration: none;
@@ -78,10 +55,6 @@
       font-size: 1.5rem;
       transition: transform 0.3s ease, color 0.3s ease;
       position: relative;
-    }
-
-    body.dark-mode .header a {
-      color: #e0e0e0;
     }
 
     /* Adding hover effect: enlarges and changes color */
@@ -165,10 +138,6 @@
       border-radius: 8px;
     }
 
-    body.dark-mode .image-container img {
-      border-color: #e0e0e0;
-    }
-
     /* Hover to see color & slight scale-up */
     .image-container img:hover {
       filter: grayscale(0%);
@@ -185,11 +154,6 @@
       overflow: hidden;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .slideshow-container {
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
     }
 
     .mySlides {
@@ -222,17 +186,8 @@
       transition: background-color 0.3s ease;
     }
 
-    body.dark-mode .caption {
-      background-color: #1e1e1e;
-      color: #ccc;
-    }
-
     .caption:hover {
       background-color: #e6e6e6;
-    }
-
-    body.dark-mode .caption:hover {
-      background-color: #2e2e2e;
     }
 
     /* Next & previous buttons */
@@ -252,11 +207,6 @@
       background-color: rgba(255,255,255,0.7);
     }
 
-    body.dark-mode .prev, body.dark-mode .next {
-      color: #e0e0e0;
-      background-color: rgba(30, 30, 30, 0.7);
-    }
-
     /* Position the "next button" to the right */
     .next {
       right: 0;
@@ -266,10 +216,6 @@
     /* On hover, add a darker background */
     .prev:hover, .next:hover {
       background-color: rgba(255,255,255,1);
-    }
-
-    body.dark-mode .prev:hover, body.dark-mode .next:hover {
-      background-color: rgba(30, 30, 30, 1);
     }
 
     /* BLOG SECTION */
@@ -282,12 +228,6 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .blog-section {
-      background-color: #1e1e1e;
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
     }
 
     .blog-section h2 {
@@ -303,10 +243,6 @@
       padding: 1rem;
       border-left: 4px solid #1DA1F2;
       transition: box-shadow 0.3s ease;
-    }
-
-    body.dark-mode .blog-post {
-      background-color: #2e2e2e;
     }
 
     .blog-post:hover {
@@ -331,10 +267,6 @@
       color: #333;
     }
 
-    body.dark-mode .blog-post p {
-      color: #ccc;
-    }
-
     /* BLOG FORM */
     .blog-form {
       margin-top: 2rem;
@@ -344,12 +276,6 @@
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       transition: box-shadow 0.3s ease;
-    }
-
-    body.dark-mode .blog-form {
-      background-color: #2e2e2e;
-      border-color: #e0e0e0;
-      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
     }
 
     .blog-form:hover {
@@ -385,13 +311,6 @@
       font-size: 1rem;
     }
 
-    body.dark-mode .blog-form input, 
-    body.dark-mode .blog-form textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: #e0e0e0;
-    }
-
     .blog-form button {
       padding: 10px;
       border: none;
@@ -418,12 +337,6 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .music-section {
-      background-color: #1e1e1e;
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
     }
 
     .music-section h2 {
@@ -455,12 +368,6 @@
       padding-top: 1rem;
       font-family: 'Roboto', sans-serif;
       color: #666;
-      transition: color 0.5s;
-    }
-
-    body.dark-mode footer {
-      color: #999;
-      border-color: #e0e0e0;
     }
 
     /* Lightbox Styles */
@@ -567,6 +474,11 @@
       100% { text-decoration: line-through; }
     }
 
+    @keyframes fadeOut {
+      from {opacity: 1;}
+      to {opacity: 0;}
+    }
+
     @keyframes fadeInUnemployed {
       from {opacity: 0;}
       to {opacity: 1;}
@@ -589,16 +501,6 @@
       80% { transform: translate(-1px, -1px) rotate(1deg); }
       90% { transform: translate(1px, 2px) rotate(0deg); }
       100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
-
-    /* Particle Background */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      top: 0;
-      left: 0;
     }
 
     /* Responsive Design */
@@ -635,9 +537,6 @@
   </style>
 </head>
 <body>
-  <!-- Particle Background -->
-  <div id="particles-js"></div>
-
   <!-- HEADER / SOCIAL MEDIA BUTTONS -->
   <div class="header">
     <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="fab fa-twitter"></a>
@@ -655,11 +554,11 @@
   </div>
 
   <!-- MAIN CONTENT -->
-  <div class="content" data-aos="fade-up">
+  <div class="content">
     <p>BLOG / PORTFOLIO.</p>
 
     <!-- IMAGE -->
-    <div class="image-container" data-aos="zoom-in">
+    <div class="image-container">
       <img 
         src="websiteimage.jpg" 
         alt="Portfolio image of robbygat in black and white style"
@@ -672,7 +571,7 @@
   </div>
 
   <!-- INSTAGRAM SLIDESHOW -->
-  <div class="slideshow-container" data-aos="fade-up">
+  <div class="slideshow-container">
     <!-- Slide 1 -->
     <div class="mySlides">
       <img src="instagram1.png" alt="1">
@@ -804,10 +703,11 @@
   </div>
 
   <!-- BLOG SECTION -->
-  <div class="blog-section" data-aos="fade-up">
+  <div class="blog-section">
     <h2>Blog</h2>
     
     <!-- Blog Post Placeholder -->
+    <!-- New posts will appear here -->
     <div id="blog-posts">
       <!-- Dynamic blog posts will be inserted here -->
     </div>
@@ -824,7 +724,7 @@
   </div>
 
   <!-- MUSIC SECTION -->
-  <div class="music-section" data-aos="fade-up">
+  <div class="music-section">
     <h2>Albums by INTERNET COWBOY</h2>
     <p>
       <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
@@ -840,87 +740,9 @@
 
   <!-- Scripts -->
 
-  <!-- particles.js config -->
+  <!-- Script to keep the year current -->
   <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#1DA1F2"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          },
-          "polygon": {
-            "nb_sides": 5
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": false
-        },
-        "size": {
-          "value": 3,
-          "random": true
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#1DA1F2",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out"
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          }
-        },
-        "modes": {
-          "repulse": {
-            "distance": 100,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 4
-          }
-        }
-      },
-      "retina_detect": true
-    });
-  </script>
-
-  <!-- AOS Initialization -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 
   <!-- Slideshow Script -->
@@ -975,11 +797,11 @@
     const lightboxCaption = document.getElementById('lightbox-caption');
     const closeBtn = document.querySelector('.close');
 
-    // Get all images in the slideshow
-    const slideshowImages = document.querySelectorAll('.slideshow-container .mySlides img');
+    // Get all images in the gallery
+    const galleryImages = document.querySelectorAll('.gallery img');
 
     // Add click event to each image
-    slideshowImages.forEach(img => {
+    galleryImages.forEach(img => {
       img.addEventListener('click', () => {
         lightbox.style.display = 'block';
         lightboxImg.src = img.src;
@@ -1100,13 +922,6 @@
     window.addEventListener('load', () => {
       animateTagline();
     });
-  </script>
-
-  <!-- Enforce HTTPS with JavaScript (Fallback Method) -->
-  <script>
-    if (location.protocol !== 'https:') {
-      location.replace(`https:${location.href.substring(location.protocol.length)}`);
-    }
   </script>
 </body>
 </html>
