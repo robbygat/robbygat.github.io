@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>robbygat.com</title>
+  
+  <!-- Inline CSS for simplicity -->
+  <style>
+    /* BASIC PAGE RESET & BODY STYLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      /* Black background, white text */
+      background-color: #000;
+      color: #fff;
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.5;
+
+      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
+      /* Using an embedded SVG that repeats across the screen */
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='80'><text x='0' y='40' font-family='sans-serif' font-size='20' fill='white' opacity='0.03'>robbygat.com  robbygat.com  robbygat.com  </text></svg>");
+      background-repeat: repeat;
+      background-attachment: fixed; /* Keeps background fixed during scroll */
+      background-size: auto;
+    }
+
+    /* HEADER / TITLE */
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 2rem;
+      font-size: 2rem;
+      border-bottom: 1px solid #555;
+      padding-bottom: 1rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* TAGLINE */
+    .tagline {
+      text-align: center;
+      font-style: italic;
+      margin: 1rem 0 2rem 0;
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    /* IMAGE SECTION */
+    .image-container {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    /* Grayscale transition effect on the image */
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease, transform 0.3s ease;
+      border: 2px solid #fff;
+      padding: 5px;
+    }
+
+    /* Hover to see color & slight scale-up */
+    .image-container img:hover {
+      filter: grayscale(0%);
+      transform: scale(1.02);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+      border-top: 1px solid #555;
+      padding-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- PAGE TITLE -->
+  <h1>robbygat.com</h1>
+
+  <!-- TAGLINE -->
+  <div class="tagline">
+    linguist, photographer, musician, actor, journalist, model
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="content">
+    <p>Welcome to my black-and-white, newspaper-inspired blog and portfolio.</p>
+
+    <!-- IMAGE -->
+    <div class="image-container">
+      <!-- Change src to EXACTLY match your file name if different -->
+      <img 
+        src="websiteimage.jpg" 
+        alt="Portfolio image of robbygat in black and white style"
+      />
+    </div>
+
+    <p>
+      This site is under construction as I refine my web design skills 
+      and integrate my artistic endeavors. Stay tuned!
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; <span id="year"></span> robbygat.com
+  </footer>
+
+  <!-- Small script to keep the year current -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
