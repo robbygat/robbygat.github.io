@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>robbygat.com</title>
   
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  
   <!-- Inline CSS for simplicity -->
   <style>
     /* BASIC PAGE RESET & BODY STYLES */
@@ -18,47 +21,72 @@
       /* Black background, white text */
       background-color: #000;
       color: #fff;
-      font-family: "Times New Roman", Times, serif;
-      line-height: 1.5;
+      font-family: 'EB Garamond', serif;
+      line-height: 1.6;
 
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      /* Using an embedded SVG that repeats across the screen */
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='80'><text x='0' y='40' font-family='sans-serif' font-size='20' fill='white' opacity='0.03'>robbygat.com  robbygat.com  robbygat.com  </text></svg>");
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='200'><text x='0' y='150' font-family='EB Garamond' font-size='50' fill='white' opacity='0.05'>robbygat.com  robbygat.com  robbygat.com</text></svg>");
       background-repeat: repeat;
       background-attachment: fixed; /* Keeps background fixed during scroll */
-      background-size: auto;
+      background-size: cover;
     }
 
-    /* HEADER / TITLE */
+    /* HEADER / SOCIAL MEDIA BUTTONS */
+    .header {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px 0;
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header a {
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .header a:hover {
+      transform: scale(1.2);
+      color: #1DA1F2; /* Twitter Blue as an example */
+    }
+
+    /* PAGE TITLE */
     h1 {
       text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-top: 2rem;
-      font-size: 2rem;
-      border-bottom: 1px solid #555;
-      padding-bottom: 1rem;
+      /* Removed text-transform: uppercase */
+      letter-spacing: 1px;
+      margin: 2rem auto 1rem auto;
+      font-size: 3rem;
+      font-family: 'EB Garamond', serif;
       max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: 0 1rem;
     }
 
     /* TAGLINE */
     .tagline {
       text-align: center;
       font-style: italic;
-      margin: 1rem 0 2rem 0;
+      margin: 0 0 2rem 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2rem;
     }
 
     /* MAIN CONTENT WRAPPER */
     .content {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 1rem;
     }
 
     p {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
     }
 
     /* IMAGE SECTION */
@@ -83,16 +111,131 @@
       transform: scale(1.02);
     }
 
+    /* INSTAGRAM SLIDESHOW */
+    .slideshow-container {
+      position: relative;
+      max-width: 900px;
+      margin: 2rem auto;
+    }
+
+    .mySlides {
+      display: none;
+    }
+
+    .mySlides img {
+      width: 100%;
+      height: auto;
+      border: 2px solid #fff;
+      transition: transform 0.5s ease;
+    }
+
+    .mySlides img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Caption text */
+    .caption {
+      text-align: center;
+      padding: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1rem;
+      color: #ccc;
+    }
+
+    /* Next & previous buttons */
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      width: auto;
+      padding: 16px;
+      margin-top: -22px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      transition: 0.3s ease;
+      border-radius: 0 3px 3px 0;
+      user-select: none;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    /* Position the "next button" to the right */
+    .next {
+      right: 0;
+      border-radius: 3px 0 0 3px;
+    }
+
+    /* On hover, add a black background color with a little bit see-through */
+    .prev:hover, .next:hover {
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    /* MUSIC SECTION */
+    .music-section {
+      text-align: center;
+      margin: 3rem 0;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.05);
+      border: 1px solid #555;
+      border-radius: 8px;
+    }
+
+    .music-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .music-section a {
+      color: #1DB954; /* Spotify Green */
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-section a:hover {
+      color: #1ed760;
+      transform: scale(1.05);
+    }
+
     /* FOOTER */
     footer {
       text-align: center;
       margin: 2rem 0;
       border-top: 1px solid #555;
       padding-top: 1rem;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .header a {
+        font-size: 1rem;
+      }
+
+      .tagline {
+        font-size: 1rem;
+      }
+
+      .music-section h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- HEADER / SOCIAL MEDIA BUTTONS -->
+  <div class="header">
+    <a href="https://x.com/robbygat" target="_blank">X</a>
+    <a href="https://youtube.com/@robbygat" target="_blank">YouTube</a>
+    <a href="https://instagram.com/robbygat" target="_blank">Instagram</a>
+    <a href="https://tiktok.com/@robbygat" target="_blank">TikTok</a>
+  </div>
+
   <!-- PAGE TITLE -->
   <h1>robbygat.com</h1>
 
@@ -103,19 +246,49 @@
 
   <!-- MAIN CONTENT -->
   <div class="content">
-    <p>BLOG & PORTFOLIO</p>
+    <p>Welcome to my black-and-white, newspaper-inspired blog and portfolio.</p>
 
     <!-- IMAGE -->
     <div class="image-container">
-      <!-- Change src to EXACTLY match your file name if different -->
       <img 
-        src="websiteimage.jpg" 
+        src="https://via.placeholder.com/800x400.png?text=Portfolio+Image" 
         alt="Portfolio image of robbygat in black and white style"
       />
     </div>
 
     <p>
-      This site is under construction!
+      This site is under construction as I refine my web design skills 
+      and integrate my artistic endeavors. Stay tuned!
+    </p>
+  </div>
+
+  <!-- INSTAGRAM SLIDESHOW -->
+  <div class="slideshow-container">
+    <div class="mySlides">
+      <img src="https://via.placeholder.com/900x600.png?text=Instagram+Post+1" alt="Instagram Post 1">
+    </div>
+    <div class="mySlides">
+      <img src="https://via.placeholder.com/900x600.png?text=Instagram+Post+2" alt="Instagram Post 2">
+    </div>
+    <div class="mySlides">
+      <img src="https://via.placeholder.com/900x600.png?text=Instagram+Post+3" alt="Instagram Post 3">
+    </div>
+
+    <!-- Caption -->
+    <div class="caption">pov</div>
+
+    <!-- Next and previous buttons -->
+    <a class="prev">&#10094;</a>
+    <a class="next">&#10095;</a>
+  </div>
+
+  <!-- MUSIC SECTION -->
+  <div class="music-section">
+    <h2>Albums by INTERNET COWBOY</h2>
+    <p>
+      <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
+        Listen to my latest album on Spotify
+      </a>
     </p>
   </div>
 
@@ -127,6 +300,48 @@
   <!-- Small script to keep the year current -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Slideshow Script -->
+  <script>
+    let slideIndex = 0;
+    const slides = document.getElementsByClassName("mySlides");
+    const prev = document.querySelector(".prev");
+    const next = document.querySelector(".next");
+
+    function showSlides(n) {
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+      }
+      slides[n].style.display = "block";  
+    }
+
+    function nextSlide() {
+      slideIndex = (slideIndex + 1) % slides.length;
+      showSlides(slideIndex);
+    }
+
+    function prevSlide() {
+      slideIndex = (slideIndex - 1 + slides.length) % slides.length;
+      showSlides(slideIndex);
+    }
+
+    // Initialize slideshow
+    showSlides(slideIndex);
+
+    // Auto-advance every 5 seconds
+    setInterval(nextSlide, 5000);
+
+    // Button event listeners
+    next.addEventListener('click', () => {
+      nextSlide();
+      clearInterval(autoSlide);
+    });
+
+    prev.addEventListener('click', () => {
+      prevSlide();
+      clearInterval(autoSlide);
+    });
   </script>
 </body>
 </html>
