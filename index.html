@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <!-- Enforce HTTPS by upgrading insecure requests -->
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>robbygat.com</title>
   
@@ -565,11 +567,6 @@
       100% { text-decoration: line-through; }
     }
 
-    @keyframes fadeOut {
-      from {opacity: 1;}
-      to {opacity: 0;}
-    }
-
     @keyframes fadeInUnemployed {
       from {opacity: 0;}
       to {opacity: 1;}
@@ -1105,13 +1102,11 @@
     });
   </script>
 
-  <!-- Innovative Feature: Dark Mode Toggle -->
+  <!-- Enforce HTTPS with JavaScript (Fallback Method) -->
   <script>
-    // Dark Mode Toggle
-    const toggle = document.getElementById('dark-mode-toggle');
-    toggle.addEventListener('change', () => {
-      document.body.classList.toggle('dark-mode');
-    });
+    if (location.protocol !== 'https:') {
+      location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    }
   </script>
 </body>
 </html>
