@@ -1,25 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>robbygat.com</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome for Social Media Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- AOS Library for Scroll Animations -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  
-  <!-- particles.js Library for Particle Background -->
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  
-  <!-- Inline CSS for simplicity -->
+
+  <!-- React and ReactDOM via CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+
+  <!-- Styles -->
   <style>
-    /* BASIC PAGE RESET & BODY STYLES */
+    /* Basic Reset */
     * {
       margin: 0;
       padding: 0;
@@ -27,1076 +20,368 @@
     }
 
     body {
-      /* White background, black text */
-      background-color: #fff;
-      color: #000;
-      font-family: 'Lora', serif;
-      line-height: 1.6;
-      position: relative;
-      overflow-x: hidden;
-
-      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-attachment: fixed; /* Keeps background fixed during scroll */
-      background-size: contain;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
       transition: background-color 0.5s, color 0.5s;
     }
 
-    /* Dark Mode */
+    /* Dark Mode Styles */
     body.dark-mode {
       background-color: #121212;
-      color: #e0e0e0;
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      color: #ffffff;
     }
 
-    /* HEADER / SOCIAL MEDIA BUTTONS */
+    /* Header Styles */
     .header {
       display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 20px 0;
-      background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #1DA1F2;
+      color: white;
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      transition: background-color 0.3s ease;
     }
 
-    body.dark-mode .header {
-      background-color: rgba(18, 18, 18, 0.95);
-      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
-    }
-
-    .header a {
-      color: #000;
+    .header nav a {
+      margin: 0 10px;
+      color: white;
       text-decoration: none;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      transition: transform 0.3s ease, color 0.3s ease;
-      position: relative;
-    }
-
-    body.dark-mode .header a {
-      color: #e0e0e0;
-    }
-
-    /* Adding hover effect: enlarges and changes color */
-    .header a:hover {
-      transform: scale(1.2);
-      color: #1DA1F2; /* Example: Twitter Blue */
-    }
-
-    /* PAGE TITLE */
-    h1 {
-      text-align: center;
-      letter-spacing: 1px;
-      margin: 2rem auto 1rem auto;
-      font-size: 3rem;
-      font-family: 'EB Garamond', serif;
-      max-width: 800px;
-      padding: 0 1rem;
-      position: relative;
-      z-index: 1;
-      transition: transform 0.5s ease;
-      animation: fadeInDown 1s ease-out;
-    }
-
-    h1:hover {
-      transform: scale(1.05);
-    }
-
-    /* TAGLINE */
-    .tagline {
-      text-align: center;
-      font-style: italic;
-      margin: 0 0 2rem 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
-      transition: color 0.3s ease;
-      position: relative;
-      display: inline-block;
-      overflow: hidden;
-      min-height: 2.5em;
-      color: red;
-      text-decoration: line-through;
-      animation: crossOut 2s forwards;
-    }
-
-    .tagline.unemployed {
-      text-decoration: none;
-      color: red;
-      font-size: 3rem;
-      animation: fadeInUnemployed 2s forwards;
-    }
-
-    /* MAIN CONTENT WRAPPER */
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    /* IMAGE SECTION */
-    .image-container {
-      text-align: center;
-      margin: 2rem 0;
-      animation: slideIn 1.5s ease-out;
-    }
-
-    /* Grayscale transition effect on the image */
-    .image-container img {
-      max-width: 100%;
-      height: auto;
-      filter: grayscale(100%);
-      transition: filter 0.3s ease, transform 0.3s ease;
-      border: 2px solid #000;
-      padding: 5px;
-      border-radius: 8px;
-    }
-
-    body.dark-mode .image-container img {
-      border-color: #e0e0e0;
-    }
-
-    /* Hover to see color & slight scale-up */
-    .image-container img:hover {
-      filter: grayscale(0%);
-      transform: scale(1.02);
-    }
-
-    /* INSTAGRAM SLIDESHOW */
-    .slideshow-container {
-      position: relative;
-      max-width: 800px;
-      margin: 2rem auto;
-      border: 1px solid #000;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .slideshow-container {
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
-    }
-
-    .mySlides {
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .mySlides img {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-      transition: transform 0.5s ease;
-    }
-
-    .mySlides img:hover {
-      transform: scale(1.05);
-    }
-
-    /* Caption text */
-    .caption {
-      text-align: center;
-      padding: 10px;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.1rem;
-      color: #666;
-      background-color: #f2f2f2;
-      transition: background-color 0.3s ease;
-    }
-
-    body.dark-mode .caption {
-      background-color: #1e1e1e;
-      color: #ccc;
-    }
-
-    .caption:hover {
-      background-color: #e6e6e6;
-    }
-
-    body.dark-mode .caption:hover {
-      background-color: #2e2e2e;
-    }
-
-    /* Next & previous buttons */
-    .prev, .next {
-      cursor: pointer;
-      position: absolute;
-      top: 50%;
-      width: auto;
-      padding: 16px;
-      margin-top: -22px;
-      color: #000;
       font-weight: bold;
-      font-size: 18px;
-      transition: 0.3s ease;
-      border-radius: 0 3px 3px 0;
-      user-select: none;
-      background-color: rgba(255,255,255,0.7);
     }
 
-    body.dark-mode .prev, body.dark-mode .next {
-      color: #e0e0e0;
-      background-color: rgba(30, 30, 30, 0.7);
+    .header nav a:hover {
+      text-decoration: underline;
     }
 
-    /* Position the "next button" to the right */
-    .next {
-      right: 0;
-      border-radius: 3px 0 0 3px;
-    }
-
-    /* On hover, add a darker background */
-    .prev:hover, .next:hover {
-      background-color: rgba(255,255,255,1);
-    }
-
-    body.dark-mode .prev:hover, body.dark-mode .next:hover {
-      background-color: rgba(30, 30, 30, 1);
-    }
-
-    /* BLOG SECTION */
-    .blog-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid #000;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .blog-section {
-      background-color: #1e1e1e;
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
-    }
-
-    .blog-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .blog-post {
-      margin-bottom: 2rem;
-      background-color: #fff;
-      padding: 1rem;
-      border-left: 4px solid #1DA1F2;
-      transition: box-shadow 0.3s ease;
-    }
-
-    body.dark-mode .blog-post {
-      background-color: #2e2e2e;
-    }
-
-    .blog-post:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .blog-post h3 {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: #1DA1F2;
-      transition: color 0.3s ease;
-    }
-
-    .blog-post h3:hover {
-      color: #0d8de1;
-    }
-
-    .blog-post p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      color: #333;
-    }
-
-    body.dark-mode .blog-post p {
-      color: #ccc;
-    }
-
-    /* BLOG FORM */
-    .blog-form {
-      margin-top: 2rem;
-      padding: 1rem;
-      background-color: #fff;
-      border: 1px solid #000;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      transition: box-shadow 0.3s ease;
-    }
-
-    body.dark-mode .blog-form {
-      background-color: #2e2e2e;
-      border-color: #e0e0e0;
-      box-shadow: 0 2px 4px rgba(255,255,255,0.1);
-    }
-
-    .blog-form:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .blog-form h3 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #1DA1F2;
-      transition: color 0.3s ease;
-    }
-
-    .blog-form h3:hover {
-      color: #0d8de1;
-    }
-
-    .blog-form form {
+    /* Dark Mode Toggle */
+    .toggle-container {
       display: flex;
-      flex-direction: column;
+      align-items: center;
       gap: 10px;
     }
 
-    .blog-form input, .blog-form textarea {
-      padding: 10px;
-      border: 1px solid #000;
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: #000;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
+    #dark-mode-toggle {
+      width: 40px;
+      height: 20px;
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: #ccc;
+      outline: none;
+      border-radius: 20px;
+      transition: background-color 0.3s;
+      cursor: pointer;
+      position: relative;
     }
 
-    body.dark-mode .blog-form input, 
-    body.dark-mode .blog-form textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: #e0e0e0;
-    }
-
-    .blog-form button {
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
+    #dark-mode-toggle:checked {
       background-color: #1DA1F2;
-      color: #fff;
+    }
+
+    #dark-mode-toggle::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: white;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s;
+    }
+
+    #dark-mode-toggle:checked::before {
+      transform: translateX(20px);
+    }
+
+    .toggle-label {
       font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .blog-form button:hover {
+    /* Main Content Styles */
+    main {
+      padding: 20px;
+    }
+
+    section {
+      margin-bottom: 40px;
+    }
+
+    /* Carousel Styles */
+    .carousel-container {
+      text-align: center;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      max-width: 800px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    body.dark-mode .carousel-container {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-container h2 {
+      font-family: 'Arial', sans-serif;
+      color: #1DA1F2;
+      margin-bottom: 20px;
+    }
+
+    body.dark-mode .carousel-container h2 {
+      color: #bb86fc;
+    }
+
+    .carousel-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      transition: opacity 1s ease-in-out;
+      opacity: 1;
+    }
+
+    .carousel-controls {
+      margin-top: 15px;
+    }
+
+    .carousel-controls button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      color: white;
+      background-color: #1DA1F2;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .carousel-controls button:hover {
       background-color: #0d8de1;
       transform: scale(1.05);
     }
 
-    /* MUSIC SECTION */
-    .music-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid #000;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .music-section {
-      background-color: #1e1e1e;
-      border-color: #e0e0e0;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.1);
-    }
-
-    .music-section h2 {
+    .carousel-indicators {
       text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      margin-top: 15px;
     }
 
-    .music-section a {
-      display: block;
-      text-align: center;
-      color: #1DA1F2; /* Spotify Blue */
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: color 0.3s ease, transform 0.3s ease;
-    }
-
-    .music-section a:hover {
-      color: #0d8de1;
-      transform: scale(1.05);
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      margin: 2rem 0;
-      border-top: 1px solid #000;
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: #666;
-      transition: color 0.5s;
-    }
-
-    body.dark-mode footer {
-      color: #999;
-      border-color: #e0e0e0;
-    }
-
-    /* Lightbox Styles */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .lightbox-content {
-      margin: auto;
-      display: block;
-      max-width: 80%;
-      max-height: 80%;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
-      transition: transform 0.3s ease;
-    }
-
-    .lightbox-content:hover {
-      transform: scale(1.05);
-    }
-
-    .close {
-      position: absolute;
-      top: 30px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      transition: color 0.3s ease;
+    .carousel-indicators .indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin: 0 5px;
+      background-color: #ccc;
+      border-radius: 50%;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
 
-    .close:hover,
-    .close:focus {
-      color: #bbb;
-      text-decoration: none;
-      cursor: pointer;
+    .carousel-indicators .indicator.active {
+      background-color: #1DA1F2;
     }
 
-    #lightbox-caption {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
+    body.dark-mode .carousel-indicators .indicator {
+      background-color: #555;
     }
 
-    /* Animations */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(-100%);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Tagline Cross-Out and Unemployed Animation */
-    @keyframes crossOut {
-      0% { text-decoration: line-through; }
-      100% { text-decoration: line-through; }
-    }
-
-    @keyframes fadeInUnemployed {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    .shake {
-      animation: shake 0.5s;
-      animation-iteration-count: 2;
-    }
-
-    @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
-
-    /* Particle Background */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      top: 0;
-      left: 0;
+    body.dark-mode .carousel-indicators .indicator.active {
+      background-color: #bb86fc;
     }
 
     /* Responsive Design */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2.5rem;
+    @media (max-width: 768px) {
+      .carousel-container {
+        padding: 15px;
+        max-width: 90%;
       }
 
-      .header a {
-        font-size: 1.2rem;
+      .carousel-controls button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        margin: 0 5px;
       }
 
-      .tagline {
-        font-size: 1.5rem;
+      .carousel-indicators .indicator {
+        width: 10px;
+        height: 10px;
+        margin: 0 3px;
       }
+    }
 
-      .blog-section h2, .music-section h2 {
-        font-size: 1.5rem;
-      }
+    /* Footer Styles */
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #1DA1F2;
+      color: white;
+    }
 
-      .prev, .next {
-        font-size: 16px;
-        padding: 12px;
-      }
-
-      .slideshow-container {
-        max-width: 100%;
-      }
-
-      .tagline.unemployed {
-        font-size: 2.5rem;
-      }
+    body.dark-mode footer {
+      background-color: #333;
+      color: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <!-- Particle Background -->
-  <div id="particles-js"></div>
-
-  <!-- HEADER / SOCIAL MEDIA BUTTONS -->
-  <div class="header">
-    <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" class="fab fa-twitter"></a>
-    <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-    <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-    <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-  </div>
-
-  <!-- PAGE TITLE -->
-  <h1>robbygat.com</h1>
-
-  <!-- TAGLINE -->
-  <div class="tagline" id="tagline">
-    linguist, photographer, musician, actor, journalist, model
-  </div>
-
-  <!-- MAIN CONTENT -->
-  <div class="content" data-aos="fade-up">
-    <p>BLOG / PORTFOLIO.</p>
-
-    <!-- IMAGE -->
-    <div class="image-container" data-aos="zoom-in">
-      <img 
-        src="websiteimage.jpg" 
-        alt="Portfolio image of robbygat in black and white style"
+  <!-- Header -->
+  <header class="header">
+    <h1>robbygat.com</h1>
+    <nav>
+      <a href="#carousel">Gallery</a>
+      <a href="#blog">Blog</a>
+      <a href="#music">Music</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <!-- Dark Mode Toggle -->
+    <div class="toggle-container">
+      <input 
+        type="checkbox" 
+        id="dark-mode-toggle" 
+        onchange="toggleDarkMode()" 
       />
+      <label for="dark-mode-toggle" class="toggle-label">
+        { /* Icons can be added here */ }
+        🌙/☀️
+      </label>
     </div>
+  </header>
 
-    <p>
-      Under construction!
-    </p>
-  </div>
+  <!-- Main Content -->
+  <main>
+    <!-- Carousel Section -->
+    <section id="carousel">
+      <div id="react-root"></div>
+    </section>
 
-  <!-- INSTAGRAM SLIDESHOW -->
-  <div class="slideshow-container" data-aos="fade-up">
-    <!-- Slide 1 -->
-    <div class="mySlides">
-      <img src="instagram1.png" alt="1">
-    </div>
+    <!-- Blog Section -->
+    <section id="blog">
+      <h2>Blog</h2>
+      <p>Your blog content goes here.</p>
+    </section>
 
-    <!-- Slide 2 -->
-    <div class="mySlides">
-      <img src="instagram2.png" alt="2">
-    </div>
+    <!-- Music Section -->
+    <section id="music">
+      <h2>Music</h2>
+      <p>Your music content goes here.</p>
+    </section>
 
-    <!-- Slide 3 -->
-    <div class="mySlides">
-      <img src="instagram3.png" alt="3">
-    </div>
+    <!-- Contact Section -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Your contact form or information goes here.</p>
+    </section>
+  </main>
 
-    <!-- Slide 4 -->
-    <div class="mySlides">
-      <img src="instagram4.png" alt="4">
-    </div>
-
-    <!-- Slide 5 -->
-    <div class="mySlides">
-      <img src="instagram5.png" alt="5">
-    </div>
-
-    <!-- Slide 6 -->
-    <div class="mySlides">
-      <img src="instagram6.png" alt="6">
-    </div>
-
-    <!-- Slide 7 -->
-    <div class="mySlides">
-      <img src="instagram7.png" alt="7">
-    </div>
-
-    <!-- Slide 8 -->
-    <div class="mySlides">
-      <img src="instagram8.png" alt="8">
-    </div>
-
-    <!-- Slide 9 -->
-    <div class="mySlides">
-      <img src="instagram9.png" alt="9">
-    </div>
-
-    <!-- Slide 10 -->
-    <div class="mySlides">
-      <img src="instagram10.png" alt="10">
-    </div>
-
-    <!-- Slide 11 -->
-    <div class="mySlides">
-      <img src="instagram11.png" alt="11">
-    </div>
-
-    <!-- Slide 12 -->
-    <div class="mySlides">
-      <img src="instagram12.png" alt="12">
-    </div>
-
-    <!-- Slide 13 -->
-    <div class="mySlides">
-      <img src="instagram13.png" alt="13">
-    </div>
-
-    <!-- Slide 14 -->
-    <div class="mySlides">
-      <img src="instagram14.png" alt="14">
-    </div>
-
-    <!-- Slide 15 -->
-    <div class="mySlides">
-      <img src="instagram15.png" alt="15">
-    </div>
-
-    <!-- Slide 16 -->
-    <div class="mySlides">
-      <img src="instagram16.png" alt="16">
-    </div>
-
-    <!-- Slide 17 -->
-    <div class="mySlides">
-      <img src="instagram17.png" alt="17">
-    </div>
-
-    <!-- Slide 18 -->
-    <div class="mySlides">
-      <img src="instagram18.png" alt="18">
-    </div>
-
-    <!-- Slide 19 -->
-    <div class="mySlides">
-      <img src="instagram19.png" alt="19">
-    </div>
-
-    <!-- Slide 20 -->
-    <div class="mySlides">
-      <img src="instagram20.png" alt="20">
-    </div>
-
-    <!-- Slide 21 -->
-    <div class="mySlides">
-      <img src="instagram21.png" alt="21">
-    </div>
-
-    <!-- Slide 22 -->
-    <div class="mySlides">
-      <img src="instagram22.png" alt="22">
-    </div>
-
-    <!-- Slide 23 -->
-    <div class="mySlides">
-      <img src="instagram23.png" alt="23">
-    </div>
-
-    <!-- Caption -->
-    <div class="caption">pov</div>
-
-    <!-- Next and previous buttons -->
-    <a class="prev">&#10094;</a>
-    <a class="next">&#10095;</a>
-  </div>
-
-  <!-- Lightbox Container -->
-  <div id="lightbox" class="lightbox">
-    <span class="close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img">
-    <div id="lightbox-caption"></div>
-  </div>
-
-  <!-- BLOG SECTION -->
-  <div class="blog-section" data-aos="fade-up">
-    <h2>Blog</h2>
-    
-    <!-- Blog Post Placeholder -->
-    <div id="blog-posts">
-      <!-- Dynamic blog posts will be inserted here -->
-    </div>
-    
-    <!-- Blog Submission Form -->
-    <div class="blog-form">
-      <h3>Submit a Blog Post</h3>
-      <form id="blog-form">
-        <input type="text" id="title" name="title" placeholder="Post Title" required>
-        <textarea id="content" name="content" rows="5" placeholder="Your post content..." required></textarea>
-        <button type="submit">Submit Post</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- MUSIC SECTION -->
-  <div class="music-section" data-aos="fade-up">
-    <h2>Albums by INTERNET COWBOY</h2>
-    <p>
-      <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
-        Listen to my latest album on Spotify
-      </a>
-    </p>
-  </div>
-
-  <!-- FOOTER -->
+  <!-- Footer -->
   <footer>
-    &copy; <span id="year"></span> robbygat.com
+    <p>&copy; 2025 robbygat.com</p>
   </footer>
 
-  <!-- Scripts -->
-
-  <!-- particles.js config -->
+  <!-- React Carousel Script -->
   <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#1DA1F2"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          },
-          "polygon": {
-            "nb_sides": 5
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": false
-        },
-        "size": {
-          "value": 3,
-          "random": true
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#1DA1F2",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out"
+    document.addEventListener('DOMContentLoaded', function() {
+      class Carousel extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { currentImage: 0 };
+          this.nextImage = this.nextImage.bind(this);
+          this.prevImage = this.prevImage.bind(this);
+          this.goToImage = this.goToImage.bind(this);
+          this.handleKeyDown = this.handleKeyDown.bind(this);
         }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          }
-        },
-        "modes": {
-          "repulse": {
-            "distance": 100,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 4
+
+        componentDidMount() {
+          // Automatically move to the next image every 5 seconds
+          this.timerID = setInterval(
+            () => this.nextImage(),
+            5000
+          );
+          // Add keyboard event listener
+          document.addEventListener('keydown', this.handleKeyDown);
+        }
+
+        componentWillUnmount() {
+          clearInterval(this.timerID);
+          document.removeEventListener('keydown', this.handleKeyDown);
+        }
+
+        nextImage() {
+          this.setState({
+            currentImage: (this.state.currentImage + 1) % this.props.images.length
+          });
+        }
+
+        prevImage() {
+          this.setState({
+            currentImage: (this.state.currentImage - 1 + this.props.images.length) % this.props.images.length
+          });
+        }
+
+        goToImage(index) {
+          this.setState({ currentImage: index });
+        }
+
+        handleKeyDown(e) {
+          if (e.key === 'ArrowRight') {
+            this.nextImage();
+          } else if (e.key === 'ArrowLeft') {
+            this.prevImage();
           }
         }
-      },
-      "retina_detect": true
-    });
-  </script>
 
-  <!-- AOS Initialization -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  </script>
-
-  <!-- Slideshow Script -->
-  <script>
-    let slideIndex = 0;
-    const slides = document.getElementsByClassName("mySlides");
-    const prev = document.querySelector(".prev");
-    const next = document.querySelector(".next");
-    let slideInterval = setInterval(nextSlide, 3000); // Change slide every 3 seconds
-
-    function showSlides() {
-      for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";  
+        render() {
+          return (
+            React.createElement('div', { className: 'carousel-container' },
+              React.createElement('h2', null, 'Image Carousel'),
+              React.createElement('img', { 
+                src: this.props.images[this.state.currentImage], 
+                alt: `Slide ${this.state.currentImage + 1}`, 
+                className: 'carousel-image active' 
+              }),
+              React.createElement('div', { className: 'carousel-controls' },
+                React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
+                React.createElement('button', { onClick: this.nextImage }, 'Next ❯')
+              ),
+              React.createElement('div', { className: 'carousel-indicators' },
+                this.props.images.map((_, index) => (
+                  React.createElement('span', { 
+                    key: index, 
+                    className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
+                    onClick: () => this.goToImage(index)
+                  })
+                ))
+              )
+            )
+          );
+        }
       }
-      slideIndex++;
-      if (slideIndex > slides.length) {slideIndex = 1}    
-      slides[slideIndex-1].style.display = "block";  
-    }
 
-    function nextSlide() {
-      showSlides();
-    }
-
-    function prevSlideFunc() {
-      slideIndex -= 2;
-      if (slideIndex < 0) {slideIndex = slides.length - 1}
-      showSlides();
-    }
-
-    // Initialize slideshow
-    showSlides();
-
-    // Button event listeners
-    next.addEventListener('click', () => {
-      nextSlide();
-      clearInterval(slideInterval);
-      slideInterval = setInterval(nextSlide, 3000);
-    });
-
-    prev.addEventListener('click', () => {
-      prevSlideFunc();
-      clearInterval(slideInterval);
-      slideInterval = setInterval(nextSlide, 3000);
-    });
-  </script>
-
-  <!-- Lightbox Script -->
-  <script>
-    // Get lightbox elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
-
-    // Get all images in the slideshow
-    const slideshowImages = document.querySelectorAll('.slideshow-container .mySlides img');
-
-    // Add click event to each image
-    slideshowImages.forEach(img => {
-      img.addEventListener('click', () => {
-        lightbox.style.display = 'block';
-        lightboxImg.src = img.src;
-        lightboxCaption.textContent = img.alt;
-      });
-    });
-
-    // Close the lightbox when the close button is clicked
-    closeBtn.addEventListener('click', () => {
-      lightbox.style.display = 'none';
-    });
-
-    // Close the lightbox when clicking outside the image
-    window.addEventListener('click', (e) => {
-      if (e.target == lightbox) {
-        lightbox.style.display = 'none';
+      // Generate image paths
+      const images = [];
+      for (let i = 1; i <= 23; i++) {
+        images.push(`images/instagram${i}.png`);
       }
-    });
-  </script>
 
-  <!-- Firebase SDKs -->
-  <!-- Include Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+      // Render the Carousel Component
+      ReactDOM.render(
+        React.createElement(Carousel, { images: images }, null),
+        document.getElementById('react-root')
+      );
 
-  <!-- Initialize Firebase -->
-  <script>
-    // TODO: Replace the following with your app's Firebase project configuration
-    // You can find this information in your Firebase project settings
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-
-  <!-- Blog Script -->
-  <script>
-    const blogForm = document.getElementById('blog-form');
-    const blogPostsContainer = document.getElementById('blog-posts');
-
-    // Function to render a blog post
-    function renderPost(post) {
-      const postDiv = document.createElement('div');
-      postDiv.classList.add('blog-post');
-
-      const title = document.createElement('h3');
-      title.textContent = post.title;
-
-      const content = document.createElement('p');
-      content.textContent = post.content;
-
-      postDiv.appendChild(title);
-      postDiv.appendChild(content);
-
-      blogPostsContainer.prepend(postDiv); // Add newest post at the top
-    }
-
-    // Fetch existing blog posts from Firestore
-    db.collection("blogPosts").orderBy("timestamp", "desc").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        renderPost(doc.data());
-      });
-    }).catch((error) => {
-      console.error("Error fetching blog posts: ", error);
-    });
-
-    // Handle blog form submission
-    blogForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const title = document.getElementById('title').value.trim();
-      const content = document.getElementById('content').value.trim();
-
-      if (title && content) {
-        db.collection("blogPosts").add({
-          title: title,
-          content: content,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        })
-        .then((docRef) => {
-          console.log("Blog post added with ID: ", docRef.id);
-          renderPost({ title: title, content: content });
-          blogForm.reset();
-        })
-        .catch((error) => {
-          console.error("Error adding blog post: ", error);
-        });
-      }
-    });
-  </script>
-
-  <!-- Tagline Animation Script -->
-  <script>
-    const tagline = document.getElementById('tagline');
-
-    function animateTagline() {
-      // Cross out the current text
-      tagline.style.transition = 'all 0.5s ease-out';
-      tagline.style.textDecoration = 'line-through';
-      tagline.style.opacity = '0';
-
-      // After the cross-out, replace with 'UNEMPLOYED'
-      setTimeout(() => {
-        tagline.textContent = 'UNEMPLOYED';
-        tagline.classList.add('unemployed');
-        tagline.style.opacity = '1';
-      }, 500);
-    }
-
-    // Trigger the animation immediately after page loads
-    window.addEventListener('load', () => {
-      animateTagline();
+      // Dark Mode Toggle Function
+      window.toggleDarkMode = function() {
+        const checkbox = document.getElementById('dark-mode-toggle');
+        if (checkbox.checked) {
+          document.body.classList.add('dark-mode');
+        } else {
+          document.body.classList.remove('dark-mode');
+        }
+      };
     });
   </script>
 </body>
