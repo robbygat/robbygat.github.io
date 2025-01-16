@@ -32,16 +32,16 @@
     }
 
     :root {
-      --primary-color: #1DA1F2;
-      --secondary-color: #0d8de1;
-      --background-light: #fff;
-      --background-dark: #121212;
-      --text-light: #000;
-      --text-dark: #e0e0e0;
-      --border-light: #000;
-      --border-dark: #e0e0e0;
-      --shadow-light: rgba(0,0,0,0.1);
-      --shadow-dark: rgba(255,255,255,0.1);
+      --primary-color: #ffffff; /* White */
+      --secondary-color: #cccccc; /* Light Grey */
+      --background-light: #000000; /* Black */
+      --background-dark: #121212; /* Dark Black */
+      --text-light: #ffffff; /* White */
+      --text-dark: #e0e0e0; /* Light Grey */
+      --border-light: #ffffff; /* White */
+      --border-dark: #e0e0e0; /* Light Grey */
+      --shadow-light: rgba(255,255,255,0.1);
+      --shadow-dark: rgba(0,0,0,0.1);
       --accent-color: #ff4081;
       --transition-speed: 0.3s;
     }
@@ -55,7 +55,7 @@
       overflow-x: hidden;
 
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
       background-attachment: fixed; /* Keeps background fixed during scroll */
       background-size: contain;
@@ -65,7 +65,7 @@
     body.dark-mode {
       background-color: var(--background-dark);
       color: var(--text-dark);
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
     }
 
     /* HEADER / SOCIAL MEDIA BUTTONS */
@@ -75,17 +75,12 @@
       align-items: center;
       gap: 20px;
       padding: 10px 0;
-      background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 4px var(--shadow-light);
-      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
-    }
-
-    body.dark-mode .header {
-      background-color: rgba(18, 18, 18, 0.95);
       box-shadow: 0 2px 4px var(--shadow-dark);
+      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
     }
 
     .header a {
@@ -97,17 +92,12 @@
       position: relative;
     }
 
-    body.dark-mode .header a {
-      color: var(--text-dark);
-    }
-
     /* Dark Mode Toggle Switch */
     .toggle-switch {
       margin-left: auto;
       display: flex;
       align-items: center;
       cursor: pointer;
-      font-size: 1rem;
     }
 
     .toggle-switch input {
@@ -119,11 +109,12 @@
       align-items: center;
       cursor: pointer;
       font-size: 1rem;
+      color: var(--text-light);
     }
 
     .toggle-switch .slider {
-      width: 50px;
-      height: 24px;
+      width: 40px;
+      height: 20px;
       background-color: #ccc;
       border-radius: 34px;
       position: relative;
@@ -134,8 +125,8 @@
     .toggle-switch .slider::before {
       content: "";
       position: absolute;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       left: 2px;
       bottom: 2px;
       background-color: white;
@@ -148,20 +139,20 @@
     }
 
     .toggle-switch input:checked + label .slider::before {
-      transform: translateX(26px);
+      transform: translateX(20px);
     }
 
     /* Adding hover effect: enlarges and changes color */
     .header a:hover {
       transform: scale(1.2);
-      color: var(--primary-color); /* Example: Twitter Blue */
+      color: var(--accent-color);
     }
 
     /* PAGE TITLE */
     h1 {
       text-align: center;
       letter-spacing: 1px;
-      margin: 1rem auto 1rem auto;
+      margin: 1rem auto 0.5rem auto;
       font-size: 2.5rem;
       font-family: 'EB Garamond', serif;
       max-width: 800px;
@@ -182,7 +173,7 @@
       font-style: italic;
       margin: 0 0 2rem 0;
       font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
+      font-size: 1.5rem;
       transition: color 0.3s ease;
       position: relative;
       display: inline-block;
@@ -196,7 +187,7 @@
     .tagline.unemployed {
       text-decoration: none;
       color: var(--accent-color);
-      font-size: 3rem;
+      font-size: 2rem;
       animation: fadeInUnemployed 2s forwards;
     }
 
@@ -212,6 +203,11 @@
       margin-bottom: 1.5rem;
       font-size: 1rem;
       font-family: 'Roboto', sans-serif;
+      color: var(--text-light);
+    }
+
+    body.dark-mode p {
+      color: var(--text-dark);
     }
 
     /* IMAGE SECTION */
@@ -221,7 +217,7 @@
       animation: zoomIn 1.5s ease-out;
     }
 
-    /* Grayscale transition effect on the image */
+    /* Image Styling */
     .image-container img {
       max-width: 100%;
       height: auto;
@@ -243,82 +239,72 @@
       transform: scale(1.02);
     }
 
-    /* INSTAGRAM GALLERY */
-    .instagram-gallery {
+    /* INSTAGRAM DOCK-STYLE IMAGES */
+    .instagram-dock {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
-      gap: 10px;
+      align-items: center;
+      gap: 20px;
       overflow-x: auto;
-      padding: 20px;
-      margin: 2rem auto;
-      max-width: 1000px;
-      perspective: 1000px;
+      padding: 1rem;
       animation: fadeInUp 1.5s ease-out;
     }
 
-    .instagram-gallery img {
+    .instagram-dock img {
       width: 100px;
       height: 100px;
       object-fit: cover;
       border-radius: 10px;
-      transition: transform 0.3s ease;
-      cursor: pointer;
-      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .instagram-gallery img:hover {
-      transform: scale(1.5);
-      z-index: 1;
+    .instagram-dock img:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 15px var(--accent-color);
     }
 
-    /* ROBBYSCRIPT SECTION */
-    .robbyscript-section {
-      max-width: 800px;
+    /* ROBBYSCRIPT DISPLAY */
+    .robby-script-section {
+      max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
-      background-color: #f9f9f9;
+      background-color: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-light);
       animation: fadeInUp 1.5s ease-out;
+      color: #000000;
     }
 
-    body.dark-mode .robbyscript-section {
-      background-color: #1e1e1e;
+    body.dark-mode .robby-script-section {
+      background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
     }
 
-    .robbyscript-section h2 {
+    .robby-script-section h2 {
       text-align: center;
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
     }
 
-    .robbyscript-table {
+    .robby-script-table {
       width: 100%;
       border-collapse: collapse;
     }
 
-    .robbyscript-table th, .robbyscript-table td {
+    .robby-script-table th, .robby-script-table td {
       border: 1px solid var(--border-light);
       padding: 10px;
       text-align: center;
       font-family: 'Roboto', sans-serif;
     }
 
-    body.dark-mode .robbyscript-table th, 
-    body.dark-mode .robbyscript-table td {
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
       border-color: var(--border-dark);
-      color: var(--text-dark);
-      background-color: #2e2e2e;
-    }
-
-    .robbyscript-table th {
-      background-color: var(--primary-color);
-      color: #fff;
     }
 
     /* PDF VIEWER SECTION */
@@ -326,18 +312,20 @@
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
-      background-color: #f9f9f9;
+      background-color: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-light);
       animation: fadeInUp 1.5s ease-out;
       text-align: center;
+      color: #000000;
     }
 
     body.dark-mode .pdf-section {
-      background-color: #1e1e1e;
+      background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
     }
 
     .pdf-section h2 {
@@ -350,12 +338,16 @@
       display: inline-block;
       padding: 10px 20px;
       background-color: var(--primary-color);
-      color: #fff;
+      color: #000000;
       text-decoration: none;
-      border-radius: 4px;
+      border-radius: 5px;
       transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
+    }
+
+    body.dark-mode .pdf-section a {
+      color: var(--text-dark);
     }
 
     .pdf-section a:hover {
@@ -368,18 +360,20 @@
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
-      background-color: #f9f9f9;
+      background-color: #ffffff;
       border: 1px solid var(--border-light);
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-light);
       animation: fadeInUp 1.5s ease-out;
       text-align: center;
+      color: #000000;
     }
 
     body.dark-mode .music-section {
-      background-color: #1e1e1e;
+      background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
     }
 
     .music-section h2 {
@@ -388,36 +382,140 @@
       margin-bottom: 1rem;
     }
 
-    .music-section a {
+    .music-section .music-button {
       display: inline-block;
       padding: 10px 20px;
       background-color: var(--primary-color);
-      color: #fff;
+      color: #000000;
       text-decoration: none;
-      border-radius: 4px;
+      border-radius: 5px;
       transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
     }
 
-    .music-section a:hover {
+    body.dark-mode .music-section .music-button {
+      color: var(--text-dark);
+    }
+
+    .music-section .music-button:hover {
       background-color: var(--secondary-color);
       transform: scale(1.05);
     }
 
-    /* FOOTER */
-    footer {
-      text-align: center;
-      margin: 2rem 0;
-      border-top: 1px solid var(--border-light);
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: #666;
-      transition: color 0.5s, border-color 0.5s;
+    /* CONTACT ME SECTION */
+    .contact-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
     }
 
-    body.dark-mode footer {
-      color: #999;
+    body.dark-mode .contact-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-section input, .contact-section textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .contact-section input, 
+    body.dark-mode .contact-section textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-section button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #000000;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body.dark-mode .contact-section button {
+      color: var(--text-dark);
+    }
+
+    .contact-section button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* ROBBYSCRIPT DISPLAY */
+    .robby-script-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      color: #000000;
+    }
+
+    body.dark-mode .robby-script-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
+    }
+
+    .robby-script-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .robby-script-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .robby-script-table th, .robby-script-table td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
       border-color: var(--border-dark);
     }
 
@@ -478,6 +576,22 @@
       padding: 10px 0;
       font-family: 'Roboto', sans-serif;
       font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: #666;
+      transition: color 0.5s, border-color 0.5s;
+    }
+
+    body.dark-mode footer {
+      color: #999;
+      border-color: var(--border-dark);
     }
 
     /* Animations */
@@ -541,41 +655,40 @@
       }
 
       .toggle-switch {
-        font-size: 0.8rem;
+        margin-left: 10px;
       }
 
       .tagline {
+        font-size: 1.2rem;
+      }
+
+      .tagline.unemployed {
         font-size: 1.5rem;
       }
 
-      .robbyscript-section h2,
+      .robby-script-section h2,
       .pdf-section h2,
-      .music-section h2 {
+      .music-section h2,
+      .contact-section h2,
+      .translator-section h2 {
         font-size: 1.5rem;
       }
 
-      .instagram-gallery img {
+      .instagram-dock img {
         width: 80px;
         height: 80px;
       }
 
-      .instagram-gallery img:hover {
-        transform: scale(1.3);
-      }
-
-      .robbyscript-table th, .robbyscript-table td {
-        padding: 8px;
-        font-size: 0.9rem;
-      }
-
       .pdf-section a,
-      .music-section a {
-        padding: 8px 16px;
+      .music-section .music-button {
         font-size: 0.9rem;
+        padding: 8px 16px;
       }
 
-      footer {
+      .contact-section button,
+      .translator-section button {
         font-size: 0.9rem;
+        padding: 8px;
       }
     }
   </style>
@@ -601,7 +714,7 @@
           }
         },
         "color": {
-          "value": "#1DA1F2"
+          "value": "#cccccc" /* Grey */
         },
         "shape": {
           "type": "circle",
@@ -624,7 +737,7 @@
         "line_linked": {
           "enable": true,
           "distance": 150,
-          "color": "#1DA1F2",
+          "color": "#cccccc",
           "opacity": 0.4,
           "width": 1
         },
@@ -740,8 +853,8 @@
       );
     };
 
-    // Instagram Gallery Component
-    const InstagramGallery = () => {
+    // Instagram Dock Component
+    const InstagramDock = () => {
       const instagramImages = [
         "instagram1.png",
         "instagram2.png",
@@ -768,33 +881,33 @@
         "instagram23.png"
       ];
 
-      const openLightbox = (src, alt) => {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxCaption = document.getElementById('lightbox-caption');
-        lightbox.style.display = 'block';
-        lightboxImg.src = src;
-        lightboxCaption.textContent = `Instagram Post ${alt}`;
-      };
-
       return (
-        <div className="instagram-gallery" data-aos="fade-up">
+        <div className="instagram-dock" data-aos="fade-up">
           {instagramImages.map((img, index) => (
             <img 
-              src={img} 
-              alt={index + 1} 
               key={index} 
-              onClick={() => openLightbox(img, index + 1)} 
-              loading="lazy"
+              src={img} 
+              alt={`Instagram ${index + 1}`} 
+              onClick={() => openLightbox(img, `Instagram ${index + 1}`)} 
             />
           ))}
         </div>
       );
     };
 
-    // Robbyscript Section Component
-    const RobbyscriptSection = () => {
-      const robbyscript = {
+    // Function to open Lightbox (outside React)
+    const openLightbox = (src, alt) => {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      lightbox.style.display = 'block';
+      lightboxImg.src = src;
+      lightboxCaption.textContent = alt;
+    };
+
+    // RobbyScript Display Component
+    const RobbyScriptDisplay = () => {
+      const robbyScript = {
         '𝌯': 'p',
         '𝍍': 'b',
         '𝌲': 't',
@@ -823,17 +936,17 @@
       };
 
       return (
-        <div className="robbyscript-section" data-aos="fade-up">
+        <div className="robby-script-section" data-aos="fade-up">
           <h2>Robbyscript</h2>
-          <table className="robbyscript-table">
+          <table className="robby-script-table">
             <thead>
               <tr>
-                <th>Robbyscript Character</th>
-                <th>IPA Value</th>
+                <th>Robbyscript</th>
+                <th>IPA</th>
               </tr>
             </thead>
             <tbody>
-              {Object.entries(robbyscript).map(([key, value], index) => (
+              {Object.entries(robbyScript).map(([key, value], index) => (
                 <tr key={index}>
                   <td>{key}</td>
                   <td>{value}</td>
@@ -858,19 +971,77 @@
     // Music Section Component
     const MusicSection = () => (
       <div className="music-section" data-aos="fade-up">
-        <h2>My Music</h2>
-        <a href="https://internetcowboy.bandcamp.com" target="_blank" rel="noopener noreferrer">
-          Visit My Bandcamp
+        <h2>Albums by INTERNET COWBOY</h2>
+        <a href="https://internetcowboy.bandcamp.com" target="_blank" rel="noopener noreferrer" className="music-button">
+          My Music
         </a>
       </div>
     );
+
+    // Contact Form Component
+    const ContactForm = () => {
+      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+      const [success, setSuccess] = useState(false);
+
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const { name, email, message } = formData;
+
+        if (name && email && message) {
+          // For demonstration, we'll just reset the form and show success message
+          // In a real application, you'd send this data to a server
+          setFormData({ name: '', email: '', message: '' });
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 5000);
+        }
+      };
+
+      return (
+        <div className="contact-section" data-aos="fade-up">
+          <h2>Contact Me</h2>
+          <form onSubmit={handleSubmit}>
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Your Name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="Your Email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              required 
+            />
+            <textarea 
+              name="message" 
+              rows="5" 
+              placeholder="Your Message..." 
+              value={formData.message} 
+              onChange={handleChange} 
+              required 
+            ></textarea>
+            <button type="submit">Send Message</button>
+            {success && <div className="success-message">Your message has been sent!</div>}
+          </form>
+        </div>
+      );
+    };
 
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
       return (
         <footer>
-          &copy; {currentYear} Tachikawa, Tokyo (立川市) by Robert Gatzke
+          &copy; {currentYear} robbygat.com | Tachikawa, Tokyo (立川市) | by Robert Gatzke
         </footer>
       );
     };
@@ -908,26 +1079,22 @@
             </div>
           </div>
 
-          {/* INSTAGRAM GALLERY */}
-          <InstagramGallery />
+          {/* INSTAGRAM DOCK */}
+          <InstagramDock />
 
-          {/* ROBBYSCRIPT SECTION */}
-          <RobbyscriptSection />
+          {/* RobbyScript Display */}
+          <RobbyScriptDisplay />
 
-          {/* PDF VIEWER SECTION */}
+          {/* PDF Viewer */}
           <PDFViewer />
 
-          {/* MUSIC SECTION */}
+          {/* Music Section */}
           <MusicSection />
 
-          {/* Lightbox Container */}
-          <div id="lightbox" className="lightbox">
-            <span className="close">&times;</span>
-            <img className="lightbox-content" id="lightbox-img" />
-            <div id="lightbox-caption"></div>
-          </div>
+          {/* Contact Form */}
+          <ContactForm />
 
-          {/* FOOTER */}
+          {/* Footer */}
           <Footer />
         </>
       );
@@ -957,5 +1124,12 @@
       }
     });
   </script>
+
+  <!-- Lightbox Container -->
+  <div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img" />
+    <div id="lightbox-caption"></div>
+  </div>
 </body>
 </html>
