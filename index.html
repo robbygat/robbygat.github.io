@@ -22,6 +22,12 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
+  <!-- Additional Libraries -->
+  <!-- React Slick for Image Carousel -->
+  <link rel="stylesheet" type="text/css" charset="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+  
   <!-- Inline CSS for simplicity -->
   <style>
     /* BASIC PAGE RESET & BODY STYLES */
@@ -43,12 +49,15 @@
       --shadow-light: rgba(0,0,0,0.1);
       --shadow-dark: rgba(255,255,255,0.1);
       --accent-color: #ff4081;
+      --font-main: 'Roboto', sans-serif;
+      --font-serif: 'EB Garamond', serif;
+      --font-serif-alt: 'Lora', serif;
     }
 
     body {
       background-color: var(--background-light);
       color: var(--text-light);
-      font-family: 'Lora', serif;
+      font-family: var(--font-serif-alt);
       line-height: 1.6;
       position: relative;
       overflow-x: hidden;
@@ -90,7 +99,7 @@
     .header a {
       color: var(--text-light);
       text-decoration: none;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 1.5rem;
       transition: transform 0.3s ease, color 0.3s ease;
       position: relative;
@@ -164,7 +173,7 @@
       letter-spacing: 1px;
       margin: 2rem auto 1rem auto;
       font-size: 3rem;
-      font-family: 'EB Garamond', serif;
+      font-family: var(--font-serif);
       max-width: 800px;
       padding: 0 1rem;
       position: relative;
@@ -182,7 +191,7 @@
       text-align: center;
       font-style: italic;
       margin: 0 0 2rem 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 2rem;
       transition: color 0.3s ease;
       position: relative;
@@ -212,7 +221,7 @@
     p {
       margin-bottom: 1.5rem;
       font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
     }
 
     /* IMAGE SECTION */
@@ -283,7 +292,7 @@
     .caption {
       text-align: center;
       padding: 10px;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 1.1rem;
       color: #666;
       background-color: #f2f2f2;
@@ -360,7 +369,7 @@
 
     .blog-section h2 {
       text-align: center;
-      font-family: 'EB Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 2rem;
       margin-bottom: 1rem;
     }
@@ -382,7 +391,7 @@
     }
 
     .blog-post h3 {
-      font-family: 'EB Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 1.5rem;
       margin-bottom: 0.5rem;
       color: var(--primary-color);
@@ -394,7 +403,7 @@
     }
 
     .blog-post p {
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 1rem;
       color: #333;
     }
@@ -426,7 +435,7 @@
 
     .blog-form h3 {
       text-align: center;
-      font-family: 'EB Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: var(--primary-color);
@@ -449,7 +458,7 @@
       border-radius: 4px;
       background-color: #f2f2f2;
       color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 1rem;
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     }
@@ -497,7 +506,7 @@
 
     .music-section h2 {
       text-align: center;
-      font-family: 'EB Garamond', serif;
+      font-family: var(--font-serif);
       font-size: 2rem;
       margin-bottom: 1rem;
     }
@@ -522,7 +531,7 @@
       margin: 2rem 0;
       border-top: 1px solid var(--border-light);
       padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       color: #666;
       transition: color 0.5s, border-color 0.5s;
     }
@@ -587,7 +596,7 @@
       text-align: center;
       color: #ccc;
       padding: 10px 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-main);
       font-size: 1rem;
     }
 
@@ -670,6 +679,73 @@
       left: 0;
     }
 
+    /* ASCII Art Display */
+    .ascii-art-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f1f1f1;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      font-family: monospace;
+      white-space: pre-wrap;
+      color: #333;
+      text-align: center;
+      animation: fadeInUp 1.5s ease-out;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode .ascii-art-container {
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    /* RobbyScript Section */
+    .robbyscript-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f1f1f1;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode .robbyscript-section {
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .robbyscript-section h2 {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .alphabet-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .alphabet-table th, .alphabet-table td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+    }
+
+    body.dark-mode .alphabet-table th, 
+    body.dark-mode .alphabet-table td {
+      border-color: var(--border-dark);
+    }
+
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
@@ -684,7 +760,7 @@
         font-size: 1.5rem;
       }
 
-      .blog-section h2, .music-section h2 {
+      .blog-section h2, .music-section h2, .robbyscript-section h2 {
         font-size: 1.5rem;
       }
 
@@ -700,7 +776,131 @@
       .tagline.unemployed {
         font-size: 2.5rem;
       }
+
+      .ascii-art-container {
+        font-size: 0.8rem;
+      }
+
+      .alphabet-table th, .alphabet-table td {
+        padding: 5px;
+      }
     }
+
+    /* Additional Styles for New Features */
+    .about-section, .projects-section, .contact-section, .testimonials-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f1f1f1;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode .about-section,
+    body.dark-mode .projects-section,
+    body.dark-mode .contact-section,
+    body.dark-mode .testimonials-section {
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .about-section h2,
+    .projects-section h2,
+    .contact-section h2,
+    .testimonials-section h2 {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Contact Form */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-form input, .contact-form textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: var(--font-main);
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .contact-form input, 
+    body.dark-mode .contact-form textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-form button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .contact-form button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* Testimonials Carousel */
+    .testimonials-carousel {
+      margin-top: 2rem;
+    }
+
+    .testimonial {
+      background-color: #fff;
+      padding: 1rem;
+      border-left: 4px solid var(--accent-color);
+      border-radius: 4px;
+      box-shadow: 0 2px 4px var(--shadow-light);
+      transition: box-shadow 0.3s ease;
+    }
+
+    body.dark-mode .testimonial {
+      background-color: #2e2e2e;
+      box-shadow: 0 2px 4px var(--shadow-dark);
+    }
+
+    .testimonial p {
+      font-family: var(--font-main);
+      font-size: 1rem;
+      color: #333;
+    }
+
+    body.dark-mode .testimonial p {
+      color: #ccc;
+    }
+
+    .testimonial h4 {
+      text-align: right;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      color: var(--primary-color);
+    }
+
+    .testimonial h4:hover {
+      color: var(--secondary-color);
+    }
+
   </style>
 </head>
 <body>
@@ -717,7 +917,7 @@
     particlesJS("particles-js", {
       "particles": {
         "number": {
-          "value": 80,
+          "value": 100,
           "density": {
             "enable": true,
             "value_area": 800
@@ -753,7 +953,7 @@
         },
         "move": {
           "enable": true,
-          "speed": 6,
+          "speed": 4,
           "direction": "none",
           "random": false,
           "straight": false,
@@ -765,7 +965,7 @@
         "events": {
           "onhover": {
             "enable": true,
-            "mode": "repulse"
+            "mode": "grab"
           },
           "onclick": {
             "enable": true,
@@ -773,9 +973,11 @@
           }
         },
         "modes": {
-          "repulse": {
-            "distance": 100,
-            "duration": 0.4
+          "grab": {
+            "distance": 200,
+            "line_linked": {
+              "opacity": 0.7
+            }
           },
           "push": {
             "particles_nb": 4
@@ -863,9 +1065,8 @@
       );
     };
 
-    // Slideshow Component
+    // Slideshow Component using React Slick
     const Slideshow = () => {
-      const [slideIndex, setSlideIndex] = useState(0);
       const slides = [
         { src: "instagram1.png", alt: "1" },
         { src: "instagram2.png", alt: "2" },
@@ -893,19 +1094,18 @@
       ];
 
       useEffect(() => {
-        const interval = setInterval(() => {
-          setSlideIndex(prevIndex => (prevIndex + 1) % slides.length);
-        }, 3000);
-        return () => clearInterval(interval);
-      }, [slides.length]);
-
-      const nextSlide = () => {
-        setSlideIndex((slideIndex + 1) % slides.length);
-      };
-
-      const prevSlide = () => {
-        setSlideIndex((slideIndex - 1 + slides.length) % slides.length);
-      };
+        $('.slideshow-container').slick({
+          dots: true,
+          infinite: true,
+          speed: 500,
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          autoplay: true,
+          autoplaySpeed: 3000,
+          arrows: true,
+          adaptiveHeight: true,
+        });
+      }, []);
 
       const openLightbox = (src, alt) => {
         const lightbox = document.getElementById('lightbox');
@@ -919,15 +1119,12 @@
       return (
         <div className="slideshow-container" data-aos="fade-up">
           {slides.map((slide, index) => (
-            <div className="mySlides" key={index} style={{ display: index === slideIndex ? 'block' : 'none' }}>
+            <div className="mySlides" key={index}>
               <img src={slide.src} alt={slide.alt} onClick={() => openLightbox(slide.src, slide.alt)} />
             </div>
           ))}
 
           <div className="caption">pov</div>
-
-          <a className="prev" onClick={prevSlide}>&#10094;</a>
-          <a className="next" onClick={nextSlide}>&#10095;</a>
         </div>
       );
     };
@@ -1019,6 +1216,229 @@
       );
     };
 
+    // ASCII Art Display Component
+    const AsciiArtDisplay = () => {
+      const asciiArts = [
+        `
+         _____
+        /     \\
+       | () () |
+        \\  ^  /
+         |||||
+         |||||
+        `,
+        `
+        .-''''-.
+       /        \\
+      /_        _\\
+     // \\      / \\\\
+     |\__\\    /__/|
+      \\    ||    /
+       \\        /
+        \\  __  /
+         '.__.'
+          |  |
+          |  |
+        `,
+        `
+        _______
+       /       \\
+      /  /\\_/\\  \\
+      |  |o o|  |
+      \\  \\_U_/  /
+       \\_______/
+        `,
+        `
+        /\_/\\  
+       ( o.o )
+        > ^ <
+        `,
+        `
+        ┌─┐      
+        │█│      
+        │█│      
+        │█│      
+        └─┘      
+        `,
+      ];
+
+      const [currentArt, setCurrentArt] = useState(0);
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentArt(prev => (prev + 1) % asciiArts.length);
+        }, 5000); // Change every 5 seconds
+
+        return () => clearInterval(interval);
+      }, [asciiArts.length]);
+
+      return (
+        <div className="ascii-art-container" data-aos="fade-up">
+          {asciiArts[currentArt]}
+        </div>
+      );
+    };
+
+    // RobbyScript Section Component
+    const RobbyScript = () => {
+      const robbyAlphabet = {
+        '𐌀': 'ɑ',
+        '𐌁': 'b',
+        '𐌂': 'tʃ',
+        '𐌃': 'd',
+        '𐌄': 'ɛ',
+        '𐌅': 'f',
+        '𐌆': 'g',
+        '𐌇': 'h',
+        '𐌈': 'i',
+        '𐌉': 'j',
+        '𐌊': 'k',
+        '𐌋': 'l',
+        '𐌌': 'm',
+        '𐌍': 'n',
+        '𐌎': 'ŋ',
+        '𐌏': 'o',
+        '𐌐': 'p',
+        '𐌑': 'q',
+        '𐌒': 'r',
+        '𐌓': 's',
+        '𐌔': 'ʃ',
+        '𐌕': 't',
+        '𐌖': 'u',
+        '𐌗': 'v',
+        '𐌘': 'w',
+        '𐌙': 'x',
+        '𐌚': 'y',
+        '𐌛': 'z',
+        '𐌜': 'ʒ',
+        // Add more unique Unicode characters as needed
+      };
+
+      return (
+        <div className="robbyscript-section" data-aos="fade-up">
+          <h2>RobbyScript - A New Alphabet</h2>
+          <table className="alphabet-table">
+            <thead>
+              <tr>
+                <th>RobbyScript</th>
+                <th>IPA Phoneme</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(robbyAlphabet).map(([key, value], index) => (
+                <tr key={index}>
+                  <td style={{ fontSize: '1.5rem' }}>{key}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // About Section Component
+    const AboutSection = () => (
+      <div className="about-section" data-aos="fade-up">
+        <h2>About Me</h2>
+        <p>
+          Hello! I'm Robby, a passionate linguist, photographer, musician, actor, journalist, and model. Welcome to my portfolio website where I showcase my diverse range of skills and projects. Explore my blog, view my photography portfolio, listen to my music, and learn more about my creative endeavors.
+        </p>
+      </div>
+    );
+
+    // Projects Section Component
+    const ProjectsSection = () => (
+      <div className="projects-section" data-aos="fade-up">
+        <h2>Projects</h2>
+        <p>
+          Here are some of the projects I've worked on:
+        </p>
+        <ul>
+          <li>Photography Portfolio</li>
+          <li>Music Albums</li>
+          <li>Short Films and Acting Roles</li>
+          <li>Journalistic Articles</li>
+          <li>Modeling Campaigns</li>
+          {/* Add more projects as needed */}
+        </ul>
+      </div>
+    );
+
+    // Contact Section Component
+    const ContactSection = () => {
+      const handleContactSubmit = (e) => {
+        e.preventDefault();
+        const name = e.target.name.value.trim();
+        const email = e.target.email.value.trim();
+        const message = e.target.message.value.trim();
+
+        if (name && email && message) {
+          // Here you can handle the form submission, e.g., send to Firebase or an API
+          console.log("Contact Form Submitted:", { name, email, message });
+          alert("Thank you for contacting me!");
+          e.target.reset();
+        }
+      };
+
+      return (
+        <div className="contact-section" data-aos="fade-up">
+          <h2>Contact Me</h2>
+          <form className="contact-form" onSubmit={handleContactSubmit}>
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" rows="5" placeholder="Your Message..." required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+      );
+    };
+
+    // Testimonials Section Component
+    const TestimonialsSection = () => {
+      const testimonials = [
+        {
+          quote: "Robby is an exceptional talent with a versatile skill set.",
+          author: "Jane Doe, Director"
+        },
+        {
+          quote: "Working with Robby was a fantastic experience.",
+          author: "John Smith, Producer"
+        },
+        {
+          quote: "Robby's creativity and dedication are unmatched.",
+          author: "Alice Johnson, Photographer"
+        },
+      ];
+
+      useEffect(() => {
+        $('.testimonials-carousel').slick({
+          dots: true,
+          infinite: true,
+          speed: 500,
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          autoplay: true,
+          autoplaySpeed: 5000,
+          arrows: true,
+        });
+      }, []);
+
+      return (
+        <div className="testimonials-section" data-aos="fade-up">
+          <h2>Testimonials</h2>
+          <div className="testimonials-carousel">
+            {testimonials.map((testimonial, index) => (
+              <div className="testimonial" key={index}>
+                <p>"{testimonial.quote}"</p>
+                <h4>- {testimonial.author}</h4>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
     // Main App Component
     const App = () => {
       const [isDarkMode, setIsDarkMode] = useState(false);
@@ -1061,15 +1481,26 @@
           {/* INSTAGRAM SLIDESHOW */}
           <Slideshow />
 
-          {/* Lightbox Container */}
-          <div id="lightbox" className="lightbox">
-            <span className="close">&times;</span>
-            <img className="lightbox-content" id="lightbox-img" />
-            <div id="lightbox-caption"></div>
-          </div>
+          {/* ASCII ART DISPLAY */}
+          <AsciiArtDisplay />
 
-          {/* BLOG SECTION */}
+          {/* RobbyScript Alphabet */}
+          <RobbyScript />
+
+          {/* About Section */}
+          <AboutSection />
+
+          {/* Projects Section */}
+          <ProjectsSection />
+
+          {/* Testimonials Section */}
+          <TestimonialsSection />
+
+          {/* Blog SECTION */}
           <BlogSection />
+
+          {/* Contact Section */}
+          <ContactSection />
 
           {/* MUSIC SECTION */}
           <MusicSection />
@@ -1104,5 +1535,9 @@
       }
     });
   </script>
+
+  <!-- Additional Scripts -->
+  <!-- jQuery for React Slick -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html>
