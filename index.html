@@ -298,6 +298,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 8px var(--shadow-light);
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      cursor: pointer;
     }
 
     body.dark-mode .portfolio-item {
@@ -330,6 +331,7 @@
       transition: opacity var(--transition-speed);
       font-size: 1.2rem;
       text-align: center;
+      padding: 10px;
     }
 
     .portfolio-item:hover .overlay {
@@ -1077,17 +1079,238 @@
        | |___  
         \\____|
         `,
-        // Add more ASCII art strings as desired
+        `
+         __
+        / /_
+       | '_ \\
+       | (_) |
+        \\___/
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | |_| |
+        \\___/ 
+        `,
+        `
+        _____
+       |  __ \\
+       | |__) |
+       |  ___/
+       | |    
+       |_|    
+        `,
+        `
+         _____ 
+        |  ___|
+        | |__  
+        |  __| 
+        | |___ 
+        \\____/ 
+        `,
+        `
+         ____  
+        |  _ \\ 
+        | |_) |
+        |  _ < 
+        | |_) |
+        |____/ 
+        `,
+        `
+        _   _ 
+       | | | |
+       | |_| |
+       |  _  |
+       | | | |
+       |_| |_|
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | | | |
+        \\___/ 
+        `,
+        `
+        ____  
+       |  _ \\ 
+       | |_) |
+       |  _ < 
+       | |_) |
+       |____/ 
+        `,
+        `
+         ___  
+        |__ \\ 
+           ) |
+          / / 
+         |_|  
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | |_| |
+        \\___/ 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+        _____ 
+       | ____|
+       | |__  
+       |  __| 
+       | |___ 
+       |_____| 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+         ____  
+        |  _ \\ 
+        | |_) |
+        |  _ < 
+        | |_) |
+        |____/ 
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | |_| |
+        \\___/ 
+        `,
+        `
+        ____  
+       |  _ \\ 
+       | |_) |
+       |  _ < 
+       | |_) |
+       |____/ 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+        _____ 
+       | ____|
+       | |__  
+       |  __| 
+       | |___ 
+       |_____| 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+         ____  
+        |  _ \\ 
+        | |_) |
+        |  _ < 
+        | |_) |
+        |____/ 
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | |_| |
+        \\___/ 
+        `,
+        `
+        ____  
+       |  _ \\ 
+       | |_) |
+       |  _ < 
+       | |_) |
+       |____/ 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+        _____ 
+       | ____|
+       | |__  
+       |  __| 
+       | |___ 
+       |_____| 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+         ____  
+        |  _ \\ 
+        | |_) |
+        |  _ < 
+        | |_) |
+        |____/ 
+        `,
+        `
+         ___  
+        / _ \\ 
+       | | | |
+       | |_| |
+        \\___/ 
+        `,
+        `
+        ____  
+       |  _ \\ 
+       | |_) |
+       |  _ < 
+       | |_) |
+       |____/ 
+        `,
+        `
+         __  
+        |  | 
+        |  | 
+        |  | 
+        |__| 
+        `,
+        `
+        _____ 
+       | ____|
+       | |__  
+       |  __| 
+       | |___ 
+       |_____| 
+        `,
       ];
 
       const [currentArt, setCurrentArt] = useState(0);
 
       useEffect(() => {
-        const interval = setInterval(() => {
-          setCurrentArt(prev => (prev + 1) % asciiArts.length);
-        }, 5000); // Change ASCII art every 5 seconds
-
-        return () => clearInterval(interval);
+        const today = new Date().getDate() - 1; // 0-based index
+        setCurrentArt(today % asciiArts.length);
       }, [asciiArts.length]);
 
       return (
@@ -1109,13 +1332,13 @@
         autoplaySpeed: 3000,
         responsive: [
           {
-            breakpoint: 768,
+            breakpoint: 1024,
             settings: {
               slidesToShow: 2,
             }
           },
           {
-            breakpoint: 480,
+            breakpoint: 600,
             settings: {
               slidesToShow: 1,
             }
@@ -1130,6 +1353,23 @@
         { src: "instagram4.png", alt: "Instagram Post 4" },
         { src: "instagram5.png", alt: "Instagram Post 5" },
         { src: "instagram6.png", alt: "Instagram Post 6" },
+        { src: "instagram7.png", alt: "Instagram Post 7" },
+        { src: "instagram8.png", alt: "Instagram Post 8" },
+        { src: "instagram9.png", alt: "Instagram Post 9" },
+        { src: "instagram10.png", alt: "Instagram Post 10" },
+        { src: "instagram11.png", alt: "Instagram Post 11" },
+        { src: "instagram12.png", alt: "Instagram Post 12" },
+        { src: "instagram13.png", alt: "Instagram Post 13" },
+        { src: "instagram14.png", alt: "Instagram Post 14" },
+        { src: "instagram15.png", alt: "Instagram Post 15" },
+        { src: "instagram16.png", alt: "Instagram Post 16" },
+        { src: "instagram17.png", alt: "Instagram Post 17" },
+        { src: "instagram18.png", alt: "Instagram Post 18" },
+        { src: "instagram19.png", alt: "Instagram Post 19" },
+        { src: "instagram20.png", alt: "Instagram Post 20" },
+        { src: "instagram21.png", alt: "Instagram Post 21" },
+        { src: "instagram22.png", alt: "Instagram Post 22" },
+        { src: "instagram23.png", alt: "Instagram Post 23" },
         // Add more Instagram post objects as needed
       ];
 
@@ -1182,7 +1422,7 @@
         setIsOpen(true);
       };
 
-      // Expose the openLightbox function globally
+      // Expose the openLightbox function globally for Slideshow component
       useEffect(() => {
         window.openLightbox = openLightbox;
       }, []);
@@ -1258,8 +1498,7 @@
 
   <!-- Additional Lightbox Script -->
   <script>
-    // This script ensures the lightbox closes when clicking outside the image or on the close button
-    // Already handled within the Lightbox component
+    // The Lightbox functionality is handled within the Lightbox component
   </script>
 </body>
 </html>
