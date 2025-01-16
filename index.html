@@ -4,20 +4,34 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+
   <title>robbygat.com</title>
-  
-  <!-- Google Fonts for Newspaper Style -->
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap" rel="stylesheet">
-  
+
+  <!-- Google Fonts for Futuristic Style -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   <!-- React and ReactDOM via CDN -->
   <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-  
+
   <!-- Link to styles.css -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Sidebar Terminal -->
+  <aside class="sidebar">
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-btn close"></span>
+        <span class="terminal-btn minimize"></span>
+        <span class="terminal-btn maximize"></span>
+      </div>
+      <div class="terminal-body">
+        <p class="terminal-prompt"><span class="prompt-user">robbygat@robbygat.com</span>:<span class="prompt-dir">~</span>$ <span class="prompt-command">_</span></p>
+      </div>
+    </div>
+  </aside>
+
   <!-- Header -->
   <header class="header">
     <img src="websiteimage.jpg" alt="Header Image" class="header-image">
@@ -29,8 +43,19 @@
       <a href="https://tiktok.com/@robbygat" target="_blank" class="social-button">TikTok</a>
       <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" class="social-button">Spotify Album</a>
     </nav>
+    <!-- Dark Mode Toggle -->
+    <div class="toggle-container">
+      <input 
+        type="checkbox" 
+        id="dark-mode-toggle" 
+        onchange="toggleDarkMode()" 
+      />
+      <label for="dark-mode-toggle" class="toggle-label">
+        <span class="toggle-switch"></span>
+      </label>
+    </div>
   </header>
-  
+
   <!-- Main Content -->
   <main>
     <!-- Carousel Section -->
@@ -46,6 +71,11 @@
     <!-- World Clock Section -->
     <section id="clock">
       <div id="clock-root"></div>
+    </section>
+    
+    <!-- Blog Section -->
+    <section id="blog">
+      <div id="blog-root"></div>
     </section>
   </main>
   
@@ -112,7 +142,7 @@
             React.createElement('img', { 
               src: this.props.images[this.state.currentImage], 
               alt: `Slide ${this.state.currentImage + 1}`, 
-              className: 'carousel-image active' 
+              className: 'carousel-image' 
             }),
             React.createElement('div', { className: 'carousel-controls' },
               React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
@@ -166,7 +196,11 @@
         return (
           React.createElement('div', { className: 'animated-text-container' },
             React.createElement('h2', null, 'I am a '),
-            React.createElement('span', { className: isCrossed ? 'cross-out' : 'active-text', 'data-translate': 'yes', 'data-japanese': isCrossed ? '失業者' : words[currentWordIndex] }, 
+            React.createElement('span', { 
+              className: isCrossed ? 'cross-out' : 'active-text', 
+              'data-translate': 'yes', 
+              'data-japanese': isCrossed ? '失業者' : words[currentWordIndex] 
+            }, 
               words[currentWordIndex]
             )
           )
@@ -199,6 +233,39 @@
           React.createElement('div', { className: 'clock-container' },
             React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': '世界時計' }, 'World Clock'),
             React.createElement('p', { 'data-translate': 'yes', 'data-japanese': time.toLocaleString() }, time.toLocaleString())
+          )
+        );
+      }
+    }
+    
+    // Blog Component
+    class Blog extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { posts: [] };
+      }
+      
+      componentDidMount() {
+        // Simulate fetching blog posts
+        const blogPosts = [
+          { title: 'Future of Technology', content: 'Exploring the advancements in AI and quantum computing...' },
+          { title: 'Photography in 2100', content: 'How drones and AI are revolutionizing the way we capture moments...' },
+          { title: 'The Evolution of Music', content: 'From analog to digital, and beyond: what’s next for the music industry...' },
+          // Add more posts as needed
+        ];
+        this.setState({ posts: blogPosts });
+      }
+      
+      render() {
+        return (
+          React.createElement('div', { className: 'blog-container' },
+            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': 'ブログ' }, 'Blog'),
+            this.state.posts.map((post, index) => (
+              React.createElement('div', { key: index, className: 'blog-post' },
+                React.createElement('h3', { 'data-translate': 'yes', 'data-japanese': post.title }, post.title),
+                React.createElement('p', { 'data-translate': 'yes', 'data-japanese': post.content }, post.content)
+              )
+            ))
           )
         );
       }
@@ -239,6 +306,12 @@
       document.getElementById('clock-root')
     );
     
+    // Render Blog
+    ReactDOM.render(
+      React.createElement(Blog, null, null),
+      document.getElementById('blog-root')
+    );
+    
     // Translation Functionality
     function translateToJapanese() {
       const elements = document.querySelectorAll('[data-translate="yes"]');
@@ -250,6 +323,87 @@
       document.getElementById('translate-button').disabled = true;
       document.getElementById('translate-button').textContent = '日本語に翻訳済み';
     }
+    
+    // Dark Mode Toggle Function
+    function toggleDarkMode() {
+      const checkbox = document.getElementById('dark-mode-toggle');
+      if (checkbox.checked) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    
+    // Interactive Terminal Simulation
+    class Terminal extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { commands: [], input: '' };
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+      }
+      
+      handleInputChange(e) {
+        this.setState({ input: e.target.value });
+      }
+      
+      handleKeyPress(e) {
+        if (e.key === 'Enter') {
+          this.executeCommand(this.state.input);
+          this.setState({ input: '' });
+        }
+      }
+      
+      executeCommand(command) {
+        const newCommands = [...this.state.commands, { type: 'command', text: command }];
+        switch(command.toLowerCase()) {
+          case 'help':
+            newCommands.push({ type: 'output', text: 'Available commands: help, about, contact, exit' });
+            break;
+          case 'about':
+            newCommands.push({ type: 'output', text: 'I am Robby Gat, a multi-talented artist from Tachikawa, Tokyo.' });
+            break;
+          case 'contact':
+            newCommands.push({ type: 'output', text: 'You can reach me via Instagram, X, YouTube, or TikTok.' });
+            break;
+          case 'exit':
+            newCommands.push({ type: 'output', text: 'Goodbye!' });
+            break;
+          default:
+            newCommands.push({ type: 'output', text: `Command not found: ${command}` });
+        }
+        this.setState({ commands: newCommands });
+      }
+      
+      render() {
+        return (
+          React.createElement('div', { className: 'terminal-container' },
+            this.state.commands.map((cmd, index) => {
+              if (cmd.type === 'command') {
+                return React.createElement('p', { key: index, className: 'terminal-command' }, `<robbygat@robbygat.com ~> ${cmd.text}`);
+              } else {
+                return React.createElement('p', { key: index, className: 'terminal-output' }, cmd.text);
+              }
+            }),
+            React.createElement('p', { className: 'terminal-prompt' }, `<robbygat@robbygat.com ~> `, 
+              React.createElement('input', { 
+                type: 'text', 
+                value: this.state.input, 
+                onChange: this.handleInputChange, 
+                onKeyPress: this.handleKeyPress, 
+                autoFocus: true 
+              })
+            )
+          )
+        );
+      }
+    }
+    
+    // Render Terminal
+    ReactDOM.render(
+      React.createElement(Terminal, null, null),
+      document.querySelector('.terminal-body')
+    );
     
   </script>
 </body>
