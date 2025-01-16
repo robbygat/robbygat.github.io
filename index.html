@@ -7,7 +7,7 @@
   
   <title>robbygat.com</title>
   
-  <!-- Google Fonts -->
+  <!-- Google Fonts for Newspaper Style -->
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap" rel="stylesheet">
   
   <!-- React and ReactDOM via CDN -->
@@ -27,18 +27,8 @@
       <a href="https://x.com/robbygat" target="_blank" class="social-button">X</a>
       <a href="https://youtube.com/@robbygat" target="_blank" class="social-button">YouTube</a>
       <a href="https://tiktok.com/@robbygat" target="_blank" class="social-button">TikTok</a>
+      <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" class="social-button">Spotify Album</a>
     </nav>
-    <!-- Dark Mode Toggle -->
-    <div class="toggle-container">
-      <input 
-        type="checkbox" 
-        id="dark-mode-toggle" 
-        onchange="toggleDarkMode()" 
-      />
-      <label for="dark-mode-toggle" class="toggle-label">
-        🌙 / ☀️
-      </label>
-    </div>
   </header>
   
   <!-- Main Content -->
@@ -118,11 +108,11 @@
       render() {
         return (
           React.createElement('div', { className: 'carousel-container' },
-            React.createElement('h2', null, 'Image Carousel'),
+            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': '画像カルーセル' }, 'Image Carousel'),
             React.createElement('img', { 
               src: this.props.images[this.state.currentImage], 
               alt: `Slide ${this.state.currentImage + 1}`, 
-              className: 'carousel-image' 
+              className: 'carousel-image active' 
             }),
             React.createElement('div', { className: 'carousel-controls' },
               React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
@@ -133,7 +123,9 @@
                 React.createElement('span', { 
                   key: index, 
                   className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
-                  onClick: () => this.goToImage(index)
+                  onClick: () => this.goToImage(index),
+                  'data-translate': 'yes',
+                  'data-japanese': ''
                 })
               ))
             )
@@ -146,40 +138,37 @@
     class AnimatedText extends React.Component {
       constructor(props) {
         super(props);
-        this.state = { currentWordIndex: 0, displayText: this.props.words[0], isCrossed: false };
+        this.state = { currentWordIndex: 0, isCrossed: false };
       }
       
       componentDidMount() {
-        this.startAnimation();
+        this.interval = setInterval(this.animateText.bind(this), 3000);
       }
       
       componentWillUnmount() {
-        clearInterval(this.animationInterval);
+        clearInterval(this.interval);
       }
       
-      startAnimation() {
-        this.animationInterval = setInterval(() => {
-          this.setState({ isCrossed: true }, () => {
-            setTimeout(() => {
-              const nextIndex = (this.state.currentWordIndex + 1) % this.props.words.length;
-              this.setState({ 
-                currentWordIndex: nextIndex, 
-                displayText: this.props.words[nextIndex],
-                isCrossed: false 
-              }, () => {
-                this.startAnimation();
-              });
-            }, 1000); // Duration of cross-out animation
-          });
-        }, 3000); // Time between animations
+      animateText() {
+        this.setState({ isCrossed: true }, () => {
+          setTimeout(() => {
+            this.setState(state => ({
+              currentWordIndex: (state.currentWordIndex + 1) % this.props.words.length,
+              isCrossed: false
+            }));
+          }, 1000);
+        });
       }
       
       render() {
-        const { displayText, isCrossed } = this.state;
+        const { words } = this.props;
+        const { currentWordIndex, isCrossed } = this.state;
         return (
           React.createElement('div', { className: 'animated-text-container' },
             React.createElement('h2', null, 'I am a '),
-            React.createElement('span', { className: isCrossed ? 'cross-out' : 'active-text' }, displayText)
+            React.createElement('span', { className: isCrossed ? 'cross-out' : 'active-text', 'data-translate': 'yes', 'data-japanese': isCrossed ? '失業者' : words[currentWordIndex] }, 
+              words[currentWordIndex]
+            )
           )
         );
       }
@@ -190,18 +179,17 @@
       constructor(props) {
         super(props);
         this.state = { time: new Date() };
-        this.updateTime = this.updateTime.bind(this);
       }
       
       componentDidMount() {
-        this.timerID = setInterval(this.updateTime, 1000);
+        this.timerID = setInterval(() => this.tick(), 1000);
       }
       
       componentWillUnmount() {
         clearInterval(this.timerID);
       }
       
-      updateTime() {
+      tick() {
         this.setState({ time: new Date() });
       }
       
@@ -209,8 +197,8 @@
         const { time } = this.state;
         return (
           React.createElement('div', { className: 'clock-container' },
-            React.createElement('h2', null, 'World Clock'),
-            React.createElement('p', null, time.toLocaleString())
+            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': '世界時計' }, 'World Clock'),
+            React.createElement('p', { 'data-translate': 'yes', 'data-japanese': time.toLocaleString() }, time.toLocaleString())
           )
         );
       }
@@ -255,20 +243,12 @@
     function translateToJapanese() {
       const elements = document.querySelectorAll('[data-translate="yes"]');
       elements.forEach(el => {
-        el.textContent = el.getAttribute('data-japanese');
+        if (el.getAttribute('data-japanese')) {
+          el.textContent = el.getAttribute('data-japanese');
+        }
       });
       document.getElementById('translate-button').disabled = true;
       document.getElementById('translate-button').textContent = '日本語に翻訳済み';
-    }
-    
-    // Dark Mode Toggle Function
-    function toggleDarkMode() {
-      const checkbox = document.getElementById('dark-mode-toggle');
-      if (checkbox.checked) {
-        document.body.classList.add('dark-mode');
-      } else {
-        document.body.classList.remove('dark-mode');
-      }
     }
     
   </script>
