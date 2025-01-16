@@ -268,76 +268,6 @@
       100% { transform: translateY(-100%); }
     }
 
-    /* PORTFOLIO SECTION */
-    .portfolio {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .portfolio {
-      background-color: var(--background-dark);
-    }
-
-    .portfolio h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      font-family: var(--font-family-serif);
-    }
-
-    .portfolio-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .portfolio-item {
-      position: relative;
-      overflow: hidden;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-      cursor: pointer;
-    }
-
-    body.dark-mode .portfolio-item {
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .portfolio-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      transition: transform var(--transition-speed);
-    }
-
-    .portfolio-item:hover img {
-      transform: scale(1.1);
-    }
-
-    .portfolio-item .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(29, 161, 242, 0.7);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity var(--transition-speed);
-      font-size: 1.2rem;
-      text-align: center;
-      padding: 10px;
-    }
-
-    .portfolio-item:hover .overlay {
-      opacity: 1;
-    }
-
     /* BLOG SECTION */
     .blog {
       padding: 60px 20px;
@@ -531,50 +461,6 @@
       transform: scale(1.05);
     }
 
-    /* MUSIC SECTION */
-    .music {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .music {
-      background-color: var(--background-dark);
-    }
-
-    .music h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      font-family: var(--font-family-serif);
-    }
-
-    .music-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .music-links a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 200px;
-      height: 60px;
-      background-color: var(--primary-color);
-      color: #fff;
-      text-decoration: none;
-      border-radius: 30px;
-      font-size: 1rem;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
-    }
-
-    .music-links a:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
     /* FOOTER */
     footer {
       text-align: center;
@@ -673,11 +559,6 @@
       100% { transform: translateY(-100%); }
     }
 
-    /* Portfolio Hover Effects */
-    .portfolio-item:hover .overlay {
-      background-color: rgba(29, 161, 242, 0.9);
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       .home h1 {
@@ -688,13 +569,8 @@
         font-size: 1.2rem;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2 {
+      .blog h2, .music h2, .contact h2 {
         font-size: 2rem;
-      }
-
-      .music-links a {
-        width: 100%;
-        max-width: 300px;
       }
     }
 
@@ -727,7 +603,7 @@
         font-size: 0.8rem;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2 {
+      .blog h2, .music h2, .contact h2 {
         font-size: 1.8rem;
       }
 
@@ -874,7 +750,7 @@
           <Link to="/" className="logo">robbygat.com</Link>
           <div className="nav-links">
             <Link to="/about">About</Link>
-            <Link to="/portfolio">Portfolio</Link>
+            {/* Portfolio Link Removed */}
             <Link to="/blog">Blog</Link>
             <Link to="/music">Music</Link>
             <Link to="/contact">Contact</Link>
@@ -916,33 +792,6 @@
         </p>
       </section>
     );
-
-    // Portfolio Component
-    const Portfolio = () => {
-      const portfolioItems = [
-        { id: 1, src: "portfolio1.jpg", title: "Photography Project 1", description: "Description of project 1." },
-        { id: 2, src: "portfolio2.jpg", title: "Photography Project 2", description: "Description of project 2." },
-        { id: 3, src: "portfolio3.jpg", title: "Photography Project 3", description: "Description of project 3." },
-        // Add more portfolio items as needed
-      ];
-
-      return (
-        <section className="portfolio" data-aos="fade-up">
-          <h2>Portfolio</h2>
-          <div className="portfolio-grid">
-            {portfolioItems.map(item => (
-              <div className="portfolio-item" key={item.id}>
-                <img src={item.src} alt={item.title} />
-                <div className="overlay">
-                  <h3>{item.title}</h3>
-                  <p>{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      );
-    };
 
     // Blog Component
     const Blog = () => {
@@ -1088,7 +937,7 @@
         `,
         `
          ___  
-        / _ \\ 
+        / _ \\
        | | | |
        | |_| |
         \\___/ 
@@ -1103,7 +952,7 @@
         `,
         `
          _____ 
-        |  ___|
+        | ____|
         | |__  
         |  __| 
         | |___ 
@@ -1111,11 +960,11 @@
         `,
         `
          ____  
-        |  _ \\ 
+        |  _ \\
         | |_) |
-        |  _ < 
+        |  _ <
         | |_) |
-        |____/ 
+        |____/
         `,
         `
         _   _ 
@@ -1127,32 +976,33 @@
         `,
         `
          ___  
-        / _ \\ 
+        / _ \\
        | | | |
-       | | | |
+       | |_| |
         \\___/ 
         `,
         `
         ____  
-       |  _ \\ 
+       |  _ \\
        | |_) |
-       |  _ < 
+       |  _ <
        | |_) |
-       |____/ 
+       |____/
         `,
         `
          ___  
-        |__ \\ 
-           ) |
-          / / 
-         |_|  
-        `,
-        `
-         ___  
-        / _ \\ 
+        / _ \\
        | | | |
        | |_| |
         \\___/ 
+        `,
+        `
+        ____  
+       |  _ \\
+       | |_) |
+       |  _ <
+       | |_) |
+       |____/
         `,
         `
          __  
@@ -1178,26 +1028,26 @@
         `,
         `
          ____  
-        |  _ \\ 
+        |  _ \\
         | |_) |
-        |  _ < 
+        |  _ <
         | |_) |
-        |____/ 
+        |____/
         `,
         `
          ___  
-        / _ \\ 
+        / _ \\
        | | | |
        | |_| |
         \\___/ 
         `,
         `
         ____  
-       |  _ \\ 
+       |  _ \\
        | |_) |
-       |  _ < 
+       |  _ <
        | |_) |
-       |____/ 
+       |____/
         `,
         `
          __  
@@ -1223,26 +1073,26 @@
         `,
         `
          ____  
-        |  _ \\ 
+        |  _ \\
         | |_) |
-        |  _ < 
+        |  _ <
         | |_) |
-        |____/ 
+        |____/
         `,
         `
          ___  
-        / _ \\ 
+        / _ \\
        | | | |
        | |_| |
         \\___/ 
         `,
         `
         ____  
-       |  _ \\ 
+       |  _ \\
        | |_) |
-       |  _ < 
+       |  _ <
        | |_) |
-       |____/ 
+       |____/
         `,
         `
          __  
@@ -1268,26 +1118,26 @@
         `,
         `
          ____  
-        |  _ \\ 
+        |  _ \\
         | |_) |
-        |  _ < 
+        |  _ <
         | |_) |
-        |____/ 
+        |____/
         `,
         `
          ___  
-        / _ \\ 
+        / _ \\
        | | | |
        | |_| |
         \\___/ 
         `,
         `
         ____  
-       |  _ \\ 
+       |  _ \\
        | |_) |
-       |  _ < 
+       |  _ <
        | |_) |
-       |____/ 
+       |____/
         `,
         `
          __  
@@ -1320,6 +1170,32 @@
       );
     };
 
+    // Blog Form Component (Optional Enhancement)
+    const BlogForm = () => {
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const title = e.target.title.value.trim();
+        const content = e.target.content.value.trim();
+
+        if (title && content) {
+          // Implement blog submission logic (e.g., Firebase Firestore)
+          alert("Blog post submitted!");
+          e.target.reset();
+        }
+      };
+
+      return (
+        <div className="blog-form">
+          <h3>Submit a Blog Post</h3>
+          <form onSubmit={handleSubmit}>
+            <input type="text" name="title" placeholder="Post Title" required />
+            <textarea name="content" rows="5" placeholder="Your post content..." required></textarea>
+            <button type="submit">Submit Post</button>
+          </form>
+        </div>
+      );
+    };
+
     // Slideshow Component using React Slick
     const Slideshow = () => {
       const settings = {
@@ -1346,31 +1222,15 @@
         ]
       };
 
+      // Placeholder Instagram posts (No images needed)
       const instagramPosts = [
-        { src: "instagram1.png", alt: "Instagram Post 1" },
-        { src: "instagram2.png", alt: "Instagram Post 2" },
-        { src: "instagram3.png", alt: "Instagram Post 3" },
-        { src: "instagram4.png", alt: "Instagram Post 4" },
-        { src: "instagram5.png", alt: "Instagram Post 5" },
-        { src: "instagram6.png", alt: "Instagram Post 6" },
-        { src: "instagram7.png", alt: "Instagram Post 7" },
-        { src: "instagram8.png", alt: "Instagram Post 8" },
-        { src: "instagram9.png", alt: "Instagram Post 9" },
-        { src: "instagram10.png", alt: "Instagram Post 10" },
-        { src: "instagram11.png", alt: "Instagram Post 11" },
-        { src: "instagram12.png", alt: "Instagram Post 12" },
-        { src: "instagram13.png", alt: "Instagram Post 13" },
-        { src: "instagram14.png", alt: "Instagram Post 14" },
-        { src: "instagram15.png", alt: "Instagram Post 15" },
-        { src: "instagram16.png", alt: "Instagram Post 16" },
-        { src: "instagram17.png", alt: "Instagram Post 17" },
-        { src: "instagram18.png", alt: "Instagram Post 18" },
-        { src: "instagram19.png", alt: "Instagram Post 19" },
-        { src: "instagram20.png", alt: "Instagram Post 20" },
-        { src: "instagram21.png", alt: "Instagram Post 21" },
-        { src: "instagram22.png", alt: "Instagram Post 22" },
-        { src: "instagram23.png", alt: "Instagram Post 23" },
-        // Add more Instagram post objects as needed
+        { src: "https://via.placeholder.com/300x200?text=Instagram+1", alt: "Instagram Post 1" },
+        { src: "https://via.placeholder.com/300x200?text=Instagram+2", alt: "Instagram Post 2" },
+        { src: "https://via.placeholder.com/300x200?text=Instagram+3", alt: "Instagram Post 3" },
+        { src: "https://via.placeholder.com/300x200?text=Instagram+4", alt: "Instagram Post 4" },
+        { src: "https://via.placeholder.com/300x200?text=Instagram+5", alt: "Instagram Post 5" },
+        { src: "https://via.placeholder.com/300x200?text=Instagram+6", alt: "Instagram Post 6" },
+        // Add more posts as needed
       ];
 
       const openLightbox = (src, alt) => {
@@ -1478,7 +1338,7 @@
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/about" component={About} />
-              <Route path="/portfolio" component={Portfolio} />
+              {/* Portfolio Route Removed */}
               <Route path="/blog" component={Blog} />
               <Route path="/music" component={Music} />
               <Route path="/contact" component={Contact} />
