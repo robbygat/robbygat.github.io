@@ -616,7 +616,7 @@
         font-size: 2rem;
       }
 
-      .header a {
+      .header a, .header .art-button {
         font-size: 1rem;
       }
 
@@ -1069,68 +1069,4 @@
             </div>
           </div>
 
-          {/* INSTAGRAM DOCK */}
-          <InstagramDock />
-
-          {/* RobbyScript Display */}
-          <RobbyScriptDisplay />
-
-          {/* PDF Viewer */}
-          <PDFViewer />
-
-          {/* Music Section */}
-          <MusicSection />
-
-          {/* Contact Form */}
-          <ContactForm />
-
-          {/* Footer */}
-          <Footer />
-        </>
-      );
-    };
-
-    // Render the App
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
-
-  <!-- Lightbox Container -->
-  <div id="lightbox" class="lightbox">
-    <span class="close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img" />
-    <div id="lightbox-caption"></div>
-  </div>
-
-  <!-- Lightbox Script (Moved Below Lightbox Container) -->
-  <script>
-    // Get lightbox elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
-
-    // Close the lightbox when the close button is clicked
-    if (closeBtn && lightbox) {
-      closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-      });
-
-      // Close the lightbox when clicking outside the image
-      window.addEventListener('click', (e) => {
-        if (e.target == lightbox) {
-          lightbox.style.display = 'none';
-        }
-      });
-
-      // Optional: Close lightbox with Esc key
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.style.display === 'block') {
-          lightbox.style.display = 'none';
-        }
-      });
-    } else {
-      console.error('Lightbox elements not found. Please check the HTML structure.');
-    }
-  </script>
-</body>
-</html>
+        
