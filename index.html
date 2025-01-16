@@ -238,169 +238,178 @@
       50% { border-color: var(--accent-color); }
     }
 
-    /* ASCII ART SECTION */
-    .ascii-art {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
-      background-color: rgba(0,0,0,0.05);
-      margin: 40px 0;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .ascii-art pre {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1rem;
-      white-space: pre-wrap;
-      color: var(--primary-color);
-      animation: fadeIn 2s ease-in-out, slideIn 10s linear infinite;
-    }
-
-    @keyframes slideIn {
-      0% { transform: translateY(100%); }
-      100% { transform: translateY(-100%); }
-    }
-
-    /* PORTFOLIO SECTION */
-    .portfolio {
+    /* INSTAGRAM GALLERY SECTION */
+    .instagram-gallery {
       padding: 60px 20px;
       background-color: var(--background-light);
       transition: background-color var(--transition-speed);
     }
 
-    body.dark-mode .portfolio {
+    body.dark-mode .instagram-gallery {
       background-color: var(--background-dark);
     }
 
-    .portfolio h2 {
+    .instagram-gallery h2 {
       text-align: center;
       font-size: 2.5rem;
       margin-bottom: 40px;
       font-family: var(--font-family-serif);
     }
 
-    .portfolio-grid {
+    .gallery-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .portfolio-item {
+    .gallery-item {
       position: relative;
+      cursor: pointer;
       overflow: hidden;
       border-radius: 10px;
       box-shadow: 0 4px 8px var(--shadow-light);
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     }
 
-    body.dark-mode .portfolio-item {
+    body.dark-mode .gallery-item {
       box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .portfolio-item img {
+    .gallery-item img {
       width: 100%;
       height: auto;
       display: block;
       transition: transform var(--transition-speed);
     }
 
-    .portfolio-item:hover img {
+    .gallery-item:hover img {
       transform: scale(1.1);
     }
 
-    .portfolio-item .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(29, 161, 242, 0.7);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity var(--transition-speed);
-      font-size: 1.2rem;
-      text-align: center;
-    }
-
-    .portfolio-item:hover .overlay {
-      opacity: 1;
-    }
-
-    /* BLOG SECTION */
-    .blog {
+    /* ROBBYSCRIPT DICTIONARY SECTION */
+    .robbyscript {
       padding: 60px 20px;
       background-color: var(--background-light);
       transition: background-color var(--transition-speed);
     }
 
-    body.dark-mode .blog {
+    body.dark-mode .robbyscript {
       background-color: var(--background-dark);
     }
 
-    .blog h2 {
+    .robbyscript h2 {
       text-align: center;
       font-size: 2.5rem;
       margin-bottom: 40px;
       font-family: var(--font-family-serif);
     }
 
-    .blog-posts {
-      max-width: 900px;
+    .robbyscript table {
+      width: 80%;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      border-collapse: collapse;
     }
 
-    .blog-post {
-      background-color: #fff;
-      padding: 20px;
-      border-left: 5px solid var(--primary-color);
-      box-shadow: 0 2px 4px var(--shadow-light);
-      transition: box-shadow var(--transition-speed), transform var(--transition-speed);
-    }
-
-    body.dark-mode .blog-post {
-      background-color: #2e2e2e;
-      box-shadow: 0 2px 4px var(--shadow-dark);
-    }
-
-    .blog-post:hover {
-      box-shadow: 0 4px 8px var(--shadow-light);
-      transform: translateY(-5px);
-    }
-
-    .blog-post h3 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-      color: var(--primary-color);
-      transition: color var(--transition-speed);
-    }
-
-    .blog-post h3:hover {
-      color: var(--secondary-color);
-    }
-
-    .blog-post p {
+    .robbyscript th, .robbyscript td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
       font-family: var(--font-family-sans);
-      font-size: 1rem;
-      color: #333;
-      transition: color var(--transition-speed);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
     }
 
-    body.dark-mode .blog-post p {
-      color: #ccc;
+    body.dark-mode .robbyscript th, 
+    body.dark-mode .robbyscript td {
+      border-color: var(--border-dark);
+      background-color: #2e2e2e;
+      color: #e0e0e0;
     }
 
-    /* BLOG FORM */
-    .blog-form {
+    .robbyscript th {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    /* SHORT STORY SECTION */
+    .short-story {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .short-story {
+      background-color: var(--background-dark);
+    }
+
+    .short-story h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .short-story embed, .short-story iframe {
+      display: block;
+      margin: 0 auto;
+      width: 80%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      transition: box-shadow var(--transition-speed);
+    }
+
+    body.dark-mode .short-story embed, 
+    body.dark-mode .short-story iframe {
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    /* RANDOM TWEETS SECTION */
+    .random-tweet {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+      text-align: center;
+    }
+
+    body.dark-mode .random-tweet {
+      background-color: var(--background-dark);
+    }
+
+    .random-tweet h2 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .tweet-container {
       max-width: 600px;
-      margin: 40px auto 0 auto;
+      margin: 0 auto;
+    }
+
+    /* CONTACT SECTION */
+    .contact {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .contact {
+      background-color: var(--background-dark);
+    }
+
+    .contact h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
       background-color: #fff;
       padding: 30px;
       border: 1px solid var(--border-light);
@@ -409,13 +418,13 @@
       transition: box-shadow var(--transition-speed), background-color var(--transition-speed);
     }
 
-    body.dark-mode .blog-form {
+    body.dark-mode .contact-form {
       background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .blog-form h3 {
+    .contact-form h3 {
       text-align: center;
       font-size: 2rem;
       margin-bottom: 20px;
@@ -424,17 +433,17 @@
       transition: color var(--transition-speed);
     }
 
-    .blog-form h3:hover {
+    .contact-form h3:hover {
       color: var(--secondary-color);
     }
 
-    .blog-form form {
+    .contact-form form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
 
-    .blog-form input, .blog-form textarea {
+    .contact-form input, .contact-form textarea {
       padding: 15px;
       border: 1px solid var(--border-light);
       border-radius: 5px;
@@ -443,14 +452,14 @@
       transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
     }
 
-    body.dark-mode .blog-form input, 
-    body.dark-mode .blog-form textarea {
+    body.dark-mode .contact-form input, 
+    body.dark-mode .contact-form textarea {
       background-color: #3e3e3e;
       color: #e0e0e0;
       border-color: var(--border-dark);
     }
 
-    .blog-form button {
+    .contact-form button {
       padding: 15px;
       border: none;
       border-radius: 5px;
@@ -461,51 +470,7 @@
       transition: background-color var(--transition-speed), transform var(--transition-speed);
     }
 
-    .blog-form button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* MUSIC SECTION */
-    .music {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .music {
-      background-color: var(--background-dark);
-    }
-
-    .music h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      font-family: var(--font-family-serif);
-    }
-
-    .music-links {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .music-links a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 200px;
-      height: 60px;
-      background-color: var(--primary-color);
-      color: #fff;
-      text-decoration: none;
-      border-radius: 30px;
-      font-size: 1rem;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
-    }
-
-    .music-links a:hover {
+    .contact-form button:hover {
       background-color: var(--secondary-color);
       transform: scale(1.05);
     }
@@ -608,11 +573,6 @@
       100% { transform: translateY(-100%); }
     }
 
-    /* Portfolio Hover Effects */
-    .portfolio-item:hover .overlay {
-      background-color: rgba(29, 161, 242, 0.9);
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       .home h1 {
@@ -623,7 +583,7 @@
         font-size: 1.2rem;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2 {
+      .robbyscript h2, .short-story h2, .random-tweet h2, .contact h2 {
         font-size: 2rem;
       }
 
@@ -658,12 +618,18 @@
         font-size: 1rem;
       }
 
-      .ascii-art pre {
-        font-size: 0.8rem;
+      .robbyscript table {
+        width: 100%;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2 {
-        font-size: 1.8rem;
+      .robbyscript th, .robbyscript td {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .short-story embed, .short-story iframe {
+        width: 95%;
+        height: 400px;
       }
 
       .blog-post h3 {
@@ -672,6 +638,10 @@
 
       .blog-form h3, .contact h2 {
         font-size: 1.8rem;
+      }
+
+      .random-tweet h2 {
+        font-size: 2rem;
       }
     }
   </style>
@@ -808,7 +778,6 @@
           <Link to="/" className="logo">robbygat.com</Link>
           <div className="nav-links">
             <Link to="/about">About</Link>
-            <Link to="/portfolio">Portfolio</Link>
             <Link to="/blog">Blog</Link>
             <Link to="/music">Music</Link>
             <Link to="/contact">Contact</Link>
@@ -829,150 +798,153 @@
       </div>
     );
 
-    // Tagline Component
-    const Tagline = () => {
-      const [isUnemployed, setIsUnemployed] = useState(false);
+    // Home Component
+    const Home = () => (
+      <section className="home" data-aos="fade-up">
+        <h1>Welcome to robbygat.com</h1>
+        <p>linguist, photographer, musician, actor, journalist, model</p>
+      </section>
+    );
 
-      useEffect(() => {
-        const timer = setTimeout(() => {
-          setIsUnemployed(true);
-        }, 2000); // Trigger after 2 seconds
+    // About Component
+    const About = () => (
+      <section className="about" data-aos="fade-up">
+        <h2>About Me</h2>
+        <p>
+          Hello! I'm Robby Gat, a multifaceted artist with a passion for language, photography, music, acting, journalism, and modeling.
+          My journey has been filled with creative exploration and dedication to honing my craft across various disciplines.
+        </p>
+        <p>
+          Whether I'm behind the camera capturing moments, composing melodies, or sharing stories through journalism, I strive to inspire and connect with audiences worldwide.
+        </p>
+      </section>
+    );
 
-        return () => clearTimeout(timer);
-      }, []);
-
-      return (
-        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
-          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
-        </div>
-      );
-    };
-
-    // Slideshow Component
-    const Slideshow = () => {
-      const [slideIndex, setSlideIndex] = useState(0);
-      const slides = [
-        { src: "https://via.placeholder.com/800x400?text=Instagram+1", alt: "Instagram Post 1" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+2", alt: "Instagram Post 2" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+3", alt: "Instagram Post 3" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+4", alt: "Instagram Post 4" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+5", alt: "Instagram Post 5" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+6", alt: "Instagram Post 6" },
-        // Add more slides as needed
-      ];
-
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setSlideIndex(prevIndex => (prevIndex + 1) % slides.length);
-        }, 3000); // Change slide every 3 seconds
-        return () => clearInterval(interval);
-      }, [slides.length]);
-
-      const nextSlide = () => {
-        setSlideIndex((slideIndex + 1) % slides.length);
-      };
-
-      const prevSlide = () => {
-        setSlideIndex((slideIndex - 1 + slides.length) % slides.length);
-      };
-
-      const openLightbox = (src, alt) => {
-        // This function will be handled by the Lightbox component
-        window.openLightbox(src, alt);
-      };
+    // Instagram Gallery Component
+    const InstagramGallery = () => {
+      const instagramImages = Array.from({ length: 23 }, (_, i) => ({
+        src: `instagram${i + 1}.png`,
+        alt: `Instagram Post ${i + 1}`
+      }));
 
       return (
-        <div className="slideshow-container" data-aos="fade-up">
-          {slides.map((slide, index) => (
-            <div className="mySlides" key={index} style={{ display: index === slideIndex ? 'block' : 'none' }}>
-              <img src={slide.src} alt={slide.alt} onClick={() => openLightbox(slide.src, slide.alt)} />
-            </div>
-          ))}
-
-          <div className="caption">pov</div>
-
-          <a className="prev" onClick={prevSlide}>&#10094;</a>
-          <a className="next" onClick={nextSlide}>&#10095;</a>
-        </div>
-      );
-    };
-
-    // Blog Section Component
-    const BlogSection = () => {
-      const [blogPosts, setBlogPosts] = useState([]);
-
-      useEffect(() => {
-        // Fetch existing blog posts from Firestore
-        db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-          const posts = [];
-          querySnapshot.forEach((doc) => {
-            posts.push({ id: doc.id, ...doc.data() });
-          });
-          setBlogPosts(posts);
-        }, (error) => {
-          console.error("Error fetching blog posts: ", error);
-        });
-      }, []);
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const title = e.target.title.value.trim();
-        const content = e.target.content.value.trim();
-
-        if (title && content) {
-          db.collection("blogPosts").add({
-            title: title,
-            content: content,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then((docRef) => {
-            console.log("Blog post added with ID: ", docRef.id);
-            e.target.reset();
-          })
-          .catch((error) => {
-            console.error("Error adding blog post: ", error);
-          });
-        }
-      };
-
-      return (
-        <div className="blog-section" data-aos="fade-up">
-          <h2>Blog</h2>
-          
-          {/* Blog Posts */}
-          <div className="blog-posts">
-            {blogPosts.map(post => (
-              <div className="blog-post" key={post.id}>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
+        <section className="instagram-gallery" data-aos="fade-up">
+          <h2>Instagram Gallery</h2>
+          <div className="gallery-grid">
+            {instagramImages.map((image, index) => (
+              <div className="gallery-item" key={index} onClick={() => window.openLightbox(image.src, image.alt)}>
+                <img src={image.src} alt={image.alt} />
               </div>
             ))}
           </div>
-          
-          {/* Blog Submission Form */}
-          <div className="blog-form">
-            <h3>Submit a Blog Post</h3>
-            <form onSubmit={handleSubmit}>
-              <input type="text" name="title" placeholder="Post Title" required />
-              <textarea name="content" rows="5" placeholder="Your post content..." required></textarea>
-              <button type="submit">Submit Post</button>
-            </form>
-          </div>
-        </div>
+        </section>
       );
     };
 
-    // Music Section Component
-    const MusicSection = () => (
-      <div className="music-section" data-aos="fade-up">
-        <h2>Albums by INTERNET COWBOY</h2>
-        <p>
-          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
-            Listen to my latest album on Spotify
-          </a>
-        </p>
-      </div>
+    // Robbyscript Dictionary Component
+    const RobbyscriptDictionary = () => {
+      const robbyscriptMapping = {
+        '𝌯': 'p',
+        '𝍍': 'b',
+        '𝌲': 't',
+        '𝍊': 'd',
+        '𝌬': 'k',
+        '𝍐': 'g',
+        '𝍑': 's',
+        '𝍁': 'z',
+        '𝍂': 'ʃ',
+        '𝌵': 'ʒ',
+        '𝌸': 'f',
+        '𝍌': 'v',
+        '𝍄': 'h',
+        '𝍇': 'm',
+        '𝌶': 'ŋ',
+        '𝌹': 'n',
+        '𝍋': 'l',
+        '𝍈': 'i',
+        '𝌿': 'e',
+        '𝍅': 'a',
+        '𝌴': 'o',
+        '𝍎': 'u',
+        '𝍏': 'ɛ',
+        '𝌷': 'ɔ',
+        '𝍀': 'æ'
+      };
+
+      return (
+        <section className="robbyscript" data-aos="fade-up">
+          <h2>Robbyscript Dictionary</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Robbyscript</th>
+                <th>IPA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(robbyscriptMapping).map(([key, value], index) => (
+                <tr key={index}>
+                  <td>{key}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      );
+    };
+
+    // Short Story Component
+    const ShortStory = () => (
+      <section className="short-story" data-aos="fade-up">
+        <h2>Short Story</h2>
+        <embed src="To Whoever Finds This.pdf" type="application/pdf" />
+        <!-- Alternatively, use an iframe:
+        <iframe src="To Whoever Finds This.pdf" title="Short Story"></iframe>
+        -->
+      </section>
     );
+
+    // Random Tweets Component
+    const RandomTweets = () => {
+      const tweetURLs = [
+        "https://x.com/robbygat/status/1712276909462008187",
+        "https://x.com/robbygat/status/1786613162537627707",
+        "https://x.com/robbygat/status/1681274164672331779",
+        "https://x.com/robbygat/status/1848056931984056753",
+        "https://x.com/robbygat/status/1651355099040555008",
+        "https://x.com/robbygat/status/1848380588534980884",
+        "https://x.com/robbygat/status/1712331930023141846",
+        "https://x.com/robbygat/status/1668788978714046465",
+        "https://x.com/robbygat/status/1649181731541360641",
+        "https://x.com/robbygat/status/1631853358662205441",
+        "https://x.com/robbygat/status/1598401043292987392",
+        "https://x.com/robbygat/status/1679489454309011457",
+        "https://x.com/robbygat/status/1670875379949531148",
+        "https://x.com/robbygat/status/1650568035629948947",
+        "https://x.com/robbygat/status/1652675215669989376"
+      ];
+
+      const [randomTweet, setRandomTweet] = useState("");
+
+      useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * tweetURLs.length);
+        setRandomTweet(tweetURLs[randomIndex]);
+      }, [tweetURLs]);
+
+      return (
+        <section className="random-tweet" data-aos="fade-up">
+          <h2>Latest Tweet</h2>
+          <div className="tweet-container">
+            {randomTweet && (
+              <blockquote className="twitter-tweet">
+                <a href={randomTweet}></a>
+              </blockquote>
+            )}
+          </div>
+        </section>
+      );
+    };
 
     // Contact Component
     const Contact = () => {
@@ -1004,372 +976,24 @@
       );
     };
 
-    // ASCII Art Component
-    const AsciiArt = () => {
-      const asciiArts = [
-        `
-         ___
-        / _ \\
-       | | | |
-       | | | |
-        \\___/
-        `,
-        `
-        _____
-       /     \\
-      | () () |
-       \\  ^  /
-        |||||
-        |||||
-        `,
-        `
-         ____  
-        / ___| 
-       | |     
-       | |___  
-        \\____|
-        `,
-        `
-         __
-        / /_
-       | '_ \\
-       | (_) |
-        \\___/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        _____
-       |  __ \\
-       | |__) |
-       |  ___/
-       | |    
-       |_|    
-        `,
-        `
-         _____ 
-        | ____|
-        | |__  
-        |  __| 
-        | |___ 
-        \\____/ 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-        _   _ 
-       | | | |
-       | |_| |
-       |  _  |
-       | | | |
-       |_| |_|
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-      ];
-
-      const [currentArt, setCurrentArt] = useState(0);
-
-      useEffect(() => {
-        const today = new Date().getDate() - 1; // 0-based index
-        setCurrentArt(today % asciiArts.length);
-      }, [asciiArts.length]);
+    // Instagram Gallery Component (Updated to display all images without slideshow)
+    const InstagramGallery = () => {
+      const instagramImages = Array.from({ length: 23 }, (_, i) => ({
+        src: `instagram${i + 1}.png`,
+        alt: `Instagram Post ${i + 1}`
+      }));
 
       return (
-        <div className="ascii-art" data-aos="fade-up">
-          <pre>{asciiArts[currentArt]}</pre>
-        </div>
-      );
-    };
-
-    // Slideshow Component using React Slick (Optional)
-    // If you choose to use React Slick, uncomment and implement accordingly
-    /*
-    const Slideshow = () => {
-      const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3000,
-        responsive: [
-          {
-            breakpoint: 768,
-            settings: {
-              slidesToShow: 2,
-            }
-          },
-          {
-            breakpoint: 480,
-            settings: {
-              slidesToShow: 1,
-            }
-          }
-        ]
-      };
-
-      const instagramPosts = [
-        { src: "https://via.placeholder.com/300x200?text=Instagram+1", alt: "Instagram Post 1" },
-        { src: "https://via.placeholder.com/300x200?text=Instagram+2", alt: "Instagram Post 2" },
-        { src: "https://via.placeholder.com/300x200?text=Instagram+3", alt: "Instagram Post 3" },
-        // Add more posts as needed
-      ];
-
-      const openLightbox = (src, alt) => {
-        window.openLightbox(src, alt);
-      };
-
-      return (
-        <section className="portfolio" data-aos="fade-up">
+        <section className="instagram-gallery" data-aos="fade-up">
           <h2>Instagram Gallery</h2>
-          <Slider {...settings}>
-            {instagramPosts.map((post, index) => (
-              <div key={index} className="portfolio-item" onClick={() => openLightbox(post.src, post.alt)}>
-                <img src={post.src} alt={post.alt} />
-                <div className="overlay">
-                  <h3>{post.alt}</h3>
-                </div>
+          <div className="gallery-grid">
+            {instagramImages.map((image, index) => (
+              <div className="gallery-item" key={index} onClick={() => window.openLightbox(image.src, image.alt)}>
+                <img src={image.src} alt={image.alt} />
               </div>
             ))}
-          </Slider>
+          </div>
         </section>
-      );
-    };
-    */
-
-    // Manual Slideshow Component
-    const ManualSlideshow = () => {
-      const [slideIndex, setSlideIndex] = useState(0);
-      const slides = [
-        { src: "https://via.placeholder.com/800x400?text=Instagram+1", alt: "Instagram Post 1" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+2", alt: "Instagram Post 2" },
-        { src: "https://via.placeholder.com/800x400?text=Instagram+3", alt: "Instagram Post 3" },
-        // Add more slides as needed
-      ];
-
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setSlideIndex(prevIndex => (prevIndex + 1) % slides.length);
-        }, 3000); // Change slide every 3 seconds
-        return () => clearInterval(interval);
-      }, [slides.length]);
-
-      const nextSlide = () => {
-        setSlideIndex((slideIndex + 1) % slides.length);
-      };
-
-      const prevSlide = () => {
-        setSlideIndex((slideIndex - 1 + slides.length) % slides.length);
-      };
-
-      const openLightbox = (src, alt) => {
-        window.openLightbox(src, alt);
-      };
-
-      return (
-        <div className="slideshow-container" data-aos="fade-up">
-          {slides.map((slide, index) => (
-            <div className="mySlides" key={index} style={{ display: index === slideIndex ? 'block' : 'none' }}>
-              <img src={slide.src} alt={slide.alt} onClick={() => openLightbox(slide.src, slide.alt)} />
-            </div>
-          ))}
-
-          <div className="caption">pov</div>
-
-          <a className="prev" onClick={prevSlide}>&#10094;</a>
-          <a className="next" onClick={nextSlide}>&#10095;</a>
-        </div>
       );
     };
 
@@ -1412,122 +1036,14 @@
       );
     };
 
-    // Blog Section Component
-    const BlogSection = () => {
-      const [blogPosts, setBlogPosts] = useState([]);
-
-      useEffect(() => {
-        // Fetch existing blog posts from Firestore
-        db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-          const posts = [];
-          querySnapshot.forEach((doc) => {
-            posts.push({ id: doc.id, ...doc.data() });
-          });
-          setBlogPosts(posts);
-        }, (error) => {
-          console.error("Error fetching blog posts: ", error);
-        });
-      }, []);
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const title = e.target.title.value.trim();
-        const content = e.target.content.value.trim();
-
-        if (title && content) {
-          db.collection("blogPosts").add({
-            title: title,
-            content: content,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then((docRef) => {
-            console.log("Blog post added with ID: ", docRef.id);
-            e.target.reset();
-          })
-          .catch((error) => {
-            console.error("Error adding blog post: ", error);
-          });
-        }
-      };
-
-      return (
-        <div className="blog-section" data-aos="fade-up">
-          <h2>Blog</h2>
-          
-          {/* Blog Posts */}
-          <div className="blog-posts">
-            {blogPosts.map(post => (
-              <div className="blog-post" key={post.id}>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-              </div>
-            ))}
-          </div>
-          
-          {/* Blog Submission Form */}
-          <div className="blog-form">
-            <h3>Submit a Blog Post</h3>
-            <form onSubmit={handleSubmit}>
-              <input type="text" name="title" placeholder="Post Title" required />
-              <textarea name="content" rows="5" placeholder="Your post content..." required></textarea>
-              <button type="submit">Submit Post</button>
-            </form>
-          </div>
-        </div>
-      );
-    };
-
-    // Music Section Component
-    const MusicSection = () => (
-      <div className="music-section" data-aos="fade-up">
-        <h2>Albums by INTERNET COWBOY</h2>
-        <p>
-          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
-            Listen to my latest album on Spotify
-          </a>
-        </p>
-      </div>
-    );
-
-    // Contact Component
-    const Contact = () => {
-      const handleContactSubmit = (e) => {
-        e.preventDefault();
-        const name = e.target.name.value.trim();
-        const email = e.target.email.value.trim();
-        const message = e.target.message.value.trim();
-
-        if (name && email && message) {
-          // Implement contact form submission logic here (e.g., send email or store in Firestore)
-          alert("Thank you for your message!");
-          e.target.reset();
-        }
-      };
-
-      return (
-        <section className="contact" data-aos="fade-up">
-          <h2>Contact Me</h2>
-          <div className="contact-form">
-            <form onSubmit={handleContactSubmit}>
-              <input type="text" name="name" placeholder="Your Name" required />
-              <input type="email" name="email" placeholder="Your Email" required />
-              <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
-              <button type="submit">Send Message</button>
-            </form>
-          </div>
-        </section>
-      );
-    };
-
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
+
       return (
         <footer data-aos="fade-up">
-          &copy; {currentYear} robbygat.com | 
-          <a href="https://github.com/robbygat" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '10px', color: 'inherit', textDecoration: 'none' }}>
-            <i className="fab fa-github"></i> GitHub
-          </a>
+          <p>robbygat is Robert Gatzke</p>
+          <p>Tachikawa, Tokyo</p>
         </footer>
       );
     };
@@ -1554,17 +1070,18 @@
         <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
           <BrowserRouter>
             <Header />
-            <AsciiArt />
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/about" component={About} />
-              <Route path="/portfolio" component={Portfolio} />
               <Route path="/blog" component={BlogSection} />
               <Route path="/music" component={MusicSection} />
               <Route path="/contact" component={Contact} />
               {/* Add more routes as needed */}
             </Switch>
-            <ManualSlideshow />
+            <RobbyscriptDictionary />
+            <ShortStory />
+            <RandomTweets />
+            <InstagramGallery />
             <Lightbox />
             <Footer />
           </BrowserRouter>
@@ -1575,5 +1092,8 @@
     // Render the App
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
+
+  <!-- Twitter Embed Script -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
