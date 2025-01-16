@@ -8,7 +8,7 @@
   <title>robbygat.com</title>
   
   <!-- Google Fonts for Newspaper Style -->
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Roboto+Slab&display=swap" rel="stylesheet">
   
   <!-- React and ReactDOM via CDN -->
   <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
@@ -26,7 +26,6 @@
   
   <!-- Header -->
   <header class="header">
-    <img src="websiteimage.jpg" alt="Header Image" class="header-image">
     <h1 class="header-title">robbygat.com</h1>
     <nav class="social-links">
       <a href="https://instagram.com/robbygat" target="_blank" class="social-button">Instagram</a>
@@ -51,43 +50,19 @@
   
   <!-- Main Content -->
   <main>
-    <!-- Carousel Section -->
-    <section id="carousel">
-      <div id="carousel-root"></div>
+    <!-- Scrolling Title -->
+    <section id="scrolling-title">
+      <div class="scrolling-text">robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com</div>
     </section>
     
-    <!-- Animated Text Section -->
-    <section id="animation">
-      <div id="animation-root"></div>
-    </section>
-    
-    <!-- World Clock Section -->
-    <section id="clock">
-      <div id="clock-root"></div>
-    </section>
-    
-    <!-- Terminal Section -->
-    <section id="terminal">
-      <div class="terminal">
-        <div class="terminal-header">
-          <span class="terminal-btn close"></span>
-          <span class="terminal-btn minimize"></span>
-          <span class="terminal-btn maximize"></span>
-        </div>
-        <div class="terminal-body">
-          <div id="terminal-root"></div>
-        </div>
-      </div>
+    <!-- Slideshow Section -->
+    <section id="slideshow">
+      <div id="slideshow-root"></div>
     </section>
     
     <!-- Blog Section -->
     <section id="blog">
       <div id="blog-root"></div>
-    </section>
-    
-    <!-- Gallery Section -->
-    <section id="gallery">
-      <div id="gallery-root"></div>
     </section>
   </main>
   
@@ -107,11 +82,15 @@
       componentDidMount() {
         const words = ["Innovation", "Creativity", "Design", "Future", "Technology", "Art", "Science", "Music", "Photography", "Journalism"];
         const container = document.getElementById('interactive-background');
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
         
         words.forEach(word => {
           const span = document.createElement('span');
           span.className = 'bg-word';
           span.textContent = word;
+          span.style.top = Math.random() * windowHeight + 'px';
+          span.style.left = Math.random() * windowWidth + 'px';
           container.appendChild(span);
         });
         
@@ -133,18 +112,17 @@
       }
     }
     
-    // Carousel Component
-    class Carousel extends React.Component {
+    // Slideshow Component
+    class Slideshow extends React.Component {
       constructor(props) {
         super(props);
-        this.state = { currentImage: 0, isTransitioning: false };
+        this.state = { currentImage: 0 };
         this.nextImage = this.nextImage.bind(this);
         this.prevImage = this.prevImage.bind(this);
-        this.goToImage = this.goToImage.bind(this);
       }
       
       componentDidMount() {
-        this.timerID = setInterval(this.nextImage, 7000);
+        this.timerID = setInterval(this.nextImage, 5000);
       }
       
       componentWillUnmount() {
@@ -163,177 +141,26 @@
         }));
       }
       
-      goToImage(index) {
-        this.setState({ currentImage: index });
-      }
-      
       render() {
         return (
-          React.createElement('div', { className: 'carousel-container' },
-            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': '画像カルーセル' }, 'Image Carousel'),
-            React.createElement('div', { className: 'carousel-slideshow' },
-              React.createElement('img', { 
-                src: this.props.images[this.state.currentImage], 
-                alt: `Slide ${this.state.currentImage + 1}`, 
-                className: 'carousel-image active' 
-              })
-            ),
-            React.createElement('div', { className: 'carousel-controls' },
+          React.createElement('div', { className: 'slideshow-container' },
+            React.createElement('img', { 
+              src: this.props.images[this.state.currentImage], 
+              alt: `Slide ${this.state.currentImage + 1}`, 
+              className: 'slideshow-image' 
+            }),
+            React.createElement('div', { className: 'slideshow-controls' },
               React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
               React.createElement('button', { onClick: this.nextImage }, 'Next ❯')
             ),
-            React.createElement('div', { className: 'carousel-indicators' },
+            React.createElement('div', { className: 'slideshow-indicators' },
               this.props.images.map((_, index) => (
                 React.createElement('span', { 
                   key: index, 
                   className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
-                  onClick: () => this.goToImage(index),
-                  'data-translate': 'yes',
-                  'data-japanese': ''
+                  onClick: () => this.setState({ currentImage: index })
                 })
               ))
-            )
-          )
-        );
-      }
-    }
-    
-    // Animated Text Component
-    class AnimatedText extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { currentWordIndex: 0, isCrossed: false };
-      }
-      
-      componentDidMount() {
-        this.interval = setInterval(this.animateText.bind(this), 4000);
-      }
-      
-      componentWillUnmount() {
-        clearInterval(this.interval);
-      }
-      
-      animateText() {
-        this.setState({ isCrossed: true }, () => {
-          setTimeout(() => {
-            this.setState(state => ({
-              currentWordIndex: (state.currentWordIndex + 1) % this.props.words.length,
-              isCrossed: false
-            }));
-          }, 1500);
-        });
-      }
-      
-      render() {
-        const { words } = this.props;
-        const { currentWordIndex, isCrossed } = this.state;
-        return (
-          React.createElement('div', { className: 'animated-text-container' },
-            React.createElement('h2', null, 'I am a '),
-            React.createElement('span', { 
-              className: isCrossed ? 'cross-out' : 'active-text', 
-              'data-translate': 'yes', 
-              'data-japanese': isCrossed ? '失業者' : words[currentWordIndex] 
-            }, 
-              words[currentWordIndex]
-            )
-          )
-        );
-      }
-    }
-    
-    // Clock Component
-    class Clock extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { time: new Date() };
-      }
-      
-      componentDidMount() {
-        this.timerID = setInterval(() => this.tick(), 1000);
-      }
-      
-      componentWillUnmount() {
-        clearInterval(this.timerID);
-      }
-      
-      tick() {
-        this.setState({ time: new Date() });
-      }
-      
-      render() {
-        const { time } = this.state;
-        return (
-          React.createElement('div', { className: 'clock-container' },
-            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': '世界時計' }, 'World Clock'),
-            React.createElement('p', { 'data-translate': 'yes', 'data-japanese': time.toLocaleString() }, time.toLocaleString())
-          )
-        );
-      }
-    }
-    
-    // Terminal Component
-    class Terminal extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { commands: [], input: '' };
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-      }
-      
-      handleInputChange(e) {
-        this.setState({ input: e.target.value });
-      }
-      
-      handleKeyPress(e) {
-        if (e.key === 'Enter') {
-          this.executeCommand(this.state.input);
-          this.setState({ input: '' });
-        }
-      }
-      
-      executeCommand(command) {
-        const newCommands = [...this.state.commands, { type: 'command', text: command }];
-        switch(command.toLowerCase()) {
-          case 'help':
-            newCommands.push({ type: 'output', text: 'Available commands: help, about, contact, projects, exit' });
-            break;
-          case 'about':
-            newCommands.push({ type: 'output', text: 'I am Robby Gat, a linguist, photographer, actor, journalist, musician, designer, and currently unemployed.' });
-            break;
-          case 'contact':
-            newCommands.push({ type: 'output', text: 'You can reach me via Instagram, X, YouTube, or TikTok.' });
-            break;
-          case 'projects':
-            newCommands.push({ type: 'output', text: 'Check out my latest projects in the Gallery section.' });
-            break;
-          case 'exit':
-            newCommands.push({ type: 'output', text: 'Goodbye!' });
-            break;
-          default:
-            newCommands.push({ type: 'output', text: `Command not found: ${command}` });
-        }
-        this.setState({ commands: newCommands });
-      }
-      
-      render() {
-        return (
-          React.createElement('div', { className: 'terminal-container' },
-            this.state.commands.map((cmd, index) => {
-              if (cmd.type === 'command') {
-                return React.createElement('p', { key: index, className: 'terminal-command' }, `<robbygat@robbygat.com ~> ${cmd.text}`);
-              } else {
-                return React.createElement('p', { key: index, className: 'terminal-output' }, cmd.text);
-              }
-            }),
-            React.createElement('p', { className: 'terminal-prompt' }, `<robbygat@robbygat.com ~> `, 
-              React.createElement('input', { 
-                type: 'text', 
-                value: this.state.input, 
-                onChange: this.handleInputChange, 
-                onKeyPress: this.handleKeyPress, 
-                autoFocus: true 
-              })
             )
           )
         );
@@ -350,12 +177,11 @@
       componentDidMount() {
         // Simulate fetching blog posts
         const blogPosts = [
-          { title: 'The Future of Linguistics', content: 'Exploring how AI and technology are shaping the field of linguistics...' },
-          { title: 'Photography Trends in 2100', content: 'Drones, AI editing, and immersive experiences are revolutionizing photography...' },
-          { title: 'Acting in a Virtual World', content: 'The rise of virtual reality and its impact on the acting profession...' },
-          { title: 'Journalism in the Age of AI', content: 'How artificial intelligence is changing the landscape of journalism...' },
-          { title: 'Music Production in 2100', content: 'From AI composers to holographic performances, music is evolving rapidly...' },
-          { title: 'Designing for the Future', content: 'Innovative design trends that are setting the stage for 2100...' },
+          { title: 'The Art of Minimalism', content: 'Exploring the beauty of simplicity in design and life...' },
+          { title: 'Photography Techniques', content: 'Mastering the essentials to capture stunning images...' },
+          { title: 'The Future of Journalism', content: 'How digital media is transforming news reporting...' },
+          { title: 'Design Trends 2025', content: 'A look into the upcoming trends in modern design...' },
+          { title: 'Music Production Tips', content: 'Enhancing your sound with these professional techniques...' },
           // Add more posts as needed
         ];
         this.setState({ posts: blogPosts });
@@ -364,79 +190,16 @@
       render() {
         return (
           React.createElement('div', { className: 'blog-container' },
-            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': 'ブログ' }, 'Blog'),
+            React.createElement('h2', null, 'Blog'),
             this.state.posts.map((post, index) => (
               React.createElement('div', { key: index, className: 'blog-post' },
-                React.createElement('h3', { 'data-translate': 'yes', 'data-japanese': post.title }, post.title),
-                React.createElement('p', { 'data-translate': 'yes', 'data-japanese': post.content }, post.content)
+                React.createElement('h3', null, post.title),
+                React.createElement('p', null, post.content)
               )
             ))
           )
         );
       }
-    }
-    
-    // Gallery Component
-    class Gallery extends React.Component {
-      render() {
-        return (
-          React.createElement('div', { className: 'gallery-container' },
-            React.createElement('h2', { 'data-translate': 'yes', 'data-japanese': 'ギャラリー' }, 'Gallery'),
-            React.createElement('div', { className: 'gallery' },
-              this.props.images.map((img, index) => (
-                React.createElement('div', { key: index, className: 'gallery-item' },
-                  React.createElement('img', { 
-                    src: img, 
-                    alt: `Gallery Image ${index + 1}`, 
-                    className: 'gallery-image', 
-                    onClick: () => openModal(img) 
-                  })
-                )
-              ))
-            )
-          )
-        );
-      }
-    }
-    
-    // Modal Component
-    class Modal extends React.Component {
-      render() {
-        if (!this.props.show) {
-          return null;
-        }
-        
-        return (
-          React.createElement('div', { className: 'modal' },
-            React.createElement('span', { className: 'close-modal', onClick: this.props.onClose }, '×'),
-            React.createElement('img', { className: 'modal-content', src: this.props.image, alt: 'Enlarged Image' })
-          )
-        );
-      }
-    }
-    
-    // Initialize Modal
-    let modalImage = '';
-    function openModal(img) {
-      modalImage = img;
-      ReactDOM.render(
-        React.createElement(Modal, { show: true, image: modalImage, onClose: closeModal }, null),
-        document.getElementById('modal-root') || createModalRoot()
-      );
-    }
-    
-    function closeModal() {
-      ReactDOM.render(
-        React.createElement(Modal, { show: false, image: '', onClose: closeModal }, null),
-        document.getElementById('modal-root')
-      );
-    }
-    
-    function createModalRoot() {
-      const modalRoot = document.createElement('div');
-      modalRoot.id = 'modal-root';
-      document.body.appendChild(modalRoot);
-      return modalRoot;
     }
     
     // Define the words for animation
@@ -451,14 +214,9 @@
     ];
     
     // Generate image paths
-    const carouselImages = [];
-    for (let i = 1; i <= 23; i++) {
-      carouselImages.push(`instagram${i}.png`);
-    }
-    
-    const galleryImages = [];
-    for (let i = 1; i <= 50; i++) { // Assuming 50 gallery images
-      galleryImages.push(`gallery${i}.jpg`);
+    const slideshowImages = [];
+    for (let i = 1; i <= 10; i++) { // Assuming 10 slideshow images
+      slideshowImages.push(`slideshow${i}.jpg`);
     }
     
     // Render Interactive Background
@@ -467,40 +225,16 @@
       document.getElementById('interactive-background')
     );
     
-    // Render Carousel
+    // Render Slideshow
     ReactDOM.render(
-      React.createElement(Carousel, { images: carouselImages }, null),
-      document.getElementById('carousel-root')
-    );
-    
-    // Render AnimatedText
-    ReactDOM.render(
-      React.createElement(AnimatedText, { words: words }, null),
-      document.getElementById('animation-root')
-    );
-    
-    // Render Clock
-    ReactDOM.render(
-      React.createElement(Clock, null, null),
-      document.getElementById('clock-root')
-    );
-    
-    // Render Terminal
-    ReactDOM.render(
-      React.createElement(Terminal, null, null),
-      document.querySelector('.terminal-body')
+      React.createElement(Slideshow, { images: slideshowImages }, null),
+      document.getElementById('slideshow-root')
     );
     
     // Render Blog
     ReactDOM.render(
       React.createElement(Blog, null, null),
       document.getElementById('blog-root')
-    );
-    
-    // Render Gallery
-    ReactDOM.render(
-      React.createElement(Gallery, { images: galleryImages }, null),
-      document.getElementById('gallery-root')
     );
     
     // Translation Functionality
@@ -525,17 +259,15 @@
       }
     }
     
-    // Keyboard Navigation for Carousel
-    document.addEventListener('keydown', function(e) {
-      const carouselRoot = document.getElementById('carousel-root');
-      if (carouselRoot) {
-        const carouselInstance = carouselRoot._reactRoot.current.child.stateNode;
-        if (e.key === 'ArrowRight') {
-          carouselInstance.nextImage();
-        } else if (e.key === 'ArrowLeft') {
-          carouselInstance.prevImage();
-        }
-      }
+    // Cursor Follow Spinning Words
+    document.addEventListener('mousemove', function(e) {
+      const words = document.querySelectorAll('.bg-word');
+      words.forEach(word => {
+        const speed = 0.05;
+        const x = (window.innerWidth / 2 - e.pageX) * speed;
+        const y = (window.innerHeight / 2 - e.pageY) * speed;
+        word.style.transform = `translate(${x}px, ${y}px) rotate(${x + y}deg)`;
+      });
     });
     
   </script>
