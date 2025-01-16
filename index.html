@@ -223,9 +223,9 @@
       animation: zoomIn 1.5s ease-out;
     }
 
-    /* Grayscale transition effect on the image */
+    /* Adjusted Grayscale transition effect on the image */
     .image-container img {
-      max-width: 100%;
+      max-width: 80%; /* Increased from 100% to 80% for better visibility */
       height: auto;
       filter: grayscale(100%);
       transition: filter 0.3s ease, transform 0.3s ease;
@@ -248,7 +248,7 @@
     /* INSTAGRAM SLIDESHOW */
     .slideshow-container {
       position: relative;
-      max-width: 800px;
+      max-width: 900px; /* Increased max-width */
       margin: 2rem auto;
       border: 1px solid var(--border-light);
       border-radius: 8px;
@@ -346,142 +346,7 @@
       background-color: rgba(30, 30, 30, 1);
     }
 
-    /* BLOG SECTION */
-    .blog-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .blog-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .blog-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .blog-post {
-      margin-bottom: 2rem;
-      background-color: #fff;
-      padding: 1rem;
-      border-left: 4px solid var(--primary-color);
-      transition: box-shadow var(--transition-speed) ease;
-    }
-
-    body.dark-mode .blog-post {
-      background-color: #2e2e2e;
-    }
-
-    .blog-post:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .blog-post h3 {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--primary-color);
-      transition: color var(--transition-speed) ease;
-    }
-
-    .blog-post h3:hover {
-      color: var(--secondary-color);
-    }
-
-    .blog-post p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      color: #333;
-    }
-
-    body.dark-mode .blog-post p {
-      color: #ccc;
-    }
-
-    /* BLOG FORM */
-    .blog-form {
-      margin-top: 2rem;
-      padding: 1rem;
-      background-color: #fff;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 2px 4px var(--shadow-light);
-      transition: box-shadow var(--transition-speed) ease;
-    }
-
-    body.dark-mode .blog-form {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 2px 4px var(--shadow-dark);
-    }
-
-    .blog-form:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-
-    .blog-form h3 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--primary-color);
-      transition: color var(--transition-speed) ease;
-    }
-
-    .blog-form h3:hover {
-      color: var(--secondary-color);
-    }
-
-    .blog-form form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .blog-form input, .blog-form textarea {
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .blog-form input, 
-    body.dark-mode .blog-form textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .blog-form button {
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .blog-form button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
+    /* BLOG SECTION - Removed */
 
     /* MUSIC SECTION */
     .music-section {
@@ -520,22 +385,6 @@
     .music-section a:hover {
       color: var(--secondary-color);
       transform: scale(1.05);
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      margin: 2rem 0;
-      border-top: 1px solid var(--border-light);
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: #666;
-      transition: color 0.5s, border-color 0.5s;
-    }
-
-    body.dark-mode footer {
-      color: #999;
-      border-color: var(--border-dark);
     }
 
     /* PDF VIEWER SECTION */
@@ -577,8 +426,8 @@
       transform: scale(1.05);
     }
 
-    /* ROBBY SCRIPT TRANSLATOR */
-    .translator-section {
+    /* ROBBY SCRIPT DISPLAY SECTION */
+    .robbyscript-section {
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
@@ -589,73 +438,56 @@
       animation: fadeInUp 1.5s ease-out;
     }
 
-    body.dark-mode .translator-section {
+    body.dark-mode .robbyscript-section {
       background-color: #1e1e1e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .translator-section h2 {
+    .robbyscript-section h2 {
       text-align: center;
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
     }
 
-    .translator-section textarea {
-      width: 100%;
-      height: 100px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-      resize: vertical;
+    .robbyscript-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
     }
 
-    body.dark-mode .translator-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
+    .robbyscript-item {
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      text-align: center;
+      transition: box-shadow var(--transition-speed) ease;
+    }
+
+    body.dark-mode .robbyscript-item {
+      background-color: #2e2e2e;
       border-color: var(--border-dark);
     }
 
-    .translator-section button {
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
+    .robbyscript-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .robbyscript-char {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .robbyscript-ipa {
       font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      color: #333;
     }
 
-    .translator-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    .translator-section .output {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      min-height: 50px;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .translator-section .output {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
+    body.dark-mode .robbyscript-ipa {
+      color: #ccc;
     }
 
     /* Lightbox Styles */
@@ -717,8 +549,8 @@
       font-size: 1rem;
     }
 
-    /* TESTIMONIALS CAROUSEL */
-    .testimonials-section {
+    /* Embedded Tweets Section */
+    .tweets-section {
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
@@ -729,604 +561,21 @@
       animation: fadeInUp 1.5s ease-out;
     }
 
-    body.dark-mode .testimonials-section {
+    body.dark-mode .tweets-section {
       background-color: #1e1e1e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .testimonials-section h2 {
+    .tweets-section h2 {
       text-align: center;
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
     }
 
-    .testimonial {
-      text-align: center;
-      padding: 1rem;
-      margin: 1rem 0;
-      background-color: #fff;
-      border-left: 4px solid var(--primary-color);
-      border-radius: 4px;
-      transition: box-shadow var(--transition-speed) ease;
-    }
-
-    body.dark-mode .testimonial {
-      background-color: #2e2e2e;
-    }
-
-    .testimonial:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .testimonial p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-
-    body.dark-mode .testimonial p {
-      color: #ccc;
-    }
-
-    .testimonial .author {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.2rem;
-      color: var(--primary-color);
-    }
-
-    /* CONTACT FORM */
-    .contact-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .contact-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .contact-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .contact-section form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-section input, .contact-section textarea {
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .contact-section input, 
-    body.dark-mode .contact-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .contact-section button {
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .contact-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* ROBBY SCRIPT TRANSLATOR */
-    .translator-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .translator-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .translator-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .translator-section textarea {
-      width: 100%;
-      height: 100px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-      resize: vertical;
-    }
-
-    body.dark-mode .translator-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .translator-section button {
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .translator-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    .translator-section .output {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      min-height: 50px;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .translator-section .output {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    /* TESTIMONIALS CAROUSEL */
-    .testimonials-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .testimonials-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .testimonials-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .testimonial {
-      text-align: center;
-      padding: 1rem;
-      margin: 1rem 0;
-      background-color: #fff;
-      border-left: 4px solid var(--primary-color);
-      border-radius: 4px;
-      transition: box-shadow var(--transition-speed) ease;
-    }
-
-    body.dark-mode .testimonial {
-      background-color: #2e2e2e;
-    }
-
-    .testimonial:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .testimonial p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-
-    body.dark-mode .testimonial p {
-      color: #ccc;
-    }
-
-    .testimonial .author {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.2rem;
-      color: var(--primary-color);
-    }
-
-    /* CONTACT FORM */
-    .contact-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .contact-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .contact-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .contact-section form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .contact-section input, .contact-section textarea {
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .contact-section input, 
-    body.dark-mode .contact-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .contact-section button {
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .contact-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* PDF VIEWER SECTION */
-    .pdf-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .pdf-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .pdf-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .pdf-section a {
-      display: block;
-      text-align: center;
-      color: var(--primary-color);
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .pdf-section a:hover {
-      color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* ROBBY SCRIPT TRANSLATOR */
-    .translator-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .translator-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .translator-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .translator-section textarea {
-      width: 100%;
-      height: 100px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-      resize: vertical;
-    }
-
-    body.dark-mode .translator-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .translator-section button {
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .translator-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    .translator-section .output {
-      margin-top: 20px;
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      min-height: 50px;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-
-    body.dark-mode .translator-section .output {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    /* TESTIMONIALS CAROUSEL */
-    .testimonials-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .testimonials-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .testimonials-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .testimonial-carousel {
-      display: flex;
-      overflow: hidden;
-      position: relative;
-      height: 200px;
-    }
-
-    .testimonial-carousel .testimonial {
-      min-width: 100%;
-      transition: transform 0.5s ease-in-out;
-    }
-
-    .testimonial p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 0.5rem;
-    }
-
-    body.dark-mode .testimonial p {
-      color: #ccc;
-    }
-
-    .testimonial .author {
-      font-family: 'EB Garamond', serif;
-      font-size: 1.2rem;
-      color: var(--primary-color);
-    }
-
-    .testimonial-carousel .prev-btn, .testimonial-carousel .next-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(255,255,255,0.7);
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-      border-radius: 50%;
-      transition: background-color var(--transition-speed) ease;
-    }
-
-    body.dark-mode .testimonial-carousel .prev-btn,
-    body.dark-mode .testimonial-carousel .next-btn {
-      background-color: rgba(30, 30, 30, 0.7);
-    }
-
-    .testimonial-carousel .prev-btn:hover,
-    .testimonial-carousel .next-btn:hover {
-      background-color: rgba(255,255,255,1);
-    }
-
-    body.dark-mode .testimonial-carousel .prev-btn:hover,
-    body.dark-mode .testimonial-carousel .next-btn:hover {
-      background-color: rgba(30, 30, 30, 1);
-    }
-
-    .testimonial-carousel .prev-btn i,
-    .testimonial-carousel .next-btn i {
-      color: var(--text-light);
-      font-size: 1.2rem;
-    }
-
-    /* CONTACT FORM SUCCESS MESSAGE */
-    .success-message {
-      color: var(--accent-color);
-      font-family: 'Roboto', sans-serif;
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    /* PARTICLE BACKGROUND */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      top: 0;
-      left: 0;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-    }
-
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Tagline Cross-Out and Unemployed Animation */
-    @keyframes crossOut {
-      0% { text-decoration: line-through; }
-      100% { text-decoration: line-through; }
-    }
-
-    @keyframes fadeInUnemployed {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    /* 3D Carousel for Testimonials */
-    .testimonial-carousel {
-      transform-style: preserve-3d;
-      transition: transform 1s;
+    .tweet {
+      margin-bottom: 20px;
     }
 
     /* Responsive Design */
@@ -1343,11 +592,15 @@
         font-size: 1.5rem;
       }
 
-      .blog-section h2, .music-section h2, .pdf-section h2, .translator-section h2, .testimonials-section h2, .contact-section h2 {
+      .robbyscript-section h2,
+      .music-section h2,
+      .pdf-section h2,
+      .robbyscript-section h2,
+      .tweets-section h2 {
         font-size: 1.5rem;
       }
 
-      .prev, .next, .testimonial-carousel .prev-btn, .testimonial-carousel .next-btn {
+      .prev, .next {
         font-size: 16px;
         padding: 12px;
       }
@@ -1358,6 +611,18 @@
 
       .tagline.unemployed {
         font-size: 2.5rem;
+      }
+
+      .robbyscript-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+
+      .robbyscript-char {
+        font-size: 1.5rem;
+      }
+
+      .robbyscript-ipa {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -1591,72 +856,7 @@
       );
     };
 
-    // Blog Section Component
-    const BlogSection = () => {
-      const [blogPosts, setBlogPosts] = useState([]);
-
-      useEffect(() => {
-        // Fetch existing blog posts from Firestore
-        const unsubscribe = db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-          const posts = [];
-          querySnapshot.forEach((doc) => {
-            posts.push({ id: doc.id, ...doc.data() });
-          });
-          setBlogPosts(posts);
-        }, (error) => {
-          console.error("Error fetching blog posts: ", error);
-        });
-
-        return () => unsubscribe();
-      }, []);
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const title = e.target.title.value.trim();
-        const content = e.target.content.value.trim();
-
-        if (title && content) {
-          db.collection("blogPosts").add({
-            title: title,
-            content: content,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          })
-          .then((docRef) => {
-            console.log("Blog post added with ID: ", docRef.id);
-            e.target.reset();
-          })
-          .catch((error) => {
-            console.error("Error adding blog post: ", error);
-          });
-        }
-      };
-
-      return (
-        <div className="blog-section" data-aos="fade-up">
-          <h2>Blog</h2>
-          
-          {/* Blog Posts */}
-          <div id="blog-posts">
-            {blogPosts.map(post => (
-              <div className="blog-post" key={post.id}>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-              </div>
-            ))}
-          </div>
-          
-          {/* Blog Submission Form */}
-          <div className="blog-form">
-            <h3>Submit a Blog Post</h3>
-            <form onSubmit={handleSubmit}>
-              <input type="text" id="title" name="title" placeholder="Post Title" required />
-              <textarea id="content" name="content" rows="5" placeholder="Your post content..." required></textarea>
-              <button type="submit">Submit Post</button>
-            </form>
-          </div>
-        </div>
-      );
-    };
+    // Blog Section Component - Removed
 
     // Music Section Component
     const MusicSection = () => (
@@ -1680,11 +880,8 @@
       </div>
     );
 
-    // Robby Script Translator Component
-    const RobbyScriptTranslator = () => {
-      const [inputText, setInputText] = useState('');
-      const [translatedText, setTranslatedText] = useState('');
-
+    // Robby Script Display Component
+    const RobbyScriptDisplay = () => {
       const robbyScript = {
         '𝌯': 'p',
         '𝍍': 'b',
@@ -1713,93 +910,51 @@
         '𝍀': 'æ'
       };
 
-      // Function to translate from robby script to IPA
-      const translateToIPA = (text) => {
-        let result = '';
-        for (let char of text) {
-          result += robbyScript[char] || char;
-        }
-        return result;
-      };
-
-      // Function to translate from IPA to robby script
-      const translateToRobby = (text) => {
-        let result = '';
-        const reverseScript = Object.fromEntries(
-          Object.entries(robbyScript).map(([key, value]) => [value, key])
-        );
-        for (let char of text) {
-          result += reverseScript[char] || char;
-        }
-        return result;
-      };
-
-      const handleTranslate = () => {
-        // For demonstration, translate input to robby script
-        const translated = translateToRobby(inputText);
-        setTranslatedText(translated);
-      };
-
       return (
-        <div className="translator-section" data-aos="fade-up">
-          <h2>Robby Script Translator</h2>
-          <textarea 
-            placeholder="Enter text to translate to Robby Script..." 
-            value={inputText} 
-            onChange={(e) => setInputText(e.target.value)} 
-          ></textarea>
-          <button onClick={handleTranslate}>Translate</button>
-          <div className="output">
-            {translatedText}
+        <div className="robbyscript-section" data-aos="fade-up">
+          <h2>Robby Script Characters</h2>
+          <div className="robbyscript-grid">
+            {Object.entries(robbyScript).map(([key, value], index) => (
+              <div className="robbyscript-item" key={index}>
+                <div className="robbyscript-char">{key}</div>
+                <div className="robbyscript-ipa">{value}</div>
+              </div>
+            ))}
           </div>
         </div>
       );
     };
 
-    // Testimonials Carousel Component
-    const TestimonialsCarousel = () => {
-      const testimonials = [
-        { quote: "Robby's work is exceptional and highly creative.", author: "Jane Doe" },
-        { quote: "A true artist with a unique vision.", author: "John Smith" },
-        { quote: "Impressive skills and professional approach.", author: "Emily Johnson" },
-        // Add more testimonials as needed
+    // Tweets Section Component
+    const TweetsSection = () => {
+      const tweetLinks = [
+        "https://x.com/robbygat/status/1652675215669989376",
+        "https://x.com/robbygat/status/1650568035629948947",
+        "https://x.com/robbygat/status/1670875379949531148",
+        "https://x.com/robbygat/status/1679489454309011457",
+        "https://x.com/robbygat/status/1598401043292987392",
+        "https://x.com/robbygat/status/1631853358662205441",
+        "https://x.com/robbygat/status/1649181731541360641",
+        "https://x.com/robbygat/status/1668788978714046465",
+        "https://x.com/robbygat/status/1712331930023141846",
+        "https://x.com/robbygat/status/1848380588534980884",
+        "https://x.com/robbygat/status/1651355099040555008",
+        "https://x.com/robbygat/status/1848056931984056753",
+        "https://x.com/robbygat/status/1681274164672331779",
+        "https://x.com/robbygat/status/1786613162537627707",
+        "https://x.com/robbygat/status/1712276909462008187"
       ];
 
-      const [current, setCurrent] = useState(0);
-      const length = testimonials.length;
-
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setCurrent(current => (current + 1) % length);
-        }, 5000); // Change testimonial every 5 seconds
-        return () => clearInterval(interval);
-      }, [length]);
-
-      const nextTestimonial = () => {
-        setCurrent((current + 1) % length);
-      };
-
-      const prevTestimonial = () => {
-        setCurrent((current - 1 + length) % length);
-      };
-
       return (
-        <div className="testimonials-section" data-aos="fade-up">
-          <h2>Testimonials</h2>
-          <div className="testimonial-carousel">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                className="testimonial" 
-                key={index} 
-                style={{ transform: `rotateY(${current * (360 / length)}deg) translateZ(300px)`, opacity: index === current ? 1 : 0 }}
-              >
-                <p>"{testimonial.quote}"</p>
-                <div className="author">- {testimonial.author}</div>
-              </div>
-            ))}
-            <button className="prev-btn" onClick={prevTestimonial}><i className="fas fa-chevron-left"></i></button>
-            <button className="next-btn" onClick={nextTestimonial}><i className="fas fa-chevron-right"></i></button>
-          </div>
+        <div className="tweets-section" data-aos="fade-up">
+          <h2>Latest Tweets</h2>
+          {tweetLinks.map((link, index) => (
+            <div className="tweet" key={index}>
+              <blockquote className="twitter-tweet">
+                <a href={link}></a>
+              </blockquote>
+            </div>
+          ))}
         </div>
       );
     };
@@ -1917,8 +1072,8 @@
             <div id="lightbox-caption"></div>
           </div>
 
-          {/* BLOG SECTION */}
-          <BlogSection />
+          {/* EMBEDDED TWEETS */}
+          <TweetsSection />
 
           {/* MUSIC SECTION */}
           <MusicSection />
@@ -1926,11 +1081,8 @@
           {/* PDF VIEWER SECTION */}
           <PDFViewer />
 
-          {/* ROBBY SCRIPT TRANSLATOR */}
-          <RobbyScriptTranslator />
-
-          {/* TESTIMONIALS CAROUSEL */}
-          <TestimonialsCarousel />
+          {/* ROBBY SCRIPT DISPLAY SECTION */}
+          <RobbyScriptDisplay />
 
           {/* CONTACT FORM */}
           <ContactForm />
@@ -1944,6 +1096,9 @@
     // Render the App
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
+
+  <!-- Twitter Embed Script -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
   <!-- Lightbox Script -->
   <script>
