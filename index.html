@@ -1,275 +1,1108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>robbygat.com</title>
   
-  <!-- Google Fonts for Newspaper Style -->
-  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&family=Roboto+Slab&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
   
-  <!-- React and ReactDOM via CDN -->
-  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Font Awesome for Social Media Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Link to styles.css -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- AOS Library for Scroll Animations -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   
-  <!-- Additional Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js" integrity="sha512-PL+E+Hvj2P5p0qG3BQ+V1cHZxXHfPVpS5E5yG5cZpU/4DY5GFlusJG43u1ezDvS1s3FO1r7lwQpK7wQopXyoqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- particles.js Library for Particle Background -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <!-- React and Babel CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Inline CSS for simplicity -->
+  <style>
+    /* BASIC PAGE RESET & BODY STYLES */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #1DA1F2;
+      --secondary-color: #0d8de1;
+      --background-light: #fff;
+      --background-dark: #121212;
+      --text-light: #000;
+      --text-dark: #e0e0e0;
+      --border-light: #000;
+      --border-dark: #e0e0e0;
+      --shadow-light: rgba(0,0,0,0.1);
+      --shadow-dark: rgba(255,255,255,0.1);
+      --accent-color: #ff4081;
+    }
+
+    body {
+      background-color: var(--background-light);
+      color: var(--text-light);
+      font-family: 'Lora', serif;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+
+      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-attachment: fixed; /* Keeps background fixed during scroll */
+      background-size: contain;
+      transition: background-color 0.5s, color 0.5s;
+    }
+
+    body.dark-mode {
+      background-color: var(--background-dark);
+      color: var(--text-dark);
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+    }
+
+    /* HEADER / SOCIAL MEDIA BUTTONS */
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px var(--shadow-light);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    body.dark-mode .header {
+      background-color: rgba(18, 18, 18, 0.95);
+      box-shadow: 0 2px 4px var(--shadow-dark);
+    }
+
+    .header a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      transition: transform 0.3s ease, color 0.3s ease;
+      position: relative;
+    }
+
+    body.dark-mode .header a {
+      color: var(--text-dark);
+    }
+
+    /* Dark Mode Toggle Switch */
+    .toggle-switch {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .toggle-switch input {
+      display: none;
+    }
+
+    .toggle-switch label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .toggle-switch .slider {
+      width: 50px;
+      height: 24px;
+      background-color: #ccc;
+      border-radius: 34px;
+      position: relative;
+      margin-left: 10px;
+      transition: background-color 0.4s;
+    }
+
+    .toggle-switch .slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.4s;
+    }
+
+    .toggle-switch input:checked + label .slider {
+      background-color: var(--primary-color);
+    }
+
+    .toggle-switch input:checked + label .slider::before {
+      transform: translateX(26px);
+    }
+
+    /* Adding hover effect: enlarges and changes color */
+    .header a:hover {
+      transform: scale(1.2);
+      color: var(--primary-color); /* Example: Twitter Blue */
+    }
+
+    /* PAGE TITLE */
+    h1 {
+      text-align: center;
+      letter-spacing: 1px;
+      margin: 2rem auto 1rem auto;
+      font-size: 3rem;
+      font-family: 'EB Garamond', serif;
+      max-width: 800px;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.5s ease;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    h1:hover {
+      transform: scale(1.05);
+    }
+
+    /* TAGLINE */
+    .tagline {
+      text-align: center;
+      font-style: italic;
+      margin: 0 0 2rem 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 2rem;
+      transition: color 0.3s ease;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      min-height: 2.5em;
+      color: var(--accent-color);
+      text-decoration: line-through;
+      animation: crossOut 2s forwards;
+    }
+
+    .tagline.unemployed {
+      text-decoration: none;
+      color: var(--accent-color);
+      font-size: 3rem;
+      animation: fadeInUnemployed 2s forwards;
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* IMAGE SECTION */
+    .image-container {
+      text-align: center;
+      margin: 2rem 0;
+      animation: zoomIn 1.5s ease-out;
+    }
+
+    /* Grayscale transition effect on the image */
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease, transform 0.3s ease;
+      border: 2px solid var(--border-light);
+      padding: 5px;
+      border-radius: 8px;
+    }
+
+    body.dark-mode .image-container img {
+      border-color: var(--border-dark);
+    }
+
+    /* Hover to see color & slight scale-up */
+    .image-container img:hover {
+      filter: grayscale(0%);
+      transform: scale(1.02);
+    }
+
+    /* INSTAGRAM SLIDESHOW */
+    .slideshow-container {
+      position: relative;
+      max-width: 800px;
+      margin: 2rem auto;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .slideshow-container {
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .mySlides {
+      display: none;
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mySlides img {
+      width: 100%;
+      height: auto;
+      cursor: pointer;
+      transition: transform 0.5s ease;
+    }
+
+    .mySlides img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Caption text */
+    .caption {
+      text-align: center;
+      padding: 10px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.1rem;
+      color: #666;
+      background-color: #f2f2f2;
+      transition: background-color 0.3s ease;
+    }
+
+    body.dark-mode .caption {
+      background-color: #1e1e1e;
+      color: #ccc;
+    }
+
+    .caption:hover {
+      background-color: #e6e6e6;
+    }
+
+    body.dark-mode .caption:hover {
+      background-color: #2e2e2e;
+    }
+
+    /* Next & previous buttons */
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      width: auto;
+      padding: 16px;
+      margin-top: -22px;
+      color: var(--text-light);
+      font-weight: bold;
+      font-size: 18px;
+      transition: 0.3s ease;
+      border-radius: 0 3px 3px 0;
+      user-select: none;
+      background-color: rgba(255,255,255,0.7);
+    }
+
+    body.dark-mode .prev, body.dark-mode .next {
+      color: var(--text-dark);
+      background-color: rgba(30, 30, 30, 0.7);
+    }
+
+    /* Position the "next button" to the right */
+    .next {
+      right: 0;
+      border-radius: 3px 0 0 3px;
+    }
+
+    /* On hover, add a darker background */
+    .prev:hover, .next:hover {
+      background-color: rgba(255,255,255,1);
+    }
+
+    body.dark-mode .prev:hover, body.dark-mode .next:hover {
+      background-color: rgba(30, 30, 30, 1);
+    }
+
+    /* BLOG SECTION */
+    .blog-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .blog-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .blog-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .blog-post {
+      margin-bottom: 2rem;
+      background-color: #fff;
+      padding: 1rem;
+      border-left: 4px solid var(--primary-color);
+      transition: box-shadow 0.3s ease;
+    }
+
+    body.dark-mode .blog-post {
+      background-color: #2e2e2e;
+    }
+
+    .blog-post:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .blog-post h3 {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+      transition: color 0.3s ease;
+    }
+
+    .blog-post h3:hover {
+      color: var(--secondary-color);
+    }
+
+    .blog-post p {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    body.dark-mode .blog-post p {
+      color: #ccc;
+    }
+
+    /* BLOG FORM */
+    .blog-form {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #fff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px var(--shadow-light);
+      transition: box-shadow 0.3s ease;
+    }
+
+    body.dark-mode .blog-form {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 2px 4px var(--shadow-dark);
+    }
+
+    .blog-form:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .blog-form h3 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+      transition: color 0.3s ease;
+    }
+
+    .blog-form h3:hover {
+      color: var(--secondary-color);
+    }
+
+    .blog-form form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .blog-form input, .blog-form textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .blog-form input, 
+    body.dark-mode .blog-form textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .blog-form button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .blog-form button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* MUSIC SECTION */
+    .music-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .music-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .music-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .music-section a {
+      display: block;
+      text-align: center;
+      color: var(--primary-color); /* Spotify Blue */
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .music-section a:hover {
+      color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: #666;
+      transition: color 0.5s, border-color 0.5s;
+    }
+
+    body.dark-mode footer {
+      color: #999;
+      border-color: var(--border-dark);
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox-content:hover {
+      transform: scale(1.05);
+    }
+
+    .close {
+      position: absolute;
+      top: 30px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Tagline Cross-Out and Unemployed Animation */
+    @keyframes crossOut {
+      0% { text-decoration: line-through; }
+      100% { text-decoration: line-through; }
+    }
+
+    @keyframes fadeInUnemployed {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .shake {
+      animation: shake 0.5s;
+      animation-iteration-count: 2;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    /* Particle Background */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .header a {
+        font-size: 1.2rem;
+      }
+
+      .tagline {
+        font-size: 1.5rem;
+      }
+
+      .blog-section h2, .music-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .prev, .next {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      .slideshow-container {
+        max-width: 100%;
+      }
+
+      .tagline.unemployed {
+        font-size: 2.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Interactive Background -->
-  <div id="interactive-background"></div>
-  
-  <!-- Header -->
-  <header class="header">
-    <h1 class="header-title">robbygat.com</h1>
-    <nav class="social-links">
-      <a href="https://instagram.com/robbygat" target="_blank" class="social-button">Instagram</a>
-      <a href="https://instagram.com/robbygatzke" target="_blank" class="social-button">Photography</a>
-      <a href="https://x.com/robbygat" target="_blank" class="social-button">X</a>
-      <a href="https://youtube.com/@robbygat" target="_blank" class="social-button">YouTube</a>
-      <a href="https://tiktok.com/@robbygat" target="_blank" class="social-button">TikTok</a>
-      <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" class="social-button">Spotify Album</a>
-    </nav>
-    <!-- Dark Mode Toggle -->
-    <div class="toggle-container">
-      <input 
-        type="checkbox" 
-        id="dark-mode-toggle" 
-        onchange="toggleDarkMode()" 
-      />
-      <label for="dark-mode-toggle" class="toggle-label">
-        <span class="toggle-switch"></span>
-      </label>
-    </div>
-  </header>
-  
-  <!-- Main Content -->
-  <main>
-    <!-- Scrolling Title -->
-    <section id="scrolling-title">
-      <div class="scrolling-text">robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com robbygat.com</div>
-    </section>
-    
-    <!-- Slideshow Section -->
-    <section id="slideshow">
-      <div id="slideshow-root"></div>
-    </section>
-    
-    <!-- Blog Section -->
-    <section id="blog">
-      <div id="blog-root"></div>
-    </section>
-  </main>
-  
-  <!-- Footer -->
-  <footer>
-    <p>Home: Tachikawa, Tokyo</p>
-    <p>&copy; 2025 robbygat.com</p>
-  </footer>
-  
-  <!-- Translate Button -->
-  <button id="translate-button" class="translate-button" onclick="translateToJapanese()">Translate to Japanese</button>
-  
-  <!-- React Components -->
+  <!-- Particle Background -->
+  <div id="particles-js"></div>
+
+  <!-- React Root -->
+  <div id="root"></div>
+
+  <!-- Scripts -->
+
+  <!-- particles.js config -->
   <script>
-    // Interactive Background Component
-    class InteractiveBackground extends React.Component {
-      componentDidMount() {
-        const words = ["Innovation", "Creativity", "Design", "Future", "Technology", "Art", "Science", "Music", "Photography", "Journalism"];
-        const container = document.getElementById('interactive-background');
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        words.forEach(word => {
-          const span = document.createElement('span');
-          span.className = 'bg-word';
-          span.textContent = word;
-          span.style.top = Math.random() * windowHeight + 'px';
-          span.style.left = Math.random() * windowWidth + 'px';
-          container.appendChild(span);
-        });
-        
-        document.addEventListener('mousemove', this.handleMouseMove);
-      }
-      
-      handleMouseMove = (e) => {
-        const words = document.querySelectorAll('.bg-word');
-        words.forEach(word => {
-          const rect = word.getBoundingClientRect();
-          const dist = Math.hypot(e.clientX - rect.x, e.clientY - rect.y);
-          const move = Math.max(0, 100 - dist) / 100 * 20;
-          word.style.transform = `translate(${move}px, ${move}px) rotate(${move}deg)`;
-        });
-      }
-      
-      render() {
-        return null;
-      }
-    }
-    
-    // Slideshow Component
-    class Slideshow extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { currentImage: 0 };
-        this.nextImage = this.nextImage.bind(this);
-        this.prevImage = this.prevImage.bind(this);
-      }
-      
-      componentDidMount() {
-        this.timerID = setInterval(this.nextImage, 5000);
-      }
-      
-      componentWillUnmount() {
-        clearInterval(this.timerID);
-      }
-      
-      nextImage() {
-        this.setState(prevState => ({
-          currentImage: (prevState.currentImage + 1) % this.props.images.length
-        }));
-      }
-      
-      prevImage() {
-        this.setState(prevState => ({
-          currentImage: (prevState.currentImage - 1 + this.props.images.length) % this.props.images.length
-        }));
-      }
-      
-      render() {
-        return (
-          React.createElement('div', { className: 'slideshow-container' },
-            React.createElement('img', { 
-              src: this.props.images[this.state.currentImage], 
-              alt: `Slide ${this.state.currentImage + 1}`, 
-              className: 'slideshow-image' 
-            }),
-            React.createElement('div', { className: 'slideshow-controls' },
-              React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
-              React.createElement('button', { onClick: this.nextImage }, 'Next ❯')
-            ),
-            React.createElement('div', { className: 'slideshow-indicators' },
-              this.props.images.map((_, index) => (
-                React.createElement('span', { 
-                  key: index, 
-                  className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
-                  onClick: () => this.setState({ currentImage: index })
-                })
-              ))
-            )
-          )
-        );
-      }
-    }
-    
-    // Blog Component
-    class Blog extends React.Component {
-      constructor(props) {
-        super(props);
-        this.state = { posts: [] };
-      }
-      
-      componentDidMount() {
-        // Simulate fetching blog posts
-        const blogPosts = [
-          { title: 'The Art of Minimalism', content: 'Exploring the beauty of simplicity in design and life...' },
-          { title: 'Photography Techniques', content: 'Mastering the essentials to capture stunning images...' },
-          { title: 'The Future of Journalism', content: 'How digital media is transforming news reporting...' },
-          { title: 'Design Trends 2025', content: 'A look into the upcoming trends in modern design...' },
-          { title: 'Music Production Tips', content: 'Enhancing your sound with these professional techniques...' },
-          // Add more posts as needed
-        ];
-        this.setState({ posts: blogPosts });
-      }
-      
-      render() {
-        return (
-          React.createElement('div', { className: 'blog-container' },
-            React.createElement('h2', null, 'Blog'),
-            this.state.posts.map((post, index) => (
-              React.createElement('div', { key: index, className: 'blog-post' },
-                React.createElement('h3', null, post.title),
-                React.createElement('p', null, post.content)
-              )
-            ))
-          )
-        );
-      }
-    }
-    
-    // Define the words for animation
-    const words = [
-      'Linguist',
-      'Photographer',
-      'Actor',
-      'Journalist',
-      'Musician',
-      'Designer',
-      'UNEMPLOYED'
-    ];
-    
-    // Generate image paths
-    const slideshowImages = [];
-    for (let i = 1; i <= 10; i++) { // Assuming 10 slideshow images
-      slideshowImages.push(`slideshow${i}.jpg`);
-    }
-    
-    // Render Interactive Background
-    ReactDOM.render(
-      React.createElement(InteractiveBackground, null, null),
-      document.getElementById('interactive-background')
-    );
-    
-    // Render Slideshow
-    ReactDOM.render(
-      React.createElement(Slideshow, { images: slideshowImages }, null),
-      document.getElementById('slideshow-root')
-    );
-    
-    // Render Blog
-    ReactDOM.render(
-      React.createElement(Blog, null, null),
-      document.getElementById('blog-root')
-    );
-    
-    // Translation Functionality
-    function translateToJapanese() {
-      const elements = document.querySelectorAll('[data-translate="yes"]');
-      elements.forEach(el => {
-        if (el.getAttribute('data-japanese')) {
-          el.textContent = el.getAttribute('data-japanese');
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": "#1DA1F2"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          },
+          "polygon": {
+            "nb_sides": 5
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": false
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#1DA1F2",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 6,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out"
         }
-      });
-      document.getElementById('translate-button').disabled = true;
-      document.getElementById('translate-button').textContent = '日本語に翻訳済み';
-    }
-    
-    // Dark Mode Toggle Function
-    function toggleDarkMode() {
-      const checkbox = document.getElementById('dark-mode-toggle');
-      if (checkbox.checked) {
-        document.body.classList.add('dark-mode');
-      } else {
-        document.body.classList.remove('dark-mode');
-      }
-    }
-    
-    // Cursor Follow Spinning Words
-    document.addEventListener('mousemove', function(e) {
-      const words = document.querySelectorAll('.bg-word');
-      words.forEach(word => {
-        const speed = 0.05;
-        const x = (window.innerWidth / 2 - e.pageX) * speed;
-        const y = (window.innerHeight / 2 - e.pageY) * speed;
-        word.style.transform = `translate(${x}px, ${y}px) rotate(${x + y}deg)`;
-      });
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          }
+        },
+        "modes": {
+          "repulse": {
+            "distance": 100,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          }
+        }
+      },
+      "retina_detect": true
     });
-    
+  </script>
+
+  <!-- AOS Initialization -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  </script>
+
+  <!-- Firebase SDKs -->
+  <!-- Include Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <!-- Initialize Firebase -->
+  <script>
+    // TODO: Replace the following with your app's Firebase project configuration
+    // You can find this information in your Firebase project settings
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
+  <!-- React Components -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Header Component
+    const Header = ({ toggleTheme, isDarkMode }) => (
+      <div className="header">
+        <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" className="fab fa-twitter"></a>
+        <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
+        <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+        <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
+        <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+      </div>
+    );
+
+    // Toggle Switch Component
+    const ToggleSwitch = ({ toggleTheme, isDarkMode }) => (
+      <div className="toggle-switch">
+        <input type="checkbox" id="theme-toggle" checked={isDarkMode} onChange={toggleTheme} />
+        <label htmlFor="theme-toggle">
+          {isDarkMode ? "Dark" : "Light"}
+          <div className="slider"></div>
+        </label>
+      </div>
+    );
+
+    // Tagline Component
+    const Tagline = () => {
+      const [isUnemployed, setIsUnemployed] = useState(false);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setIsUnemployed(true);
+        }, 2000); // Trigger after 2 seconds
+
+        return () => clearTimeout(timer);
+      }, []);
+
+      return (
+        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
+          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
+        </div>
+      );
+    };
+
+    // Slideshow Component
+    const Slideshow = () => {
+      const [slideIndex, setSlideIndex] = useState(0);
+      const slides = [
+        { src: "instagram1.png", alt: "1" },
+        { src: "instagram2.png", alt: "2" },
+        { src: "instagram3.png", alt: "3" },
+        { src: "instagram4.png", alt: "4" },
+        { src: "instagram5.png", alt: "5" },
+        { src: "instagram6.png", alt: "6" },
+        { src: "instagram7.png", alt: "7" },
+        { src: "instagram8.png", alt: "8" },
+        { src: "instagram9.png", alt: "9" },
+        { src: "instagram10.png", alt: "10" },
+        { src: "instagram11.png", alt: "11" },
+        { src: "instagram12.png", alt: "12" },
+        { src: "instagram13.png", alt: "13" },
+        { src: "instagram14.png", alt: "14" },
+        { src: "instagram15.png", alt: "15" },
+        { src: "instagram16.png", alt: "16" },
+        { src: "instagram17.png", alt: "17" },
+        { src: "instagram18.png", alt: "18" },
+        { src: "instagram19.png", alt: "19" },
+        { src: "instagram20.png", alt: "20" },
+        { src: "instagram21.png", alt: "21" },
+        { src: "instagram22.png", alt: "22" },
+        { src: "instagram23.png", alt: "23" },
+      ];
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setSlideIndex(prevIndex => (prevIndex + 1) % slides.length);
+        }, 3000);
+        return () => clearInterval(interval);
+      }, [slides.length]);
+
+      const nextSlide = () => {
+        setSlideIndex((slideIndex + 1) % slides.length);
+      };
+
+      const prevSlide = () => {
+        setSlideIndex((slideIndex - 1 + slides.length) % slides.length);
+      };
+
+      const openLightbox = (src, alt) => {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        lightbox.style.display = 'block';
+        lightboxImg.src = src;
+        lightboxCaption.textContent = alt;
+      };
+
+      return (
+        <div className="slideshow-container" data-aos="fade-up">
+          {slides.map((slide, index) => (
+            <div className="mySlides" key={index} style={{ display: index === slideIndex ? 'block' : 'none' }}>
+              <img src={slide.src} alt={slide.alt} onClick={() => openLightbox(slide.src, slide.alt)} />
+            </div>
+          ))}
+
+          <div className="caption">pov</div>
+
+          <a className="prev" onClick={prevSlide}>&#10094;</a>
+          <a className="next" onClick={nextSlide}>&#10095;</a>
+        </div>
+      );
+    };
+
+    // Blog Section Component
+    const BlogSection = () => {
+      const [blogPosts, setBlogPosts] = useState([]);
+
+      useEffect(() => {
+        // Fetch existing blog posts from Firestore
+        db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
+          const posts = [];
+          querySnapshot.forEach((doc) => {
+            posts.push({ id: doc.id, ...doc.data() });
+          });
+          setBlogPosts(posts);
+        }, (error) => {
+          console.error("Error fetching blog posts: ", error);
+        });
+      }, []);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const title = e.target.title.value.trim();
+        const content = e.target.content.value.trim();
+
+        if (title && content) {
+          db.collection("blogPosts").add({
+            title: title,
+            content: content,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then((docRef) => {
+            console.log("Blog post added with ID: ", docRef.id);
+            e.target.reset();
+          })
+          .catch((error) => {
+            console.error("Error adding blog post: ", error);
+          });
+        }
+      };
+
+      return (
+        <div className="blog-section" data-aos="fade-up">
+          <h2>Blog</h2>
+          
+          {/* Blog Posts */}
+          <div id="blog-posts">
+            {blogPosts.map(post => (
+              <div className="blog-post" key={post.id}>
+                <h3>{post.title}</h3>
+                <p>{post.content}</p>
+              </div>
+            ))}
+          </div>
+          
+          {/* Blog Submission Form */}
+          <div className="blog-form">
+            <h3>Submit a Blog Post</h3>
+            <form onSubmit={handleSubmit}>
+              <input type="text" id="title" name="title" placeholder="Post Title" required />
+              <textarea id="content" name="content" rows="5" placeholder="Your post content..." required></textarea>
+              <button type="submit">Submit Post</button>
+            </form>
+          </div>
+        </div>
+      );
+    };
+
+    // Music Section Component
+    const MusicSection = () => (
+      <div className="music-section" data-aos="fade-up">
+        <h2>Albums by INTERNET COWBOY</h2>
+        <p>
+          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
+            Listen to my latest album on Spotify
+          </a>
+        </p>
+      </div>
+    );
+
+    // Footer Component
+    const Footer = () => {
+      const currentYear = new Date().getFullYear();
+      return (
+        <footer>
+          &copy; {currentYear} robbygat.com
+        </footer>
+      );
+    };
+
+    // Main App Component
+    const App = () => {
+      const [isDarkMode, setIsDarkMode] = useState(false);
+
+      useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          setIsDarkMode(savedTheme === 'dark');
+          document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+        }
+      }, []);
+
+      const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
+      };
+
+      return (
+        <>
+          <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+          <h1>robbygat.com</h1>
+          <Tagline />
+          <div className="content" data-aos="fade-up">
+            <p>BLOG / PORTFOLIO.</p>
+
+            {/* IMAGE */}
+            <div className="image-container" data-aos="zoom-in">
+              <img 
+                src="websiteimage.jpg" 
+                alt="Portfolio image of robbygat in black and white style"
+              />
+            </div>
+
+            <p>
+              Under construction!
+            </p>
+          </div>
+
+          {/* INSTAGRAM SLIDESHOW */}
+          <Slideshow />
+
+          {/* Lightbox Container */}
+          <div id="lightbox" className="lightbox">
+            <span className="close">&times;</span>
+            <img className="lightbox-content" id="lightbox-img" />
+            <div id="lightbox-caption"></div>
+          </div>
+
+          {/* BLOG SECTION */}
+          <BlogSection />
+
+          {/* MUSIC SECTION */}
+          <MusicSection />
+
+          {/* FOOTER */}
+          <Footer />
+        </>
+      );
+    };
+
+    // Render the App
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+
+  <!-- Lightbox Script -->
+  <script>
+    // Get lightbox elements
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.querySelector('.close');
+
+    // Close the lightbox when the close button is clicked
+    closeBtn.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+    });
+
+    // Close the lightbox when clicking outside the image
+    window.addEventListener('click', (e) => {
+      if (e.target == lightbox) {
+        lightbox.style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>
