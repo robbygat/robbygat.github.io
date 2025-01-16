@@ -74,7 +74,7 @@
       justify-content: center;
       align-items: center;
       gap: 20px;
-      padding: 10px 0;
+      padding: 20px 0;
       background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
       position: sticky;
       top: 0;
@@ -105,7 +105,7 @@
     .toggle-switch {
       position: absolute;
       right: 20px;
-      top: 10px;
+      top: 20px;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -120,12 +120,12 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
 
     .toggle-switch .slider {
-      width: 40px;
-      height: 20px;
+      width: 50px;
+      height: 24px;
       background-color: #ccc;
       border-radius: 34px;
       position: relative;
@@ -136,8 +136,8 @@
     .toggle-switch .slider::before {
       content: "";
       position: absolute;
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       left: 2px;
       bottom: 2px;
       background-color: white;
@@ -150,7 +150,7 @@
     }
 
     .toggle-switch input:checked + label .slider::before {
-      transform: translateX(20px);
+      transform: translateX(26px);
     }
 
     /* Adding hover effect: enlarges and changes color */
@@ -223,9 +223,9 @@
       animation: zoomIn 1.5s ease-out;
     }
 
-    /* Grayscale transition effect on the image */
+    /* Adjusted Image Styles */
     .image-container img {
-      max-width: 80%;
+      max-width: 100%;
       height: auto;
       filter: grayscale(100%);
       transition: filter 0.3s ease, transform 0.3s ease;
@@ -233,6 +233,8 @@
       padding: 5px;
       border-radius: 8px;
       cursor: pointer;
+      width: 80%; /* Adjusted width for better display */
+      max-width: 600px; /* Limit maximum width */
     }
 
     body.dark-mode .image-container img {
@@ -278,6 +280,7 @@
       height: auto;
       cursor: pointer;
       transition: transform 0.5s ease;
+      object-fit: cover;
     }
 
     .mySlides img:hover {
@@ -346,47 +349,6 @@
       background-color: rgba(30, 30, 30, 1);
     }
 
-    /* BLOG SECTION REMOVED */
-
-    /* PDF VIEWER SECTION */
-    .pdf-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .pdf-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .pdf-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .pdf-section a {
-      display: block;
-      text-align: center;
-      color: var(--primary-color);
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .pdf-section a:hover {
-      color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
     /* ROBBY SCRIPT DISPLAY SECTION */
     .robby-script-section {
       max-width: 900px;
@@ -423,14 +385,14 @@
       padding: 10px;
       text-align: center;
       font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
       transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
     }
 
-    body.dark-mode .robby-script-table th, body.dark-mode .robby-script-table td {
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
       border-color: var(--border-dark);
       background-color: #2e2e2e;
-      color: var(--text-dark);
+      color: #e0e0e0;
     }
 
     .robby-script-table th {
@@ -446,40 +408,86 @@
       background-color: #3e3e3e;
     }
 
-    /* ROBBY SCRIPT DISPLAY HOVER EFFECT */
-    .robby-script-table tr:hover {
-      background-color: var(--accent-color);
-      color: #fff;
-    }
-
-    body.dark-mode .robby-script-table tr:hover {
-      background-color: var(--accent-color);
-      color: #fff;
-    }
-
-    /* ROBBY SCRIPT CHARACTERS */
-    .robby-script-character {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px 0;
-      padding: 10px;
+    /* TWEETS CAROUSEL SECTION */
+    .tweets-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
       border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #fff;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
     }
 
-    body.dark-mode .robby-script-character {
-      background-color: #2e2e2e;
+    body.dark-mode .tweets-section {
+      background-color: #1e1e1e;
       border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .robby-script-character:hover {
-      background-color: var(--primary-color);
-      color: #fff;
-      transform: scale(1.05);
+    .tweets-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .tweets-carousel {
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tweet {
+      min-width: 100%;
+      transition: transform 0.5s ease-in-out;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      padding: 20px;
+    }
+
+    .tweets-carousel a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .tweets-carousel a:hover {
+      color: var(--secondary-color);
+    }
+
+    .tweets-carousel .prev-btn, .tweets-carousel .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn,
+    body.dark-mode .tweets-carousel .next-btn {
+      background-color: rgba(30, 30, 30, 0.7);
+    }
+
+    .tweets-carousel .prev-btn:hover,
+    .tweets-carousel .next-btn:hover {
+      background-color: rgba(255,255,255,1);
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn:hover,
+    body.dark-mode .tweets-carousel .next-btn:hover {
+      background-color: rgba(30, 30, 30, 1);
+    }
+
+    .tweets-carousel .prev-btn i,
+    .tweets-carousel .next-btn i {
+      color: var(--text-light);
+      font-size: 1.2rem;
     }
 
     /* CONTACT FORM */
@@ -547,25 +555,575 @@
       transform: scale(1.05);
     }
 
-    .contact-section .success-message {
-      color: var(--accent-color);
-      font-family: 'Roboto', sans-serif;
-      margin-top: 10px;
+    /* PDF VIEWER SECTION */
+    .pdf-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
       text-align: center;
     }
 
-    /* ROBBY SCRIPT DISPLAY CHARACTERS */
-    .robby-script-character span {
-      font-size: 1.5rem;
+    body.dark-mode .pdf-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .pdf-section h2 {
       font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
 
-    .robby-script-character .ipa {
+    .pdf-section a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
       font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
     }
 
-    /* LIGHTBOX STYLES REMAINING SAME */
+    .pdf-section a:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* ROBBY SCRIPT DISPLAY SECTION */
+    .robby-script-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .robby-script-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .robby-script-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .robby-script-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .robby-script-table th, .robby-script-table td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
+      border-color: var(--border-dark);
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+    }
+
+    .robby-script-table th {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .robby-script-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    body.dark-mode .robby-script-table tr:nth-child(even) {
+      background-color: #3e3e3e;
+    }
+
+    /* TWEETS CAROUSEL SECTION */
+    .tweets-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
+    }
+
+    body.dark-mode .tweets-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .tweets-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .tweets-carousel {
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tweet {
+      min-width: 100%;
+      transition: transform 0.5s ease-in-out;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      padding: 20px;
+    }
+
+    .tweets-carousel a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .tweets-carousel a:hover {
+      color: var(--secondary-color);
+    }
+
+    .tweets-carousel .prev-btn, .tweets-carousel .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn,
+    body.dark-mode .tweets-carousel .next-btn {
+      background-color: rgba(30, 30, 30, 0.7);
+    }
+
+    .tweets-carousel .prev-btn:hover,
+    .tweets-carousel .next-btn:hover {
+      background-color: rgba(255,255,255,1);
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn:hover,
+    body.dark-mode .tweets-carousel .next-btn:hover {
+      background-color: rgba(30, 30, 30, 1);
+    }
+
+    .tweets-carousel .prev-btn i,
+    .tweets-carousel .next-btn i {
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+
+    /* CONTACT FORM */
+    .contact-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .contact-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-section input, .contact-section textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .contact-section input, 
+    body.dark-mode .contact-section textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-section button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+
+    .contact-section button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* PDF VIEWER SECTION */
+    .pdf-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
+    }
+
+    body.dark-mode .pdf-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .pdf-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .pdf-section a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+
+    .pdf-section a:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* ROBBY SCRIPT DISPLAY SECTION */
+    .robby-script-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .robby-script-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .robby-script-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .robby-script-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .robby-script-table th, .robby-script-table td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    }
+
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
+      border-color: var(--border-dark);
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+    }
+
+    .robby-script-table th {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    .robby-script-table tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    body.dark-mode .robby-script-table tr:nth-child(even) {
+      background-color: #3e3e3e;
+    }
+
+    /* TWEETS CAROUSEL SECTION */
+    .tweets-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
+    }
+
+    body.dark-mode .tweets-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .tweets-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .tweets-carousel {
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      height: 150px;
+    }
+
+    .tweet {
+      min-width: 100%;
+      transition: transform 0.5s ease-in-out;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      padding: 20px;
+    }
+
+    .tweets-carousel a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .tweets-carousel a:hover {
+      color: var(--secondary-color);
+    }
+
+    .tweets-carousel .prev-btn, .tweets-carousel .next-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background-color var(--transition-speed) ease;
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn,
+    body.dark-mode .tweets-carousel .next-btn {
+      background-color: rgba(30, 30, 30, 0.7);
+    }
+
+    .tweets-carousel .prev-btn:hover,
+    .tweets-carousel .next-btn:hover {
+      background-color: rgba(255,255,255,1);
+    }
+
+    body.dark-mode .tweets-carousel .prev-btn:hover,
+    body.dark-mode .tweets-carousel .next-btn:hover {
+      background-color: rgba(30, 30, 30, 1);
+    }
+
+    .tweets-carousel .prev-btn i,
+    .tweets-carousel .next-btn i {
+      color: var(--text-light);
+      font-size: 1.2rem;
+    }
+
+    /* CONTACT FORM */
+    .contact-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .contact-section {
+      background-color: #1e1e1e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-section input, .contact-section textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .contact-section input, 
+    body.dark-mode .contact-section textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-section button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+
+    .contact-section button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: #666;
+      transition: color 0.5s, border-color 0.5s;
+    }
+
+    body.dark-mode footer {
+      color: #999;
+      border-color: var(--border-dark);
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox-content:hover {
+      transform: scale(1.05);
+    }
+
+    .close {
+      position: absolute;
+      top: 30px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
 
     /* Animations */
     @keyframes fadeIn {
@@ -617,23 +1175,6 @@
       to {opacity: 1;}
     }
 
-    /* ROBBY SCRIPT CHARACTER HOVER EFFECT */
-    .robby-script-character:hover {
-      background-color: var(--primary-color);
-      color: #fff;
-      transform: scale(1.05);
-    }
-
-    /* PARTICLE BACKGROUND */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      top: 0;
-      left: 0;
-    }
-
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
@@ -648,11 +1189,11 @@
         font-size: 1.5rem;
       }
 
-      .blog-section h2, .music-section h2, .pdf-section h2, .robby-script-section h2, .translator-section h2, .contact-section h2 {
+      .blog-section h2, .music-section h2, .pdf-section h2, .robby-script-section h2, .tweets-section h2, .contact-section h2 {
         font-size: 1.5rem;
       }
 
-      .prev, .next, .slideshow-container .prev-btn, .slideshow-container .next-btn {
+      .prev, .next, .tweets-carousel .prev-btn, .tweets-carousel .next-btn {
         font-size: 16px;
         padding: 12px;
       }
@@ -664,39 +1205,6 @@
       .tagline.unemployed {
         font-size: 2.5rem;
       }
-
-      .robby-script-character {
-        flex-direction: column;
-      }
-    }
-
-    /* EMBEDDED TWEETS SECTION */
-    .tweets-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .tweets-section {
-      background-color: #1e1e1e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .tweets-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .tweet {
-      margin-bottom: 2rem;
     }
   </style>
 </head>
@@ -815,9 +1323,6 @@
     const db = firebase.firestore();
   </script>
 
-  <!-- Twitter Widgets Script -->
-  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
   <!-- React Components -->
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -932,20 +1437,6 @@
       );
     };
 
-    // Blog Section REMOVED
-
-    // Music Section Component
-    const MusicSection = () => (
-      <div className="music-section" data-aos="fade-up">
-        <h2>Albums by INTERNET COWBOY</h2>
-        <p>
-          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" rel="noopener noreferrer">
-            Listen to my latest album on Spotify
-          </a>
-        </p>
-      </div>
-    );
-
     // PDF Viewer Component
     const PDFViewer = () => (
       <div className="pdf-section" data-aos="fade-up">
@@ -956,7 +1447,7 @@
       </div>
     );
 
-    // Robby Script Display Component
+    // RobbyScript Display Component
     const RobbyScriptDisplay = () => {
       const robbyScript = {
         '𝌯': 'p',
@@ -988,19 +1479,19 @@
 
       return (
         <div className="robby-script-section" data-aos="fade-up">
-          <h2>Robby Script Characters and IPA</h2>
+          <h2>RobbyScript Characters</h2>
           <table className="robby-script-table">
             <thead>
               <tr>
-                <th>Robby Script</th>
-                <th>IPA</th>
+                <th>RobbyScript Character</th>
+                <th>IPA Symbol</th>
               </tr>
             </thead>
             <tbody>
               {Object.entries(robbyScript).map(([key, value], index) => (
                 <tr key={index}>
-                  <td><span>{key}</span></td>
-                  <td><span className="ipa">{value}</span></td>
+                  <td style={{ fontSize: '2rem' }}>{key}</td>
+                  <td>{value}</td>
                 </tr>
               ))}
             </tbody>
@@ -1009,9 +1500,9 @@
       );
     };
 
-    // Tweets Section Component
-    const TweetsSection = () => {
-      const tweetLinks = [
+    // Tweets Carousel Component
+    const TweetsCarousel = () => {
+      const tweets = [
         "https://x.com/robbygat/status/1652675215669989376",
         "https://x.com/robbygat/status/1650568035629948947",
         "https://x.com/robbygat/status/1670875379949531148",
@@ -1026,19 +1517,41 @@
         "https://x.com/robbygat/status/1848056931984056753",
         "https://x.com/robbygat/status/1681274164672331779",
         "https://x.com/robbygat/status/1786613162537627707",
-        "https://x.com/robbygat/status/1712276909462008187"
+        "https://x.com/robbygat/status/1712276909462008187",
       ];
+
+      const [current, setCurrent] = useState(0);
+      const length = tweets.length;
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrent(current => (current + 1) % length);
+        }, 5000); // Change tweet every 5 seconds
+        return () => clearInterval(interval);
+      }, [length]);
+
+      const nextTweet = () => {
+        setCurrent((current + 1) % length);
+      };
+
+      const prevTweet = () => {
+        setCurrent((current - 1 + length) % length);
+      };
 
       return (
         <div className="tweets-section" data-aos="fade-up">
-          <h2>Latest Tweets</h2>
-          {tweetLinks.map((link, index) => (
-            <div className="tweet" key={index}>
-              <a href={link} className="twitter-tweet" data-lang="en" target="_blank" rel="noopener noreferrer">
-                {link}
-              </a>
-            </div>
-          ))}
+          <h2>Tweets</h2>
+          <div className="tweets-carousel">
+            {tweets.map((tweet, index) => (
+              <div className="tweet" key={index} style={{ display: index === current ? 'block' : 'none' }}>
+                <a href={tweet} target="_blank" rel="noopener noreferrer">
+                  {tweet}
+                </a>
+              </div>
+            ))}
+            <button className="prev-btn" onClick={prevTweet}><i className="fas fa-chevron-left"></i></button>
+            <button className="next-btn" onClick={nextTweet}><i className="fas fa-chevron-right"></i></button>
+          </div>
         </div>
       );
     };
@@ -1097,10 +1610,6 @@
       );
     };
 
-    // PDF Viewer REMOVED
-
-    // Robby Script Translator REMOVED
-
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
@@ -1144,10 +1653,6 @@
                 alt="Portfolio image of robbygat in black and white style"
               />
             </div>
-
-            <p>
-              Under construction!
-            </p>
           </div>
 
           {/* INSTAGRAM SLIDESHOW */}
@@ -1160,17 +1665,14 @@
             <div id="lightbox-caption"></div>
           </div>
 
-          {/* EMBEDDED TWEETS */}
-          <TweetsSection />
-
-          {/* MUSIC SECTION */}
-          <MusicSection />
-
           {/* PDF VIEWER SECTION */}
           <PDFViewer />
 
           {/* ROBBY SCRIPT DISPLAY SECTION */}
           <RobbyScriptDisplay />
+
+          {/* TWEETS CAROUSEL */}
+          <TweetsCarousel />
 
           {/* CONTACT FORM */}
           <ContactForm />
