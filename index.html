@@ -4,238 +4,29 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
   <title>robbygat.com</title>
-
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap" rel="stylesheet">
+  
   <!-- React and ReactDOM via CDN -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-
-  <!-- Styles -->
-  <style>
-    /* Basic Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      color: #333;
-      transition: background-color 0.5s, color 0.5s;
-    }
-
-    /* Dark Mode Styles */
-    body.dark-mode {
-      background-color: #121212;
-      color: #ffffff;
-    }
-
-    /* Header Styles */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      background-color: #1DA1F2;
-      color: white;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .header nav a {
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .header nav a:hover {
-      text-decoration: underline;
-    }
-
-    /* Dark Mode Toggle */
-    .toggle-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    #dark-mode-toggle {
-      width: 40px;
-      height: 20px;
-      -webkit-appearance: none;
-      appearance: none;
-      background-color: #ccc;
-      outline: none;
-      border-radius: 20px;
-      transition: background-color 0.3s;
-      cursor: pointer;
-      position: relative;
-    }
-
-    #dark-mode-toggle:checked {
-      background-color: #1DA1F2;
-    }
-
-    #dark-mode-toggle::before {
-      content: '';
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      background-color: white;
-      border-radius: 50%;
-      top: 1px;
-      left: 1px;
-      transition: transform 0.3s;
-    }
-
-    #dark-mode-toggle:checked::before {
-      transform: translateX(20px);
-    }
-
-    .toggle-label {
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    /* Main Content Styles */
-    main {
-      padding: 20px;
-    }
-
-    section {
-      margin-bottom: 40px;
-    }
-
-    /* Carousel Styles */
-    .carousel-container {
-      text-align: center;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 10px;
-      max-width: 800px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      position: relative;
-    }
-
-    body.dark-mode .carousel-container {
-      background-color: rgba(0, 0, 0, 0.8);
-    }
-
-    .carousel-container h2 {
-      font-family: 'Arial', sans-serif;
-      color: #1DA1F2;
-      margin-bottom: 20px;
-    }
-
-    body.dark-mode .carousel-container h2 {
-      color: #bb86fc;
-    }
-
-    .carousel-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      transition: opacity 1s ease-in-out;
-      opacity: 1;
-    }
-
-    .carousel-controls {
-      margin-top: 15px;
-    }
-
-    .carousel-controls button {
-      padding: 10px 20px;
-      font-size: 1rem;
-      color: white;
-      background-color: #1DA1F2;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin: 0 10px;
-      transition: background-color 0.3s, transform 0.3s;
-    }
-
-    .carousel-controls button:hover {
-      background-color: #0d8de1;
-      transform: scale(1.05);
-    }
-
-    .carousel-indicators {
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .carousel-indicators .indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      margin: 0 5px;
-      background-color: #ccc;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .carousel-indicators .indicator.active {
-      background-color: #1DA1F2;
-    }
-
-    body.dark-mode .carousel-indicators .indicator {
-      background-color: #555;
-    }
-
-    body.dark-mode .carousel-indicators .indicator.active {
-      background-color: #bb86fc;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .carousel-container {
-        padding: 15px;
-        max-width: 90%;
-      }
-
-      .carousel-controls button {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-        margin: 0 5px;
-      }
-
-      .carousel-indicators .indicator {
-        width: 10px;
-        height: 10px;
-        margin: 0 3px;
-      }
-    }
-
-    /* Footer Styles */
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #1DA1F2;
-      color: white;
-    }
-
-    body.dark-mode footer {
-      background-color: #333;
-      color: #f0f0f0;
-    }
-  </style>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Link to styles.css -->
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <!-- Header -->
   <header class="header">
-    <h1>robbygat.com</h1>
-    <nav>
-      <a href="#carousel">Gallery</a>
-      <a href="#blog">Blog</a>
-      <a href="#music">Music</a>
-      <a href="#contact">Contact</a>
+    <img src="websiteimage.jpg" alt="Header Image" class="header-image">
+    <h1 class="header-title">robbygat.com</h1>
+    <nav class="social-links">
+      <a href="https://instagram.com/robbygat" target="_blank" class="social-button">Instagram</a>
+      <a href="https://x.com/robbygat" target="_blank" class="social-button">X</a>
+      <a href="https://youtube.com/@robbygat" target="_blank" class="social-button">YouTube</a>
+      <a href="https://tiktok.com/@robbygat" target="_blank" class="social-button">TikTok</a>
     </nav>
     <!-- Dark Mode Toggle -->
     <div class="toggle-container">
@@ -245,144 +36,241 @@
         onchange="toggleDarkMode()" 
       />
       <label for="dark-mode-toggle" class="toggle-label">
-        { /* Icons can be added here */ }
-        🌙/☀️
+        🌙 / ☀️
       </label>
     </div>
   </header>
-
+  
   <!-- Main Content -->
   <main>
     <!-- Carousel Section -->
     <section id="carousel">
-      <div id="react-root"></div>
+      <div id="carousel-root"></div>
     </section>
-
-    <!-- Blog Section -->
-    <section id="blog">
-      <h2>Blog</h2>
-      <p>Your blog content goes here.</p>
+    
+    <!-- Animated Text Section -->
+    <section id="animation">
+      <div id="animation-root"></div>
     </section>
-
-    <!-- Music Section -->
-    <section id="music">
-      <h2>Music</h2>
-      <p>Your music content goes here.</p>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Your contact form or information goes here.</p>
+    
+    <!-- World Clock Section -->
+    <section id="clock">
+      <div id="clock-root"></div>
     </section>
   </main>
-
+  
   <!-- Footer -->
   <footer>
+    <p>Home: Tachikawa, Tokyo</p>
     <p>&copy; 2025 robbygat.com</p>
   </footer>
-
-  <!-- React Carousel Script -->
+  
+  <!-- Translate Button -->
+  <button id="translate-button" class="translate-button" onclick="translateToJapanese()">Translate to Japanese</button>
+  
+  <!-- React Components -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      class Carousel extends React.Component {
-        constructor(props) {
-          super(props);
-          this.state = { currentImage: 0 };
-          this.nextImage = this.nextImage.bind(this);
-          this.prevImage = this.prevImage.bind(this);
-          this.goToImage = this.goToImage.bind(this);
-          this.handleKeyDown = this.handleKeyDown.bind(this);
+    // Carousel Component
+    class Carousel extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { currentImage: 0 };
+        this.nextImage = this.nextImage.bind(this);
+        this.prevImage = this.prevImage.bind(this);
+        this.goToImage = this.goToImage.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+      }
+      
+      componentDidMount() {
+        this.timerID = setInterval(this.nextImage, 5000);
+        document.addEventListener('keydown', this.handleKeyDown);
+      }
+      
+      componentWillUnmount() {
+        clearInterval(this.timerID);
+        document.removeEventListener('keydown', this.handleKeyDown);
+      }
+      
+      nextImage() {
+        this.setState({
+          currentImage: (this.state.currentImage + 1) % this.props.images.length
+        });
+      }
+      
+      prevImage() {
+        this.setState({
+          currentImage: (this.state.currentImage - 1 + this.props.images.length) % this.props.images.length
+        });
+      }
+      
+      goToImage(index) {
+        this.setState({ currentImage: index });
+      }
+      
+      handleKeyDown(e) {
+        if (e.key === 'ArrowRight') {
+          this.nextImage();
+        } else if (e.key === 'ArrowLeft') {
+          this.prevImage();
         }
-
-        componentDidMount() {
-          // Automatically move to the next image every 5 seconds
-          this.timerID = setInterval(
-            () => this.nextImage(),
-            5000
-          );
-          // Add keyboard event listener
-          document.addEventListener('keydown', this.handleKeyDown);
-        }
-
-        componentWillUnmount() {
-          clearInterval(this.timerID);
-          document.removeEventListener('keydown', this.handleKeyDown);
-        }
-
-        nextImage() {
-          this.setState({
-            currentImage: (this.state.currentImage + 1) % this.props.images.length
-          });
-        }
-
-        prevImage() {
-          this.setState({
-            currentImage: (this.state.currentImage - 1 + this.props.images.length) % this.props.images.length
-          });
-        }
-
-        goToImage(index) {
-          this.setState({ currentImage: index });
-        }
-
-        handleKeyDown(e) {
-          if (e.key === 'ArrowRight') {
-            this.nextImage();
-          } else if (e.key === 'ArrowLeft') {
-            this.prevImage();
-          }
-        }
-
-        render() {
-          return (
-            React.createElement('div', { className: 'carousel-container' },
-              React.createElement('h2', null, 'Image Carousel'),
-              React.createElement('img', { 
-                src: this.props.images[this.state.currentImage], 
-                alt: `Slide ${this.state.currentImage + 1}`, 
-                className: 'carousel-image active' 
-              }),
-              React.createElement('div', { className: 'carousel-controls' },
-                React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
-                React.createElement('button', { onClick: this.nextImage }, 'Next ❯')
-              ),
-              React.createElement('div', { className: 'carousel-indicators' },
-                this.props.images.map((_, index) => (
-                  React.createElement('span', { 
-                    key: index, 
-                    className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
-                    onClick: () => this.goToImage(index)
-                  })
-                ))
-              )
+      }
+      
+      render() {
+        return (
+          React.createElement('div', { className: 'carousel-container' },
+            React.createElement('h2', null, 'Image Carousel'),
+            React.createElement('img', { 
+              src: this.props.images[this.state.currentImage], 
+              alt: `Slide ${this.state.currentImage + 1}`, 
+              className: 'carousel-image' 
+            }),
+            React.createElement('div', { className: 'carousel-controls' },
+              React.createElement('button', { onClick: this.prevImage }, '❮ Prev'),
+              React.createElement('button', { onClick: this.nextImage }, 'Next ❯')
+            ),
+            React.createElement('div', { className: 'carousel-indicators' },
+              this.props.images.map((_, index) => (
+                React.createElement('span', { 
+                  key: index, 
+                  className: `indicator ${index === this.state.currentImage ? 'active' : ''}`, 
+                  onClick: () => this.goToImage(index)
+                })
+              ))
             )
-          );
-        }
+          )
+        );
       }
-
-      // Generate image paths
-      const images = [];
-      for (let i = 1; i <= 23; i++) {
-        images.push(`images/instagram${i}.png`);
+    }
+    
+    // Animated Text Component
+    class AnimatedText extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { currentWordIndex: 0, displayText: this.props.words[0], isCrossed: false };
       }
-
-      // Render the Carousel Component
-      ReactDOM.render(
-        React.createElement(Carousel, { images: images }, null),
-        document.getElementById('react-root')
-      );
-
-      // Dark Mode Toggle Function
-      window.toggleDarkMode = function() {
-        const checkbox = document.getElementById('dark-mode-toggle');
-        if (checkbox.checked) {
-          document.body.classList.add('dark-mode');
-        } else {
-          document.body.classList.remove('dark-mode');
-        }
-      };
-    });
+      
+      componentDidMount() {
+        this.startAnimation();
+      }
+      
+      componentWillUnmount() {
+        clearInterval(this.animationInterval);
+      }
+      
+      startAnimation() {
+        this.animationInterval = setInterval(() => {
+          this.setState({ isCrossed: true }, () => {
+            setTimeout(() => {
+              const nextIndex = (this.state.currentWordIndex + 1) % this.props.words.length;
+              this.setState({ 
+                currentWordIndex: nextIndex, 
+                displayText: this.props.words[nextIndex],
+                isCrossed: false 
+              }, () => {
+                this.startAnimation();
+              });
+            }, 1000); // Duration of cross-out animation
+          });
+        }, 3000); // Time between animations
+      }
+      
+      render() {
+        const { displayText, isCrossed } = this.state;
+        return (
+          React.createElement('div', { className: 'animated-text-container' },
+            React.createElement('h2', null, 'I am a '),
+            React.createElement('span', { className: isCrossed ? 'cross-out' : 'active-text' }, displayText)
+          )
+        );
+      }
+    }
+    
+    // Clock Component
+    class Clock extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { time: new Date() };
+        this.updateTime = this.updateTime.bind(this);
+      }
+      
+      componentDidMount() {
+        this.timerID = setInterval(this.updateTime, 1000);
+      }
+      
+      componentWillUnmount() {
+        clearInterval(this.timerID);
+      }
+      
+      updateTime() {
+        this.setState({ time: new Date() });
+      }
+      
+      render() {
+        const { time } = this.state;
+        return (
+          React.createElement('div', { className: 'clock-container' },
+            React.createElement('h2', null, 'World Clock'),
+            React.createElement('p', null, time.toLocaleString())
+          )
+        );
+      }
+    }
+    
+    // Define the words for animation
+    const words = [
+      'Linguist',
+      'Photographer',
+      'Actor',
+      'Journalist',
+      'Musician',
+      'Designer',
+      'UNEMPLOYED'
+    ];
+    
+    // Generate image paths
+    const carouselImages = [];
+    for (let i = 1; i <= 23; i++) {
+      carouselImages.push(`instagram${i}.png`);
+    }
+    
+    // Render Carousel
+    ReactDOM.render(
+      React.createElement(Carousel, { images: carouselImages }, null),
+      document.getElementById('carousel-root')
+    );
+    
+    // Render AnimatedText
+    ReactDOM.render(
+      React.createElement(AnimatedText, { words: words }, null),
+      document.getElementById('animation-root')
+    );
+    
+    // Render Clock
+    ReactDOM.render(
+      React.createElement(Clock, null, null),
+      document.getElementById('clock-root')
+    );
+    
+    // Translation Functionality
+    function translateToJapanese() {
+      const elements = document.querySelectorAll('[data-translate="yes"]');
+      elements.forEach(el => {
+        el.textContent = el.getAttribute('data-japanese');
+      });
+      document.getElementById('translate-button').disabled = true;
+      document.getElementById('translate-button').textContent = '日本語に翻訳済み';
+    }
+    
+    // Dark Mode Toggle Function
+    function toggleDarkMode() {
+      const checkbox = document.getElementById('dark-mode-toggle');
+      if (checkbox.checked) {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+    
   </script>
 </body>
 </html>
