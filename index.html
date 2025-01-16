@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>robbygat.com</title>
+  <title>robbygat.com - Portfolio</title>
   
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
@@ -22,9 +22,12 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
+  <!-- React Router -->
+  <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
+  
   <!-- Inline CSS for simplicity -->
   <style>
-    /* BASIC PAGE RESET & BODY STYLES */
+    /* BASIC PAGE RESET & VARIABLES */
     * {
       margin: 0;
       padding: 0;
@@ -34,6 +37,7 @@
     :root {
       --primary-color: #1DA1F2;
       --secondary-color: #0d8de1;
+      --accent-color: #ff4081;
       --background-light: #fff;
       --background-dark: #121212;
       --text-light: #000;
@@ -42,24 +46,25 @@
       --border-dark: #e0e0e0;
       --shadow-light: rgba(0,0,0,0.1);
       --shadow-dark: rgba(255,255,255,0.1);
-      --accent-color: #ff4081;
+      --font-family-serif: 'EB Garamond', serif;
+      --font-family-sans: 'Roboto', sans-serif;
       --transition-speed: 0.3s;
     }
 
     body {
       background-color: var(--background-light);
       color: var(--text-light);
-      font-family: 'Lora', serif;
+      font-family: var(--font-family-serif);
       line-height: 1.6;
       position: relative;
       overflow-x: hidden;
-
+      transition: background-color 0.5s, color 0.5s;
+      
       /* REPEATING TEXT BACKGROUND: "robbygat.com" */
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='black' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
       background-repeat: repeat;
-      background-attachment: fixed; /* Keeps background fixed during scroll */
+      background-attachment: fixed;
       background-size: contain;
-      transition: background-color 0.5s, color 0.5s;
     }
 
     body.dark-mode {
@@ -68,48 +73,64 @@
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='white' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
     }
 
-    /* HEADER / SOCIAL MEDIA BUTTONS */
-    .header {
+    /* HEADER / NAVBAR */
+    .navbar {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 20px;
-      padding: 20px 0;
-      background-color: rgba(255, 255, 255, 0.95); /* Semi-transparent background */
+      padding: 20px 40px;
+      background-color: rgba(255, 255, 255, 0.95);
       position: sticky;
       top: 0;
       z-index: 1000;
       box-shadow: 0 2px 4px var(--shadow-light);
-      transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
     }
 
-    body.dark-mode .header {
+    body.dark-mode .navbar {
       background-color: rgba(18, 18, 18, 0.95);
       box-shadow: 0 2px 4px var(--shadow-dark);
     }
 
-    .header a {
-      color: var(--text-light);
+    .navbar .logo {
+      font-size: 1.8rem;
+      font-family: var(--font-family-serif);
+      color: var(--primary-color);
       text-decoration: none;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      transition: transform var(--transition-speed) ease, color var(--transition-speed) ease;
-      position: relative;
+      transition: transform var(--transition-speed);
     }
 
-    body.dark-mode .header a {
+    .navbar .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .navbar .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar .nav-links a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-family: var(--font-family-sans);
+      font-size: 1rem;
+      transition: color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    body.dark-mode .navbar .nav-links a {
       color: var(--text-dark);
     }
 
-    /* Dark Mode Toggle Switch */
+    .navbar .nav-links a:hover {
+      color: var(--primary-color);
+      transform: scale(1.1);
+    }
+
+    /* Dark Mode Toggle */
     .toggle-switch {
-      position: absolute;
-      right: 20px;
-      top: 20px;
       display: flex;
       align-items: center;
       cursor: pointer;
-      z-index: 1001;
     }
 
     .toggle-switch input {
@@ -121,6 +142,12 @@
       align-items: center;
       cursor: pointer;
       font-size: 1rem;
+      color: var(--text-light);
+      transition: color var(--transition-speed);
+    }
+
+    body.dark-mode .toggle-switch label {
+      color: var(--text-dark);
     }
 
     .toggle-switch .slider {
@@ -153,245 +180,249 @@
       transform: translateX(26px);
     }
 
-    /* Adding hover effect: enlarges and changes color */
-    .header a:hover {
-      transform: scale(1.2);
-      color: var(--primary-color); /* Example: Twitter Blue */
+    /* MOBILE RESPONSIVENESS */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .navbar .nav-links {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
 
-    /* PAGE TITLE */
-    h1 {
+    /* HOME SECTION */
+    .home {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
       text-align: center;
-      letter-spacing: 1px;
-      margin: 2rem auto 1rem auto;
-      font-size: 3rem;
-      font-family: 'EB Garamond', serif;
-      max-width: 800px;
-      padding: 0 1rem;
-      position: relative;
-      z-index: 1;
-      transition: transform 0.5s ease;
-      animation: fadeInDown 1s ease-out;
+      padding: 0 20px;
+      animation: fadeInUp 1.5s ease-out;
     }
 
-    h1:hover {
+    .home h1 {
+      font-size: 4rem;
+      font-family: var(--font-family-serif);
+      margin-bottom: 20px;
+      transition: transform var(--transition-speed);
+    }
+
+    .home h1:hover {
       transform: scale(1.05);
     }
 
-    /* TAGLINE */
-    .tagline {
-      text-align: center;
-      font-style: italic;
-      margin: 0 0 2rem 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 2rem;
-      transition: color 0.3s ease;
-      position: relative;
-      display: inline-block;
+    .home p {
+      font-size: 1.5rem;
+      font-family: var(--font-family-sans);
+      color: var(--accent-color);
+      animation: typing 3s steps(30, end), blink-caret 0.75s step-end infinite;
+      white-space: nowrap;
       overflow: hidden;
-      min-height: 2.5em;
-      color: var(--accent-color);
-      text-decoration: line-through;
-      animation: crossOut 2s forwards;
+      border-right: 4px solid var(--accent-color);
+      width: 0;
+      animation-fill-mode: forwards;
     }
 
-    .tagline.unemployed {
-      text-decoration: none;
-      color: var(--accent-color);
-      font-size: 3rem;
-      animation: fadeInUnemployed 2s forwards;
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
     }
 
-    /* MAIN CONTENT WRAPPER */
-    .content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--accent-color); }
     }
 
-    p {
-      margin-bottom: 1.5rem;
+    /* ASCII ART SECTION */
+    .ascii-art {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      background-color: rgba(0,0,0,0.05);
+      margin: 40px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ascii-art pre {
+      font-family: 'Courier New', Courier, monospace;
       font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
+      white-space: pre-wrap;
+      color: var(--primary-color);
+      animation: fadeIn 2s ease-in-out, slideIn 10s linear infinite;
     }
 
-    /* IMAGE SECTION */
-    .image-container {
+    @keyframes slideIn {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-100%); }
+    }
+
+    /* PORTFOLIO SECTION */
+    .portfolio {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .portfolio {
+      background-color: var(--background-dark);
+    }
+
+    .portfolio h2 {
       text-align: center;
-      margin: 2rem 0;
-      animation: zoomIn 1.5s ease-out;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
     }
 
-    /* Grayscale transition effect on the image */
-    .image-container img {
-      max-width: 100%;
-      height: auto;
-      filter: grayscale(100%);
-      transition: filter 0.3s ease, transform 0.3s ease;
-      border: 2px solid var(--border-light);
-      padding: 5px;
-      border-radius: 8px;
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
 
-    body.dark-mode .image-container img {
-      border-color: var(--border-dark);
-    }
-
-    /* Hover to see color & slight scale-up */
-    .image-container img:hover {
-      filter: grayscale(0%);
-      transform: scale(1.02);
-    }
-
-    /* INSTAGRAM SLIDESHOW */
-    .slideshow-container {
+    .portfolio-item {
       position: relative;
-      max-width: 1000px;
-      margin: 2rem auto;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
       overflow: hidden;
+      border-radius: 10px;
       box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-      background-color: #fff;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
     }
 
-    body.dark-mode .slideshow-container {
-      border-color: var(--border-dark);
+    body.dark-mode .portfolio-item {
       box-shadow: 0 4px 8px var(--shadow-dark);
-      background-color: #1e1e1e;
     }
 
-    .mySlides {
-      display: none;
-      animation: fadeIn 1s ease-in-out;
-      position: relative;
+    .portfolio-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform var(--transition-speed);
+    }
+
+    .portfolio-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .portfolio-item .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-    }
-
-    .mySlides img {
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-      transition: transform 0.5s ease;
-    }
-
-    .mySlides img:hover {
-      transform: scale(1.05);
-    }
-
-    /* Caption text */
-    .caption {
+      background-color: rgba(29, 161, 242, 0.7);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity var(--transition-speed);
+      font-size: 1.2rem;
       text-align: center;
+    }
+
+    .portfolio-item:hover .overlay {
+      opacity: 1;
+    }
+
+    /* ROBBYSCRIPT SECTION */
+    .robbyscript {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .robbyscript {
+      background-color: var(--background-dark);
+    }
+
+    .robbyscript h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .robbyscript table {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    .robbyscript th, .robbyscript td {
+      border: 1px solid var(--border-light);
       padding: 10px;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.1rem;
-      color: #666;
-      background-color: #f2f2f2;
-      transition: background-color 0.3s ease;
+      text-align: center;
+      font-family: var(--font-family-sans);
     }
 
-    body.dark-mode .caption {
-      background-color: #2e2e2e;
-      color: #ccc;
-    }
-
-    .caption:hover {
-      background-color: #e6e6e6;
-    }
-
-    body.dark-mode .caption:hover {
-      background-color: #3e3e3e;
-    }
-
-    /* Next & previous buttons */
-    .prev, .next {
-      cursor: pointer;
-      position: absolute;
-      top: 50%;
-      width: auto;
-      padding: 16px;
-      margin-top: -22px;
-      color: var(--text-light);
-      font-weight: bold;
-      font-size: 18px;
-      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-      border-radius: 0 3px 3px 0;
-      user-select: none;
-      background-color: rgba(255,255,255,0.7);
-      transform: translateY(-50%);
-    }
-
-    body.dark-mode .prev, body.dark-mode .next {
+    body.dark-mode .robbyscript th, 
+    body.dark-mode .robbyscript td {
+      border-color: var(--border-dark);
       color: var(--text-dark);
-      background-color: rgba(30, 30, 30, 0.7);
     }
 
-    /* Position the "next button" to the right */
-    .next {
-      right: 0;
-      border-radius: 3px 0 0 3px;
-    }
-
-    /* On hover, add a darker background */
-    .prev:hover, .next:hover {
-      background-color: rgba(255,255,255,1);
-    }
-
-    body.dark-mode .prev:hover, body.dark-mode .next:hover {
-      background-color: rgba(30, 30, 30, 1);
+    .robbyscript th {
+      background-color: var(--primary-color);
+      color: #fff;
     }
 
     /* BLOG SECTION */
-    .blog-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
+    .blog {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
     }
 
-    body.dark-mode .blog-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
+    body.dark-mode .blog {
+      background-color: var(--background-dark);
     }
 
-    .blog-section h2 {
+    .blog h2 {
       text-align: center;
-      font-family: 'EB Garamond', serif;
       font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .blog-posts {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .blog-post {
-      margin-bottom: 2rem;
       background-color: #fff;
-      padding: 1.5rem;
-      border-left: 4px solid var(--primary-color);
-      transition: box-shadow var(--transition-speed) ease;
-      border-radius: 4px;
+      padding: 20px;
+      border-left: 5px solid var(--primary-color);
+      box-shadow: 0 2px 4px var(--shadow-light);
+      transition: box-shadow var(--transition-speed), transform var(--transition-speed);
     }
 
     body.dark-mode .blog-post {
-      background-color: #3e3e3e;
+      background-color: #2e2e2e;
+      box-shadow: 0 2px 4px var(--shadow-dark);
     }
 
     .blog-post:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 8px var(--shadow-light);
+      transform: translateY(-5px);
     }
 
     .blog-post h3 {
-      font-family: 'EB Garamond', serif;
       font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 10px;
       color: var(--primary-color);
-      transition: color var(--transition-speed) ease;
+      transition: color var(--transition-speed);
     }
 
     .blog-post h3:hover {
@@ -399,43 +430,41 @@
     }
 
     .blog-post p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.1rem;
+      font-family: var(--font-family-sans);
+      font-size: 1rem;
       color: #333;
+      transition: color var(--transition-speed);
     }
 
     body.dark-mode .blog-post p {
-      color: #e0e0e0;
+      color: #ccc;
     }
 
     /* BLOG FORM */
     .blog-form {
-      margin-top: 2rem;
-      padding: 1.5rem;
+      max-width: 600px;
+      margin: 40px auto 0 auto;
       background-color: #fff;
+      padding: 30px;
       border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 2px 4px var(--shadow-light);
-      transition: box-shadow var(--transition-speed) ease;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      transition: box-shadow var(--transition-speed), background-color var(--transition-speed);
     }
 
     body.dark-mode .blog-form {
-      background-color: #3e3e3e;
+      background-color: #2e2e2e;
       border-color: var(--border-dark);
-      box-shadow: 0 2px 4px var(--shadow-dark);
-    }
-
-    .blog-form:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
     .blog-form h3 {
       text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
+      font-size: 2rem;
+      margin-bottom: 20px;
       color: var(--primary-color);
-      transition: color var(--transition-speed) ease;
+      font-family: var(--font-family-serif);
+      transition: color var(--transition-speed);
     }
 
     .blog-form h3:hover {
@@ -449,32 +478,30 @@
     }
 
     .blog-form input, .blog-form textarea {
-      padding: 12px;
+      padding: 15px;
       border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
+      border-radius: 5px;
+      font-family: var(--font-family-sans);
       font-size: 1rem;
-      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+      transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
     }
 
     body.dark-mode .blog-form input, 
     body.dark-mode .blog-form textarea {
-      background-color: #4e4e4e;
+      background-color: #3e3e3e;
       color: #e0e0e0;
       border-color: var(--border-dark);
     }
 
     .blog-form button {
-      padding: 12px;
+      padding: 15px;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
       background-color: var(--primary-color);
       color: #fff;
       font-size: 1rem;
       cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
     }
 
     .blog-form button:hover {
@@ -482,58 +509,189 @@
       transform: scale(1.05);
     }
 
-    /* MUSIC SECTION */
-    .music-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
+    /* SHORT STORY SECTION */
+    .short-story {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
     }
 
-    body.dark-mode .music-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
+    body.dark-mode .short-story {
+      background-color: var(--background-dark);
+    }
+
+    .short-story h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .short-story iframe {
+      display: block;
+      margin: 0 auto;
+      width: 80%;
+      height: 600px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+    }
+
+    body.dark-mode .short-story iframe {
       box-shadow: 0 4px 8px var(--shadow-dark);
     }
 
-    .music-section h2 {
+    /* TWEET OF THE MINUTE SECTION */
+    .tweet-section {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
       text-align: center;
-      font-family: 'EB Garamond', serif;
+    }
+
+    body.dark-mode .tweet-section {
+      background-color: var(--background-dark);
+    }
+
+    .tweet-section h2 {
       font-size: 2.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
+      font-family: var(--font-family-serif);
     }
 
-    .music-section a {
-      display: block;
+    .tweet {
+      background-color: #f5f8fa;
+      padding: 20px;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px var(--shadow-light);
+      font-family: var(--font-family-sans);
+      font-size: 1.2rem;
+      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    body.dark-mode .tweet {
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      box-shadow: 0 2px 4px var(--shadow-dark);
+    }
+
+    /* MUSIC SECTION */
+    .music {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .music {
+      background-color: var(--background-dark);
+    }
+
+    .music h2 {
       text-align: center;
-      color: var(--primary-color); /* Spotify Blue */
-      text-decoration: none;
-      font-size: 1.3rem;
-      transition: color var(--transition-speed) ease, transform var(--transition-speed) ease;
-      margin-bottom: 1rem;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
     }
 
-    .music-section a:hover {
-      color: var(--secondary-color);
+    .music-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .music-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 200px;
+      height: 60px;
+      background-color: var(--primary-color);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    .music-links a:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* CONTACT SECTION */
+    .contact {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .contact {
+      background-color: var(--background-dark);
+    }
+
+    .contact h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-form input, .contact-form textarea {
+      padding: 15px;
+      border: 1px solid var(--border-light);
+      border-radius: 5px;
+      font-family: var(--font-family-sans);
+      font-size: 1rem;
+      transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+    }
+
+    body.dark-mode .contact-form input, 
+    body.dark-mode .contact-form textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-form button {
+      padding: 15px;
+      border: none;
+      border-radius: 5px;
+      background-color: var(--accent-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed), transform var(--transition-speed);
+    }
+
+    .contact-form button:hover {
+      background-color: #e91e63;
       transform: scale(1.05);
     }
 
     /* FOOTER */
     footer {
       text-align: center;
-      margin: 2rem 0;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.95);
       border-top: 1px solid var(--border-light);
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-family-sans);
       color: #666;
-      transition: color 0.5s, border-color 0.5s;
+      transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
     }
 
     body.dark-mode footer {
+      background-color: rgba(18, 18, 18, 0.95);
       color: #999;
       border-color: var(--border-dark);
     }
@@ -593,7 +751,7 @@
       text-align: center;
       color: #ccc;
       padding: 10px 0;
-      font-family: 'Roboto', sans-serif;
+      font-family: var(--font-family-sans);
       font-size: 1rem;
     }
 
@@ -614,344 +772,117 @@
       }
     }
 
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    @keyframes slideIn {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(-100%); }
     }
 
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* Portfolio Hover Effects */
+    .portfolio-item:hover .overlay {
+      background-color: rgba(29, 161, 242, 0.9);
     }
 
-    /* Tagline Cross-Out and Unemployed Animation */
-    @keyframes crossOut {
-      0% { text-decoration: line-through; }
-      100% { text-decoration: line-through; }
+    /* TWEET SECTION */
+    .tweet-section {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+      text-align: center;
     }
 
-    @keyframes fadeInUnemployed {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    body.dark-mode .tweet-section {
+      background-color: var(--background-dark);
     }
 
-    .shake {
-      animation: shake 0.5s;
-      animation-iteration-count: 2;
+    .tweet-section h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      font-family: var(--font-family-serif);
     }
 
-    @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    .tweet {
+      background-color: #f5f8fa;
+      padding: 20px;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px var(--shadow-light);
+      font-family: var(--font-family-sans);
+      font-size: 1.2rem;
+      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
     }
 
-    /* Particle Background */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      top: 0;
-      left: 0;
+    body.dark-mode .tweet {
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+      box-shadow: 0 2px 4px var(--shadow-dark);
     }
 
     /* Responsive Design */
-    @media (max-width: 1200px) {
-      .slideshow-container {
-        max-width: 90%;
-      }
-      .blog-section, .music-section {
-        padding: 1.5rem;
-      }
-    }
-
-    @media (max-width: 900px) {
-      h1 {
-        font-size: 2.5rem;
+    @media (max-width: 768px) {
+      .home h1 {
+        font-size: 3rem;
       }
 
-      .header a {
+      .home p {
         font-size: 1.2rem;
       }
 
-      .tagline {
-        font-size: 1.5rem;
-      }
-
-      .blog-section h2, .music-section h2 {
+      .portfolio h2, .blog h2, .music h2, .contact h2, .robbyscript h2, .short-story h2, .tweet-section h2 {
         font-size: 2rem;
       }
 
-      .prev, .next {
-        font-size: 16px;
-        padding: 12px;
-      }
-
-      .slideshow-container {
-        max-width: 100%;
-      }
-
-      .tagline.unemployed {
-        font-size: 2.5rem;
+      .music-links a {
+        width: 100%;
+        max-width: 300px;
       }
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 10px 20px;
       }
 
-      .header a {
+      .navbar .logo {
+        font-size: 1.5rem;
+      }
+
+      .navbar .nav-links a {
+        font-size: 0.9rem;
+      }
+
+      .toggle-switch label {
+        font-size: 0.9rem;
+      }
+
+      .home h1 {
+        font-size: 2.5rem;
+      }
+
+      .home p {
         font-size: 1rem;
       }
 
-      .tagline {
-        font-size: 1.2rem;
+      .ascii-art pre {
+        font-size: 0.8rem;
       }
 
-      .blog-section h2, .music-section h2 {
+      .portfolio h2, .blog h2, .music h2, .contact h2, .robbyscript h2, .short-story h2, .tweet-section h2 {
+        font-size: 1.8rem;
+      }
+
+      .blog-post h3 {
         font-size: 1.5rem;
       }
 
-      .prev, .next {
-        font-size: 14px;
-        padding: 10px;
+      .blog-form h3, .contact h2 {
+        font-size: 1.8rem;
       }
 
-      .tagline.unemployed {
-        font-size: 2rem;
+      .tweet {
+        font-size: 1rem;
       }
     }
-
-    /* Custom Alphabet Section */
-    .alphabet-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .alphabet-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .alphabet-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .alphabet-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 20px;
-      margin-top: 2rem;
-    }
-
-    .alphabet-card {
-      background-color: #fff;
-      padding: 1rem;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      text-align: center;
-      transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
-      cursor: pointer;
-    }
-
-    body.dark-mode .alphabet-card {
-      background-color: #3e3e3e;
-      border-color: var(--border-dark);
-    }
-
-    .alphabet-card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .alphabet-card .symbol {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      color: var(--primary-color);
-    }
-
-    .alphabet-card .phoneme {
-      font-size: 1rem;
-      color: #666;
-    }
-
-    body.dark-mode .alphabet-card .phoneme {
-      color: #ccc;
-    }
-
-    /* Contact Form Section */
-    .contact-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .contact-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .contact-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .contact-form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .contact-form input, .contact-form textarea {
-      padding: 12px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
-    }
-
-    body.dark-mode .contact-form input, 
-    body.dark-mode .contact-form textarea {
-      background-color: #4e4e4e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .contact-form button {
-      padding: 12px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .contact-form button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* Testimonials Section */
-    .testimonials-section {
-      max-width: 1200px;
-      margin: 3rem auto;
-      padding: 2rem;
-      background-color: #f9f9f9;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-
-    body.dark-mode .testimonials-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
-    .testimonials-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .testimonial {
-      background-color: #fff;
-      padding: 1.5rem;
-      border-left: 4px solid var(--accent-color);
-      margin-bottom: 1.5rem;
-      border-radius: 4px;
-      transition: box-shadow var(--transition-speed) ease;
-    }
-
-    body.dark-mode .testimonial {
-      background-color: #3e3e3e;
-    }
-
-    .testimonial:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .testimonial p {
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.1rem;
-      color: #333;
-    }
-
-    body.dark-mode .testimonial p {
-      color: #e0e0e0;
-    }
-
-    .testimonial .author {
-      margin-top: 0.5rem;
-      font-family: 'EB Garamond', serif;
-      font-size: 1rem;
-      color: var(--primary-color);
-    }
-
-    /* Responsive Grid for Alphabet and Testimonials */
-    @media (max-width: 900px) {
-      .alphabet-grid {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-        gap: 15px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .alphabet-grid {
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-        gap: 10px;
-      }
-    }
-
   </style>
 </head>
 <body>
@@ -1071,78 +1002,33 @@
 
   <!-- React Components -->
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, createContext, useContext } = React;
+    const { BrowserRouter, Route, Switch, Link } = ReactRouterDOM;
 
-    // Fake Alphabet Dictionary
-    const robbyScriptAlphabet = {
-      '𐌀': 'ɑː',
-      '𐌁': 'b',
-      '𐌂': 'k',
-      '𐌃': 'd',
-      '𐌄': 'ɛ',
-      '𐌅': 'f',
-      '𐌆': 'g',
-      '𐌇': 'h',
-      '𐌈': 'iː',
-      '𐌉': 'j',
-      '𐌊': 'kʰ',
-      '𐌋': 'l',
-      '𐌌': 'm',
-      '𐌍': 'n',
-      '𐌎': 'ŋ',
-      '𐌏': 'oː',
-      '𐌐': 'p',
-      '𐌑': 'q',
-      '𐌒': 'r',
-      '𐌓': 's',
-      '𐌔': 't',
-      '𐌕': 'uː',
-      '𐌖': 'v',
-      '𐌗': 'w',
-      '𐌘': 'x',
-      '𐌙': 'y',
-      '𐌚': 'z',
-      '𐌛': 'θ',
-      '𐌜': 'ð',
-      '𐌝': 'ʃ',
-      '𐌞': 'ʒ',
-      '𐌟': 'ʔ',
-      '𐌠': 'æ',
-      '𐌡': 'ɔ',
-      '𐌢': 'ø',
-      '𐌣': 'ɣ',
-      '𐌤': 'ʁ',
-      '𐌥': 'ħ',
-      '𐌦': 'ʕ',
-      '𐌧': 'ʢ',
-      '𐌨': 'ʡ',
-      '𐌩': 'ʙ',
-      '𐌪': 'ɮ',
-      '𐌫': 'ɬ',
-      '𐌬': 'ɮ',
-      '𐌭': 'ɰ',
-      '𐌮': 'ɵ',
-      '𐌯': 'ʋ',
-      '𐌰': 'a',
-      '𐌱': 'b',
-      '𐌲': 'c',
-      '𐌳': 'd',
-      // Add more as needed
-    };
+    // Theme Context
+    const ThemeContext = createContext();
 
     // Header Component
-    const Header = ({ toggleTheme, isDarkMode }) => (
-      <header className="header">
-        <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" className="fab fa-twitter"></a>
-        <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube" className="fab fa-youtube"></a>
-        <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram" className="fab fa-instagram"></a>
-        <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok" className="fab fa-tiktok"></a>
-        <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-      </header>
-    );
+    const Header = () => {
+      const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+
+      return (
+        <nav className="navbar" data-aos="fade-down">
+          <Link to="/" className="logo">robbygat.com</Link>
+          <div className="nav-links">
+            <Link to="/about">About</Link>
+            <Link to="/portfolio">Portfolio</Link>
+            <Link to="/blog">Blog</Link>
+            <Link to="/music">Music</Link>
+            <Link to="/contact">Contact</Link>
+          </div>
+          <ToggleSwitch isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
+        </nav>
+      );
+    };
 
     // Toggle Switch Component
-    const ToggleSwitch = ({ toggleTheme, isDarkMode }) => (
+    const ToggleSwitch = ({ isDarkMode, toggleTheme }) => (
       <div className="toggle-switch">
         <input type="checkbox" id="theme-toggle" checked={isDarkMode} onChange={toggleTheme} />
         <label htmlFor="theme-toggle">
@@ -1152,91 +1038,116 @@
       </div>
     );
 
-    // Tagline Component
-    const Tagline = () => {
-      const [isUnemployed, setIsUnemployed] = useState(false);
+    // Home Component
+    const Home = () => (
+      <section className="home" data-aos="fade-up">
+        <h1>Welcome to robbygat.com</h1>
+        <p>linguist, photographer, musician, actor, journalist, model</p>
+      </section>
+    );
 
-      useEffect(() => {
-        const timer = setTimeout(() => {
-          setIsUnemployed(true);
-        }, 2000); // Trigger after 2 seconds
+    // About Component
+    const About = () => (
+      <section className="about" data-aos="fade-up">
+        <h2>About Me</h2>
+        <p>
+          Hello! I'm Robby Gat, a multifaceted artist with a passion for language, photography, music, acting, journalism, and modeling.
+          My journey has been filled with creative exploration and dedication to honing my craft across various disciplines.
+        </p>
+        <p>
+          Whether I'm behind the camera capturing moments, composing melodies, or sharing stories through journalism, I strive to inspire and connect with audiences worldwide.
+        </p>
+      </section>
+    );
 
-        return () => clearTimeout(timer);
-      }, []);
+    // Portfolio Component
+    const Portfolio = () => {
+      const portfolioItems = [
+        { id: 1, src: "https://via.placeholder.com/300x200?text=Artwork+1", title: "Artwork 1", description: "Description of artwork 1." },
+        { id: 2, src: "https://via.placeholder.com/300x200?text=Artwork+2", title: "Artwork 2", description: "Description of artwork 2." },
+        { id: 3, src: "https://via.placeholder.com/300x200?text=Artwork+3", title: "Artwork 3", description: "Description of artwork 3." },
+        { id: 4, src: "https://via.placeholder.com/300x200?text=Artwork+4", title: "Artwork 4", description: "Description of artwork 4." },
+        { id: 5, src: "https://via.placeholder.com/300x200?text=Artwork+5", title: "Artwork 5", description: "Description of artwork 5." },
+        { id: 6, src: "https://via.placeholder.com/300x200?text=Artwork+6", title: "Artwork 6", description: "Description of artwork 6." },
+        { id: 7, src: "https://via.placeholder.com/300x200?text=Artwork+7", title: "Artwork 7", description: "Description of artwork 7." },
+        { id: 8, src: "https://via.placeholder.com/300x200?text=Artwork+8", title: "Artwork 8", description: "Description of artwork 8." },
+        { id: 9, src: "https://via.placeholder.com/300x200?text=Artwork+9", title: "Artwork 9", description: "Description of artwork 9." },
+        { id: 10, src: "https://via.placeholder.com/300x200?text=Artwork+10", title: "Artwork 10", description: "Description of artwork 10." },
+      ];
 
       return (
-        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
-          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
-        </div>
+        <section className="portfolio" data-aos="fade-up">
+          <h2>Portfolio</h2>
+          <div className="portfolio-grid">
+            {portfolioItems.map(item => (
+              <div className="portfolio-item" key={item.id} onClick={() => openLightbox(item.src, item.title)}>
+                <img src={item.src} alt={item.title} />
+                <div className="overlay">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       );
     };
 
-    // Slideshow Component
-    const Slideshow = () => {
-      const [slideIndex, setSlideIndex] = useState(0);
-      const slides = [
-        { src: "instagram1.png", alt: "1" },
-        { src: "instagram2.png", alt: "2" },
-        { src: "instagram3.png", alt: "3" },
-        { src: "instagram4.png", alt: "4" },
-        { src: "instagram5.png", alt: "5" },
-        { src: "instagram6.png", alt: "6" },
-        { src: "instagram7.png", alt: "7" },
-        { src: "instagram8.png", alt: "8" },
-        { src: "instagram9.png", alt: "9" },
-        { src: "instagram10.png", alt: "10" },
-        { src: "instagram11.png", alt: "11" },
-        { src: "instagram12.png", alt: "12" },
-        { src: "instagram13.png", alt: "13" },
-        { src: "instagram14.png", alt: "14" },
-        { src: "instagram15.png", alt: "15" },
-        { src: "instagram16.png", alt: "16" },
-        { src: "instagram17.png", alt: "17" },
-        { src: "instagram18.png", alt: "18" },
-        { src: "instagram19.png", alt: "19" },
-        { src: "instagram20.png", alt: "20" },
-        { src: "instagram21.png", alt: "21" },
-        { src: "instagram22.png", alt: "22" },
-        { src: "instagram23.png", alt: "23" },
-      ];
+    // Function to open Lightbox from Portfolio
+    const openLightbox = (src, alt) => {
+      window.openLightbox(src, alt);
+    };
 
-      useEffect(() => {
-        const interval = setInterval(() => {
-          setSlideIndex(prevIndex => (prevIndex + 1) % slides.length);
-        }, 3000);
-        return () => clearInterval(interval);
-      }, [slides.length]);
-
-      const nextSlide = () => {
-        setSlideIndex((slideIndex + 1) % slides.length);
-      };
-
-      const prevSlide = () => {
-        setSlideIndex((slideIndex - 1 + slides.length) % slides.length);
-      };
-
-      const openLightbox = (src, alt) => {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxCaption = document.getElementById('lightbox-caption');
-        lightbox.style.display = 'block';
-        lightboxImg.src = src;
-        lightboxCaption.textContent = alt;
+    // Robbyscript Component
+    const Robbyscript = () => {
+      const robbyscriptDict = {
+        '𝌯': 'p',
+        '𝍍': 'b',
+        '𝌲': 't',
+        '𝍊': 'd',
+        '𝌬': 'k',
+        '𝍐': 'g',
+        '𝍑': 's',
+        '𝍁': 'z',
+        '𝍂': 'ʃ',
+        '𝌵': 'ʒ',
+        '𝌸': 'f',
+        '𝍌': 'v',
+        '𝍄': 'h',
+        '𝍇': 'm',
+        '𝌶': 'ŋ',
+        '𝌹': 'n',
+        '𝍋': 'l',
+        '𝍈': 'i',
+        '𝌿': 'e',
+        '𝍅': 'a',
+        '𝌴': 'o',
+        '𝍎': 'u',
+        '𝍏': 'ɛ',
+        '𝌷': 'ɔ',
+        '𝍀': 'æ'
       };
 
       return (
-        <div className="slideshow-container" data-aos="fade-up">
-          {slides.map((slide, index) => (
-            <div className="mySlides" key={index} style={{ display: index === slideIndex ? 'block' : 'none' }}>
-              <img src={slide.src} alt={slide.alt} onClick={() => openLightbox(slide.src, slide.alt)} />
-            </div>
-          ))}
-
-          <div className="caption">pov</div>
-
-          <a className="prev" onClick={prevSlide}>&#10094;</a>
-          <a className="next" onClick={nextSlide}>&#10095;</a>
-        </div>
+        <section className="robbyscript" data-aos="fade-up">
+          <h2>Robbyscript Alphabet</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Robbyscript</th>
+                <th>IPA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(robbyscriptDict).map(([key, value], index) => (
+                <tr key={index}>
+                  <td style={{ fontSize: '2rem' }}>{key}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       );
     };
 
@@ -1246,7 +1157,7 @@
 
       useEffect(() => {
         // Fetch existing blog posts from Firestore
-        const unsubscribe = db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
+        db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
           const posts = [];
           querySnapshot.forEach((doc) => {
             posts.push({ id: doc.id, ...doc.data() });
@@ -1255,8 +1166,6 @@
         }, (error) => {
           console.error("Error fetching blog posts: ", error);
         });
-
-        return () => unsubscribe();
       }, []);
 
       const handleSubmit = (e) => {
@@ -1281,11 +1190,9 @@
       };
 
       return (
-        <div className="blog-section" data-aos="fade-up">
+        <section className="blog" data-aos="fade-up">
           <h2>Blog</h2>
-          
-          {/* Blog Posts */}
-          <div id="blog-posts">
+          <div className="blog-posts">
             {blogPosts.map(post => (
               <div className="blog-post" key={post.id}>
                 <h3>{post.title}</h3>
@@ -1293,187 +1200,182 @@
               </div>
             ))}
           </div>
-          
-          {/* Blog Submission Form */}
           <div className="blog-form">
             <h3>Submit a Blog Post</h3>
             <form onSubmit={handleSubmit}>
-              <input type="text" id="title" name="title" placeholder="Post Title" required />
-              <textarea id="content" name="content" rows="5" placeholder="Your post content..." required></textarea>
+              <input type="text" name="title" placeholder="Post Title" required />
+              <textarea name="content" rows="5" placeholder="Your post content..." required></textarea>
               <button type="submit">Submit Post</button>
             </form>
           </div>
-        </div>
+        </section>
+      );
+    };
+
+    // Short Story Component
+    const ShortStory = () => (
+      <section className="short-story" data-aos="fade-up">
+        <h2>Short Story</h2>
+        <iframe src="To%20Whoever%20Finds%20This.pdf" title="To Whoever Finds This" allowFullScreen></iframe>
+      </section>
+    );
+
+    // Tweet of the Minute Component
+    const TweetSection = () => {
+      const [currentTweet, setCurrentTweet] = useState('');
+
+      useEffect(() => {
+        const fetchTweets = async () => {
+          try {
+            // Note: Accessing Twitter's API directly from the frontend requires authentication.
+            // For security reasons, it's recommended to handle API calls from a backend.
+            // Here, we'll use placeholder tweets.
+
+            const placeholderTweets = [
+              "Excited to share my latest artwork! 🎨 #Art #Portfolio",
+              "Just finished writing a short story. Check it out! 📖 #Writing #Creative",
+              "Behind the scenes of my recent photoshoot. 📸 #Photography",
+              "New music coming soon! Stay tuned. 🎶 #Music #INTERNETCOWBOY",
+              "Loving the vibrant vibes of Tokyo! 🗼 #Travel #Tokyo",
+              // Add more placeholder tweets as desired
+            ];
+
+            const randomIndex = Math.floor(Math.random() * placeholderTweets.length);
+            setCurrentTweet(placeholderTweets[randomIndex]);
+          } catch (error) {
+            console.error("Error fetching tweets:", error);
+          }
+        };
+
+        fetchTweets(); // Fetch immediately on mount
+
+        const interval = setInterval(() => {
+          fetchTweets();
+        }, 60000); // Update every minute
+
+        return () => clearInterval(interval);
+      }, []);
+
+      return (
+        <section className="tweet-section" data-aos="fade-up">
+          <h2>Tweet of the Minute</h2>
+          <div className="tweet">
+            {currentTweet}
+          </div>
+        </section>
       );
     };
 
     // Music Section Component
     const MusicSection = () => (
-      <div className="music-section" data-aos="fade-up">
-        <h2>Albums by INTERNET COWBOY</h2>
-        <p>
-          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank">
-            Listen to my latest album on Spotify
+      <section className="music" data-aos="fade-up">
+        <h2>INTERNET COWBOY</h2>
+        <div className="music-links">
+          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-spotify" style={{ marginRight: '10px' }}></i> Listen on Spotify
           </a>
-        </p>
-      </div>
+          <a href="https://soundcloud.com/robbygat" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-soundcloud" style={{ marginRight: '10px' }}></i> Listen on SoundCloud
+          </a>
+          <!-- Add more music platforms as needed -->
+        </div>
+      </section>
+    );
+
+    // Contact Component
+    const Contact = () => {
+      const handleContactSubmit = (e) => {
+        e.preventDefault();
+        const name = e.target.name.value.trim();
+        const email = e.target.email.value.trim();
+        const message = e.target.message.value.trim();
+
+        if (name && email && message) {
+          // Implement contact form submission logic here (e.g., send email via EmailJS)
+          // For simplicity, we'll use mailto:
+          window.location.href = `mailto:robby@robbygat.com?subject=Contact%20Form%20Submission&body=Name:%20${encodeURIComponent(name)}%0AEmail:%20${encodeURIComponent(email)}%0AMessage:%20${encodeURIComponent(message)}`;
+        }
+      };
+
+      return (
+        <section className="contact" data-aos="fade-up">
+          <h2>Contact Me</h2>
+          <div className="contact-form">
+            <form onSubmit={handleContactSubmit}>
+              <input type="text" name="name" placeholder="Your Name" required />
+              <input type="email" name="email" placeholder="Your Email" required />
+              <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+              <button type="submit">Send Message</button>
+            </form>
+          </div>
+        </section>
+      );
+    };
+
+    // Lightbox Component
+    const Lightbox = () => {
+      const [isOpen, setIsOpen] = useState(false);
+      const [imgSrc, setImgSrc] = useState('');
+      const [caption, setCaption] = useState('');
+
+      useEffect(() => {
+        const handleClickOutside = (e) => {
+          if (e.target.className === 'lightbox') {
+            setIsOpen(false);
+          }
+        };
+
+        window.addEventListener('click', handleClickOutside);
+        return () => window.removeEventListener('click', handleClickOutside);
+      }, []);
+
+      const openLightbox = (src, alt) => {
+        setImgSrc(src);
+        setCaption(alt);
+        setIsOpen(true);
+      };
+
+      // Expose the openLightbox function globally
+      useEffect(() => {
+        window.openLightbox = openLightbox;
+      }, []);
+
+      return (
+        isOpen && (
+          <div className="lightbox" onClick={() => setIsOpen(false)}>
+            <span className="close" onClick={() => setIsOpen(false)}>&times;</span>
+            <img className="lightbox-content" src={imgSrc} alt={caption} />
+            <div id="lightbox-caption">{caption}</div>
+          </div>
+        )
+      );
+    };
+
+    // Robby's Short Story Component
+    const ShortStory = () => (
+      <section className="short-story" data-aos="fade-up">
+        <h2>Short Story</h2>
+        <iframe src="To%20Whoever%20Finds%20This.pdf" title="To Whoever Finds This" allowFullScreen></iframe>
+      </section>
     );
 
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
+
       return (
-        <footer>
-          &copy; {currentYear} robbygat.com
+        <footer data-aos="fade-up">
+          <p>&copy; {currentYear} robbygat.com | robbygat is Robert Gatzke | Tachikawa, Tokyo</p>
+          <p>
+            <a href="https://github.com/robbygat" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '10px', color: 'inherit', textDecoration: 'none' }}>
+              <i className="fab fa-github"></i> GitHub
+            </a>
+          </p>
         </footer>
       );
     };
 
-    // Alphabet Section Component
-    const AlphabetSection = () => {
-      const [searchTerm, setSearchTerm] = useState('');
-
-      const filteredAlphabet = Object.keys(robbyScriptAlphabet).filter(symbol =>
-        robbyScriptAlphabet[symbol].toLowerCase().includes(searchTerm.toLowerCase())
-      );
-
-      return (
-        <div className="alphabet-section" data-aos="fade-up">
-          <h2>ROBBYSCRIPT Alphabet</h2>
-          <p style={{ textAlign: 'center', fontFamily: 'Roboto, sans-serif', fontSize: '1.2rem', marginBottom: '1rem' }}>
-            Explore the unique ROBBYSCRIPT alphabet and its corresponding IPA phonemes.
-          </p>
-          <div style={{ maxWidth: '400px', margin: '0 auto 2rem auto' }}>
-            <input
-              type="text"
-              placeholder="Search Phonemes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px',
-                border: '1px solid var(--border-light)',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                fontFamily: 'Roboto, sans-serif'
-              }}
-            />
-          </div>
-          <div className="alphabet-grid">
-            {filteredAlphabet.map((symbol, index) => (
-              <div className="alphabet-card" key={index}>
-                <div className="symbol">{symbol}</div>
-                <div className="phoneme">{robbyScriptAlphabet[symbol]}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    };
-
-    // Contact Form Component
-    const ContactSection = () => {
-      const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-      });
-
-      const [status, setStatus] = useState('');
-
-      const handleChange = (e) => {
-        setFormData({
-          ...formData,
-          [e.target.name]: e.target.value
-        });
-      };
-
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const { name, email, message } = formData;
-
-        if (name && email && message) {
-          // For demonstration, we'll just log the data. In real application, you might send this to Firebase or another backend.
-          console.log("Contact Form Submitted:", formData);
-          setStatus('Message sent successfully!');
-          setFormData({ name: '', email: '', message: '' });
-        } else {
-          setStatus('Please fill in all fields.');
-        }
-      };
-
-      return (
-        <div className="contact-section" data-aos="fade-up">
-          <h2>Contact Me</h2>
-          <div className="contact-form">
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-              <textarea
-                name="message"
-                rows="5"
-                placeholder="Your Message..."
-                value={formData.message}
-                onChange={handleChange}
-                required
-              ></textarea>
-              <button type="submit">Send Message</button>
-            </form>
-            {status && <p style={{ marginTop: '1rem', textAlign: 'center', color: '#ff4081' }}>{status}</p>}
-          </div>
-        </div>
-      );
-    };
-
-    // Testimonials Section Component
-    const TestimonialsSection = () => {
-      const [testimonials, setTestimonials] = useState([]);
-
-      useEffect(() => {
-        // Fetch testimonials from Firestore
-        const unsubscribe = db.collection("testimonials").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
-          const ts = [];
-          querySnapshot.forEach((doc) => {
-            ts.push({ id: doc.id, ...doc.data() });
-          });
-          setTestimonials(ts);
-        }, (error) => {
-          console.error("Error fetching testimonials: ", error);
-        });
-
-        return () => unsubscribe();
-      }, []);
-
-      return (
-        <div className="testimonials-section" data-aos="fade-up">
-          <h2>Testimonials</h2>
-          <div id="testimonials">
-            {testimonials.length > 0 ? testimonials.map(testimonial => (
-              <div className="testimonial" key={testimonial.id}>
-                <p>"{testimonial.message}"</p>
-                <div className="author">- {testimonial.author}</div>
-              </div>
-            )) : <p style={{ textAlign: 'center' }}>No testimonials yet.</p>}
-          </div>
-        </div>
-      );
-    };
-
-    // Main App Component
+    // App Component
     const App = () => {
       const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -1486,60 +1388,32 @@
       }, []);
 
       const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
+        setIsDarkMode(prev => !prev);
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
       };
 
       return (
-        <>
-          <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-          <h1>robbygat.com</h1>
-          <Tagline />
-          <div className="content" data-aos="fade-up">
-            <p>BLOG / PORTFOLIO.</p>
-
-            {/* IMAGE */}
-            <div className="image-container" data-aos="zoom-in">
-              <img 
-                src="websiteimage.jpg" 
-                alt="Portfolio image of robbygat in black and white style"
-              />
-            </div>
-
-            <p>
-              Under construction!
-            </p>
-          </div>
-
-          {/* INSTAGRAM SLIDESHOW */}
-          <Slideshow />
-
-          {/* Lightbox Container */}
-          <div id="lightbox" className="lightbox">
-            <span className="close">&times;</span>
-            <img className="lightbox-content" id="lightbox-img" />
-            <div id="lightbox-caption"></div>
-          </div>
-
-          {/* BLOG SECTION */}
-          <BlogSection />
-
-          {/* Alphabet Section */}
-          <AlphabetSection />
-
-          {/* Contact Section */}
-          <ContactSection />
-
-          {/* Testimonials Section */}
-          <TestimonialsSection />
-
-          {/* MUSIC SECTION */}
-          <MusicSection />
-
-          {/* FOOTER */}
-          <Footer />
-        </>
+        <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+          <BrowserRouter>
+            <Header />
+            <AsciiArt />
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route path="/about" component={About} />
+              <Route path="/portfolio" component={Portfolio} />
+              <Route path="/blog" component={BlogSection} />
+              <Route path="/music" component={MusicSection} />
+              <Route path="/contact" component={Contact} />
+              {/* Add more routes as needed */}
+            </Switch>
+            <Robbyscript />
+            <ShortStory />
+            <TweetSection />
+            <Lightbox />
+            <Footer />
+          </BrowserRouter>
+        </ThemeContext.Provider>
       );
     };
 
@@ -1549,23 +1423,8 @@
 
   <!-- Lightbox Script -->
   <script>
-    // Get lightbox elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
-
-    // Close the lightbox when the close button is clicked
-    closeBtn.addEventListener('click', () => {
-      lightbox.style.display = 'none';
-    });
-
-    // Close the lightbox when clicking outside the image
-    window.addEventListener('click', (e) => {
-      if (e.target == lightbox) {
-        lightbox.style.display = 'none';
-      }
-    });
+    // The Lightbox functionality is handled within the React component.
+    // No additional scripts are required here.
   </script>
 </body>
 </html>
