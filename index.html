@@ -25,9 +25,6 @@
   <!-- React Router -->
   <script src="https://unpkg.com/react-router-dom/umd/react-router-dom.min.js"></script>
   
-  <!-- EmailJS SDK -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
-  
   <!-- Inline CSS for simplicity -->
   <style>
     /* BASIC PAGE RESET & VARIABLES */
@@ -241,75 +238,6 @@
       50% { border-color: var(--accent-color); }
     }
 
-    /* ASCII ART SECTION */
-    .ascii-art {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 200px;
-      background-color: rgba(0,0,0,0.05);
-      margin: 40px 0;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .ascii-art pre {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1rem;
-      white-space: pre-wrap;
-      color: var(--primary-color);
-      animation: fadeIn 2s ease-in-out, slideIn 10s linear infinite;
-    }
-
-    @keyframes slideIn {
-      0% { transform: translateY(100%); }
-      100% { transform: translateY(-100%); }
-    }
-
-    /* ROBBYSCRIPT SECTION */
-    .robbyscript {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .robbyscript {
-      background-color: var(--background-dark);
-    }
-
-    .robbyscript h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      font-family: var(--font-family-serif);
-    }
-
-    .robbyscript table {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-
-    .robbyscript th, .robbyscript td {
-      border: 1px solid var(--border-light);
-      padding: 10px;
-      text-align: center;
-      font-family: var(--font-family-sans);
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode .robbyscript th, body.dark-mode .robbyscript td {
-      border-color: var(--border-dark);
-      background-color: #2e2e2e;
-      color: #e0e0e0;
-    }
-
-    .robbyscript th {
-      background-color: var(--primary-color);
-      color: #fff;
-    }
-
     /* PORTFOLIO SECTION */
     .portfolio {
       padding: 60px 20px;
@@ -340,6 +268,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 8px var(--shadow-light);
       transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      cursor: pointer;
     }
 
     body.dark-mode .portfolio-item {
@@ -376,6 +305,107 @@
 
     .portfolio-item:hover .overlay {
       opacity: 1;
+    }
+
+    /* ROBBYSCRIPT DICTIONARY SECTION */
+    .robbyscript {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .robbyscript {
+      background-color: var(--background-dark);
+    }
+
+    .robbyscript h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .robbyscript table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    .robbyscript th, .robbyscript td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+      font-family: var(--font-family-sans);
+      transition: background-color var(--transition-speed), color var(--transition-speed);
+    }
+
+    body.dark-mode .robbyscript th, 
+    body.dark-mode .robbyscript td {
+      border-color: var(--border-dark);
+      background-color: #2e2e2e;
+      color: #e0e0e0;
+    }
+
+    .robbyscript th {
+      background-color: var(--primary-color);
+      color: #fff;
+    }
+
+    /* SHORT STORY SECTION */
+    .short-story {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+    }
+
+    body.dark-mode .short-story {
+      background-color: var(--background-dark);
+    }
+
+    .short-story h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .short-story embed, .short-story iframe {
+      display: block;
+      margin: 0 auto;
+      width: 80%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      transition: box-shadow var(--transition-speed);
+    }
+
+    body.dark-mode .short-story embed, 
+    body.dark-mode .short-story iframe {
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    /* RANDOM TWEETS SECTION */
+    .random-tweet {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+      text-align: center;
+    }
+
+    body.dark-mode .random-tweet {
+      background-color: var(--background-dark);
+    }
+
+    .random-tweet h2 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .tweet-container {
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     /* BLOG SECTION */
@@ -513,64 +543,6 @@
       transform: scale(1.05);
     }
 
-    /* CONTACT SECTION */
-    .contact {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .contact {
-      background-color: var(--background-dark);
-    }
-
-    .contact h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 40px;
-      font-family: var(--font-family-serif);
-    }
-
-    .contact-form {
-      max-width: 600px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .contact-form input, .contact-form textarea {
-      padding: 15px;
-      border: 1px solid var(--border-light);
-      border-radius: 5px;
-      font-family: var(--font-family-sans);
-      font-size: 1rem;
-      transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
-    }
-
-    body.dark-mode .contact-form input, 
-    body.dark-mode .contact-form textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-
-    .contact-form button {
-      padding: 15px;
-      border: none;
-      border-radius: 5px;
-      background-color: var(--accent-color);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed), transform var(--transition-speed);
-    }
-
-    .contact-form button:hover {
-      background-color: #e91e63;
-      transform: scale(1.05);
-    }
-
     /* MUSIC SECTION */
     .music {
       padding: 60px 20px;
@@ -615,41 +587,6 @@
       transform: scale(1.05);
     }
 
-    /* TWEET OF THE MINUTE SECTION */
-    .tweet-of-the-minute {
-      padding: 60px 20px;
-      background-color: var(--background-light);
-      transition: background-color var(--transition-speed);
-    }
-
-    body.dark-mode .tweet-of-the-minute {
-      background-color: var(--background-dark);
-    }
-
-    .tweet-of-the-minute h2 {
-      text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      font-family: var(--font-family-serif);
-    }
-
-    .tweet-content {
-      max-width: 800px;
-      margin: 0 auto;
-      font-family: var(--font-family-sans);
-      font-size: 1.2rem;
-      color: var(--text-light);
-      background-color: rgba(0,0,0,0.05);
-      padding: 20px;
-      border-radius: 10px;
-      transition: background-color var(--transition-speed), color var(--transition-speed);
-    }
-
-    body.dark-mode .tweet-content {
-      background-color: rgba(255,255,255,0.1);
-      color: var(--text-dark);
-    }
-
     /* SHORT STORY SECTION */
     .short-story {
       padding: 60px 20px;
@@ -664,23 +601,47 @@
     .short-story h2 {
       text-align: center;
       font-size: 2.5rem;
-      margin-bottom: 20px;
+      margin-bottom: 40px;
       font-family: var(--font-family-serif);
     }
 
-    .short-story iframe {
+    .short-story embed, .short-story iframe {
       display: block;
       margin: 0 auto;
       width: 80%;
       height: 600px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-light);
       transition: box-shadow var(--transition-speed);
     }
 
+    body.dark-mode .short-story embed, 
     body.dark-mode .short-story iframe {
       box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    /* RANDOM TWEETS SECTION */
+    .random-tweet {
+      padding: 60px 20px;
+      background-color: var(--background-light);
+      transition: background-color var(--transition-speed);
+      text-align: center;
+    }
+
+    body.dark-mode .random-tweet {
+      background-color: var(--background-dark);
+    }
+
+    .random-tweet h2 {
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      font-family: var(--font-family-serif);
+    }
+
+    .tweet-container {
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     /* FOOTER */
@@ -698,16 +659,6 @@
       background-color: rgba(18, 18, 18, 0.95);
       color: #999;
       border-color: var(--border-dark);
-    }
-
-    footer p {
-      margin: 5px 0;
-    }
-
-    footer .location {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #888;
     }
 
     /* Lightbox Styles */
@@ -801,18 +752,13 @@
         font-size: 1.2rem;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2, .robbyscript h2, .short-story h2, .tweet-of-the-minute h2 {
+      .portfolio h2, .blog h2, .music h2, .contact h2, .robbyscript h2, .short-story h2, .random-tweet h2 {
         font-size: 2rem;
       }
 
       .music-links a {
         width: 100%;
         max-width: 300px;
-      }
-
-      .short-story iframe {
-        width: 95%;
-        height: 400px;
       }
     }
 
@@ -841,24 +787,30 @@
         font-size: 1rem;
       }
 
-      .ascii-art pre {
-        font-size: 0.8rem;
+      .robbyscript table {
+        width: 100%;
       }
 
-      .portfolio h2, .blog h2, .music h2, .contact h2, .robbyscript h2, .short-story h2, .tweet-of-the-minute h2 {
-        font-size: 1.8rem;
+      .robbyscript th, .robbyscript td {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .short-story embed, .short-story iframe {
+        width: 95%;
+        height: 400px;
       }
 
       .blog-post h3 {
         font-size: 1.5rem;
       }
 
-      .blog-form h3, .contact h2, .robbyscript h2, .short-story h2, .tweet-of-the-minute h2 {
+      .blog-form h3, .contact h2 {
         font-size: 1.8rem;
       }
 
-      .tweet-content {
-        font-size: 1rem;
+      .random-tweet h2 {
+        font-size: 2rem;
       }
     }
   </style>
@@ -955,13 +907,6 @@
     });
   </script>
 
-  <!-- EmailJS Initialization -->
-  <script type="text/javascript">
-    (function(){
-      emailjs.init("YOUR_USER_ID"); // Replace 'YOUR_USER_ID' with your actual EmailJS user ID
-    })();
-  </script>
-
   <!-- Firebase SDKs -->
   <!-- Include Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -1048,9 +993,9 @@
     // Portfolio Component
     const Portfolio = () => {
       const portfolioItems = [
-        { id: 1, src: "portfolio1.jpg", title: "Photography Project 1", description: "Description of project 1." },
-        { id: 2, src: "portfolio2.jpg", title: "Photography Project 2", description: "Description of project 2." },
-        { id: 3, src: "portfolio3.jpg", title: "Photography Project 3", description: "Description of project 3." },
+        { id: 1, src: "https://via.placeholder.com/300x200?text=Portfolio+1", title: "Photography Project 1", description: "Description of project 1." },
+        { id: 2, src: "https://via.placeholder.com/300x200?text=Portfolio+2", title: "Photography Project 2", description: "Description of project 2." },
+        { id: 3, src: "https://via.placeholder.com/300x200?text=Portfolio+3", title: "Photography Project 3", description: "Description of project 3." },
         // Add more portfolio items as needed
       ];
 
@@ -1059,7 +1004,7 @@
           <h2>Portfolio</h2>
           <div className="portfolio-grid">
             {portfolioItems.map(item => (
-              <div className="portfolio-item" key={item.id} onClick={() => openLightbox(item.src, item.title)}>
+              <div className="portfolio-item" key={item.id} onClick={() => window.openLightbox(item.src, item.title)}>
                 <img src={item.src} alt={item.title} />
                 <div className="overlay">
                   <h3>{item.title}</h3>
@@ -1072,13 +1017,118 @@
       );
     };
 
+    // Robbyscript Dictionary Component
+    const RobbyscriptDictionary = () => {
+      const robbyscriptMapping = {
+        '𝌯': 'p',
+        '𝍍': 'b',
+        '𝌲': 't',
+        '𝍊': 'd',
+        '𝌬': 'k',
+        '𝍐': 'g',
+        '𝍑': 's',
+        '𝍁': 'z',
+        '𝍂': 'ʃ',
+        '𝌵': 'ʒ',
+        '𝌸': 'f',
+        '𝍌': 'v',
+        '𝍄': 'h',
+        '𝍇': 'm',
+        '𝌶': 'ŋ',
+        '𝌹': 'n',
+        '𝍋': 'l',
+        '𝍈': 'i',
+        '𝌿': 'e',
+        '𝍅': 'a',
+        '𝌴': 'o',
+        '𝍎': 'u',
+        '𝍏': 'ɛ',
+        '𝌷': 'ɔ',
+        '𝍀': 'æ'
+      };
+
+      return (
+        <section className="robbyscript" data-aos="fade-up">
+          <h2>Robbyscript Dictionary</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Robbyscript</th>
+                <th>IPA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(robbyscriptMapping).map(([key, value], index) => (
+                <tr key={index}>
+                  <td>{key}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      );
+    };
+
+    // Short Story Component
+    const ShortStory = () => (
+      <section className="short-story" data-aos="fade-up">
+        <h2>Short Story</h2>
+        <embed src="To Whoever Finds This.pdf" type="application/pdf" />
+        <!-- Alternatively, use an iframe:
+        <iframe src="To Whoever Finds This.pdf" title="Short Story"></iframe>
+        -->
+      </section>
+    );
+
+    // Random Tweets Component
+    const RandomTweets = () => {
+      const tweetURLs = [
+        "https://x.com/robbygat/status/1712276909462008187",
+        "https://x.com/robbygat/status/1786613162537627707",
+        "https://x.com/robbygat/status/1681274164672331779",
+        "https://x.com/robbygat/status/1848056931984056753",
+        "https://x.com/robbygat/status/1651355099040555008",
+        "https://x.com/robbygat/status/1848380588534980884",
+        "https://x.com/robbygat/status/1712331930023141846",
+        "https://x.com/robbygat/status/1668788978714046465",
+        "https://x.com/robbygat/status/1649181731541360641",
+        "https://x.com/robbygat/status/1631853358662205441",
+        "https://x.com/robbygat/status/1598401043292987392",
+        "https://x.com/robbygat/status/1679489454309011457",
+        "https://x.com/robbygat/status/1670875379949531148",
+        "https://x.com/robbygat/status/1650568035629948947",
+        "https://x.com/robbygat/status/1652675215669989376"
+      ];
+
+      const [randomTweet, setRandomTweet] = useState("");
+
+      useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * tweetURLs.length);
+        setRandomTweet(tweetURLs[randomIndex]);
+      }, [tweetURLs]);
+
+      return (
+        <section className="random-tweet" data-aos="fade-up">
+          <h2>Latest Tweet</h2>
+          <div className="tweet-container">
+            {randomTweet && (
+              <blockquote className="twitter-tweet">
+                <a href={randomTweet}></a>
+              </blockquote>
+            )}
+          </div>
+        </section>
+      );
+    };
+
     // Blog Section Component
     const BlogSection = () => {
       const [blogPosts, setBlogPosts] = useState([]);
 
       useEffect(() => {
         // Fetch existing blog posts from Firestore
-        db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
+        const unsubscribe = db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
           const posts = [];
           querySnapshot.forEach((doc) => {
             posts.push({ id: doc.id, ...doc.data() });
@@ -1087,6 +1137,8 @@
         }, (error) => {
           console.error("Error fetching blog posts: ", error);
         });
+
+        return () => unsubscribe();
       }, []);
 
       const handleSubmit = (e) => {
@@ -1137,29 +1189,31 @@
     const MusicSection = () => (
       <section className="music" data-aos="fade-up">
         <h2>INTERNET COWBOY</h2>
-        <p>
+        <div className="music-links">
           <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" rel="noopener noreferrer">
-            Listen to my latest album on Spotify
+            <i className="fab fa-spotify" style={{ marginRight: '10px' }}></i> Listen on Spotify
           </a>
-        </p>
+          <a href="https://soundcloud.com/robbygat" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-soundcloud" style={{ marginRight: '10px' }}></i> Listen on SoundCloud
+          </a>
+          <!-- Add more music platforms as needed -->
+        </div>
       </section>
     );
 
-    // Contact Component with EmailJS
+    // Contact Component
     const Contact = () => {
       const handleContactSubmit = (e) => {
         e.preventDefault();
-        const form = e.target;
+        const name = e.target.name.value.trim();
+        const email = e.target.email.value.trim();
+        const message = e.target.message.value.trim();
 
-        emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', form)
-          .then((result) => {
-              console.log(result.text);
-              alert("Thank you for your message!");
-              form.reset();
-          }, (error) => {
-              console.log(error.text);
-              alert("An error occurred while sending your message. Please try again later.");
-          });
+        if (name && email && message) {
+          // Implement contact form submission logic here (e.g., send email or store in Firestore)
+          alert("Thank you for your message!");
+          e.target.reset();
+        }
       };
 
       return (
@@ -1177,309 +1231,6 @@
       );
     };
 
-    // ASCII Art Component
-    const AsciiArt = () => {
-      const asciiArts = [
-        `
-         ___
-        / _ \\
-       | | | |
-       | | | |
-        \\___/
-        `,
-        `
-        _____
-       /     \\
-      | () () |
-       \\  ^  /
-        |||||
-        |||||
-        `,
-        `
-         ____  
-        / ___| 
-       | |     
-       | |___  
-        \\____|
-        `,
-        `
-         __
-        / /_
-       | '_ \\
-       | (_) |
-        \\___/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        _____
-       |  __ \\
-       | |__) |
-       |  ___/
-       | |    
-       |_|    
-        `,
-        `
-         _____ 
-        | ____|
-        | |__  
-        |  __| 
-        | |___ 
-        \\____/ 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-        _   _ 
-       | | | |
-       | |_| |
-       |  _  |
-       | | | |
-       |_| |_|
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-         ____  
-        |  _ \\
-        | |_) |
-        |  _ <
-        | |_) |
-        |____/
-        `,
-        `
-         ___  
-        / _ \\
-       | | | |
-       | |_| |
-        \\___/ 
-        `,
-        `
-        ____  
-       |  _ \\
-       | |_) |
-       |  _ <
-       | |_) |
-       |____/
-        `,
-        `
-         __  
-        |  | 
-        |  | 
-        |  | 
-        |__| 
-        `,
-        `
-        _____ 
-       | ____|
-       | |__  
-       |  __| 
-       | |___ 
-       |_____| 
-        `,
-      ];
-
-      const [currentArt, setCurrentArt] = useState(0);
-
-      useEffect(() => {
-        const today = new Date().getDate() - 1; // 0-based index
-        setCurrentArt(today % asciiArts.length);
-      }, [asciiArts.length]);
-
-      return (
-        <div className="ascii-art" data-aos="fade-up">
-          <pre>{asciiArts[currentArt]}</pre>
-        </div>
-      );
-    };
-
-    // Robbyscript Section Component
-    const Robbyscript = () => {
-      const robbyscriptMapping = {
-        '𝌯': 'p',
-        '𝍍': 'b',
-        '𝌲': 't',
-        '𝍊': 'd',
-        '𝌬': 'k',
-        '𝍐': 'g',
-        '𝍑': 's',
-        '𝍁': 'z',
-        '𝍂': 'ʃ',
-        '𝌵': 'ʒ',
-        '𝌸': 'f',
-        '𝍌': 'v',
-        '𝍄': 'h',
-        '𝍇': 'm',
-        '𝌶': 'ŋ',
-        '𝌹': 'n',
-        '𝍋': 'l',
-        '𝍈': 'i',
-        '𝌿': 'e',
-        '𝍅': 'a',
-        '𝌴': 'o',
-        '𝍎': 'u',
-        '𝍏': 'ɛ',
-        '𝌷': 'ɔ',
-        '𝍀': 'æ'
-      };
-
-      return (
-        <section className="robbyscript" data-aos="fade-up">
-          <h2>Robbyscript Alphabet</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Robbyscript Letter</th>
-                <th>IPA Sound</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(robbyscriptMapping).map(([letter, ipa], index) => (
-                <tr key={index}>
-                  <td style={{ fontSize: '2rem' }}>{letter}</td>
-                  <td>{ipa}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      );
-    };
-
-    // Short Story Component
-    const ShortStory = () => (
-      <section className="short-story" data-aos="fade-up">
-        <h2>Short Story</h2>
-        <iframe src="To%20Whoever%20Finds%20This.pdf" title="To Whoever Finds This" allowfullscreen></iframe>
-      </section>
-    );
-
-    // Tweet of the Minute Component
-    const TweetOfTheMinute = () => {
-      const tweets = [
-        "Just released my new album! Listen now on Spotify. #NewMusic #INTERNETCOWBOY",
-        "Exploring new photography techniques today. Can't wait to share the results! 📸",
-        "Excited to announce my upcoming acting project. Stay tuned! 🎬",
-        "Writing continues on my latest short story. Thoughts welcome!",
-        "Live streaming my songwriting session tonight. Join me! 🎶",
-        // Add more predefined tweets as desired
-      ];
-
-      const [currentTweet, setCurrentTweet] = useState('');
-
-      useEffect(() => {
-        const getRandomTweet = () => {
-          const randomIndex = Math.floor(Math.random() * tweets.length);
-          setCurrentTweet(tweets[randomIndex]);
-        };
-
-        getRandomTweet(); // Initial tweet
-        const interval = setInterval(getRandomTweet, 60000); // Change tweet every minute
-
-        return () => clearInterval(interval);
-      }, [tweets]);
-
-      return (
-        <section className="tweet-of-the-minute" data-aos="fade-up">
-          <h2>Tweet of the Minute</h2>
-          <div className="tweet-content">
-            {currentTweet}
-          </div>
-        </section>
-      );
-    };
-
     // Slideshow Component
     const Slideshow = () => {
       const [slideIndex, setSlideIndex] = useState(0);
@@ -1490,8 +1241,24 @@
         { src: "https://via.placeholder.com/800x400?text=Instagram+4", alt: "Instagram Post 4" },
         { src: "https://via.placeholder.com/800x400?text=Instagram+5", alt: "Instagram Post 5" },
         { src: "https://via.placeholder.com/800x400?text=Instagram+6", alt: "Instagram Post 6" },
-        // Add more slides as needed
-      };
+        { src: "https://via.placeholder.com/800x400?text=Instagram+7", alt: "Instagram Post 7" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+8", alt: "Instagram Post 8" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+9", alt: "Instagram Post 9" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+10", alt: "Instagram Post 10" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+11", alt: "Instagram Post 11" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+12", alt: "Instagram Post 12" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+13", alt: "Instagram Post 13" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+14", alt: "Instagram Post 14" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+15", alt: "Instagram Post 15" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+16", alt: "Instagram Post 16" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+17", alt: "Instagram Post 17" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+18", alt: "Instagram Post 18" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+19", alt: "Instagram Post 19" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+20", alt: "Instagram Post 20" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+21", alt: "Instagram Post 21" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+22", alt: "Instagram Post 22" },
+        { src: "https://via.placeholder.com/800x400?text=Instagram+23", alt: "Instagram Post 23" },
+      ];
 
       useEffect(() => {
         const interval = setInterval(() => {
@@ -1509,7 +1276,6 @@
       };
 
       const openLightbox = (src, alt) => {
-        // This function will be handled by the Lightbox component
         window.openLightbox(src, alt);
       };
 
@@ -1568,20 +1334,175 @@
       );
     };
 
+    // Blog Section Component
+    const BlogSection = () => {
+      const [blogPosts, setBlogPosts] = useState([]);
+
+      useEffect(() => {
+        // Fetch existing blog posts from Firestore
+        const unsubscribe = db.collection("blogPosts").orderBy("timestamp", "desc").onSnapshot((querySnapshot) => {
+          const posts = [];
+          querySnapshot.forEach((doc) => {
+            posts.push({ id: doc.id, ...doc.data() });
+          });
+          setBlogPosts(posts);
+        }, (error) => {
+          console.error("Error fetching blog posts: ", error);
+        });
+
+        return () => unsubscribe();
+      }, []);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const title = e.target.title.value.trim();
+        const content = e.target.content.value.trim();
+
+        if (title && content) {
+          db.collection("blogPosts").add({
+            title: title,
+            content: content,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          })
+          .then((docRef) => {
+            console.log("Blog post added with ID: ", docRef.id);
+            e.target.reset();
+          })
+          .catch((error) => {
+            console.error("Error adding blog post: ", error);
+          });
+        }
+      };
+
+      return (
+        <section className="blog" data-aos="fade-up">
+          <h2>Blog</h2>
+          <div className="blog-posts">
+            {blogPosts.map(post => (
+              <div className="blog-post" key={post.id}>
+                <h3>{post.title}</h3>
+                <p>{post.content}</p>
+              </div>
+            ))}
+          </div>
+          <div className="blog-form">
+            <h3>Submit a Blog Post</h3>
+            <form onSubmit={handleSubmit}>
+              <input type="text" name="title" placeholder="Post Title" required />
+              <textarea name="content" rows="5" placeholder="Your post content..." required></textarea>
+              <button type="submit">Submit Post</button>
+            </form>
+          </div>
+        </section>
+      );
+    };
+
+    // Music Section Component
+    const MusicSection = () => (
+      <section className="music" data-aos="fade-up">
+        <h2>INTERNET COWBOY</h2>
+        <div className="music-links">
+          <a href="https://open.spotify.com/album/0dUD6xpOJvMv31VTx2zC5E" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-spotify" style={{ marginRight: '10px' }}></i> Listen on Spotify
+          </a>
+          <a href="https://soundcloud.com/robbygat" target="_blank" rel="noopener noreferrer">
+            <i className="fab fa-soundcloud" style={{ marginRight: '10px' }}></i> Listen on SoundCloud
+          </a>
+          <!-- Add more music platforms as needed -->
+        </div>
+      </section>
+    );
+
+    // Contact Component
+    const Contact = () => {
+      const handleContactSubmit = (e) => {
+        e.preventDefault();
+        const name = e.target.name.value.trim();
+        const email = e.target.email.value.trim();
+        const message = e.target.message.value.trim();
+
+        if (name && email && message) {
+          // Implement contact form submission logic here (e.g., send email or store in Firestore)
+          alert("Thank you for your message!");
+          e.target.reset();
+        }
+      };
+
+      return (
+        <section className="contact" data-aos="fade-up">
+          <h2>Contact Me</h2>
+          <div className="contact-form">
+            <form onSubmit={handleContactSubmit}>
+              <input type="text" name="name" placeholder="Your Name" required />
+              <input type="email" name="email" placeholder="Your Email" required />
+              <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+              <button type="submit">Send Message</button>
+            </form>
+          </div>
+        </section>
+      );
+    };
+
+    // Short Story Component
+    const ShortStory = () => (
+      <section className="short-story" data-aos="fade-up">
+        <h2>Short Story</h2>
+        <embed src="To Whoever Finds This.pdf" type="application/pdf" />
+        <!-- Alternatively, use an iframe:
+        <iframe src="To Whoever Finds This.pdf" title="Short Story"></iframe>
+        -->
+      </section>
+    );
+
+    // Random Tweets Component
+    const RandomTweets = () => {
+      const tweetURLs = [
+        "https://x.com/robbygat/status/1712276909462008187",
+        "https://x.com/robbygat/status/1786613162537627707",
+        "https://x.com/robbygat/status/1681274164672331779",
+        "https://x.com/robbygat/status/1848056931984056753",
+        "https://x.com/robbygat/status/1651355099040555008",
+        "https://x.com/robbygat/status/1848380588534980884",
+        "https://x.com/robbygat/status/1712331930023141846",
+        "https://x.com/robbygat/status/1668788978714046465",
+        "https://x.com/robbygat/status/1649181731541360641",
+        "https://x.com/robbygat/status/1631853358662205441",
+        "https://x.com/robbygat/status/1598401043292987392",
+        "https://x.com/robbygat/status/1679489454309011457",
+        "https://x.com/robbygat/status/1670875379949531148",
+        "https://x.com/robbygat/status/1650568035629948947",
+        "https://x.com/robbygat/status/1652675215669989376"
+      ];
+
+      const [randomTweet, setRandomTweet] = useState("");
+
+      useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * tweetURLs.length);
+        setRandomTweet(tweetURLs[randomIndex]);
+      }, [tweetURLs]);
+
+      return (
+        <section className="random-tweet" data-aos="fade-up">
+          <h2>Latest Tweet</h2>
+          <div className="tweet-container">
+            {randomTweet && (
+              <blockquote className="twitter-tweet">
+                <a href={randomTweet}></a>
+              </blockquote>
+            )}
+          </div>
+        </section>
+      );
+    };
+
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
 
       return (
         <footer data-aos="fade-up">
-          <p>&copy; {currentYear} robbygat.com</p>
           <p>robbygat is Robert Gatzke</p>
-          <p className="location">Tachikawa, Tokyo</p>
-          <p>
-            <a href="https://github.com/robbygat" target="_blank" rel="noopener noreferrer" style={{ marginLeft: '10px', color: 'inherit', textDecoration: 'none' }}>
-              <i className="fab fa-github"></i> GitHub
-            </a>
-          </p>
+          <p>Tachikawa, Tokyo</p>
         </footer>
       );
     };
@@ -1608,7 +1529,6 @@
         <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
           <BrowserRouter>
             <Header />
-            <AsciiArt />
             <Switch>
               <Route exact path="/" component={Home} />
               <Route path="/about" component={About} />
@@ -1618,9 +1538,9 @@
               <Route path="/contact" component={Contact} />
               {/* Add more routes as needed */}
             </Switch>
-            <Robbyscript />
+            <RobbyscriptDictionary />
             <ShortStory />
-            <TweetOfTheMinute />
+            <RandomTweets />
             <Slideshow />
             <Lightbox />
             <Footer />
@@ -1633,10 +1553,7 @@
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 
-  <!-- Additional Lightbox Script -->
-  <script>
-    // This script ensures the lightbox closes when clicking outside the image or on the close button
-    // Already handled within the Lightbox component
-  </script>
+  <!-- Twitter Embed Script -->
+  <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
