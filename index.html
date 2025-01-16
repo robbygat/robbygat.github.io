@@ -24,19 +24,6 @@
   
   <!-- Inline CSS for simplicity -->
   <style>
-
-/* Particle Background Styling */
-#particles-js {
-  position: fixed;          /* Fixes the particles in place */
-  top: 0;                   /* Aligns to the top */
-  left: 0;                  /* Aligns to the left */
-  width: 100%;              /* Full width */
-  height: 100%;             /* Full height */
-  z-index: -1;              /* Places it behind other elements */
-  pointer-events: none;     /* Allows clicks to pass through */
-}
-
-    
     /* BASIC PAGE RESET & VARIABLES */
     * {
       margin: 0;
@@ -57,6 +44,17 @@
       --shadow-dark: rgba(0,0,0,0.1);
       --accent-color: #ff4081;
       --transition-speed: 0.3s;
+    }
+
+    /* Particle Background Styling */
+    #particles-js {
+      position: fixed;          /* Fixes the particles in place */
+      top: 0;                   /* Aligns to the top */
+      left: 0;                  /* Aligns to the left */
+      width: 100%;              /* Full width */
+      height: 100%;             /* Full height */
+      z-index: -1;              /* Places it behind other elements */
+      pointer-events: none;     /* Allows clicks to pass through */
     }
 
     body {
@@ -269,6 +267,7 @@
       object-fit: cover;
       border-radius: 10px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer; /* Ensure cursor indicates clickability */
     }
 
     .instagram-dock img:hover {
@@ -487,8 +486,8 @@
       transform: scale(1.05);
     }
 
-    /* ROBBYSCRIPT DISPLAY */
-    .robby-script-section {
+    /* ARTWORKS SECTION */
+    .artworks-section {
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
@@ -497,44 +496,47 @@
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-light);
       animation: fadeInUp 1.5s ease-out;
+      text-align: center;
       color: #000000;
     }
 
-    body.dark-mode .robby-script-section {
+    body.dark-mode .artworks-section {
       background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
       color: var(--text-dark);
     }
 
-    .robby-script-section h2 {
-      text-align: center;
+    .artworks-section h2 {
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
     }
 
-    .robby-script-table {
-      width: 100%;
-      border-collapse: collapse;
+    .artworks-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
     }
 
-    .robby-script-table th, .robby-script-table td {
-      border: 1px solid var(--border-light);
-      padding: 10px;
-      text-align: center;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
+    .artworks-gallery img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
 
-    body.dark-mode .robby-script-table th, 
-    body.dark-mode .robby-script-table td {
-      border-color: var(--border-dark);
+    .artworks-gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--accent-color);
     }
 
     /* Lightbox Styles */
     .lightbox {
-      display: none;
+      display: none; /* Hidden by default */
       position: fixed;
       z-index: 2000;
       padding-top: 60px;
@@ -682,11 +684,13 @@
       .robby-script-section h2,
       .pdf-section h2,
       .music-section h2,
-      .contact-section h2 {
+      .contact-section h2,
+      .artworks-section h2 {
         font-size: 1.5rem;
       }
 
-      .instagram-dock img {
+      .instagram-dock img,
+      .artworks-gallery img {
         width: 80px;
         height: 80px;
       }
@@ -867,29 +871,29 @@
     // Instagram Dock Component
     const InstagramDock = () => {
       const instagramImages = [
-        "instagram1.png",
-        "instagram2.png",
-        "instagram3.png",
-        "instagram4.png",
-        "instagram5.png",
-        "instagram6.png",
-        "instagram7.png",
-        "instagram8.png",
-        "instagram9.png",
-        "instagram10.png",
-        "instagram11.png",
-        "instagram12.png",
-        "instagram13.png",
-        "instagram14.png",
-        "instagram15.png",
-        "instagram16.png",
-        "instagram17.png",
-        "instagram18.png",
-        "instagram19.png",
-        "instagram20.png",
-        "instagram21.png",
-        "instagram22.png",
-        "instagram23.png"
+        "images/instagram1.png",
+        "images/instagram2.png",
+        "images/instagram3.png",
+        "images/instagram4.png",
+        "images/instagram5.png",
+        "images/instagram6.png",
+        "images/instagram7.png",
+        "images/instagram8.png",
+        "images/instagram9.png",
+        "images/instagram10.png",
+        "images/instagram11.png",
+        "images/instagram12.png",
+        "images/instagram13.png",
+        "images/instagram14.png",
+        "images/instagram15.png",
+        "images/instagram16.png",
+        "images/instagram17.png",
+        "images/instagram18.png",
+        "images/instagram19.png",
+        "images/instagram20.png",
+        "images/instagram21.png",
+        "images/instagram22.png",
+        "images/instagram23.png"
       ];
 
       return (
@@ -989,6 +993,34 @@
       </div>
     );
 
+    // Artworks Section Component
+    const ArtworksSection = () => {
+      const artworks = [
+        { src: "artworks/artwork1.jpg", alt: "Artwork 1" },
+        { src: "artworks/artwork2.jpg", alt: "Artwork 2" },
+        { src: "artworks/artwork3.jpg", alt: "Artwork 3" },
+        { src: "artworks/artwork4.jpg", alt: "Artwork 4" },
+        { src: "artworks/artwork5.jpg", alt: "Artwork 5" },
+        { src: "artworks/artwork6.jpg", alt: "Artwork 6" }
+      ];
+
+      return (
+        <div className="artworks-section" data-aos="fade-up">
+          <h2>Artworks</h2>
+          <div className="artworks-gallery">
+            {artworks.map((art, index) => (
+              <img 
+                key={index} 
+                src={art.src} 
+                alt={art.alt} 
+                onClick={() => openLightbox(art.src, art.alt)} 
+              />
+            ))}
+          </div>
+        </div>
+      );
+    };
+
     // Contact Form Component
     const ContactForm = () => {
       const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -1084,8 +1116,9 @@
             {/* IMAGE */}
             <div className="image-container" data-aos="zoom-in">
               <img 
-                src="websiteimage.jpg" 
+                src="images/websiteimage.jpg" 
                 alt="Portfolio image of robbygat in black and white style"
+                onClick={() => openLightbox("images/websiteimage.jpg", "Portfolio Image")}
               />
             </div>
           </div>
@@ -1095,6 +1128,9 @@
 
           {/* RobbyScript Display */}
           <RobbyScriptDisplay />
+
+          {/* Artworks Section */}
+          <ArtworksSection />
 
           {/* PDF Viewer */}
           <PDFViewer />
@@ -1115,28 +1151,42 @@
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 
-  <!-- Lightbox Script -->
+  <!-- Lightbox Script (Moved Below Lightbox Container) -->
   <script>
-    // Get lightbox elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
+    document.addEventListener('DOMContentLoaded', () => {
+      // Get lightbox elements
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      const closeBtn = document.querySelector('.close');
 
-    // Close the lightbox when the close button is clicked
-    closeBtn.addEventListener('click', () => {
-      lightbox.style.display = 'none';
-    });
+      // Check if elements are found before adding event listeners
+      if (closeBtn && lightbox) {
+        // Close the lightbox when the close button is clicked
+        closeBtn.addEventListener('click', () => {
+          lightbox.style.display = 'none';
+        });
 
-    // Close the lightbox when clicking outside the image
-    window.addEventListener('click', (e) => {
-      if (e.target == lightbox) {
-        lightbox.style.display = 'none';
+        // Close the lightbox when clicking outside the image
+        window.addEventListener('click', (e) => {
+          if (e.target == lightbox) {
+            lightbox.style.display = 'none';
+          }
+        });
+
+        // Optional: Close lightbox with Esc key
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && lightbox.style.display === 'block') {
+            lightbox.style.display = 'none';
+          }
+        });
+      } else {
+        console.error('Lightbox elements not found. Please check the HTML structure.');
       }
     });
   </script>
 
-  <!-- Lightbox Container -->
+  <!-- Lightbox Container (Ensure This is After the Lightbox Script) -->
   <div id="lightbox" class="lightbox">
     <span class="close">&times;</span>
     <img class="lightbox-content" id="lightbox-img" />
