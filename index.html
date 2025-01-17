@@ -17,21 +17,376 @@
   <!-- particles.js Library for Particle Background -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   
+  <!-- Ethers.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  
   <!-- React and Babel CDN -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- Ethers.js Library -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  
   <!-- Inline CSS for simplicity -->
   <style>
-    /* [Your existing CSS from index.html with necessary modifications if any] */
     /* BASIC PAGE RESET & VARIABLES */
-    /* ... [Include all relevant CSS here as in index.html] ... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    /* Ensure consistency in styles between index.html and art.html */
+    :root {
+      --primary-color: #ffffff; /* White */
+      --secondary-color: #cccccc; /* Light Grey */
+      --background-light: #000000; /* Black */
+      --background-dark: #121212; /* Dark Black */
+      --text-light: #ffffff; /* White */
+      --text-dark: #e0e0e0; /* Light Grey */
+      --border-light: #ffffff; /* White */
+      --border-dark: #e0e0e0; /* Light Grey */
+      --shadow-light: rgba(255,255,255,0.1);
+      --shadow-dark: rgba(0,0,0,0.1);
+      --accent-color: #ff4081;
+      --transition-speed: 0.3s;
+    }
+
+    /* Particle Background Styling */
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1; /* Ensures particles stay behind other elements */
+      pointer-events: none;
+    }
+
+    body {
+      background-color: var(--background-light);
+      color: var(--text-light);
+      font-family: 'Lora', serif;
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+
+      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-attachment: fixed; /* Keeps background fixed during scroll */
+      background-size: contain;
+      transition: background-color 0.5s, color 0.5s;
+    }
+
+    body.dark-mode {
+      background-color: var(--background-dark);
+      color: var(--text-dark);
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+    }
+
+    /* HEADER / SOCIAL MEDIA BUTTONS */
+    .header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 0;
+      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 4px var(--shadow-dark);
+      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .header a {
+      color: var(--text-light);
+      text-decoration: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2rem;
+      transition: transform var(--transition-speed), color var(--transition-speed);
+      position: relative;
+    }
+
+    /* Dark Mode Toggle Switch */
+    .toggle-switch {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .toggle-switch input {
+      display: none;
+    }
+
+    .toggle-switch label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-light);
+    }
+
+    .toggle-switch .slider {
+      width: 40px;
+      height: 20px;
+      background-color: #ccc;
+      border-radius: 34px;
+      position: relative;
+      margin-left: 10px;
+      transition: background-color 0.4s;
+    }
+
+    .toggle-switch .slider::before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.4s;
+    }
+
+    .toggle-switch input:checked + label .slider {
+      background-color: var(--primary-color);
+    }
+
+    .toggle-switch input:checked + label .slider::before {
+      transform: translateX(20px);
+    }
+
+    /* Adding hover effect: enlarges and changes color */
+    .header a:hover {
+      transform: scale(1.2);
+      color: var(--accent-color);
+    }
+
+    /* Navigation Buttons Styling */
+    .art-button, .mint-button {
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+
+    .art-button:hover, .mint-button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* PAGE TITLE */
+    h1 {
+      text-align: center;
+      letter-spacing: 1px;
+      margin: 1rem auto 0.5rem auto;
+      font-size: 2.5rem;
+      font-family: 'EB Garamond', serif;
+      max-width: 800px;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.5s ease;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    h1:hover {
+      transform: scale(1.05);
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-light);
+    }
+
+    body.dark-mode p {
+      color: var(--text-dark);
+    }
+
+    /* Instagram Dock Styling */
+    .instagram-dock {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 2rem 0;
+    }
+
+    .instagram-dock img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .instagram-dock img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px var(--shadow-light);
+    }
+
+    body.dark-mode .instagram-dock img:hover {
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: #666;
+      transition: color 0.5s, border-color 0.5s;
+    }
+
+    body.dark-mode footer {
+      color: #999;
+      border-color: var(--border-dark);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+      }
+      to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .header a, .header .art-button, .header .mint-button {
+        font-size: 1rem;
+      }
+
+      .toggle-switch {
+        margin-left: 10px;
+      }
+
+      .instagram-dock img {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    /* Lightbox Styling */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 100px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+    }
+
+    .close {
+      position: absolute;
+      top: 50px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
+    }
+
+    /* Success Message Styling */
+    .success-message {
+      color: green;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 10px;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    /* Error Message Styling */
+    .error-message {
+      color: red;
+      font-size: 1rem;
+      text-align: center;
+      margin-top: 10px;
+      font-family: 'Roboto', sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -156,6 +511,8 @@
     // WalletConnector Component
     const WalletConnector = () => {
       const [currentAccount, setCurrentAccount] = useState(null);
+      const [errorMessage, setErrorMessage] = useState('');
+      const [successMessage, setSuccessMessage] = useState('');
 
       // Function to check if MetaMask is installed
       const isMetaMaskInstalled = () => {
@@ -182,6 +539,7 @@
 
         } catch (error) {
           console.error('Error connecting to MetaMask:', error);
+          setErrorMessage('Failed to connect wallet. Please try again.');
         }
       };
 
@@ -190,9 +548,10 @@
         if (accounts.length === 0) {
           // MetaMask is locked or the user has not connected any accounts
           setCurrentAccount(null);
-          alert('Please connect to MetaMask.');
+          setErrorMessage('Please connect to MetaMask.');
         } else {
           setCurrentAccount(accounts[0]);
+          setErrorMessage('');
         }
       };
 
@@ -217,6 +576,7 @@
           }
         } catch (error) {
           console.error('Error checking wallet connection:', error);
+          setErrorMessage('Failed to check wallet connection.');
         }
       };
 
@@ -264,6 +624,8 @@
               Connect Wallet
             </button>
           )}
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          {successMessage && <div className="success-message">{successMessage}</div>}
         </div>
       );
     };
@@ -276,6 +638,7 @@
         <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
         <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
         <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
+        <button className="mint-button" onClick={() => window.location.href='mint.html'} aria-label="Mint NFT Page">Mint an NFT</button>
         <WalletConnector />
         <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
       </div>
@@ -292,61 +655,18 @@
       </div>
     );
 
-    // Tagline Component
-    const Tagline = () => {
-      const [isUnemployed, setIsUnemployed] = useState(false);
-
-      useEffect(() => {
-        const timer = setTimeout(() => {
-          setIsUnemployed(true);
-        }, 2000); // Trigger after 2 seconds
-
-        return () => clearTimeout(timer);
-      }, []);
+    // Gifs Gallery Component
+    const GifsGallery = () => {
+      const gifImages = Array.from({ length: 21 }, (_, i) => `gif_folder/gif${i + 1}.gif`);
 
       return (
-        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
-          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
-        </div>
-      );
-    };
-
-    // Instagram Dock Component
-    const InstagramDock = () => {
-      const instagramImages = [
-        "instagram1.png",
-        "instagram2.png",
-        "instagram3.png",
-        "instagram4.png",
-        "instagram5.png",
-        "instagram6.png",
-        "instagram7.png",
-        "instagram8.png",
-        "instagram9.png",
-        "instagram10.png",
-        "instagram11.png",
-        "instagram12.png",
-        "instagram13.png",
-        "instagram14.png",
-        "instagram15.png",
-        "instagram16.png",
-        "instagram17.png",
-        "instagram18.png",
-        "instagram19.png",
-        "instagram20.png",
-        "instagram21.png",
-        "instagram22.png",
-        "instagram23.png"
-      ];
-
-      return (
-        <div className="instagram-dock" data-aos="fade-up">
-          {instagramImages.map((img, index) => (
+        <div className="gifs-gallery" data-aos="fade-up">
+          {gifImages.map((gif, index) => (
             <img 
               key={index} 
-              src={img} 
-              alt={`Instagram ${index + 1}`} 
-              onClick={() => openLightbox(img, `Instagram ${index + 1}`)} 
+              src={gif} 
+              alt={`Gif ${index + 1}`} 
+              onClick={() => openLightbox(gif, `Gif ${index + 1}`)} 
             />
           ))}
         </div>
@@ -395,7 +715,6 @@
         <>
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           <h1>robbygat© by Robert Gatzke</h1>
-          <Tagline />
           <div className="content" data-aos="fade-up">
             {/* IMAGE */}
             <div className="image-container" data-aos="zoom-in">
@@ -407,7 +726,7 @@
           </div>
 
           {/* INSTAGRAM DOCK */}
-          <InstagramDock />
+          <GifsGallery />
 
           {/* Footer */}
           <Footer />
@@ -426,7 +745,7 @@
     <div id="lightbox-caption"></div>
   </div>
 
-  <!-- Lightbox Script (Moved Below Lightbox Container) -->
+  <!-- Lightbox Script (Placed After Lightbox Container) -->
   <script>
     // Get lightbox elements
     const lightbox = document.getElementById('lightbox');
