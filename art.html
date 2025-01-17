@@ -14,7 +14,18 @@
   <!-- AOS Library for Scroll Animations -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
   
-  <!-- Inline CSS for simplicity -->
+  <!-- particles.js Library for Particle Background -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <!-- React and Babel CDN -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Ethers.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  
+  <!-- Inline CSS -->
   <style>
     /* BASIC PAGE RESET & VARIABLES */
     * {
@@ -45,7 +56,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1; /* Ensure it's behind all other elements */
+      z-index: -1; /* Ensures particles stay behind other elements */
       pointer-events: none;
     }
 
@@ -81,7 +92,7 @@
       background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
       position: sticky;
       top: 0;
-      z-index: 1000; /* Higher than particles.js */
+      z-index: 1000;
       box-shadow: 0 2px 4px var(--shadow-dark);
       transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
     }
@@ -151,6 +162,24 @@
       color: var(--accent-color);
     }
 
+    /* Navigation Buttons Styling */
+    .art-button, .mint-button {
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+    }
+
+    .art-button:hover, .mint-button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
     /* PAGE TITLE */
     h1 {
       text-align: center;
@@ -170,130 +199,28 @@
       transform: scale(1.05);
     }
 
-    /* TAGLINE */
-    .tagline {
-      text-align: center;
-      font-style: italic;
-      margin: 0 0 2rem 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      transition: color 0.3s ease;
-      position: relative;
-      display: inline-block;
-      overflow: hidden;
-      min-height: 2.5em;
-      color: var(--accent-color);
-      text-decoration: line-through;
-      animation: crossOut 2s forwards;
-    }
-
-    .tagline.unemployed {
-      text-decoration: none;
-      color: var(--accent-color);
-      font-size: 2rem;
-      animation: fadeInUnemployed 2s forwards;
-    }
-
-    /* MAIN CONTENT WRAPPER */
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: var(--text-light);
-    }
-
-    body.dark-mode p {
-      color: var(--text-dark);
-    }
-
-    /* Gifs Gallery Styles */
+    /* GIFS GALLERY */
     .gifs-gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 10px;
       justify-content: center;
-      padding: 1rem;
+      margin: 2rem 0;
       animation: fadeInUp 1.5s ease-out;
     }
 
     .gifs-gallery img {
-      width: 200px;
-      height: 200px;
+      width: 150px;
+      height: 150px;
       object-fit: cover;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
 
     .gifs-gallery img:hover {
-      transform: scale(1.3);
-      box-shadow: 0 0 15px var(--accent-color);
-    }
-
-    /* Lightbox Styles */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .lightbox-content {
-      margin: auto;
-      display: block;
-      max-width: 80%;
-      max-height: 80%;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
-      transition: transform 0.3s ease;
-    }
-
-    .lightbox-content:hover {
       transform: scale(1.05);
-    }
-
-    .close {
-      position: absolute;
-      top: 30px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      transition: color 0.3s ease;
-      cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: #bbb;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    #lightbox-caption {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
     /* Footer */
@@ -351,24 +278,13 @@
       }
     }
 
-    /* Tagline Cross-Out and Unemployed Animation */
-    @keyframes crossOut {
-      0% { text-decoration: line-through; }
-      100% { text-decoration: line-through; }
-    }
-
-    @keyframes fadeInUnemployed {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
         font-size: 2rem;
       }
 
-      .header a, .header .art-button {
+      .header a, .header .art-button, .header .mint-button {
         font-size: 1rem;
       }
 
@@ -376,54 +292,60 @@
         margin-left: 10px;
       }
 
-      .tagline {
-        font-size: 1.2rem;
-      }
-
-      .tagline.unemployed {
-        font-size: 1.5rem;
-      }
-
       .gifs-gallery img {
-        width: 150px;
-        height: 150px;
-      }
-
-      .pdf-section a,
-      .music-section .music-button {
-        font-size: 0.9rem;
-        padding: 8px 16px;
-      }
-
-      .contact-section button {
-        font-size: 0.9rem;
-        padding: 8px;
+        width: 100px;
+        height: 100px;
       }
     }
 
-    /* Additional Styles for Art Button */
-    .header .art-button {
-      background-color: transparent;
-      border: none;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.2rem;
+    /* Lightbox Styling */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 100px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+    }
+
+    .close {
+      position: absolute;
+      top: 50px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s;
       cursor: pointer;
-      transition: transform var(--transition-speed), color var(--transition-speed);
     }
 
-    .header .art-button:hover {
-      transform: scale(1.2);
-      color: var(--accent-color);
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
     }
 
-    /* Success Message Styling */
-    .success-message {
-      color: green;
-      font-size: 1rem;
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
       text-align: center;
-      margin-top: 10px;
-      font-family: 'Roboto', sans-serif;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
     }
   </style>
 </head>
@@ -549,6 +471,8 @@
     // WalletConnector Component
     const WalletConnector = () => {
       const [currentAccount, setCurrentAccount] = useState(null);
+      const [errorMessage, setErrorMessage] = useState('');
+      const [successMessage, setSuccessMessage] = useState('');
 
       // Function to check if MetaMask is installed
       const isMetaMaskInstalled = () => {
@@ -575,6 +499,7 @@
 
         } catch (error) {
           console.error('Error connecting to MetaMask:', error);
+          setErrorMessage('Failed to connect wallet. Please try again.');
         }
       };
 
@@ -583,9 +508,10 @@
         if (accounts.length === 0) {
           // MetaMask is locked or the user has not connected any accounts
           setCurrentAccount(null);
-          alert('Please connect to MetaMask.');
+          setErrorMessage('Please connect to MetaMask.');
         } else {
           setCurrentAccount(accounts[0]);
+          setErrorMessage('');
         }
       };
 
@@ -610,6 +536,7 @@
           }
         } catch (error) {
           console.error('Error checking wallet connection:', error);
+          setErrorMessage('Failed to check wallet connection.');
         }
       };
 
@@ -657,6 +584,8 @@
               Connect Wallet
             </button>
           )}
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          {successMessage && <div className="success-message">{successMessage}</div>}
         </div>
       );
     };
@@ -668,7 +597,8 @@
         <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
         <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
         <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-        <button className="art-button" onClick={() => window.location.href='index.html'} aria-label="Home Page">Home</button>
+        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
+        <button className="mint-button" onClick={() => window.location.href='mint.html'} aria-label="Mint NFT Page">Mint an NFT</button>
         <WalletConnector />
         <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
       </div>
@@ -745,8 +675,6 @@
         <>
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           <h1>Gifs Gallery by Robert Gatzke</h1>
-          {/* Tagline can be omitted or customized for the Art page */}
-          {/* <Tagline /> */}
           <div className="content" data-aos="fade-up">
             {/* Add any introductory content here if needed */}
           </div>
@@ -771,7 +699,7 @@
     <div id="lightbox-caption"></div>
   </div>
 
-  <!-- Lightbox Script (Moved Below Lightbox Container) -->
+  <!-- Lightbox Script -->
   <script>
     // Get lightbox elements
     const lightbox = document.getElementById('lightbox');
