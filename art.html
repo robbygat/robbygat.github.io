@@ -22,10 +22,7 @@
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- Ethers.js Library -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  
-  <!-- Inline CSS -->
+  <!-- Inline CSS for simplicity -->
   <style>
     /* BASIC PAGE RESET & VARIABLES */
     * {
@@ -56,7 +53,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1; /* Ensures particles stay behind other elements */
+      z-index: -1;
       pointer-events: none;
     }
 
@@ -162,24 +159,6 @@
       color: var(--accent-color);
     }
 
-    /* Navigation Buttons Styling */
-    .art-button, .mint-button {
-      padding: 10px 20px;
-      background-color: var(--primary-color);
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-    }
-
-    .art-button:hover, .mint-button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
     /* PAGE TITLE */
     h1 {
       text-align: center;
@@ -199,28 +178,394 @@
       transform: scale(1.05);
     }
 
-    /* GIFS GALLERY */
+    /* TAGLINE */
+    .tagline {
+      text-align: center;
+      font-style: italic;
+      margin: 0 0 2rem 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      min-height: 2.5em;
+      color: var(--accent-color);
+      text-decoration: line-through;
+      animation: crossOut 2s forwards;
+    }
+
+    .tagline.unemployed {
+      text-decoration: none;
+      color: var(--accent-color);
+      font-size: 2rem;
+      animation: fadeInUnemployed 2s forwards;
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      font-family: 'Roboto', sans-serif;
+      color: var(--text-light);
+    }
+
+    body.dark-mode p {
+      color: var(--text-dark);
+    }
+
+    /* IMAGE SECTION */
+    .image-container {
+      text-align: center;
+      margin: 2rem 0;
+      animation: zoomIn 1.5s ease-out;
+    }
+
+    /* Image Styling */
+    .image-container img {
+      max-width: 100%;
+      height: auto;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease, transform 0.3s ease;
+      border: 2px solid var(--border-light);
+      padding: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    body.dark-mode .image-container img {
+      border-color: var(--border-dark);
+    }
+
+    /* Hover to see color & slight scale-up */
+    .image-container img:hover {
+      filter: grayscale(0%);
+      transform: scale(1.02);
+    }
+
+    /* INSTAGRAM DOCK-STYLE IMAGES */
+    .instagram-dock {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 1rem;
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    .instagram-dock img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .instagram-dock img:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+
+    /* ROBBYSCRIPT DISPLAY */
+    .robby-script-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      color: #000000;
+    }
+
+    body.dark-mode .robby-script-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
+    }
+
+    .robby-script-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .robby-script-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .robby-script-table th, .robby-script-table td {
+      border: 1px solid var(--border-light);
+      padding: 10px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+
+    body.dark-mode .robby-script-table th, 
+    body.dark-mode .robby-script-table td {
+      border-color: var(--border-dark);
+    }
+
+    /* PDF VIEWER SECTION */
+    .pdf-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
+      color: #000000;
+    }
+
+    body.dark-mode .pdf-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
+    }
+
+    .pdf-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .pdf-section a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #000000;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+
+    body.dark-mode .pdf-section a {
+      color: var(--text-dark);
+    }
+
+    .pdf-section a:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* MUSIC SECTION */
+    .music-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+      text-align: center;
+      color: #000000;
+    }
+
+    body.dark-mode .music-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+      color: var(--text-dark);
+    }
+
+    .music-section h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .music-section .music-button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: var(--primary-color);
+      color: #000000;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+    }
+
+    body.dark-mode .music-section .music-button {
+      color: var(--text-dark);
+    }
+
+    .music-section .music-button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* CONTACT ME SECTION */
+    .contact-section {
+      max-width: 900px;
+      margin: 3rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      animation: fadeInUp 1.5s ease-out;
+    }
+
+    body.dark-mode .contact-section {
+      background-color: #2e2e2e;
+      border-color: var(--border-dark);
+      box-shadow: 0 4px 8px var(--shadow-dark);
+    }
+
+    .contact-section h2 {
+      text-align: center;
+      font-family: 'EB Garamond', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .contact-section form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-section input, .contact-section textarea {
+      padding: 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      background-color: #f2f2f2;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body.dark-mode .contact-section input, 
+    body.dark-mode .contact-section textarea {
+      background-color: #3e3e3e;
+      color: #e0e0e0;
+      border-color: var(--border-dark);
+    }
+
+    .contact-section button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: var(--primary-color);
+      color: #000000;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body.dark-mode .contact-section button {
+      color: var(--text-dark);
+    }
+
+    .contact-section button:hover {
+      background-color: var(--secondary-color);
+      transform: scale(1.05);
+    }
+
+    /* Gifs Gallery Styles */
     .gifs-gallery {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 20px;
       justify-content: center;
-      margin: 2rem 0;
+      padding: 1rem;
       animation: fadeInUp 1.5s ease-out;
     }
 
     .gifs-gallery img {
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .gifs-gallery img:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 15px var(--accent-color);
+    }
+
+    /* Lightbox Styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 60px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox-content:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .close {
+      position: absolute;
+      top: 30px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
     }
 
     /* Footer */
@@ -278,13 +623,24 @@
       }
     }
 
+    /* Tagline Cross-Out and Unemployed Animation */
+    @keyframes crossOut {
+      0% { text-decoration: line-through; }
+      100% { text-decoration: line-through; }
+    }
+
+    @keyframes fadeInUnemployed {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 {
         font-size: 2rem;
       }
 
-      .header a, .header .art-button, .header .mint-button {
+      .header a, .header .art-button {
         font-size: 1rem;
       }
 
@@ -292,60 +648,62 @@
         margin-left: 10px;
       }
 
-      .gifs-gallery img {
-        width: 100px;
-        height: 100px;
+      .tagline {
+        font-size: 1.2rem;
+      }
+
+      .tagline.unemployed {
+        font-size: 1.5rem;
+      }
+
+      .robby-script-section h2,
+      .pdf-section h2,
+      .music-section h2,
+      .contact-section h2,
+      .gifs-gallery h2 {
+        font-size: 1.5rem;
+      }
+
+      .instagram-dock img, .gifs-gallery img {
+        width: 80px;
+        height: 80px;
+      }
+
+      .pdf-section a,
+      .music-section .music-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
+
+      .contact-section button {
+        font-size: 0.9rem;
+        padding: 8px;
       }
     }
 
-    /* Lightbox Styling */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      padding-top: 100px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-    }
-
-    .lightbox-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-    }
-
-    .close {
-      position: absolute;
-      top: 50px;
-      right: 35px;
-      color: #f1f1f1;
-      font-size: 40px;
-      font-weight: bold;
-      transition: color 0.3s;
+    /* Additional Styles for Art Button */
+    .header .art-button {
+      background-color: transparent;
+      border: none;
+      color: var(--text-light);
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.2rem;
       cursor: pointer;
+      transition: transform var(--transition-speed), color var(--transition-speed);
     }
 
-    .close:hover,
-    .close:focus {
-      color: #bbb;
-      text-decoration: none;
-      cursor: pointer;
+    .header .art-button:hover {
+      transform: scale(1.2);
+      color: var(--accent-color);
     }
 
-    #lightbox-caption {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
+    /* Success Message Styling */
+    .success-message {
+      color: green;
+      font-size: 1rem;
       text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-      height: 150px;
+      margin-top: 10px;
+      font-family: 'Roboto', sans-serif;
     }
   </style>
 </head>
@@ -468,128 +826,6 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
 
-    // WalletConnector Component
-    const WalletConnector = () => {
-      const [currentAccount, setCurrentAccount] = useState(null);
-      const [errorMessage, setErrorMessage] = useState('');
-      const [successMessage, setSuccessMessage] = useState('');
-
-      // Function to check if MetaMask is installed
-      const isMetaMaskInstalled = () => {
-        return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
-      };
-
-      // Function to connect wallet
-      const connectWallet = async () => {
-        try {
-          if (!isMetaMaskInstalled()) {
-            alert('MetaMask is not installed. Please install MetaMask and try again.');
-            return;
-          }
-
-          // Request account access
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setCurrentAccount(accounts[0]);
-
-          // Listen for account changes
-          window.ethereum.on('accountsChanged', handleAccountsChanged);
-          
-          // Listen for network changes
-          window.ethereum.on('chainChanged', handleChainChanged);
-
-        } catch (error) {
-          console.error('Error connecting to MetaMask:', error);
-          setErrorMessage('Failed to connect wallet. Please try again.');
-        }
-      };
-
-      // Handle account changes
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length === 0) {
-          // MetaMask is locked or the user has not connected any accounts
-          setCurrentAccount(null);
-          setErrorMessage('Please connect to MetaMask.');
-        } else {
-          setCurrentAccount(accounts[0]);
-          setErrorMessage('');
-        }
-      };
-
-      // Handle network changes
-      const handleChainChanged = (_chainId) => {
-        // Reload the page to avoid any inconsistent state
-        window.location.reload();
-      };
-
-      // Check if wallet is already connected
-      const checkIfWalletIsConnected = async () => {
-        try {
-          if (!isMetaMaskInstalled()) {
-            console.log('MetaMask is not installed.');
-            return;
-          }
-
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-
-          if (accounts.length > 0) {
-            setCurrentAccount(accounts[0]);
-          }
-        } catch (error) {
-          console.error('Error checking wallet connection:', error);
-          setErrorMessage('Failed to check wallet connection.');
-        }
-      };
-
-      useEffect(() => {
-        checkIfWalletIsConnected();
-
-        // Cleanup listeners on component unmount
-        return () => {
-          if (window.ethereum && window.ethereum.removeListener) {
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-            window.ethereum.removeListener('chainChanged', handleChainChanged);
-          }
-        };
-      }, []);
-
-      return (
-        <div>
-          {currentAccount ? (
-            <div style={{ color: 'var(--accent-color)', fontFamily: 'Roboto, sans-serif' }}>
-              Connected: {currentAccount.substring(0, 6)}...{currentAccount.substring(currentAccount.length - 4)}
-            </div>
-          ) : (
-            <button 
-              onClick={connectWallet} 
-              style={{
-                padding: '10px 20px',
-                backgroundColor: 'var(--primary-color)',
-                color: '#000',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontFamily: 'Roboto, sans-serif',
-                fontSize: '1rem',
-                transition: 'background-color var(--transition-speed) ease, transform var(--transition-speed) ease'
-              }}
-              onMouseOver={e => {
-                e.target.style.backgroundColor = 'var(--secondary-color)';
-                e.target.style.transform = 'scale(1.05)';
-              }}
-              onMouseOut={e => {
-                e.target.style.backgroundColor = 'var(--primary-color)';
-                e.target.style.transform = 'scale(1)';
-              }}
-            >
-              Connect Wallet
-            </button>
-          )}
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-          {successMessage && <div className="success-message">{successMessage}</div>}
-        </div>
-      );
-    };
-
     // Header Component
     const Header = ({ toggleTheme, isDarkMode }) => (
       <div className="header">
@@ -597,9 +833,7 @@
         <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
         <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
         <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
-        <button className="mint-button" onClick={() => window.location.href='mint.html'} aria-label="Mint NFT Page">Mint an NFT</button>
-        <WalletConnector />
+        <button className="art-button" onClick={() => window.location.href='index.html'} aria-label="Home Page">Home</button>
         <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
       </div>
     );
@@ -615,9 +849,28 @@
       </div>
     );
 
+    // Tagline Component (Optional for Art Page)
+    const Tagline = () => {
+      const [isUnemployed, setIsUnemployed] = useState(false);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setIsUnemployed(true);
+        }, 2000); // Trigger after 2 seconds
+
+        return () => clearTimeout(timer);
+      }, []);
+
+      return (
+        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
+          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
+        </div>
+      );
+    };
+
     // Gifs Gallery Component
     const GifsGallery = () => {
-      const gifImages = Array.from({ length: 21 }, (_, i) => `gif_folder/gif${i + 1}.gif`);
+      const gifImages = Array.from({ length: 21 }, (_, i) => `gif${i + 1}.gif`);
 
       return (
         <div className="gifs-gallery" data-aos="fade-up">
@@ -675,6 +928,8 @@
         <>
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           <h1>Gifs Gallery by Robert Gatzke</h1>
+          {/* Tagline can be omitted or customized for the Art page */}
+          {/* <Tagline /> */}
           <div className="content" data-aos="fade-up">
             {/* Add any introductory content here if needed */}
           </div>
@@ -699,7 +954,7 @@
     <div id="lightbox-caption"></div>
   </div>
 
-  <!-- Lightbox Script -->
+  <!-- Lightbox Script (Moved Below Lightbox Container) -->
   <script>
     // Get lightbox elements
     const lightbox = document.getElementById('lightbox');
