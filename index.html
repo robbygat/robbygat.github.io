@@ -17,15 +17,15 @@
   <!-- particles.js Library for Particle Background -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   
-  <!-- Ethers.js Library -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  
   <!-- React and Babel CDN -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- Inline CSS for simplicity -->
+  <!-- Ethers.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  
+  <!-- Inline CSS -->
   <style>
     /* BASIC PAGE RESET & VARIABLES */
     * {
@@ -218,33 +218,6 @@
       color: var(--text-dark);
     }
 
-    /* Instagram Dock Styling */
-    .instagram-dock {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 2rem 0;
-    }
-
-    .instagram-dock img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
-    }
-
-    .instagram-dock img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 8px var(--shadow-light);
-    }
-
-    body.dark-mode .instagram-dock img:hover {
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-
     /* Footer */
     footer {
       text-align: center;
@@ -313,61 +286,6 @@
       .toggle-switch {
         margin-left: 10px;
       }
-
-      .instagram-dock img {
-        width: 80px;
-        height: 80px;
-      }
-    }
-
-    /* Lightbox Styling */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      padding-top: 100px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-    }
-
-    .lightbox-content {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-    }
-
-    .close {
-      position: absolute;
-      top: 50px;
-      right: 35px;
-      color: #f1f1f1;
-      font-size: 40px;
-      font-weight: bold;
-      transition: color 0.3s;
-      cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: #bbb;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    #lightbox-caption {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
-      text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-      height: 150px;
     }
 
     /* Success Message Styling */
@@ -655,34 +573,6 @@
       </div>
     );
 
-    // Gifs Gallery Component
-    const GifsGallery = () => {
-      const gifImages = Array.from({ length: 21 }, (_, i) => `gif_folder/gif${i + 1}.gif`);
-
-      return (
-        <div className="gifs-gallery" data-aos="fade-up">
-          {gifImages.map((gif, index) => (
-            <img 
-              key={index} 
-              src={gif} 
-              alt={`Gif ${index + 1}`} 
-              onClick={() => openLightbox(gif, `Gif ${index + 1}`)} 
-            />
-          ))}
-        </div>
-      );
-    };
-
-    // Function to open Lightbox (outside React)
-    const openLightbox = (src, alt) => {
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightbox-img');
-      const lightboxCaption = document.getElementById('lightbox-caption');
-      lightbox.style.display = 'block';
-      lightboxImg.src = src;
-      lightboxCaption.textContent = alt;
-    };
-
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
@@ -716,19 +606,8 @@
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           <h1>robbygat© by Robert Gatzke</h1>
           <div className="content" data-aos="fade-up">
-            {/* IMAGE */}
-            <div className="image-container" data-aos="zoom-in">
-              <img 
-                src="websiteimage.jpg" 
-                alt="Portfolio image of robbygat in black and white style"
-              />
-            </div>
+            <p>Welcome to robbygat's official website. Explore my art, connect your wallet, and mint your exclusive NFTs!</p>
           </div>
-
-          {/* INSTAGRAM DOCK */}
-          <GifsGallery />
-
-          {/* Footer */}
           <Footer />
         </>
       );
@@ -738,14 +617,14 @@
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 
-  <!-- Lightbox Container -->
+  <!-- Lightbox Container (Optional if needed on this page) -->
   <div id="lightbox" class="lightbox">
     <span class="close">&times;</span>
     <img class="lightbox-content" id="lightbox-img" />
     <div id="lightbox-caption"></div>
   </div>
 
-  <!-- Lightbox Script (Placed After Lightbox Container) -->
+  <!-- Lightbox Script (Optional if needed on this page) -->
   <script>
     // Get lightbox elements
     const lightbox = document.getElementById('lightbox');
