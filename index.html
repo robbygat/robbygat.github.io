@@ -4,30 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>robbygat by Robert Gatzke</title>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
-  
+
   <!-- Font Awesome for Social Media Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- AOS Library for Scroll Animations -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  
+
   <!-- particles.js Library for Particle Background -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  
+
   <!-- React and Babel CDN -->
   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
+
   <!-- Ethers.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  
+
   <!-- Inline CSS -->
   <style>
-    /* BASIC PAGE RESET & VARIABLES */
     * {
       margin: 0;
       padding: 0;
@@ -35,29 +34,27 @@
     }
 
     :root {
-      --primary-color: #ffffff; /* White */
-      --secondary-color: #cccccc; /* Light Grey */
-      --background-light: #000000; /* Black */
-      --background-dark: #121212; /* Dark Black */
-      --text-light: #ffffff; /* White */
-      --text-dark: #e0e0e0; /* Light Grey */
-      --border-light: #ffffff; /* White */
-      --border-dark: #e0e0e0; /* Light Grey */
+      --primary-color: #ffffff;
+      --secondary-color: #cccccc;
+      --background-light: #000000;
+      --background-dark: #121212;
+      --text-light: #ffffff;
+      --text-dark: #e0e0e0;
+      --border-light: #ffffff;
+      --border-dark: #e0e0e0;
       --shadow-light: rgba(255,255,255,0.1);
       --shadow-dark: rgba(0,0,0,0.1);
       --accent-color: #ff4081;
       --transition-speed: 0.3s;
     }
 
-    /* Particle Background Styling */
     #particles-js {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1; /* Ensures particles stay behind other elements */
-      pointer-events: none;
+      z-index: -1;
     }
 
     body {
@@ -65,595 +62,116 @@
       color: var(--text-light);
       font-family: 'Lora', serif;
       line-height: 1.6;
-      position: relative;
       overflow-x: hidden;
-
-      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-attachment: fixed; /* Keeps background fixed during scroll */
-      background-size: contain;
-      transition: background-color 0.5s, color 0.5s;
     }
 
     body.dark-mode {
       background-color: var(--background-dark);
       color: var(--text-dark);
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
     }
 
-    /* HEADER / SOCIAL MEDIA BUTTONS */
     .header {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 20px;
       padding: 10px 0;
-      background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+      background-color: rgba(0, 0, 0, 0.8);
       position: sticky;
       top: 0;
       z-index: 1000;
-      box-shadow: 0 2px 4px var(--shadow-dark);
-      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
     }
 
     .header a {
       color: var(--text-light);
-      text-decoration: none;
       font-family: 'Roboto', sans-serif;
       font-size: 1.2rem;
-      transition: transform var(--transition-speed), color var(--transition-speed);
-      position: relative;
     }
 
-    /* Dark Mode Toggle Switch */
-    .toggle-switch {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .toggle-switch input {
-      display: none;
-    }
-
-    .toggle-switch label {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-light);
-    }
-
-    .toggle-switch .slider {
-      width: 40px;
-      height: 20px;
-      background-color: #ccc;
-      border-radius: 34px;
-      position: relative;
-      margin-left: 10px;
-      transition: background-color 0.4s;
-    }
-
-    .toggle-switch .slider::before {
-      content: "";
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.4s;
-    }
-
-    .toggle-switch input:checked + label .slider {
-      background-color: var(--primary-color);
-    }
-
-    .toggle-switch input:checked + label .slider::before {
-      transform: translateX(20px);
-    }
-
-    /* Adding hover effect: enlarges and changes color */
-    .header a:hover {
-      transform: scale(1.2);
-      color: var(--accent-color);
-    }
-
-    /* Navigation Buttons Styling */
-    .art-button, .mint-button {
-      padding: 10px 20px;
+    .header button {
       background-color: var(--primary-color);
       color: #000;
+      padding: 10px 20px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
     }
 
-    .art-button:hover, .mint-button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-
-    /* PAGE TITLE */
     h1 {
       text-align: center;
-      letter-spacing: 1px;
-      margin: 1rem auto 0.5rem auto;
-      font-size: 2.5rem;
       font-family: 'EB Garamond', serif;
-      max-width: 800px;
-      padding: 0 1rem;
-      position: relative;
-      z-index: 1;
-      transition: transform 0.5s ease;
-      animation: fadeInDown 1s ease-out;
+      margin: 20px;
     }
 
-    h1:hover {
-      transform: scale(1.05);
-    }
-
-    /* MAIN CONTENT WRAPPER */
     .content {
       max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
+      margin: auto;
+      padding: 20px;
     }
 
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: var(--text-light);
+    .section {
+      margin-bottom: 40px;
     }
 
-    body.dark-mode p {
-      color: var(--text-dark);
-    }
-
-    /* Footer */
-    footer {
+    .section h2 {
       text-align: center;
-      margin: 2rem 0;
-      border-top: 1px solid var(--border-light);
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: #666;
-      transition: color 0.5s, border-color 0.5s;
+      font-family: 'EB Garamond', serif;
+      margin-bottom: 20px;
     }
 
-    body.dark-mode footer {
-      color: #999;
-      border-color: var(--border-dark);
+    .instagram-dock img {
+      width: 100px;
+      height: 100px;
+      margin: 5px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s;
     }
 
-    /* Animations */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-    }
-
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-
-      .header a, .header .art-button, .header .mint-button {
-        font-size: 1rem;
-      }
-
-      .toggle-switch {
-        margin-left: 10px;
-      }
-    }
-
-    /* Success Message Styling */
-    .success-message {
-      color: green;
-      font-size: 1rem;
-      text-align: center;
-      margin-top: 10px;
-      font-family: 'Roboto', sans-serif;
-    }
-
-    /* Error Message Styling */
-    .error-message {
-      color: red;
-      font-size: 1rem;
-      text-align: center;
-      margin-top: 10px;
-      font-family: 'Roboto', sans-serif;
+    .instagram-dock img:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
-  <!-- Particle Background -->
   <div id="particles-js"></div>
-
-  <!-- React Root -->
-  <div id="root"></div>
-
-  <!-- Scripts -->
-
-  <!-- particles.js config -->
-  <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#cccccc" /* Grey */
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          },
-          "polygon": {
-            "nb_sides": 5
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": false
-        },
-        "size": {
-          "value": 3,
-          "random": true
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#cccccc",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out"
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          }
-        },
-        "modes": {
-          "repulse": {
-            "distance": 100,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 4
-          }
-        }
-      },
-      "retina_detect": true
-    });
-  </script>
-
-  <!-- AOS Initialization -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  </script>
-
-  <!-- Firebase SDKs -->
-  <!-- Include Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
-  <!-- Initialize Firebase -->
-  <script>
-    // TODO: Replace the following with your app's Firebase project configuration
-    // You can find this information in your Firebase project settings
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-
-  <!-- React Components -->
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-
-    // WalletConnector Component
-    const WalletConnector = () => {
-      const [currentAccount, setCurrentAccount] = useState(null);
-      const [errorMessage, setErrorMessage] = useState('');
-      const [successMessage, setSuccessMessage] = useState('');
-
-      // Function to check if MetaMask is installed
-      const isMetaMaskInstalled = () => {
-        return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
-      };
-
-      // Function to connect wallet
-      const connectWallet = async () => {
-        try {
-          if (!isMetaMaskInstalled()) {
-            alert('MetaMask is not installed. Please install MetaMask and try again.');
-            return;
-          }
-
-          // Request account access
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setCurrentAccount(accounts[0]);
-
-          // Listen for account changes
-          window.ethereum.on('accountsChanged', handleAccountsChanged);
-          
-          // Listen for network changes
-          window.ethereum.on('chainChanged', handleChainChanged);
-
-        } catch (error) {
-          console.error('Error connecting to MetaMask:', error);
-          setErrorMessage('Failed to connect wallet. Please try again.');
-        }
-      };
-
-      // Handle account changes
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length === 0) {
-          // MetaMask is locked or the user has not connected any accounts
-          setCurrentAccount(null);
-          setErrorMessage('Please connect to MetaMask.');
-        } else {
-          setCurrentAccount(accounts[0]);
-          setErrorMessage('');
-        }
-      };
-
-      // Handle network changes
-      const handleChainChanged = (_chainId) => {
-        // Reload the page to avoid any inconsistent state
-        window.location.reload();
-      };
-
-      // Check if wallet is already connected
-      const checkIfWalletIsConnected = async () => {
-        try {
-          if (!isMetaMaskInstalled()) {
-            console.log('MetaMask is not installed.');
-            return;
-          }
-
-          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-
-          if (accounts.length > 0) {
-            setCurrentAccount(accounts[0]);
-          }
-        } catch (error) {
-          console.error('Error checking wallet connection:', error);
-          setErrorMessage('Failed to check wallet connection.');
-        }
-      };
-
-      useEffect(() => {
-        checkIfWalletIsConnected();
-
-        // Cleanup listeners on component unmount
-        return () => {
-          if (window.ethereum && window.ethereum.removeListener) {
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-            window.ethereum.removeListener('chainChanged', handleChainChanged);
-          }
-        };
-      }, []);
-
-      return (
-        <div>
-          {currentAccount ? (
-            <div style={{ color: 'var(--accent-color)', fontFamily: 'Roboto, sans-serif' }}>
-              Connected: {currentAccount.substring(0, 6)}...{currentAccount.substring(currentAccount.length - 4)}
-            </div>
-          ) : (
-            <button 
-              onClick={connectWallet} 
-              style={{
-                padding: '10px 20px',
-                backgroundColor: 'var(--primary-color)',
-                color: '#000',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer',
-                fontFamily: 'Roboto, sans-serif',
-                fontSize: '1rem',
-                transition: 'background-color var(--transition-speed) ease, transform var(--transition-speed) ease'
-              }}
-              onMouseOver={e => {
-                e.target.style.backgroundColor = 'var(--secondary-color)';
-                e.target.style.transform = 'scale(1.05)';
-              }}
-              onMouseOut={e => {
-                e.target.style.backgroundColor = 'var(--primary-color)';
-                e.target.style.transform = 'scale(1)';
-              }}
-            >
-              Connect Wallet
-            </button>
-          )}
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
-          {successMessage && <div className="success-message">{successMessage}</div>}
-        </div>
-      );
-    };
-
-    // Header Component
-    const Header = ({ toggleTheme, isDarkMode }) => (
-      <div className="header">
-        <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" className="fab fa-twitter"></a>
-        <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
-        <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-        <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
-        <button className="mint-button" onClick={() => window.location.href='mint.html'} aria-label="Mint NFT Page">Mint an NFT</button>
-        <WalletConnector />
-        <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-      </div>
-    );
-
-    // Toggle Switch Component
-    const ToggleSwitch = ({ toggleTheme, isDarkMode }) => (
-      <div className="toggle-switch">
-        <input type="checkbox" id="theme-toggle" checked={isDarkMode} onChange={toggleTheme} />
-        <label htmlFor="theme-toggle">
-          {isDarkMode ? "Dark" : "Light"}
-          <div className="slider"></div>
-        </label>
-      </div>
-    );
-
-    // Footer Component
-    const Footer = () => {
-      const currentYear = new Date().getFullYear();
-      return (
-        <footer>
-          &copy; {currentYear} robbygat.com | Tachikawa, Tokyo (立川市) | by Robert Gatzke
-        </footer>
-      );
-    };
-
-    // App Component
-    const App = () => {
-      const [isDarkMode, setIsDarkMode] = useState(false);
-
-      useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-          setIsDarkMode(savedTheme === 'dark');
-          document.body.classList.toggle('dark-mode', savedTheme === 'dark');
-        }
-      }, []);
-
-      const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-      };
-
-      return (
-        <>
-          <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-          <h1>robbygat© by Robert Gatzke</h1>
-          <div className="content" data-aos="fade-up">
-            <p>Welcome to robbygat's official website. Explore my art, connect your wallet, and mint your exclusive NFTs!</p>
-          </div>
-          <Footer />
-        </>
-      );
-    };
-
-    // Render the App
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
-
-  <!-- Lightbox Container (Optional if needed on this page) -->
-  <div id="lightbox" class="lightbox">
-    <span class="close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img" />
-    <div id="lightbox-caption"></div>
+  <div class="header">
+    <a href="art.html">Art</a>
+    <a href="mint.html">Mint an NFT</a>
+    <a href="contact.html">Contact Me</a>
   </div>
 
-  <!-- Lightbox Script (Optional if needed on this page) -->
+  <h1>Welcome to robbygat</h1>
+
+  <div class="content">
+    <div class="section">
+      <h2>Instagram Dock</h2>
+      <div class="instagram-dock">
+        <img src="instagram1.png" alt="Instagram 1">
+        <img src="instagram2.png" alt="Instagram 2">
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>RobbyScript</h2>
+      <p>Custom linguistic script section.</p>
+    </div>
+
+    <div class="section">
+      <h2>Music by INTERNET COWBOY</h2>
+      <a href="https://internetcowboy.bandcamp.com" target="_blank">Listen Here</a>
+    </div>
+  </div>
+
   <script>
-    // Get lightbox elements
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
-
-    // Close the lightbox when the close button is clicked
-    if (closeBtn && lightbox) {
-      closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-      });
-
-      // Close the lightbox when clicking outside the image
-      window.addEventListener('click', (e) => {
-        if (e.target == lightbox) {
-          lightbox.style.display = 'none';
-        }
-      });
-
-      // Optional: Close lightbox with Esc key
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.style.display === 'block') {
-          lightbox.style.display = 'none';
-        }
-      });
-    } else {
-      console.error('Lightbox elements not found. Please check the HTML structure.');
-    }
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 100 },
+        size: { value: 3 },
+        move: { enable: true, speed: 2 },
+      },
+    });
   </script>
 </body>
 </html>
