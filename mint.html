@@ -25,7 +25,7 @@
   <!-- Ethers.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
   
-  <!-- Inline CSS for simplicity -->
+  <!-- Inline CSS -->
   <style>
     /* BASIC PAGE RESET & VARIABLES */
     * {
@@ -199,27 +199,8 @@
       transform: scale(1.05);
     }
 
-    /* MAIN CONTENT WRAPPER */
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: var(--text-light);
-    }
-
-    body.dark-mode p {
-      color: var(--text-dark);
-    }
-
     /* Mint Section Styles */
-    .mint-section {
+    .mint-section, .purchase-section {
       max-width: 900px;
       margin: 3rem auto;
       padding: 1rem;
@@ -232,20 +213,20 @@
       color: #000000;
     }
 
-    body.dark-mode .mint-section {
+    body.dark-mode .mint-section, body.dark-mode .purchase-section {
       background-color: #2e2e2e;
       border-color: var(--border-dark);
       box-shadow: 0 4px 8px var(--shadow-dark);
       color: var(--text-dark);
     }
 
-    .mint-section h2 {
+    .mint-section h2, .purchase-section h2 {
       font-family: 'EB Garamond', serif;
       font-size: 2rem;
       margin-bottom: 1rem;
     }
 
-    .mint-section button {
+    .mint-section button, .purchase-section button {
       padding: 10px 20px;
       background-color: var(--primary-color);
       color: #000;
@@ -258,11 +239,11 @@
       margin-top: 1rem;
     }
 
-    body.dark-mode .mint-section button {
+    body.dark-mode .mint-section button, body.dark-mode .purchase-section button {
       color: var(--text-dark);
     }
 
-    .mint-section button:hover {
+    .mint-section button:hover, .purchase-section button:hover {
       background-color: var(--secondary-color);
       transform: scale(1.05);
     }
@@ -336,11 +317,11 @@
         margin-left: 10px;
       }
 
-      .mint-section h2 {
+      .mint-section h2, .purchase-section h2 {
         font-size: 1.5rem;
       }
 
-      .mint-section button {
+      .mint-section button, .purchase-section button {
         font-size: 0.9rem;
         padding: 8px 16px;
       }
@@ -362,6 +343,56 @@
       text-align: center;
       margin-top: 10px;
       font-family: 'Roboto', sans-serif;
+    }
+
+    /* Lightbox Styling */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 100px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.8);
+    }
+
+    .lightbox-content {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+    }
+
+    .close {
+      position: absolute;
+      top: 50px;
+      right: 35px;
+      color: #f1f1f1;
+      font-size: 40px;
+      font-weight: bold;
+      transition: color 0.3s;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #bbb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #lightbox-caption {
+      margin: auto;
+      display: block;
+      width: 80%;
+      max-width: 700px;
+      text-align: center;
+      color: #ccc;
+      padding: 10px 0;
+      height: 150px;
     }
   </style>
 </head>
@@ -490,16 +521,6 @@
       const [errorMessage, setErrorMessage] = useState('');
       const [successMessage, setSuccessMessage] = useState('');
 
-      // Replace with your own contract details
-      const contractAddress = "YOUR_CONTRACT_ADDRESS"; // e.g., "0xYourContractAddress"
-      const contractABI = [
-        // Replace with your contract's ABI
-        // Example:
-        // "function mintNFT(address recipient) public returns (uint256)",
-        // "function buyNFT() public payable returns (uint256)",
-        // "function setPrice(uint256 newPrice) public"
-      ];
-
       // Function to check if MetaMask is installed
       const isMetaMaskInstalled = () => {
         return typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask;
@@ -623,7 +644,7 @@
         <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
         <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
         <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-        <button className="art-button" onClick={() => window.location.href='index.html'} aria-label="Home Page">Home</button>
+        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
         <button className="mint-button" onClick={() => window.location.href='mint.html'} aria-label="Mint NFT Page">Mint an NFT</button>
         <WalletConnector />
         <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
@@ -641,74 +662,6 @@
       </div>
     );
 
-    // MintNFT Component
-    const MintNFT = () => {
-      const [minting, setMinting] = useState(false);
-      const [mintError, setMintError] = useState('');
-      const [mintSuccess, setMintSuccess] = useState('');
-
-      // Replace with your own contract details
-      const contractAddress = "YOUR_CONTRACT_ADDRESS"; // e.g., "0xYourContractAddress"
-      const contractABI = [
-        // Replace with your contract's ABI
-        // Example:
-        // "function mintNFT(address recipient) public returns (uint256)",
-        // "function buyNFT() public payable returns (uint256)",
-        // "function setPrice(uint256 newPrice) public"
-      ];
-
-      // Function to mint NFT
-      const mintNFT = async () => {
-        setMinting(true);
-        setMintError('');
-        setMintSuccess('');
-
-        try {
-          if (!window.ethereum) {
-            setMintError('MetaMask is not installed.');
-            setMinting(false);
-            return;
-          }
-
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const userAddress = await signer.getAddress();
-
-          // Replace 'YOUR_WALLET_ADDRESS' with your actual wallet address
-          const ownerAddress = "YOUR_WALLET_ADDRESS"; // e.g., "0xYourWalletAddress"
-
-          if (userAddress.toLowerCase() !== ownerAddress.toLowerCase()) {
-            setMintError('Only the owner can mint NFTs.');
-            setMinting(false);
-            return;
-          }
-
-          const contract = new ethers.Contract(contractAddress, contractABI, signer);
-          
-          const tx = await contract.mintNFT(userAddress);
-          await tx.wait();
-
-          setMintSuccess('NFT minted successfully!');
-        } catch (error) {
-          console.error('Error minting NFT:', error);
-          setMintError('Failed to mint NFT.');
-        }
-
-        setMinting(false);
-      };
-
-      return (
-        <div className="mint-section" data-aos="fade-up">
-          <h2>Mint Your Exclusive NFT</h2>
-          <button onClick={mintNFT} disabled={minting}>
-            {minting ? 'Minting...' : 'Mint NFT'}
-          </button>
-          {mintError && <div className="error-message">{mintError}</div>}
-          {mintSuccess && <div className="success-message">{mintSuccess}</div>}
-        </div>
-      );
-    };
-
     // Footer Component
     const Footer = () => {
       const currentYear = new Date().getFullYear();
@@ -719,7 +672,7 @@
       );
     };
 
-    // App Component for mint.html
+    // App Component
     const App = () => {
       const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -740,9 +693,10 @@
       return (
         <>
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-          <h1>Mint Your NFT</h1>
-          <WalletConnector />
-          <MintNFT />
+          <h1>robbygat© by Robert Gatzke</h1>
+          <div className="content" data-aos="fade-up">
+            <p>Welcome to robbygat's official website. Explore my art, connect your wallet, and mint your exclusive NFTs!</p>
+          </div>
           <Footer />
         </>
       );
@@ -759,7 +713,7 @@
     <div id="lightbox-caption"></div>
   </div>
 
-  <!-- Lightbox Script (Optional if needed on this page) -->
+  <!-- Lightbox Script -->
   <script>
     // Get lightbox elements
     const lightbox = document.getElementById('lightbox');
