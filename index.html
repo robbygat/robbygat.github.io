@@ -792,5 +792,345 @@
       appId: "YOUR_APP_ID"
     };
 
-    // Initialize
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
 
+  <!-- React Components -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Header Component
+    const Header = ({ toggleTheme, isDarkMode }) => (
+      <div className="header">
+        <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" className="fab fa-twitter"></a>
+        <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
+        <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
+        <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
+        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
+        <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+      </div>
+    );
+
+    // Toggle Switch Component
+    const ToggleSwitch = ({ toggleTheme, isDarkMode }) => (
+      <div className="toggle-switch">
+        <input type="checkbox" id="theme-toggle" checked={isDarkMode} onChange={toggleTheme} />
+        <label htmlFor="theme-toggle">
+          {isDarkMode ? "Dark" : "Light"}
+          <div className="slider"></div>
+        </label>
+      </div>
+    );
+
+    // Tagline Component
+    const Tagline = () => {
+      const [isUnemployed, setIsUnemployed] = useState(false);
+
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setIsUnemployed(true);
+        }, 2000); // Trigger after 2 seconds
+
+        return () => clearTimeout(timer);
+      }, []);
+
+      return (
+        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
+          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
+        </div>
+      );
+    };
+
+    // Instagram Dock Component
+    const InstagramDock = () => {
+      const instagramImages = [
+        "instagram1.png",
+        "instagram2.png",
+        "instagram3.png",
+        "instagram4.png",
+        "instagram5.png",
+        "instagram6.png",
+        "instagram7.png",
+        "instagram8.png",
+        "instagram9.png",
+        "instagram10.png",
+        "instagram11.png",
+        "instagram12.png",
+        "instagram13.png",
+        "instagram14.png",
+        "instagram15.png",
+        "instagram16.png",
+        "instagram17.png",
+        "instagram18.png",
+        "instagram19.png",
+        "instagram20.png",
+        "instagram21.png",
+        "instagram22.png",
+        "instagram23.png"
+      ];
+
+      return (
+        <div className="instagram-dock" data-aos="fade-up">
+          {instagramImages.map((img, index) => (
+            <img 
+              key={index} 
+              src={img} 
+              alt={`Instagram ${index + 1}`} 
+              onClick={() => openLightbox(img, `Instagram ${index + 1}`)} 
+            />
+          ))}
+        </div>
+      );
+    };
+
+    // Function to open Lightbox (outside React)
+    const openLightbox = (src, alt) => {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const lightboxCaption = document.getElementById('lightbox-caption');
+      lightbox.style.display = 'block';
+      lightboxImg.src = src;
+      lightboxCaption.textContent = alt;
+    };
+
+    // RobbyScript Display Component
+    const RobbyScriptDisplay = () => {
+      const robbyScript = {
+        '𝌯': 'p',
+        '𝍍': 'b',
+        '𝌲': 't',
+        '𝍊': 'd',
+        '𝌬': 'k',
+        '𝍐': 'g',
+        '𝍑': 's',
+        '𝍁': 'z',
+        '𝍂': 'ʃ',
+        '𝌵': 'ʒ',
+        '𝌸': 'f',
+        '𝍌': 'v',
+        '𝍄': 'h',
+        '𝍇': 'm',
+        '𝌶': 'ŋ',
+        '𝌹': 'n',
+        '𝍋': 'l',
+        '𝍈': 'i',
+        '𝌿': 'e',
+        '𝍅': 'a',
+        '𝌴': 'o',
+        '𝍎': 'u',
+        '𝍏': 'ɛ',
+        '𝌷': 'ɔ',
+        '𝍀': 'æ'
+      };
+
+      return (
+        <div className="robby-script-section" data-aos="fade-up">
+          <h2>Robbyscript</h2>
+          <table className="robby-script-table">
+            <thead>
+              <tr>
+                <th>Robbyscript</th>
+                <th>IPA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(robbyScript).map(([key, value], index) => (
+                <tr key={index}>
+                  <td>{key}</td>
+                  <td>{value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // PDF Viewer Component
+    const PDFViewer = () => (
+      <div className="pdf-section" data-aos="fade-up">
+        <h2>Read "To Whoever Finds This"</h2>
+        <a href="To%20Whoever%20Finds%20This.pdf" target="_blank" rel="noopener noreferrer">
+          Open PDF
+        </a>
+      </div>
+    );
+
+    // Music Section Component
+    const MusicSection = () => (
+      <div className="music-section" data-aos="fade-up">
+        <h2>Albums by INTERNET COWBOY</h2>
+        <a href="https://internetcowboy.bandcamp.com" target="_blank" rel="noopener noreferrer" className="music-button">
+          My Music
+        </a>
+      </div>
+    );
+
+    // Contact Form Component
+    const ContactForm = () => {
+      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+      const [success, setSuccess] = useState(false);
+
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const { name, email, message } = formData;
+
+        if (name && email && message) {
+          // For demonstration, we'll just reset the form and show success message
+          // In a real application, you'd send this data to a server
+          setFormData({ name: '', email: '', message: '' });
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 5000);
+        }
+      };
+
+      return (
+        <div className="contact-section" data-aos="fade-up">
+          <h2>Contact Me</h2>
+          <form onSubmit={handleSubmit}>
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Your Name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              required 
+            />
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="Your Email" 
+              value={formData.email} 
+              onChange={handleChange} 
+              required 
+            />
+            <textarea 
+              name="message" 
+              rows="5" 
+              placeholder="Your Message..." 
+              value={formData.message} 
+              onChange={handleChange} 
+              required 
+            ></textarea>
+            <button type="submit">Send Message</button>
+            {success && <div className="success-message">Your message has been sent!</div>}
+          </form>
+        </div>
+      );
+    };
+
+    // Footer Component
+    const Footer = () => {
+      const currentYear = new Date().getFullYear();
+      return (
+        <footer>
+          &copy; {currentYear} robbygat.com | Tachikawa, Tokyo (立川市) | by Robert Gatzke
+        </footer>
+      );
+    };
+
+    // App Component
+    const App = () => {
+      const [isDarkMode, setIsDarkMode] = useState(false);
+
+      useEffect(() => {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+          setIsDarkMode(savedTheme === 'dark');
+          document.body.classList.toggle('dark-mode', savedTheme === 'dark');
+        }
+      }, []);
+
+      const toggleTheme = () => {
+        setIsDarkMode(!isDarkMode);
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
+      };
+
+      return (
+        <>
+          <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+          <h1>robbygat© by Robert Gatzke</h1>
+          <Tagline />
+          <div className="content" data-aos="fade-up">
+            {/* IMAGE */}
+            <div className="image-container" data-aos="zoom-in">
+              <img 
+                src="websiteimage.jpg" 
+                alt="Portfolio image of robbygat in black and white style"
+              />
+            </div>
+          </div>
+
+          {/* INSTAGRAM DOCK */}
+          <InstagramDock />
+
+          {/* RobbyScript Display */}
+          <RobbyScriptDisplay />
+
+          {/* PDF Viewer */}
+          <PDFViewer />
+
+          {/* Music Section */}
+          <MusicSection />
+
+          {/* Contact Form */}
+          <ContactForm />
+
+          {/* Footer */}
+          <Footer />
+        </>
+      );
+    };
+
+    // Render the App
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+
+  <!-- Lightbox Container -->
+  <div id="lightbox" class="lightbox">
+    <span class="close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img" />
+    <div id="lightbox-caption"></div>
+  </div>
+
+  <!-- Lightbox Script (Moved Below Lightbox Container) -->
+  <script>
+    // Get lightbox elements
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const closeBtn = document.querySelector('.close');
+
+    // Close the lightbox when the close button is clicked
+    if (closeBtn && lightbox) {
+      closeBtn.addEventListener('click', () => {
+        lightbox.style.display = 'none';
+      });
+
+      // Close the lightbox when clicking outside the image
+      window.addEventListener('click', (e) => {
+        if (e.target == lightbox) {
+          lightbox.style.display = 'none';
+        }
+      });
+
+      // Optional: Close lightbox with Esc key
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightbox.style.display === 'block') {
+          lightbox.style.display = 'none';
+        }
+      });
+    } else {
+      console.error('Lightbox elements not found. Please check the HTML structure.');
+    }
+  </script>
+</body>
+</html>
