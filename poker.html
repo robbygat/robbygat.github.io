@@ -1,511 +1,766 @@
-import tkinter as tk
-from tkinter import Canvas, Frame, Label, Button, Entry, messagebox
-import random
-import requests
-from io import BytesIO
-from PIL import Image, ImageTk
-from treys import Card, Evaluator, Deck
-import os
-import time
-
-# Global cache for card images.
-image_cache = {}
-
-def get_card_image(card, width=120, height=180, face_up=True):
-    """Fetch (or return cached) image for a card from the Deck of Cards API."""
-    if not face_up:
-        card_back = Image.new("RGB", (width, height), color="darkblue")
-        return ImageTk.PhotoImage(card_back)
-    card_str = Card.int_to_str(card)  # e.g., "Ah"
-    rank = card_str[0].upper()
-    suit = card_str[1].upper()
-    if rank == "T":
-        rank = "0"
-    key = f"{rank}{suit}"
-    if key in image_cache:
-        return image_cache[key]
-    url = f"https://deckofcardsapi.com/static/img/{key}.png"
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        img = Image.open(BytesIO(response.content))
-    except Exception as e:
-        print(f"Error loading {url}: {e}")
-        return None
-    img = img.resize((width, height), Image.Resampling.LANCZOS)
-    photo = ImageTk.PhotoImage(img)
-    image_cache[key] = photo
-    return photo
-
-# ---------------------------
-# Poker game logic (with blinds and button)
-# ---------------------------
-class PokerGame:
-    def __init__(self):
-        self.num_players = 4
-        self.big_blind_amt = 50
-        self.small_blind_amt = 25
-        self.button_position = 1  # start with player 1 as dealer/button
-        self.reset_game()
-
-    def next_active_player(self, pid):
-        return (pid % self.num_players) + 1
-
-    def reset_game(self):
-        """Reset deck, assign button/blinds, post blinds, and deal hole cards."""
-        self.deck = Deck()
-        self.evaluator = Evaluator()
-        self.players = {
-            pid: {"hand": [], "balance": 1000, "active": True, "bet": 0}
-            for pid in range(1, self.num_players + 1)
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Texas Hold'em Poker</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- PokerSolver library for hand evaluation -->
+    <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
+    <!-- React and Babel CDN -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      /* Reset and Global Variables */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --primary-color: #ffffff;
+        --accent-color: #ff4081;
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
+        --bg-gradient: linear-gradient(135deg, #008000, #006400);
+        --font-family: 'Roboto', sans-serif;
+      }
+      body {
+        font-family: var(--font-family);
+        background-color: var(--bg-dark-green);
+        overflow-x: hidden;
+        position: relative;
+      }
+      /* Particles background (black particles) */
+      #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -3;
+        background: var(--bg-dark-green);
+      }
+      /* Header */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 20px;
+        background: rgba(0, 0, 0, 0.8);
+      }
+      header h2 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+      }
+      header a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: transform 0.3s;
+      }
+      header a:hover {
+        transform: scale(1.2);
+        color: var(--accent-color);
+      }
+      /* Volume Control */
+      .volume-control {
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(0,0,0,0.8);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: var(--primary-color);
+        font-size: 1rem;
+      }
+      /* Timer, Stats, and Turn Indicator */
+      .timer, .stats, .turn-indicator {
+        position: fixed;
+        background: rgba(0,0,0,0.8);
+        color: var(--primary-color);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        z-index: 1000;
+      }
+      .timer { top: 70px; right: 20px; }
+      .stats { top: 70px; left: 20px; }
+      .turn-indicator { top: 110px; left: 20px; }
+      /* Main Table Area */
+      .table {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+      }
+      .table::before {
+        content: "";
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        right: 50px;
+        bottom: 50px;
+        border: 10px solid darkgreen;
+        border-radius: 50%;
+        background: var(--bg-green);
+        z-index: -1;
+      }
+      /* Community Cards */
+      .community {
+        position: absolute;
+        top: 38%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 2;
+      }
+      /* Player Areas */
+      .player {
+        position: absolute;
+        text-align: center;
+        z-index: 2;
+        padding: 5px;
+        transition: box-shadow 0.3s, border 0.3s;
+      }
+      /* Active player gets a red border */
+      .player.active {
+        border: 2px solid red;
+        box-shadow: 0 0 15px var(--accent-color);
+      }
+      .player.p1 { bottom: 10%; left: 45%; }
+      .player.p2 { top: 35%; left: 5%; }
+      .player.p3 { top: 5%; left: 45%; }
+      .player.p4 { top: 35%; right: 5%; }
+      /* Card Styles (always face-up) */
+      .card {
+        width: 90px;
+        height: 135px;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        background: #fff;
+        overflow: hidden;
+        perspective: 1000px;
+      }
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s ease-in-out;
+        transform-style: preserve-3d;
+      }
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+      }
+      .card-front {
+        background: #fff;
+      }
+      /* Suit colors: hearts and diamonds red; clubs and spades black */
+      .card-front.red { color: red; }
+      .card-front.black { color: black; }
+      /* Hidden CPU cards: blue background with "??" */
+      .card.hidden .card-face {
+        background: blue;
+        color: #fff;
+      }
+      .card.hidden .card-face::after {
+        content: "??";
+        font-size: 1.5rem;
+      }
+      /* Controls */
+      .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #222;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        z-index: 1000;
+      }
+      .controls button {
+        font-size: 1rem;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+      }
+      .controls button:hover {
+        transform: scale(1.05);
+      }
+      .btn-fold { background: #d9534f; color: #fff; }
+      .btn-call { background: #5cb85c; color: #fff; }
+      .btn-raise { background: #0275d8; color: #fff; }
+      .btn-next { background: #888; color: #fff; }
+      .btn-showdown { background: #ff9900; color: #fff; }
+      .btn-new { background: #444; color: #fff; }
+      /* Game Info Message */
+      .game-info {
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        z-index: 1000;
+      }
+      /* Ledger: Tracks chip counts per hand */
+      .ledger {
+        position: fixed;
+        top: 150px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        max-height: 40vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+      .ledger h3 { margin-bottom: 5px; }
+      .ledger table { width: 100%; border-collapse: collapse; }
+      .ledger th, .ledger td { border: 1px solid var(--primary-color); padding: 2px 5px; text-align: center; }
+      /* Extra Animations */
+      @keyframes fadeInBounce {
+        0% { opacity: 0; transform: scale(0.5); }
+        50% { opacity: 0.7; transform: scale(1.2); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      .animate-bounce { animation: fadeInBounce 0.8s ease-out; }
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .card { width: 70px; height: 105px; }
+        .player { font-size: 0.9rem; }
+        .controls button { font-size: 0.9rem; padding: 8px 15px; }
+        .ledger { font-size: 0.8rem; top: 180px; right: 10px; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Particles background -->
+    <div id="particles-js"></div>
+    <!-- Header with Home button and Volume Control -->
+    <header>
+      <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
+      <h2>Poker Arena</h2>
+      <div class="volume-control">
+        Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
+      </div>
+    </header>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">30</div>
+    <!-- Game Stats Display -->
+    <div class="stats" id="stats">Hands: 0</div>
+    <!-- Turn Indicator -->
+    <div class="turn-indicator" id="turn">Turn: Player ?</div>
+    <!-- Ledger -->
+    <div class="ledger" id="ledger">
+      <h3>Ledger</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Hand</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body">
+          <!-- Ledger rows will be added here -->
+        </tbody>
+      </table>
+    </div>
+    <!-- Main React Root -->
+    <div id="root"></div>
+    <!-- particles.js configuration (black particles) -->
+    <script>
+      particlesJS("particles-js", {
+        "particles": {
+          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": "#000000" },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.5 },
+          "size": { "value": 3, "random": true },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#000000",
+            "opacity": 0.4,
+            "width": 1
+          },
+          "move": { "enable": true, "speed": 2 }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": { "enable": true, "mode": "repulse" },
+            "onclick": { "enable": true, "mode": "push" }
+          },
+          "modes": {
+            "repulse": { "distance": 100, "duration": 0.4 },
+            "push": { "particles_nb": 4 }
+          }
+        },
+        "retina_detect": true
+      });
+    </script>
+    <!-- Sound Effects and Background Music (calming vaporwave synth) -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
+    <script>
+      // Set initial volume for all sounds based on volume slider.
+      const volumeSlider = document.getElementById("volume-slider");
+      const setVolumeAll = (vol) => {
+        const sounds = document.querySelectorAll("audio");
+        sounds.forEach(sound => sound.volume = vol);
+      };
+      volumeSlider.addEventListener("input", (e) => {
+        setVolumeAll(e.target.value);
+      });
+      // Start background music.
+      document.getElementById("background-music").play();
+    </script>
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+      
+      // --- Helper Functions ---
+      const suits = ['♠', '♥', '♦', '♣'];
+      const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      // Create a standard 52-card deck.
+      const createDeck = () => {
+        let deck = [];
+        suits.forEach(suit => {
+          ranks.forEach(rank => {
+            deck.push({ rank, suit });
+          });
+        });
+        return deck;
+      };
+      const shuffleDeck = (deck) => {
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
         }
-        self.pot = 0
-        self.community = []
-        self.stage = "pre-flop"
-        self.current_bet = 0
-
-        # Rotate button clockwise.
-        self.button_position = self.next_active_player(self.button_position)
-        # Determine blinds.
-        self.small_blind = self.next_active_player(self.button_position)
-        self.big_blind = self.next_active_player(self.small_blind)
-
-        # Post blinds.
-        self.players[self.small_blind]["balance"] -= self.small_blind_amt
-        self.players[self.small_blind]["bet"] = self.small_blind_amt
-        self.players[self.big_blind]["balance"] -= self.big_blind_amt
-        self.players[self.big_blind]["bet"] = self.big_blind_amt
-        self.pot = self.small_blind_amt + self.big_blind_amt
-        self.current_bet = self.big_blind_amt
-
-        # Deal hole cards.
-        for pid in self.players:
-            self.players[pid]["hand"] = self.deck.draw(2)
-            self.players[pid]["active"] = True
-
-        # Pre-flop action starts with the player to the left of the big blind.
-        self.current_player = self.next_active_player(self.big_blind)
-
-    def start_new_betting_round(self):
-        """Reset bets for a new betting round and set the current player."""
-        for pid in self.players:
-            if self.players[pid]["active"]:
-                self.players[pid]["bet"] = 0
-        self.current_bet = 0
-        if self.stage == "pre-flop":
-            self.current_player = self.next_active_player(self.big_blind)
-        else:
-            self.current_player = self.next_active_player(self.button_position)
-
-    def deal_community(self, count):
-        new_cards = self.deck.draw(count)
-        self.community.extend(new_cards)
-        if len(self.community) == 3:
-            self.stage = "flop"
-        elif len(self.community) == 4:
-            self.stage = "turn"
-        elif len(self.community) == 5:
-            self.stage = "river"
-
-    def evaluate_hands(self):
-        best_score = None
-        winner = None
-        for pid, data in self.players.items():
-            if not data["active"]:
-                continue
-            score = self.evaluator.evaluate(data["hand"], self.community)
-            if best_score is None or score < best_score:
-                best_score = score
-                winner = pid
-        return winner
-
-    def process_bet(self, action, player_id, raise_amount=0):
-        if action == "fold":
-            self.players[player_id]["active"] = False
-        elif action == "raise":
-            bet = raise_amount
-            if self.players[player_id]["balance"] >= bet:
-                self.players[player_id]["balance"] -= bet
-                self.players[player_id]["bet"] += bet
-                self.pot += bet
-                self.current_bet = max(self.current_bet, self.players[player_id]["bet"])
-        elif action == "call":
-            bet_needed = self.current_bet - self.players[player_id]["bet"]
-            if bet_needed > 0:
-                if self.players[player_id]["balance"] >= bet_needed:
-                    self.players[player_id]["balance"] -= bet_needed
-                    self.players[player_id]["bet"] += bet_needed
-                    self.pot += bet_needed
-        elif action == "check":
-            if self.players[player_id]["bet"] < self.current_bet:
-                return False  # invalid check
-        return True
-
-    def is_betting_round_over(self):
-        active_players = [pid for pid, data in self.players.items() if data["active"]]
-        if len(active_players) <= 1:
-            return True
-        for pid in active_players:
-            if self.players[pid]["bet"] < self.current_bet:
-                return False
-        return True
-
-    def showdown(self):
-        winner = self.evaluate_hands()
-        if winner:
-            self.players[winner]["balance"] += self.pot
-        self.stage = "showdown"
-        return winner
-
-# ---------------------------
-# Poker GUI (with revised stage advancement)
-# ---------------------------
-class PokerGUI:
-    def __init__(self, root):
-        print("Initializing PokerGUI...")
-        self.root = root
-        self.root.title("Texas Hold'em Poker")
-        self.game = PokerGame()
-
-        # Larger fonts for readability.
-        self.default_font = ("Arial", 20, "bold")
-        self.btn_font = ("Arial", 18, "bold")
-        self.info_font = ("Arial", 18, "bold")
-        self.card_width = 90
-        self.card_height = 135
-
-        self.setup_layout()
-        self.preload_ui_images()
-        self.update_table_ui()
-        self.update_player_ui()
-        self.update_community_ui()
-        print("PokerGUI initialized.")
-
-    def setup_layout(self):
-        self.canvas = Canvas(self.root, bg="#1e1e1e")
-        self.canvas.pack(fill="both", expand=True)
-        self.screen_width = self.root.winfo_screenwidth()
-        self.screen_height = self.root.winfo_screenheight()
-
-        if os.path.exists("table.png"):
-            try:
-                table_img = Image.open("table.png")
-                table_img = table_img.resize((self.screen_width, self.screen_height), Image.Resampling.LANCZOS)
-                self.table_bg = ImageTk.PhotoImage(table_img)
-                self.canvas.create_image(0, 0, anchor="nw", image=self.table_bg)
-            except Exception as e:
-                print("Error loading table.png:", e)
-                self.draw_fallback_table()
-        else:
-            self.draw_fallback_table()
-
-        self.player_positions = {
-            1: (self.screen_width * 0.5, self.screen_height * 0.8),
-            2: (self.screen_width * 0.15, self.screen_height * 0.4),
-            3: (self.screen_width * 0.5, self.screen_height * 0.1),
-            4: (self.screen_width * 0.85, self.screen_height * 0.4)
+        return deck;
+      };
+      
+      // Format a card for PokerSolver.
+      const formatCardForSolver = (card) => {
+        let rank = card.rank === "10" ? "T" : card.rank;
+        const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
+        return `${rank}${suitMap[card.suit]}`;
+      };
+      
+      // Card Component: Displays a full card face.
+      const Card = ({ card, animate }) => {
+        let faceClass = "card-front";
+        if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
+        else if (card.suit === "?") faceClass += " blue";
+        else faceClass += " black";
+        const hiddenClass = card.suit === "?" ? "hidden" : "";
+        return (
+          <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
+            <div className="card-inner">
+              <div className={`card-face card-front ${faceClass}`}>
+                {card.suit === "?" ? "" : `${card.rank}${card.suit}`}
+              </div>
+            </div>
+          </div>
+        );
+      };
+      
+      // --- Advanced AI Simulation Placeholder ---
+      const aiDecision = async (playerHand, community) => {
+        const highRanks = ["J", "Q", "K", "A"];
+        const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
+        let highCount = countHigh(playerHand) + countHigh(community);
+        await new Promise(res => setTimeout(res, 500));
+        if (highCount >= 3) return "raise";
+        if (highCount === 0) return "fold";
+        return "call";
+      };
+      
+      // --- Ledger Management ---
+      const updateLedger = (handCount, players) => {
+        const ledgerBody = document.getElementById("ledger-body");
+        if (!ledgerBody) return;
+        const row = document.createElement("tr");
+        const handCell = document.createElement("td");
+        handCell.textContent = handCount;
+        row.appendChild(handCell);
+        for (let i = 1; i <= 4; i++) {
+          const cell = document.createElement("td");
+          cell.textContent = players[i] ? players[i].balance : 0;
+          row.appendChild(cell);
         }
-        self.player_card_offsets = {
-            1: [(-60, 0), (60, 0)],
-            2: [(0, -60), (0, 60)],
-            3: [(-60, 0), (60, 0)],
-            4: [(0, -60), (0, 60)]
+        ledgerBody.appendChild(row);
+      };
+      
+      // --- Sound Effects Helper ---
+      const playSound = (id) => {
+        const sound = document.getElementById(id);
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play();
         }
-        self.community_positions = []
-        start_x = self.screen_width * 0.3
-        step_x = self.screen_width * 0.08
-        y = self.screen_height * 0.45
-        for i in range(5):
-            self.community_positions.append((start_x + i * step_x, y))
-
-        self.player_card_items = {}
-        for pid, pos in self.player_positions.items():
-            x, y = pos
-            offsets = self.player_card_offsets[pid]
-            self.player_card_items[pid] = []
-            for dx, dy in offsets:
-                item = self.canvas.create_image(x + dx, y + dy, image=None)
-                self.player_card_items[pid].append(item)
-
-        self.community_items = []
-        for pos in self.community_positions:
-            item = self.canvas.create_image(pos[0], pos[1], image=None)
-            self.community_items.append(item)
-
-        self.pot_text = self.canvas.create_text(
-            self.screen_width * 0.5,
-            self.screen_height * 0.5,
-            text="POT: 0",
-            fill="white",
-            font=("Arial", 26, "bold")
-        )
-
-        self.cash_items = {}
-        for pid, pos in self.player_positions.items():
-            x, y = pos
-            rect = self.canvas.create_rectangle(x - 50, y + 40, x + 50, y + 60, fill="gold")
-            text = self.canvas.create_text(x, y + 50, text="", fill="black", font=("Arial", 18, "bold"))
-            self.cash_items[pid] = (rect, text)
-
-        self.control_frame = Frame(self.root, bg="#222222")
-        self.control_frame.pack(side="bottom", fill="x")
-
-        self.stage_label = Label(
-            self.control_frame,
-            text="Stage: Pre-Flop",
-            font=self.info_font,
-            bg="#222222",
-            fg="white"
-        )
-        self.stage_label.pack(side="left", padx=15, pady=10)
-
-        self.fold_button = Button(
-            self.control_frame,
-            text="Fold",
-            font=self.btn_font,
-            bg="#d9534f",
-            fg="white",
-            command=self.fold
-        )
-        self.fold_button.pack(side="left", padx=10, pady=10)
-
-        self.call_button = Button(
-            self.control_frame,
-            text="Call/Check",
-            font=self.btn_font,
-            bg="#5cb85c",
-            fg="white",
-            command=self.call
-        )
-        self.call_button.pack(side="left", padx=10, pady=10)
-
-        self.raise_button = Button(
-            self.control_frame,
-            text="Raise",
-            font=self.btn_font,
-            bg="#0275d8",
-            fg="white",
-            command=self.raise_bet
-        )
-        self.raise_button.pack(side="left", padx=10, pady=10)
-
-        self.raise_entry = Entry(
-            self.control_frame,
-            font=self.info_font,
-            width=5
-        )
-        self.raise_entry.insert(0, "100")
-        self.raise_entry.pack(side="left", padx=10, pady=10)
-
-        self.next_stage_button = Button(
-            self.control_frame,
-            text="Next Stage",
-            font=self.btn_font,
-            bg="#888888",
-            fg="white",
-            command=self.next_stage
-        )
-        self.next_stage_button.pack(side="left", padx=10, pady=10)
-
-        self.showdown_button = Button(
-            self.control_frame,
-            text="Showdown",
-            font=self.btn_font,
-            bg="#ff9900",
-            fg="white",
-            command=self.showdown
-        )
-        self.showdown_button.pack(side="left", padx=10, pady=10)
-        self.showdown_button.pack_forget()
-
-    def draw_fallback_table(self):
-        margin = 100
-        self.canvas.create_oval(
-            margin,
-            margin,
-            self.screen_width - margin,
-            self.screen_height - margin,
-            fill="seagreen",
-            outline="black",
-            width=5
-        )
-
-    def preload_ui_images(self):
-        print("Preloading card images...")
-        ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "0", "J", "Q", "K"]
-        suits = ["C", "D", "H", "S"]
-        for suit in suits:
-            for rank in ranks:
-                key = f"{rank}{suit}"
-                if key in image_cache:
-                    continue
-                url = f"https://deckofcardsapi.com/static/img/{key}.png"
-                try:
-                    response = requests.get(url)
-                    response.raise_for_status()
-                    img = Image.open(BytesIO(response.content))
-                except Exception as e:
-                    print(f"Error preloading {url}: {e}")
-                    continue
-                img = img.resize((self.card_width, self.card_height), Image.Resampling.LANCZOS)
-                photo = ImageTk.PhotoImage(img)
-                image_cache[key] = photo
-        print("Preloading complete.")
-
-    def update_table_ui(self):
-        self.canvas.itemconfig(self.pot_text, text=f"POT: {self.game.pot}")
-        for pid, pos in self.player_positions.items():
-            balance = self.game.players[pid]["balance"]
-            rect_id, text_id = self.cash_items[pid]
-            height_scale = 100 / 1000
-            x, y = pos
-            rect_height = max(10, balance * height_scale)
-            self.canvas.coords(rect_id, x - 50, y + 60 - rect_height, x + 50, y + 60)
-            self.canvas.itemconfig(text_id, text=str(balance))
-        self.stage_label.config(text=f"Stage: {self.game.stage.capitalize()}")
-
-    def update_community_ui(self):
-        for i, card in enumerate(self.game.community):
-            photo = get_card_image(card, width=self.card_width, height=self.card_height)
-            if photo:
-                self.canvas.itemconfig(self.community_items[i], image=photo)
-                self.canvas.image = photo
-        for i in range(len(self.game.community), 5):
-            self.canvas.itemconfig(self.community_items[i], image=None)
-
-    def update_player_ui(self, reveal_all=False):
-        for pid, items in self.player_card_items.items():
-            hand = self.game.players[pid]["hand"]
-            if pid == 1 or reveal_all:
-                for i, card in enumerate(hand):
-                    photo = get_card_image(card, width=self.card_width, height=self.card_height)
-                    if photo:
-                        self.canvas.itemconfig(items[i], image=photo)
-            else:
-                back_photo = get_card_image(None, width=self.card_width, height=self.card_height, face_up=False)
-                for item in items:
-                    self.canvas.itemconfig(item, image=back_photo)
-
-    def fold(self):
-        self.game.process_bet("fold", player_id=1)
-        self.update_table_ui()
-        self.post_user_action()
-
-    def call(self):
-        success = self.game.process_bet("call", player_id=1)
-        if not success:
-            self.game.process_bet("check", player_id=1)
-        self.update_table_ui()
-        self.post_user_action()
-
-    def raise_bet(self):
-        try:
-            amt = int(self.raise_entry.get())
-        except ValueError:
-            amt = 100
-        self.game.process_bet("raise", player_id=1, raise_amount=amt)
-        self.update_table_ui()
-        self.post_user_action()
-
-    def post_user_action(self):
-        # Execute CPU actions until it's the human's turn.
-        self.run_cpu_actions()
-        # Do not auto-advance the stage; let the user press "Next Stage."
-        self.update_table_ui()
-        self.update_player_ui()
-        self.update_community_ui()
-
-    def run_cpu_actions(self):
-        pid = self.game.current_player
-        while pid != 1:
-            if not self.game.players[pid]["active"]:
-                pid = self.game.next_active_player(pid)
-                continue
-            if self.game.is_betting_round_over():
-                break
-            self.cpu_action(pid)
-            pid = self.game.next_active_player(pid)
-
-    def cpu_action(self, pid):
-        r = random.random()
-        bet_needed = self.game.current_bet - self.game.players[pid]["bet"]
-        hand_score = self.game.evaluator.evaluate(self.game.players[pid]["hand"], self.game.community)
-        if bet_needed > 0:
-            if hand_score < 3000 and r < 0.7:
-                self.game.process_bet("call", pid)
-            elif r < 0.1:
-                self.game.process_bet("fold", pid)
-            else:
-                raise_amt = bet_needed + random.randint(50, 200)
-                if raise_amt > self.game.players[pid]["balance"]:
-                    self.game.process_bet("call", pid)
-                else:
-                    self.game.process_bet("raise", pid, raise_amount=raise_amt)
-        else:
-            if hand_score < 3000 and r < 0.2:
-                raise_amt = random.randint(50, 150)
-                if raise_amt > self.game.players[pid]["balance"]:
-                    self.game.process_bet("check", pid)
-                else:
-                    self.game.process_bet("raise", pid, raise_amount=raise_amt)
-            else:
-                self.game.process_bet("check", pid)
-        self.update_table_ui()
-        self.update_player_ui()
-        self.update_community_ui()
-        self.root.update()
-        time.sleep(0.5)
-
-    def next_stage(self):
-        # Start a new betting round.
-        self.game.start_new_betting_round()
-        if self.game.stage == "pre-flop":
-            self.game.deal_community(3)
-        elif self.game.stage == "flop":
-            self.game.deal_community(1)
-        elif self.game.stage == "turn":
-            self.game.deal_community(1)
-        elif self.game.stage == "river":
-            self.update_table_ui()
-            self.update_community_ui()
-            self.update_player_ui()
-            self.stage_label.config(text="Stage: River (Final Betting)")
-            self.showdown_button.pack(side="left", padx=10, pady=10)
-            return
-        self.stage_label.config(text=f"Stage: {self.game.stage.capitalize()}")
-        self.update_table_ui()
-        self.update_community_ui()
-        self.update_player_ui()
-        # Removed auto-call to post_user_action so the user controls progression.
-
-    def showdown(self):
-        self.showdown_button.pack_forget()
-        winner = self.game.showdown()
-        self.update_player_ui(reveal_all=True)
-        self.update_table_ui()
-        self.update_community_ui()
-        if winner:
-            messagebox.showinfo("Showdown", f"Player {winner} wins the pot of {self.game.pot} credits!")
-        else:
-            messagebox.showinfo("Showdown", "No winner was determined.")
-        self.reset_game()
-
-    def reset_game(self):
-        self.game.reset_game()
-        self.showdown_button.pack_forget()
-        self.stage_label.config(text="Stage: Pre-Flop")
-        self.update_table_ui()
-        self.update_community_ui()
-        self.update_player_ui()
-
-def main():
-    print("Launching game...")
-    root = tk.Tk()
-    root.geometry("1280x720")
-    app = PokerGUI(root)
-    print("Game GUI created. Entering mainloop...")
-    root.mainloop()
-    print("Mainloop has ended.")
-
-if __name__ == "__main__":
-    main()
+      };
+      
+      // --- Poker Game Component ---
+      const PokerGameComponent = () => {
+        const numPlayers = 4;
+        const initialBalance = 1000;
+        const bigBlindAmt = 50;
+        const smallBlindAmt = 25;
+        const moveTime = 30; // seconds per move
+        
+        // Game state
+        const [deck, setDeck] = useState([]);
+        const [players, setPlayers] = useState({});
+        const [community, setCommunity] = useState([]);
+        const [stage, setStage] = useState("pre-flop");
+        const [pot, setPot] = useState(0);
+        const [currentPlayer, setCurrentPlayer] = useState(1);
+        const [message, setMessage] = useState("");
+        const [processing, setProcessing] = useState(false);
+        const [handCount, setHandCount] = useState(0);
+        const [timer, setTimer] = useState(moveTime);
+        const timerRef = useRef(null);
+        
+        // Update turn indicator.
+        const updateTurnIndicator = () => {
+          const turnElem = document.getElementById("turn");
+          if (turnElem) turnElem.textContent = `Turn: Player ${currentPlayer}`;
+        };
+        
+        // Reset timer when currentPlayer changes.
+        useEffect(() => {
+          resetTimer();
+          updateTurnIndicator();
+          return () => clearInterval(timerRef.current);
+        }, [currentPlayer]);
+        
+        const resetTimer = () => {
+          clearInterval(timerRef.current);
+          setTimer(moveTime);
+          timerRef.current = setInterval(() => {
+            setTimer(prev => {
+              if (prev <= 1) {
+                clearInterval(timerRef.current);
+                if (currentPlayer === 1) handlePlayerAction("call");
+                return moveTime;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        };
+        
+        // Initialize a new hand (preserving overall balance).
+        const initHand = () => {
+          let newDeck = shuffleDeck(createDeck());
+          let newPlayers = {};
+          for (let i = 1; i <= numPlayers; i++) {
+            let balance = players[i] ? players[i].balance : initialBalance;
+            newPlayers[i] = {
+              hand: [newDeck.pop(), newDeck.pop()],
+              balance: balance,
+              active: true,
+              bet: 0,
+              totalBet: 0
+            };
+          }
+          // Post blinds: player2 posts small, player3 posts big.
+          newPlayers[2].balance -= smallBlindAmt;
+          newPlayers[2].bet = smallBlindAmt;
+          newPlayers[2].totalBet = smallBlindAmt;
+          newPlayers[3].balance -= bigBlindAmt;
+          newPlayers[3].bet = bigBlindAmt;
+          newPlayers[3].totalBet = bigBlindAmt;
+          setPot(smallBlindAmt + bigBlindAmt);
+          setDeck(newDeck);
+          setPlayers(newPlayers);
+          setCommunity([]);
+          setStage("pre-flop");
+          setCurrentPlayer(4); // action starts with player4.
+          setMessage("Pre-flop: Your move if you're Player 1.");
+          setHandCount(prev => prev + 1);
+          playSound("sound-newhand");
+          if (handCount > 0) updateLedger(handCount + 1, players);
+        };
+        
+        // Initialize a new game (overall reset).
+        const initGame = () => {
+          let newPlayers = {};
+          for (let i = 1; i <= numPlayers; i++) {
+            newPlayers[i] = { balance: initialBalance };
+          }
+          setPlayers(newPlayers);
+          setHandCount(0);
+          const ledgerBody = document.getElementById("ledger-body");
+          if (ledgerBody) ledgerBody.innerHTML = "";
+          initHand();
+        };
+        
+        // On mount, start a new game.
+        useEffect(() => {
+          initGame();
+        }, []);
+        
+        // Deal community cards.
+        const dealCommunity = (count) => {
+          let newDeck = [...deck];
+          let newCommunity = [...community];
+          for (let i = 0; i < count; i++) {
+            newCommunity.push(newDeck.pop());
+          }
+          setDeck(newDeck);
+          setCommunity(newCommunity);
+          if (newCommunity.length === 3) setStage("flop");
+          else if (newCommunity.length === 4) setStage("turn");
+          else if (newCommunity.length === 5) setStage("river");
+        };
+        
+        // Get current bet.
+        const currentBet = () => {
+          let maxBet = 0;
+          Object.values(players).forEach(p => {
+            if (p.bet > maxBet) maxBet = p.bet;
+          });
+          return maxBet;
+        };
+        
+        // Process a bet action:
+        // This function handles fold, call, and raise with proper chip deduction and pot updates.
+        const processBet = async (action, playerId, raiseAmt = 0) => {
+          let newPlayers = { ...players };
+          if (action === "fold") {
+            newPlayers[playerId].active = false;
+            setMessage(`Player ${playerId} folds.`);
+          } else if (action === "call") {
+            let betNeeded = currentBet() - newPlayers[playerId].bet;
+            if (newPlayers[playerId].balance >= betNeeded) {
+              newPlayers[playerId].balance -= betNeeded;
+              newPlayers[playerId].bet += betNeeded;
+              newPlayers[playerId].totalBet += betNeeded;
+              setPot(prev => prev + betNeeded);
+              setMessage(`Player ${playerId} calls.`);
+              playSound("sound-bet");
+            }
+          } else if (action === "raise") {
+            // Enforce that the player must call first
+            let betNeeded = currentBet() - newPlayers[playerId].bet;
+            if (newPlayers[playerId].balance >= betNeeded + raiseAmt) {
+              // First, call the current bet.
+              newPlayers[playerId].balance -= betNeeded;
+              newPlayers[playerId].bet += betNeeded;
+              newPlayers[playerId].totalBet += betNeeded;
+              setPot(prev => prev + betNeeded);
+              // Then, raise by the additional amount.
+              newPlayers[playerId].balance -= raiseAmt;
+              newPlayers[playerId].bet += raiseAmt;
+              newPlayers[playerId].totalBet += raiseAmt;
+              setPot(prev => prev + raiseAmt);
+              setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
+              playSound("sound-bet");
+            }
+          } else if (action === "check") {
+            setMessage(`Player ${playerId} checks.`);
+          }
+          setPlayers(newPlayers);
+        };
+        
+        // bettingRoundOver now checks if all active players have matched the highest bet or folded.
+        const bettingRoundOver = () => {
+          const activePlayers = Object.entries(players)
+            .filter(([pid, p]) => p.active)
+            .map(([pid, p]) => p);
+          return activePlayers.every(p => p.bet === currentBet());
+        };
+        
+        // Evaluate hands using PokerSolver at showdown.
+        const evaluateHands = () => {
+          let bestScore = null;
+          let winner = null;
+          for (let pid in players) {
+            if (!players[pid].active) continue;
+            let hole = players[pid].hand.map(c => formatCardForSolver(c));
+            let communityCards = community.map(c => formatCardForSolver(c));
+            const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
+            if (bestScore === null || solved.rank < bestScore.rank) {
+              bestScore = solved;
+              winner = pid;
+            }
+          }
+          return winner;
+        };
+        
+        // Advance to next stage.
+        const nextStage = async () => {
+          let newPlayers = { ...players };
+          // Reset bets for new round.
+          for (let pid in newPlayers) {
+            newPlayers[pid].bet = 0;
+          }
+          setPlayers(newPlayers);
+          if (stage === "pre-flop") {
+            dealCommunity(3); // flop.
+          } else if (stage === "flop") {
+            dealCommunity(1); // turn.
+          } else if (stage === "turn") {
+            dealCommunity(1); // river.
+          }
+          setMessage(`Stage: ${stage.toUpperCase()}`);
+          resetTimer();
+        };
+        
+        // CPU actions run sequentially after the human player.
+        const runCpuActions = async () => {
+          for (let pid = 2; pid <= numPlayers; pid++) {
+            if (!players[pid].active) continue;
+            setProcessing(true);
+            const decision = await aiDecision(players[pid].hand, community);
+            if (decision === "raise") {
+              let raiseAmt = Math.floor(Math.random() * 150) + 50;
+              await processBet("raise", pid, raiseAmt);
+            } else {
+              await processBet(decision, pid);
+            }
+            setProcessing(false);
+          }
+        };
+        
+        // Handle human action.
+        const handlePlayerAction = async (action, raiseAmt = 0) => {
+          if (!players[1].active) return;
+          await processBet(action, 1, raiseAmt);
+          // CPU actions run sequentially after human action.
+          await runCpuActions();
+          if (bettingRoundOver()) {
+            if (stage === "river") {
+              setMessage("Showdown!");
+              playSound("sound-showdown");
+              const winner = evaluateHands();
+              let newPlayers = { ...players };
+              newPlayers[winner].balance += pot;
+              setPlayers(newPlayers);
+              // Popup winner message.
+              window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              // After delay, start next hand.
+              setTimeout(() => { initHand(); }, 3000);
+              if (players[1].balance <= 0) {
+                setTimeout(() => {
+                  if (window.confirm("LOZER!! You ran out of points. Start a new game?")) {
+                    initGame();
+                  }
+                }, 3000);
+              }
+            } else {
+              await nextStage();
+            }
+          }
+          resetTimer();
+          // Cycle turn indicator (simple cycle: 1 -> 2 -> 3 -> 4 -> 1).
+          setCurrentPlayer(prev => (prev % numPlayers) + 1);
+        };
+        
+        // "New Game" button.
+        const newGame = () => {
+          if (window.confirm("Start a new game? All progress will be reset.")) {
+            initGame();
+          }
+        };
+        
+        // Update game stats (hand counter).
+        useEffect(() => {
+          const statsElem = document.getElementById("stats");
+          if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
+        }, [handCount]);
+        
+        return (
+          <div className="table">
+            <div className="info">
+              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
+            </div>
+            <div className="community">
+              {community.map((card, idx) => (
+                <Card key={idx} card={card} animate={true} />
+              ))}
+            </div>
+            {Object.entries(players).map(([pid, data]) => (
+              <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
+                <div>Player {pid} {pid === "1" && "(You)"}</div>
+                <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                  {data.hand.map((card, idx) => (
+                    // For CPU players, show hidden cards (blue with "??") until showdown.
+                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
+                  ))}
+                </div>
+                <div>
+                  Balance: {data.balance} | Bet: {data.totalBet}
+                </div>
+              </div>
+            ))}
+            <div className="controls">
+              <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
+              <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
+              <button className="btn-raise" onClick={() => {
+                const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
+                handlePlayerAction("raise", amt);
+              }} disabled={processing}>Raise</button>
+              {stage !== "river" && (
+                <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
+              )}
+              {stage === "river" && (
+                <button className="btn-showdown" onClick={async () => {
+                  await runCpuActions();
+                  const winner = evaluateHands();
+                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                  playSound("sound-showdown");
+                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                }} disabled={processing}>Showdown</button>
+              )}
+              <button className="btn-new" onClick={newGame}>New Game</button>
+            </div>
+            {message && (
+              <div className="game-info">
+                {message}
+              </div>
+            )}
+          </div>
+        );
+      };
+      
+      // For real-time multiplayer and advanced AI, integrate a backend (e.g. Node.js with websockets)
+      // and a trained machine-learning model (via TensorFlow.js or a Python-based service).
+      
+      ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
