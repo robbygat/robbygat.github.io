@@ -4,26 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- Three.js for 3D background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- PokerSolver library for hand evaluation -->
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
-    <!-- React and Babel CDN -->
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      /* Reset and Global Variables */
       * { margin: 0; padding: 0; box-sizing: border-box; }
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Very dark green for website background */
-        --bg-green: #006400;       /* Lighter green for poker table */
+        --bg-dark-green: #002200;
+        --bg-green: #006400;
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -33,7 +27,6 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Three.js canvas for rotating wireframe cubes background */
       #threejs-canvas {
         position: fixed;
         top: 0;
@@ -42,7 +35,6 @@
         height: 100%;
         z-index: -4;
       }
-      /* Header */
       header {
         position: sticky;
         top: 0;
@@ -67,7 +59,6 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Volume Control */
       .volume-control {
         display: flex;
         align-items: center;
@@ -75,7 +66,6 @@
         color: var(--primary-color);
         font-size: 1rem;
       }
-      /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
         position: fixed;
         background: rgba(0,0,0,0.8);
@@ -88,7 +78,6 @@
       .timer { top: 70px; right: 20px; }
       .stats { top: 70px; left: 20px; }
       .turn-indicator { top: 110px; left: 20px; }
-      /* Main Table Area */
       .table {
         position: relative;
         width: 100%;
@@ -103,10 +92,9 @@
         bottom: 50px;
         border: 10px solid darkgreen;
         border-radius: 50%;
-        background: rgba(0, 100, 0, 0.7); /* 70% opacity */
+        background: rgba(0, 100, 0, 0.7);
         z-index: -1;
       }
-      /* Community Cards */
       .community {
         position: absolute;
         top: 38%;
@@ -116,7 +104,6 @@
         gap: 10px;
         z-index: 2;
       }
-      /* Player Areas */
       .player {
         position: absolute;
         text-align: center;
@@ -132,7 +119,6 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles (always face-up) */
       .card {
         width: 90px;
         height: 135px;
@@ -162,10 +148,8 @@
       .card-front {
         background: #fff;
       }
-      /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: display blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -174,7 +158,6 @@
         content: "??";
         font-size: 1.5rem;
       }
-      /* Controls */
       .controls {
         position: fixed;
         bottom: 0;
@@ -204,7 +187,6 @@
       .btn-next { background: #888; color: #fff; }
       .btn-showdown { background: #ff9900; color: #fff; }
       .btn-new { background: #444; color: #fff; }
-      /* Game Info Message */
       .game-info {
         position: fixed;
         bottom: 70px;
@@ -217,7 +199,6 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger */
       .ledger {
         position: fixed;
         top: 150px;
@@ -234,14 +215,12 @@
       .ledger h3 { margin-bottom: 5px; }
       .ledger table { width: 100%; border-collapse: collapse; }
       .ledger th, .ledger td { border: 1px solid var(--primary-color); padding: 2px 5px; text-align: center; }
-      /* Extra Animations */
       @keyframes fadeInBounce {
         0% { opacity: 0; transform: scale(0.5); }
         50% { opacity: 0.7; transform: scale(1.2); }
         100% { opacity: 1; transform: scale(1); }
       }
       .animate-bounce { animation: fadeInBounce 0.8s ease-out; }
-      /* Responsive adjustments */
       @media (max-width: 768px) {
         .card { width: 70px; height: 105px; }
         .player { font-size: 0.9rem; }
@@ -251,9 +230,7 @@
     </style>
   </head>
   <body>
-    <!-- Three.js canvas for rotating wireframe cubes background -->
     <canvas id="threejs-canvas"></canvas>
-    <!-- Header with Home button and Volume Control -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
@@ -261,11 +238,9 @@
         Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
     </header>
-    <!-- Timer, Stats, and Turn Indicator -->
     <div class="timer" id="timer">30</div>
     <div class="stats" id="stats">Hands: 0</div>
     <div class="turn-indicator" id="turn">Turn: Player ?</div>
-    <!-- Ledger -->
     <div class="ledger" id="ledger">
       <h3>Ledger</h3>
       <table>
@@ -281,9 +256,10 @@
         <tbody id="ledger-body"></tbody>
       </table>
     </div>
-    <!-- Main React Root -->
     <div id="root"></div>
-    <!-- Three.js script to create rotating wireframe cubes background -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/wood_plank_flicks.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
     <script>
       let scene, camera, renderer, cubes = [];
       function initThreeJS() {
@@ -318,12 +294,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
       });
       initThreeJS();
-    </script>
-    <!-- Sound Effects and Synth-Style Soundtrack -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/wood_plank_flicks.ogg"></audio>
-    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
-    <script>
+
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
         const sounds = document.querySelectorAll("audio");
@@ -336,39 +307,11 @@
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
-      
-      // --- Helper Functions ---
-      const suits = ['♠', '♥', '♦', '♣'];
-      const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      const createDeck = () => {
-        let deck = [];
-        suits.forEach(suit => {
-          ranks.forEach(rank => {
-            deck.push({ rank, suit });
-          });
-        });
-        return deck;
-      };
-      const shuffleDeck = (deck) => {
-        for (let i = deck.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [deck[i], deck[j]] = [deck[j], deck[i]];
-        }
-        return deck;
-      };
-      
-      // Get card code for deckofcardsapi.com.
-      const getCardCode = (card) => {
-        let rank = card.rank === "10" ? "0" : card.rank;
-        const suitMap = { '♠': 'S', '♥': 'H', '♦': 'D', '♣': 'C' };
-        return `${rank}${suitMap[card.suit]}`;
-      };
-      
-      // Card Component: Loads card image from deckofcardsapi.com.
+
       const Card = ({ card, animate }) => {
         const imgUrl = card.suit === "?" 
           ? "https://deckofcardsapi.com/static/img/back.png" 
-          : `https://deckofcardsapi.com/static/img/${getCardCode(card)}.png`;
+          : card.image;
         const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
@@ -380,35 +323,31 @@
           </div>
         );
       };
-      
-      // --- Advanced AI Simulation Placeholder ---
-      const aiDecision = async (playerHand, community) => {
-        const highRanks = ["J", "Q", "K", "A"];
-        const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
-        let highCount = countHigh(playerHand) + countHigh(community);
+
+      const aiDecision = async (hand, community, currentBet, balance) => {
+        const highRanks = ["JACK", "QUEEN", "KING", "ACE"];
+        const countHigh = (cards) => cards.filter(c => highRanks.includes(c.value)).length;
+        const strength = countHigh(hand) + countHigh(community);
         await new Promise(res => setTimeout(res, 500));
-        if (highCount >= 3) return "raise";
-        if (highCount === 0) return "fold";
-        return "call";
+        if (strength >= 3 && balance > currentBet * 2) return { action: "raise", amount: currentBet * 2 };
+        if (strength === 0) return { action: "fold" };
+        return { action: "call" };
       };
-      
-      // --- Ledger Management ---
+
       const updateLedger = (handCount, players) => {
         const ledgerBody = document.getElementById("ledger-body");
         if (!ledgerBody) return;
         const row = document.createElement("tr");
-        const handCell = document.createElement("td");
-        handCell.textContent = handCount;
-        row.appendChild(handCell);
-        for (let i = 1; i <= 4; i++) {
-          const cell = document.createElement("td");
-          cell.textContent = players[i] ? players[i].balance : 0;
-          row.appendChild(cell);
-        }
+        row.innerHTML = `
+          <td>${handCount}</td>
+          <td>${players[1].balance}</td>
+          <td>${players[2].balance}</td>
+          <td>${players[3].balance}</td>
+          <td>${players[4].balance}</td>
+        `;
         ledgerBody.appendChild(row);
       };
-      
-      // --- Sound Effects Helper ---
+
       const playSound = (id) => {
         const sound = document.getElementById(id);
         if (sound) {
@@ -416,38 +355,44 @@
           sound.play();
         }
       };
-      
-      // --- Poker Game Component ---
+
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
-        const bigBlindAmt = 50;
         const smallBlindAmt = 25;
+        const bigBlindAmt = 50;
         const moveTime = 30;
-        
-        const [deck, setDeck] = useState([]);
+
+        const [deckId, setDeckId] = useState(null);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
         const [stage, setStage] = useState("pre-flop");
         const [pot, setPot] = useState(0);
         const [currentPlayer, setCurrentPlayer] = useState(1);
-        const [message, setMessage] = useState("");
+        const [dealer, setDealer] = useState(0);
+        const [message, setMessage] = useState("Initializing...");
         const [processing, setProcessing] = useState(false);
         const [handCount, setHandCount] = useState(0);
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
-        
+
+        useEffect(() => {
+          fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1")
+            .then(res => res.json())
+            .then(data => setDeckId(data.deck_id));
+        }, []);
+
         const updateTurnIndicator = () => {
           const turnElem = document.getElementById("turn");
           if (turnElem) turnElem.textContent = `Turn: Player ${currentPlayer}`;
         };
-        
+
         useEffect(() => {
           resetTimer();
           updateTurnIndicator();
           return () => clearInterval(timerRef.current);
         }, [currentPlayer]);
-        
+
         const resetTimer = () => {
           clearInterval(timerRef.current);
           setTimer(moveTime);
@@ -462,202 +407,231 @@
             });
           }, 1000);
         };
-        
-        const initHand = () => {
-          let newDeck = shuffleDeck(createDeck());
-          let newPlayers = {};
+
+        const nextPlayer = (pid) => (pid % numPlayers) + 1;
+
+        const drawCards = async (count) => {
+          const res = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${count}`);
+          const data = await res.json();
+          return data.cards.map(card => ({
+            value: card.value,
+            suit: card.suit[0].toLowerCase(),
+            image: card.image
+          }));
+        };
+
+        const initHand = async () => {
+          const cardsNeeded = numPlayers * 2 + 5; // 2 cards per player + 5 community
+          const newCards = await drawCards(cardsNeeded);
+          const newPlayers = {};
+          const newDealer = nextPlayer(dealer);
+          const smallBlindPos = nextPlayer(newDealer);
+          const bigBlindPos = nextPlayer(smallBlindPos);
+          const firstToAct = nextPlayer(bigBlindPos);
+
           for (let i = 1; i <= numPlayers; i++) {
-            let balance = players[i] ? players[i].balance : initialBalance;
+            const balance = players[i]?.balance ?? initialBalance;
             newPlayers[i] = {
-              hand: [newDeck.pop(), newDeck.pop()],
-              balance: balance,
+              hand: [newCards.shift(), newCards.shift()],
+              balance,
               active: true,
               bet: 0,
               totalBet: 0
             };
           }
-          newPlayers[2].balance -= smallBlindAmt;
-          newPlayers[2].bet = smallBlindAmt;
-          newPlayers[2].totalBet = smallBlindAmt;
-          newPlayers[3].balance -= bigBlindAmt;
-          newPlayers[3].bet = bigBlindAmt;
-          newPlayers[3].totalBet = bigBlindAmt;
+
+          newPlayers[smallBlindPos].balance -= smallBlindAmt;
+          newPlayers[smallBlindPos].bet = smallBlindAmt;
+          newPlayers[smallBlindPos].totalBet = smallBlindAmt;
+          newPlayers[bigBlindPos].balance -= bigBlindAmt;
+          newPlayers[bigBlindPos].bet = bigBlindAmt;
+          newPlayers[bigBlindPos].totalBet = bigBlindAmt;
+
           setPot(smallBlindAmt + bigBlindAmt);
-          setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4);
-          setMessage("Pre-flop: Your move if you're Player 1.");
+          setCurrentPlayer(firstToAct);
+          setDealer(newDealer);
+          setMessage(`Pre-flop: Player ${firstToAct}'s turn`);
           setHandCount(prev => prev + 1);
           playSound("sound-newhand");
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
-        
-        const initGame = () => {
-          let newPlayers = {};
+
+        const initGame = async () => {
+          const newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
             newPlayers[i] = { balance: initialBalance };
           }
           setPlayers(newPlayers);
           setHandCount(0);
+          setDealer(0);
           const ledgerBody = document.getElementById("ledger-body");
           if (ledgerBody) ledgerBody.innerHTML = "";
-          initHand();
+          await initHand();
         };
-        
+
         useEffect(() => {
-          initGame();
-        }, []);
-        
-        const dealCommunity = (count) => {
-          let newDeck = [...deck];
-          let newCommunity = [...community];
-          for (let i = 0; i < count; i++) {
-            newCommunity.push(newDeck.pop());
-          }
-          setDeck(newDeck);
-          setCommunity(newCommunity);
-          if (newCommunity.length === 3) setStage("flop");
-          else if (newCommunity.length === 4) setStage("turn");
-          else if (newCommunity.length === 5) setStage("river");
+          if (deckId) initGame();
+        }, [deckId]);
+
+        const dealCommunity = async (count) => {
+          const newCards = await drawCards(count);
+          setCommunity(prev => [...prev, ...newCards]);
+          if (community.length + count === 3) setStage("flop");
+          else if (community.length + count === 4) setStage("turn");
+          else if (community.length + count === 5) setStage("river");
         };
-        
-        const currentBet = () => {
-          let maxBet = 0;
-          Object.values(players).forEach(p => {
-            if (p.bet > maxBet) maxBet = p.bet;
-          });
-          return maxBet;
-        };
-        
+
+        const currentBet = () => Math.max(...Object.values(players).map(p => p.bet));
+
         const processBet = async (action, playerId, raiseAmt = 0) => {
-          let newPlayers = { ...players };
+          const newPlayers = { ...players };
+          const player = newPlayers[playerId];
+          const betToMatch = currentBet();
+
           if (action === "fold") {
-            newPlayers[playerId].active = false;
-            setMessage(`Player ${playerId} folds.`);
+            player.active = false;
+            setMessage(`Player ${playerId} folds`);
           } else if (action === "call") {
-            let betNeeded = currentBet() - newPlayers[playerId].bet;
-            if (newPlayers[playerId].balance >= betNeeded) {
-              newPlayers[playerId].balance -= betNeeded;
-              newPlayers[playerId].bet += betNeeded;
-              newPlayers[playerId].totalBet += betNeeded;
-              setPot(prev => prev + betNeeded);
-              setMessage(`Player ${playerId} calls.`);
+            const needed = betToMatch - player.bet;
+            if (player.balance >= needed) {
+              player.balance -= needed;
+              player.bet = betToMatch;
+              player.totalBet += needed;
+              setPot(prev => prev + needed);
+              setMessage(`Player ${playerId} calls ${needed}`);
               playSound("sound-bet");
             }
           } else if (action === "raise") {
-            if (newPlayers[playerId].balance >= raiseAmt) {
-              newPlayers[playerId].balance -= raiseAmt;
-              newPlayers[playerId].bet += raiseAmt;
-              newPlayers[playerId].totalBet += raiseAmt;
-              setPot(prev => prev + raiseAmt);
-              setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
+            const totalBet = betToMatch + raiseAmt;
+            const amount = totalBet - player.bet;
+            if (player.balance >= amount) {
+              player.balance -= amount;
+              player.bet = totalBet;
+              player.totalBet += amount;
+              setPot(prev => prev + amount);
+              setMessage(`Player ${playerId} raises by ${raiseAmt}`);
               playSound("sound-bet");
             }
-          } else if (action === "check") {
-            setMessage(`Player ${playerId} checks.`);
           }
           setPlayers(newPlayers);
         };
-        
+
         const bettingRoundOver = () => {
-          const activePlayers = Object.entries(players)
-            .filter(([pid, p]) => p.active)
-            .map(([pid, p]) => p);
-          return activePlayers.every(p => p.bet === currentBet());
+          const activePlayers = Object.values(players).filter(p => p.active);
+          if (activePlayers.length <= 1) return true;
+          const maxBet = currentBet();
+          return activePlayers.every(p => p.bet === maxBet);
         };
-        
+
         const evaluateHands = () => {
-          let bestScore = null;
-          let winner = null;
-          for (let pid in players) {
+          const winners = [];
+          let bestHand = null;
+          for (const pid in players) {
             if (!players[pid].active) continue;
-            let hole = players[pid].hand.map(c => formatCardForSolver(c));
-            let communityCards = community.map(c => formatCardForSolver(c));
-            const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
-            if (bestScore === null || solved.rank < bestScore.rank) {
-              bestScore = solved;
-              winner = pid;
+            const hole = players[pid].hand.map(c => {
+              const rank = c.value === "10" ? "0" : c.value[0];
+              return `${rank}${c.suit}`;
+            });
+            const comm = community.map(c => {
+              const rank = c.value === "10" ? "0" : c.value[0];
+              return `${rank}${c.suit}`;
+            });
+            const hand = PokerSolver.Hand.solve([...hole, ...comm]);
+            if (!bestHand || hand.rank > bestHand.rank) {
+              bestHand = hand;
+              winners.length = 0;
+              winners.push(pid);
+            } else if (hand.rank === bestHand.rank) {
+              winners.push(pid);
             }
           }
-          return winner;
+          return winners;
         };
-        
+
         const nextStage = async () => {
-          let newPlayers = { ...players };
-          for (let pid in newPlayers) {
-            newPlayers[pid].bet = 0;
-          }
+          const newPlayers = { ...players };
+          for (const pid in newPlayers) newPlayers[pid].bet = 0;
           setPlayers(newPlayers);
-          if (stage === "pre-flop") {
-            dealCommunity(3);
-          } else if (stage === "flop") {
-            dealCommunity(1);
-          } else if (stage === "turn") {
-            dealCommunity(1);
-          }
-          setMessage(`Stage: ${stage.toUpperCase()}`);
-          resetTimer();
+          const firstToAct = nextPlayer(dealer);
+          setCurrentPlayer(firstToAct);
+
+          if (stage === "pre-flop") await dealCommunity(3);
+          else if (stage === "flop") await dealCommunity(1);
+          else if (stage === "turn") await dealCommunity(1);
+          setMessage(`Stage: ${stage.toUpperCase()} - Player ${firstToAct}'s turn`);
         };
-        
+
         const runCpuActions = async () => {
-          for (let pid = 2; pid <= numPlayers; pid++) {
-            if (!players[pid].active) continue;
+          let pid = currentPlayer;
+          while (pid !== 1 && players[pid].active && !bettingRoundOver()) {
             setProcessing(true);
-            const decision = await aiDecision(players[pid].hand, community);
-            if (decision === "raise") {
-              let raiseAmt = Math.floor(Math.random() * 150) + 50;
-              await processBet("raise", pid, raiseAmt);
-            } else {
-              await processBet(decision, pid);
-            }
+            const decision = await aiDecision(players[pid].hand, community, currentBet(), players[pid].balance);
+            await processBet(decision.action, pid, decision.amount || bigBlindAmt);
+            pid = nextPlayer(pid);
+            setCurrentPlayer(pid);
             setProcessing(false);
           }
         };
-        
+
         const handlePlayerAction = async (action, raiseAmt = 0) => {
-          if (!players[1].active) return;
+          if (currentPlayer !== 1 || !players[1].active || processing) return;
+          setProcessing(true);
           await processBet(action, 1, raiseAmt);
-          setCurrentPlayer(2);
-          await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              setMessage("Showdown!");
-              playSound("sound-showdown");
-              const winner = evaluateHands();
-              let newPlayers = { ...players };
-              newPlayers[winner].balance += pot;
+              const winners = evaluateHands();
+              const splitPot = Math.floor(pot / winners.length);
+              const newPlayers = { ...players };
+              winners.forEach(w => newPlayers[w].balance += splitPot);
               setPlayers(newPlayers);
-              window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              setTimeout(() => { initHand(); }, 3000);
-              if (players[1].balance <= 0) {
+              setMessage(`Showdown! ${winners.map(w => `Player ${w}`).join(", ")} win ${splitPot} each`);
+              playSound("sound-showdown");
+              window.alert(`Showdown! ${winners.map(w => `Player ${w}`).join(", ")} win ${splitPot} each`);
+              setTimeout(() => initHand(), 3000);
+              if (newPlayers[1].balance <= 0) {
                 setTimeout(() => {
-                  if (window.confirm("LOZER!! You ran out of points. Start a new game?")) {
-                    initGame();
-                  }
+                  if (window.confirm("You ran out of chips! Start a new game?")) initGame();
                 }, 3000);
               }
             } else {
               await nextStage();
             }
+          } else {
+            setCurrentPlayer(nextPlayer(1));
+            await runCpuActions();
+            if (bettingRoundOver()) {
+              if (stage === "river") {
+                const winners = evaluateHands();
+                const splitPot = Math.floor(pot / winners.length);
+                const newPlayers = { ...players };
+                winners.forEach(w => newPlayers[w].balance += splitPot);
+                setPlayers(newPlayers);
+                setMessage(`Showdown! ${winners.map(w => `Player ${w}`).join(", ")} win ${splitPot} each`);
+                playSound("sound-showdown");
+                window.alert(`Showdown! ${winners.map(w => `Player ${w}`).join(", ")} win ${splitPot} each`);
+                setTimeout(() => initHand(), 3000);
+              } else {
+                await nextStage();
+              }
+            } else if (!players[nextPlayer(1)].active) {
+              setCurrentPlayer(nextPlayer(nextPlayer(1)));
+            }
           }
-          resetTimer();
-          setCurrentPlayer(prev => (prev % numPlayers) + 1);
+          setProcessing(false);
         };
-        
+
         const newGame = () => {
-          if (window.confirm("Start a new game? All progress will be reset.")) {
-            initGame();
-          }
+          if (window.confirm("Start a new game? All progress will be reset.")) initGame();
         };
-        
+
         useEffect(() => {
           const statsElem = document.getElementById("stats");
           if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
         }, [handCount]);
-        
+
         return (
           <div className="table">
             <div className="info">
@@ -673,7 +647,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
+                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { suit: "?" }} animate={true} />
                   ))}
                 </div>
                 <div>
@@ -692,13 +666,7 @@
                 <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
               )}
               {stage === "river" && (
-                <button className="btn-showdown" onClick={async () => {
-                  await runCpuActions();
-                  const winner = evaluateHands();
-                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                  playSound("sound-showdown");
-                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                }} disabled={processing}>Showdown</button>
+                <button className="btn-showdown" onClick={handlePlayerAction} disabled={processing}>Showdown</button>
               )}
               <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
@@ -710,7 +678,7 @@
           </div>
         );
       };
-      
+
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
   </body>
