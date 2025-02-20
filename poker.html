@@ -4,16 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Google Fonts: Bungee for a fun look, and Roboto for body text -->
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
@@ -28,18 +22,19 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background */
-        --bg-green: #006400;       /* Poker table background */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
-        --font-family: 'Roboto', sans-serif;
+        --fun-font: 'Bungee', cursive;
+        --body-font: 'Roboto', sans-serif;
       }
       body {
-        font-family: var(--font-family);
+        font-family: var(--body-font);
         background-color: var(--bg-dark-green);
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background */
+      /* Particles background (black particles) */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -59,6 +54,7 @@
         background: rgba(0, 0, 0, 0.8);
       }
       header h2 {
+        font-family: var(--fun-font);
         color: var(--primary-color);
         font-size: 1.8rem;
       }
@@ -71,6 +67,18 @@
       header a:hover {
         transform: scale(1.2);
         color: var(--accent-color);
+      }
+      /* Volume Control: moved to bottom right */
+      .volume-control {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 5px 10px;
+        border-radius: 5px;
+        color: var(--primary-color);
+        font-size: 1rem;
       }
       /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
@@ -118,18 +126,28 @@
         position: absolute;
         text-align: center;
         z-index: 2;
-        padding: 5px;
+        padding: 10px;
         transition: box-shadow 0.3s, border 0.3s;
       }
       .player.active {
         border: 2px solid red;
         box-shadow: 0 0 15px var(--accent-color);
       }
+      .player p {
+        font-family: var(--fun-font);
+        font-size: 1.4rem;
+        margin-bottom: 5px;
+      }
+      .player .balance {
+        font-family: var(--fun-font);
+        font-size: 1.6rem;
+        margin-top: 5px;
+      }
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles */
+      /* Card Styles (always face-up) */
       .card {
         width: 90px;
         height: 135px;
@@ -138,6 +156,7 @@
         background: #fff;
         overflow: hidden;
         perspective: 1000px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       }
       .card-inner {
         position: relative;
@@ -256,7 +275,7 @@
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
     </header>
-    <!-- Volume Control (moved to bottom right) -->
+    <!-- Volume Control -->
     <div class="volume-control">
       Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
     </div>
@@ -318,10 +337,9 @@
         "retina_detect": true
       });
     </script>
-    <!-- Remove all sound effects (no background soundtrack) -->
+    <!-- Remove all other sound effects -->
     <script>
-      // Remove any calls to playSound in our code by not defining any sound-playing functions.
-      // Also, remove audio elements for sound effects.
+      // The sound elements have been removed as per request.
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
@@ -402,11 +420,11 @@
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
-        const bigBlindAmt = 20;  // Updated blinds.
+        const bigBlindAmt = 20;
         const smallBlindAmt = 10;
         const moveTime = 30; // seconds per move
         
-        // We'll track the button position to rotate blinds.
+        // Track the dealer button to rotate blinds.
         const [button, setButton] = useState(1);
         
         // Game state
@@ -450,12 +468,10 @@
           }, 1000);
         };
         
-        // Determine next player (clockwise).
-        const nextPlayer = (pid) => {
-          return (pid % numPlayers) + 1;
-        };
+        // Get next player (clockwise).
+        const nextPlayer = (pid) => (pid % numPlayers) + 1;
         
-        // Initialize a new hand (preserving overall balance, rotating blinds).
+        // Initialize a new hand (with blind rotation).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -470,7 +486,6 @@
             };
           }
           // Determine blinds based on the current button.
-          // For simplicity, assign: small blind = nextPlayer(button), big blind = nextPlayer(small blind)
           let smallBlind = nextPlayer(button);
           let bigBlind = nextPlayer(smallBlind);
           newPlayers[smallBlind].balance -= smallBlindAmt;
@@ -489,8 +504,7 @@
           setCurrentPlayer(nextPlayer(bigBlind));
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
-          // Rotate the button for the next hand.
-          setButton(prev => nextPlayer(prev));
+          setButton(nextPlayer(button)); // Rotate dealer.
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
@@ -653,7 +667,7 @@
             }
           }
           resetTimer();
-          // Cycle turn indicator: simple cycle 1->2->3->4->1.
+          // Cycle turn: simple cycle 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -682,14 +696,13 @@
             </div>
             {Object.entries(players).map(([pid, data]) => (
               <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
-                <div>Player {pid} {pid === "1" && "(You)"}</div>
+                <p>Player {pid} {pid === "1" && "(You)"}</p>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, show hidden cards until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
-                <div>
+                <div className="balance">
                   Balance: {data.balance} | Bet: {data.totalBet}
                 </div>
               </div>
@@ -723,8 +736,7 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced AI,
-      // integrate a backend with websockets and a trained ML model.
+      // Placeholder: For real-time multiplayer and advanced AI, integrate a backend with websockets and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
