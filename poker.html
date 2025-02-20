@@ -28,8 +28,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background: very dark green */
-        --bg-green: #006400;       /* Poker table background: lighter green */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -74,15 +74,10 @@
       }
       /* Volume Control */
       .volume-control {
-        position: fixed;
-        top: 10px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(0,0,0,0.8);
-        padding: 5px 10px;
-        border-radius: 5px;
         color: var(--primary-color);
-        font-size: 1rem;
+      }
+      .volume-control input {
+        vertical-align: middle;
       }
       /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
@@ -171,10 +166,10 @@
       .card-front {
         background: #fff;
       }
-      /* Suit colors: hearts and diamonds red; clubs and spades black */
+      /* Suit colors: hearts/diamonds red, clubs/spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: when not revealed, show blue background with "??" */
+      /* Hidden CPU cards: Blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -219,7 +214,7 @@
         bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 10px 20px;
         border-radius: 8px;
@@ -262,11 +257,10 @@
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button -->
+    <!-- Header with Home button and Volume Control -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
-      <!-- Volume Control -->
       <div class="volume-control">
         Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
@@ -330,12 +324,11 @@
       });
     </script>
     <!-- Sound Effects and Background Music (calming vaporwave synth) -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
-    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_chill.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_chill.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_chill.ogg"></audio>
     <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
     <script>
-      // Set initial volume for all sounds based on volume slider.
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
         const sounds = document.querySelectorAll("audio");
@@ -344,53 +337,56 @@
       volumeSlider.addEventListener("input", (e) => {
         setVolumeAll(e.target.value);
       });
-      // Start background music.
       document.getElementById("background-music").play();
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
       
+      // --- API Integration for Deck Management ---
+      const fetchNewDeck = async () => {
+        const response = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
+        const data = await response.json();
+        return data.deck_id;
+      };
+      const drawCards = async (deckId, count) => {
+        const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${count}`);
+        const data = await response.json();
+        // Map API card objects to our format.
+        return data.cards.map(card => ({
+          rank: card.value, 
+          suit: card.suit,
+          image: card.image,
+          code: card.code
+        }));
+      };
+      
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a standard 52-card deck.
-      const createDeck = () => {
-        let deck = [];
-        suits.forEach(suit => {
-          ranks.forEach(rank => {
-            deck.push({ rank, suit });
-          });
-        });
-        return deck;
-      };
-      const shuffleDeck = (deck) => {
-        for (let i = deck.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [deck[i], deck[j]] = [deck[j], deck[i]];
-        }
-        return deck;
-      };
       
-      // Format a card for PokerSolver.
+      // For PokerSolver, format cards.
       const formatCardForSolver = (card) => {
-        let rank = card.rank === "10" ? "T" : card.rank;
+        let rank = card.rank === "10" ? "T" : card.rank[0];
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Displays a full card face.
+      // Card Component: Uses API image for card face.
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
-        else if (card.suit === "?") faceClass = "card-front"; // will be handled by hidden styling
+        else if (card.suit === "?") faceClass = "card-front"; // hidden will be styled below.
         else faceClass += " black";
-        // If card.suit is "?", add hidden class to display blue card with "??"
         const hiddenClass = card.suit === "?" ? "hidden" : "";
+        // If an API image is provided, use it; otherwise, fallback to text.
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
             <div className="card-inner">
               <div className={`card-face card-front ${faceClass}`}>
-                {card.suit === "?" ? "" : `${card.rank}${card.suit}`}
+                {card.image && card.suit !== "?" ? 
+                  <img src={card.image} alt={`${card.rank}${card.suit}`} style={{width: "100%", height: "100%"}} /> 
+                  : (card.suit === "?" ? "" : `${card.rank}${card.suit}`)
+                }
               </div>
             </div>
           </div>
@@ -441,8 +437,11 @@
         const smallBlindAmt = 25;
         const moveTime = 30; // seconds per move
         
+        // New state for deck ID (from API) and dealer position.
+        const [deckId, setDeckId] = useState("");
+        const [dealer, setDealer] = useState(1);
+        
         // Game state
-        const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
         const [stage, setStage] = useState("pre-flop");
@@ -482,41 +481,89 @@
           }, 1000);
         };
         
-        // Initialize a new hand (preserving overall balance).
-        const initHand = () => {
-          let newDeck = shuffleDeck(createDeck());
+        // Fetch a new deck from the API.
+        const initializeDeck = async () => {
+          const id = await fetchNewDeck();
+          setDeckId(id);
+        };
+        
+        const fetchNewDeck = async () => {
+          const response = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
+          const data = await response.json();
+          return data.deck_id;
+        };
+        
+        // Draw cards from API.
+        const drawCards = async (count) => {
+          const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${count}`);
+          const data = await response.json();
+          // Map API card objects to our format.
+          return data.cards.map(card => ({
+            rank: card.value,
+            suit: card.suit,
+            image: card.image,
+            code: card.code
+          }));
+        };
+        
+        // Rotate dealer position.
+        const rotateDealer = () => {
+          setDealer(prev => (prev % numPlayers) + 1);
+        };
+        
+        // Determine next active player (skipping folded players).
+        const nextPlayer = (start) => {
+          let next = start;
+          do {
+            next = (next % numPlayers) + 1;
+          } while (!players[next] || !players[next].active);
+          return next;
+        };
+        
+        // Initialize a new hand using the Deck API.
+        const initHand = async () => {
+          // If no deckId yet, initialize deck.
+          if (!deckId) await initializeDeck();
+          // Draw 8 cards for players (2 each).
+          const drawn = await drawCards(numPlayers * 2);
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
             let balance = players[i] ? players[i].balance : initialBalance;
             newPlayers[i] = {
-              hand: [newDeck.pop(), newDeck.pop()],
+              hand: [drawn[(i - 1) * 2], drawn[(i - 1) * 2 + 1]],
               balance: balance,
               active: true,
               bet: 0,
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
-          newPlayers[2].balance -= smallBlindAmt;
-          newPlayers[2].bet = smallBlindAmt;
-          newPlayers[2].totalBet = smallBlindAmt;
-          newPlayers[3].balance -= bigBlindAmt;
-          newPlayers[3].bet = bigBlindAmt;
-          newPlayers[3].totalBet = bigBlindAmt;
+          // Rotate dealer.
+          rotateDealer();
+          // Set blinds based on dealer:
+          const smallBlindPos = nextPlayer(dealer);
+          const bigBlindPos = nextPlayer(smallBlindPos);
+          newPlayers[smallBlindPos].balance -= smallBlindAmt;
+          newPlayers[smallBlindPos].bet = smallBlindAmt;
+          newPlayers[smallBlindPos].totalBet = smallBlindAmt;
+          newPlayers[bigBlindPos].balance -= bigBlindAmt;
+          newPlayers[bigBlindPos].bet = bigBlindAmt;
+          newPlayers[bigBlindPos].totalBet = bigBlindAmt;
           setPot(smallBlindAmt + bigBlindAmt);
-          setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4.
+          // Pre-flop action starts with the player after the big blind.
+          setCurrentPlayer(nextPlayer(bigBlindPos));
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
           playSound("sound-newhand");
+          // Update ledger if this isn't the first hand.
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
-        // Initialize a new game (overall reset).
-        const initGame = () => {
+        // Initialize a new game (reset overall game state).
+        const initGame = async () => {
+          await initializeDeck();
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
             newPlayers[i] = { balance: initialBalance };
@@ -525,7 +572,7 @@
           setHandCount(0);
           const ledgerBody = document.getElementById("ledger-body");
           if (ledgerBody) ledgerBody.innerHTML = "";
-          initHand();
+          await initHand();
         };
         
         // On mount, start a new game.
@@ -533,14 +580,10 @@
           initGame();
         }, []);
         
-        // Deal community cards.
-        const dealCommunity = (count) => {
-          let newDeck = [...deck];
-          let newCommunity = [...community];
-          for (let i = 0; i < count; i++) {
-            newCommunity.push(newDeck.pop());
-          }
-          setDeck(newDeck);
+        // Deal community cards (5 total over stages).
+        const dealCommunity = async (count) => {
+          const drawn = await drawCards(count);
+          const newCommunity = [...community, ...drawn];
           setCommunity(newCommunity);
           if (newCommunity.length === 3) setStage("flop");
           else if (newCommunity.length === 4) setStage("turn");
@@ -598,7 +641,7 @@
         // Evaluate hands using PokerSolver at showdown.
         const evaluateHands = () => {
           let bestScore = null;
-          let winner = null;
+          let winners = [];
           for (let pid in players) {
             if (!players[pid].active) continue;
             let hole = players[pid].hand.map(c => formatCardForSolver(c));
@@ -606,10 +649,12 @@
             const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
             if (bestScore === null || solved.rank < bestScore.rank) {
               bestScore = solved;
-              winner = pid;
+              winners = [pid];
+            } else if (solved.rank === bestScore.rank) {
+              winners.push(pid);
             }
           }
-          return winner;
+          return winners;
         };
         
         // Advance to next stage.
@@ -620,14 +665,16 @@
           }
           setPlayers(newPlayers);
           if (stage === "pre-flop") {
-            dealCommunity(3); // flop.
+            await dealCommunity(3); // flop.
           } else if (stage === "flop") {
-            dealCommunity(1); // turn.
+            await dealCommunity(1); // turn.
           } else if (stage === "turn") {
-            dealCommunity(1); // river.
+            await dealCommunity(1); // river.
           }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
+          // For post-flop, action starts with the player after the dealer.
+          setCurrentPlayer(nextPlayer(dealer));
         };
         
         // CPU actions.
@@ -650,21 +697,22 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // For proper Texas Hold'em rules, if a bet is made you must call at minimum.
-          // (This simple simulation forces the next actions to follow accordingly.)
+          // Advance turn order.
+          setCurrentPlayer(nextPlayer(1));
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
               setMessage("Showdown!");
               playSound("sound-showdown");
-              const winner = evaluateHands();
+              const winners = evaluateHands();
+              // Split pot evenly among winners.
               let newPlayers = { ...players };
-              newPlayers[winner].balance += pot;
+              winners.forEach(w => {
+                newPlayers[w].balance += Math.floor(pot / winners.length);
+              });
               setPlayers(newPlayers);
-              // Popup winner message.
-              window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // After delay, start next hand.
+              window.alert(`Showdown! Winner(s): Player ${winners.join(", ")} win the pot of ${pot} credits!`);
+              setMessage(`Showdown! Winner(s): Player ${winners.join(", ")} win the pot of ${pot} credits!`);
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -678,8 +726,7 @@
             }
           }
           resetTimer();
-          // Cycle turn indicator: simple cycle 1->2->3->4->1.
-          setCurrentPlayer(prev => (prev % numPlayers) + 1);
+          setCurrentPlayer(nextPlayer(currentPlayer));
         };
         
         // "New Game" button.
@@ -698,7 +745,7 @@
         return (
           <div className="table">
             <div className="info">
-              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
+              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt} | Dealer: Player {dealer}
             </div>
             <div className="community">
               {community.map((card, idx) => (
@@ -710,7 +757,6 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, show hidden card until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -732,10 +778,10 @@
               {stage === "river" && (
                 <button className="btn-showdown" onClick={async () => {
                   await runCpuActions();
-                  const winner = evaluateHands();
-                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                  const winners = evaluateHands();
+                  setMessage(`Showdown! Winner(s): Player ${winners.join(", ")} win the pot of ${pot} credits!`);
                   playSound("sound-showdown");
-                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                  window.alert(`Showdown! Winner(s): Player ${winners.join(", ")} win the pot of ${pot} credits!`);
                 }} disabled={processing}>Showdown</button>
               )}
               <button className="btn-new" onClick={newGame}>New Game</button>
