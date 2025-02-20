@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
@@ -22,8 +28,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background (darker green) */
-        --bg-green: #006400;       /* Poker table background (lighter green) */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -66,30 +72,19 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Timer Display */
-      .timer {
+      /* Timer and Stats */
+      .timer, .stats, .turn-indicator {
         position: fixed;
-        top: 70px;
-        right: 20px;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.8);
         color: var(--primary-color);
         padding: 5px 10px;
         border-radius: 5px;
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Game Stats (hand counter, etc.) */
-      .stats {
-        position: fixed;
-        top: 70px;
-        left: 20px;
-        background: rgba(0,0,0,0.8);
-        color: var(--primary-color);
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 1.1rem;
-        z-index: 1000;
-      }
+      .timer { top: 70px; right: 20px; }
+      .stats { top: 70px; left: 20px; }
+      .turn-indicator { top: 110px; left: 20px; }
       /* Main Table Area */
       .table {
         position: relative;
@@ -133,7 +128,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles (no flip animation inversion) */
+      /* Card Styles (simple face display) */
       .card {
         width: 90px;
         height: 135px;
@@ -150,7 +145,6 @@
         transition: transform 0.8s ease-in-out;
         transform-style: preserve-3d;
       }
-      /* We no longer flip the card for display; all cards show their face normally */
       .card-face {
         position: absolute;
         width: 100%;
@@ -164,7 +158,7 @@
       .card-front {
         background: #fff;
       }
-      /* Red for hearts and diamonds, black for clubs and spades */
+      /* Card font colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
       /* Controls */
@@ -203,7 +197,7 @@
         bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.8);
         color: var(--primary-color);
         padding: 10px 20px;
         border-radius: 8px;
@@ -237,6 +231,8 @@
     <div class="timer" id="timer">30</div>
     <!-- Game Stats Display -->
     <div class="stats" id="stats">Hands: 0</div>
+    <!-- Turn Indicator -->
+    <div class="turn-indicator" id="turn">Turn: Player ?</div>
     <!-- Main React Root -->
     <div id="root"></div>
     <!-- particles.js configuration (black particles) -->
@@ -277,7 +273,7 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a standard 52-card deck.
+      // Create a full 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -295,16 +291,14 @@
         return deck;
       };
       
-      // For hand evaluation using PokerSolver
+      // Format a card for PokerSolver (T for 10, and lowercase suit letters).
       const formatCardForSolver = (card) => {
-        // Map rank: "10" becomes "T", others unchanged.
         let rank = card.rank === "10" ? "T" : card.rank;
-        // Map suit: ♠ -> s, ♥ -> h, ♦ -> d, ♣ -> c.
-        let suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
+        const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Shows full card face normally.
+      // Card Component: Displays full card face.
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
@@ -320,9 +314,10 @@
         );
       };
       
-      // --- Smarter AI Simulation ---
+      // --- Advanced AI Simulation Placeholder ---
       const aiDecision = async (playerHand, community) => {
-        // Use a simple evaluation: count high cards.
+        // A smarter AI might use real ML models.
+        // Here we simulate with basic high-card count logic.
         const highRanks = ["J", "Q", "K", "A"];
         const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
         let highCount = countHigh(playerHand) + countHigh(community);
@@ -353,14 +348,10 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
-        // Highlight the current player's area.
-        const getPlayerClass = (pid) => {
-          return `player p${pid} ${pid == 1 && currentPlayer === 1 ? "active" : (pid == currentPlayer ? "active" : "")}`;
-        };
-        
         // Reset timer when currentPlayer changes.
         useEffect(() => {
           resetTimer();
+          updateTurnIndicator();
           return () => clearInterval(timerRef.current);
         }, [currentPlayer]);
         
@@ -379,7 +370,15 @@
           }, 1000);
         };
         
-        // Initialize a new hand while preserving overall game balance.
+        // Update turn indicator.
+        const updateTurnIndicator = () => {
+          const turnElem = document.getElementById("turn");
+          if (turnElem) {
+            turnElem.textContent = `Turn: Player ${currentPlayer}`;
+          }
+        };
+        
+        // Initialize a new hand (preserving overall balance).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -393,7 +392,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
+          // Post blinds: player2 (small) and player3 (big).
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -405,12 +404,12 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4.
+          setCurrentPlayer(4); // Action starts with player4.
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
         };
         
-        // Initialize a new game (overall reset).
+        // Initialize a new game (reset overall game state).
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -486,18 +485,15 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Evaluate hands using PokerSolver when showdown.
+        // Evaluate hands using PokerSolver at showdown.
         const evaluateHands = () => {
-          // Build array of hand strings for each active player.
           let bestScore = null;
           let winner = null;
           for (let pid in players) {
             if (!players[pid].active) continue;
             let hole = players[pid].hand.map(c => formatCardForSolver(c));
             let communityCards = community.map(c => formatCardForSolver(c));
-            // Use PokerSolver to evaluate best 5-card hand.
             const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
-            // Lower rank value is better.
             if (bestScore === null || solved.rank < bestScore.rank) {
               bestScore = solved;
               winner = pid;
@@ -509,7 +505,6 @@
         // Advance to next stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
-          // Reset bets.
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
@@ -548,17 +543,14 @@
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              // At showdown, evaluate hands.
               setMessage("Showdown!");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // After delay, start next hand.
-              setTimeout(() => {
-                initHand();
-              }, 3000);
+              // Automatically start next hand after delay.
+              setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
                   if (window.confirm("LOZER!! You ran out of points. Start a new game?")) {
@@ -597,12 +589,12 @@
               ))}
             </div>
             {Object.entries(players).map(([pid, data]) => (
-              <div key={pid} className={getPlayerClass(pid)}>
+              <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, do not reveal hole cards until showdown.
-                    <Card key={idx} card={ (pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" } } animate={true} />
+                    // For CPU players, hide hole cards (show "?" instead) until showdown.
+                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
                 <div>
@@ -637,6 +629,12 @@
           </div>
         );
       };
+      
+      // Placeholder: For real-time server-side state management and advanced AI,
+      // you could integrate a Node.js backend with WebSocket support and a trained
+      // ML model (e.g., via TensorFlow.js or a Python‑based service).
+      // This client‑side code is designed with modularity in mind so that those
+      // advanced features can be added later.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
