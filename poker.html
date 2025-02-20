@@ -9,28 +9,62 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <!-- Font Awesome (optional for icons) -->
+    <!-- Font Awesome for icons -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <!-- React and Babel CDN -->
-    <script
-      src="https://unpkg.com/react@17/umd/react.development.js"
-      crossorigin
-    ></script>
-    <script
-      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
-      crossorigin
-    ></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      body {
+      /* Basic resets and variables */
+      * {
         margin: 0;
-        font-family: 'Roboto', sans-serif;
-        background-color: #1e1e1e;
-        color: #fff;
+        padding: 0;
+        box-sizing: border-box;
       }
+      :root {
+        --primary-color: #ffffff;
+        --background-light: #1e1e1e;
+        --background-dark: #121212;
+        --accent-color: #ff4081;
+        --font-family: 'Roboto', sans-serif;
+      }
+      body {
+        font-family: var(--font-family);
+        background-color: var(--background-light);
+        color: var(--primary-color);
+      }
+      /* Header styles */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      header button,
+      header a {
+        font-size: 1.2rem;
+        color: var(--primary-color);
+        background: none;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.3s;
+      }
+      header button:hover,
+      header a:hover {
+        transform: scale(1.2);
+        color: var(--accent-color);
+      }
+      /* Table (background) styles */
       .table {
         position: relative;
         width: 100%;
@@ -38,47 +72,65 @@
         background: url('table.png') no-repeat center center;
         background-size: cover;
       }
-      .overlay {
+      /* Fallback table if no image */
+      .fallback-table {
         position: absolute;
-        width: 100%;
-        height: 100%;
+        top: 50px;
+        left: 50px;
+        right: 50px;
+        bottom: 50px;
+        border: 10px solid darkgreen;
+        border-radius: 50%;
+        background: seagreen;
+      }
+      /* Community and player card layouts */
+      .community {
+        position: absolute;
+        top: 40%;
+        left: 30%;
+        display: flex;
+        gap: 10px;
       }
       .player {
         position: absolute;
         text-align: center;
       }
+      /* Positions for 4 players */
+      .player.p1 { top: 70%; left: 45%; }
+      .player.p2 { top: 40%; left: 10%; }
+      .player.p3 { top: 10%; left: 45%; }
+      .player.p4 { top: 40%; left: 80%; }
+      /* Card styles */
       .card {
-        display: inline-block;
+        width: 90px;
+        height: 135px;
+        border: 2px solid #fff;
+        border-radius: 8px;
         background: #fff;
         color: #000;
-        border: 2px solid #fff;
-        border-radius: 4px;
-        width: 60px;
-        height: 90px;
-        line-height: 90px;
-        font-size: 1.2rem;
-        margin: 0 5px;
+        font-size: 1.5rem;
+        line-height: 135px;
+        text-align: center;
       }
-      .community {
-        position: absolute;
-        display: flex;
-        gap: 10px;
+      .card.back {
+        background: darkblue;
       }
+      /* Controls */
       .controls {
         position: absolute;
         bottom: 0;
         width: 100%;
         background: #222;
-        padding: 10px;
+        padding: 15px;
         display: flex;
         justify-content: center;
         gap: 10px;
       }
-      button {
+      .controls button {
         font-size: 1rem;
-        padding: 10px 15px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 4px;
+        border-radius: 5px;
         cursor: pointer;
       }
       .btn-fold { background: #d9534f; color: #fff; }
@@ -97,25 +149,30 @@
     </style>
   </head>
   <body>
+    <!-- Header with Home button -->
+    <header>
+      <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
+      <h2>Poker Arena</h2>
+    </header>
+    <!-- Main React root -->
     <div id="root"></div>
-
     <script type="text/babel">
       const { useState, useEffect } = React;
-
-      // Helper functions
+      
+      // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-
+      
+      // Create and shuffle a deck
       const createDeck = () => {
         let deck = [];
-        suits.forEach((suit) => {
-          ranks.forEach((rank) => {
-            deck.push({ suit, rank });
+        suits.forEach(suit => {
+          ranks.forEach(rank => {
+            deck.push({ rank, suit });
           });
         });
         return deck;
       };
-
       const shuffleDeck = (deck) => {
         for (let i = deck.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -123,201 +180,265 @@
         }
         return deck;
       };
-
-      // Main Poker Game Component
-      const PokerGame = () => {
+      
+      // Simple function to render a card as text; in a real app, you could load images.
+      const renderCard = (card, faceUp=true) => {
+        if (!faceUp) return <div className="card back"></div>;
+        return (
+          <div className="card">
+            {card.rank}{card.suit}
+          </div>
+        );
+      };
+      
+      // --- AI API Simulation --- 
+      // Simulate an API call that “thinks” for the CPU opponent.
+      const aiDecision = async (playerHand, community) => {
+        // For demo purposes, we call a dummy endpoint (replace with your real AI endpoint).
+        // We simulate a delay and return a random decision.
+        await new Promise(res => setTimeout(res, 500)); // simulate thinking time
+        const choices = ['call', 'raise', 'fold', 'check'];
+        return choices[Math.floor(Math.random() * choices.length)];
+      };
+      
+      // --- Game Logic ---
+      const PokerGameComponent = () => {
+        const numPlayers = 4;
+        const initialBalance = 1000;
+        const bigBlind = 50;
+        const smallBlind = 25;
+        
         // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
-        const [stage, setStage] = useState('Pre-flop');
+        const [stage, setStage] = useState("pre-flop");
         const [pot, setPot] = useState(0);
-        const [message, setMessage] = useState('');
-
-        // Setup positions for 4 players (using percentages)
-        const playerPositions = {
-          1: { top: '75%', left: '45%' },
-          2: { top: '35%', left: '10%' },
-          3: { top: '5%', left: '45%' },
-          4: { top: '35%', left: '80%' }
-        };
-
-        // Deal initial cards to 4 players (2 cards each)
+        const [currentPlayer, setCurrentPlayer] = useState(1);
+        const [message, setMessage] = useState("");
+        const [processing, setProcessing] = useState(false);
+        
+        // On mount, initialize game
+        useEffect(() => {
+          initGame();
+        }, []);
+        
         const initGame = () => {
           let newDeck = shuffleDeck(createDeck());
-          const newPlayers = {};
-          for (let i = 1; i <= 4; i++) {
+          let newPlayers = {};
+          for (let i = 1; i <= numPlayers; i++) {
             newPlayers[i] = {
-              cards: [newDeck.pop(), newDeck.pop()],
-              cash: 1000
+              hand: [newDeck.pop(), newDeck.pop()],
+              balance: initialBalance,
+              active: true,
+              bet: 0
             };
           }
+          // For simplicity, set player 1 as human; others are CPU.
+          // Post blinds: button rotates but here we fix for demo.
+          newPlayers[2].balance -= smallBlind; newPlayers[2].bet = smallBlind;
+          newPlayers[3].balance -= bigBlind; newPlayers[3].bet = bigBlind;
+          setPot(smallBlind + bigBlind);
           setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
-          setStage('Pre-flop');
-          setPot(0);
-          setMessage('');
+          setStage("pre-flop");
+          // Action starts with player 4 (next to big blind) for demo.
+          setCurrentPlayer(4);
+          setMessage("Pre-flop: Your move if you're player 1.");
         };
-
-        // Deal community cards
-        const dealCommunity = (num) => {
+        
+        // Function to deal community cards
+        const dealCommunity = (count) => {
           let newDeck = [...deck];
-          const newCommunity = [...community];
-          for (let i = 0; i < num; i++) {
+          let newCommunity = [...community];
+          for (let i = 0; i < count; i++) {
             newCommunity.push(newDeck.pop());
           }
           setDeck(newDeck);
           setCommunity(newCommunity);
+          if (newCommunity.length === 3) setStage("flop");
+          else if (newCommunity.length === 4) setStage("turn");
+          else if (newCommunity.length === 5) setStage("river");
         };
-
-        // Advance game stage
-        const nextStage = () => {
-          // For simplicity, we are not resetting bets here.
-          if (stage === 'Pre-flop') {
+        
+        // Process a bet action for a given player
+        const processBet = async (action, playerId, raiseAmt=0) => {
+          let newPlayers = { ...players };
+          if (action === "fold") {
+            newPlayers[playerId].active = false;
+            setMessage(`Player ${playerId} folds.`);
+          } else if (action === "call") {
+            const betNeeded = currentBet() - newPlayers[playerId].bet;
+            if (newPlayers[playerId].balance >= betNeeded) {
+              newPlayers[playerId].balance -= betNeeded;
+              newPlayers[playerId].bet += betNeeded;
+              setPot(pot + betNeeded);
+              setMessage(`Player ${playerId} calls.`);
+            }
+          } else if (action === "raise") {
+            if (newPlayers[playerId].balance >= raiseAmt) {
+              newPlayers[playerId].balance -= raiseAmt;
+              newPlayers[playerId].bet += raiseAmt;
+              setPot(pot + raiseAmt);
+              setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
+            }
+          } else if (action === "check") {
+            setMessage(`Player ${playerId} checks.`);
+          }
+          setPlayers(newPlayers);
+        };
+        
+        // For simplicity, assume currentBet is the maximum bet so far.
+        const currentBet = () => {
+          let maxBet = 0;
+          Object.values(players).forEach(p => {
+            if (p.bet > maxBet) maxBet = p.bet;
+          });
+          return maxBet;
+        };
+        
+        // Determine if betting round is over (all active players have met the bet)
+        const bettingRoundOver = () => {
+          let active = Object.entries(players)
+            .filter(([pid, p]) => p.active)
+            .map(([pid, p]) => p);
+          return active.every(p => p.bet === currentBet());
+        };
+        
+        // Advance to next stage if betting is over
+        const nextStage = async () => {
+          if (stage === "pre-flop") {
+            // Deal flop: three cards
             dealCommunity(3);
-            setStage('Flop');
-          } else if (stage === 'Flop') {
+          } else if (stage === "flop") {
             dealCommunity(1);
-            setStage('Turn');
-          } else if (stage === 'Turn') {
+          } else if (stage === "turn") {
             dealCommunity(1);
-            setStage('River');
+          }
+          // Reset bets for next round (not fully implemented)
+          let newPlayers = { ...players };
+          for (let pid in newPlayers) {
+            newPlayers[pid].bet = 0;
+          }
+          setPlayers(newPlayers);
+          setMessage(`Stage: ${stage.toUpperCase()}`);
+        };
+        
+        // CPU (AI) action simulation
+        const runCpuActions = async () => {
+          // Cycle through players (except human player 1)
+          for (let pid = 2; pid <= numPlayers; pid++) {
+            if (!players[pid].active) continue;
+            // Use the AI API simulation to decide action
+            setProcessing(true);
+            const decision = await aiDecision(players[pid].hand, community);
+            // For simplicity, if AI decides to raise, choose a random raise amount.
+            if (decision === "raise") {
+              let raiseAmt = Math.floor(Math.random() * 150) + 50;
+              await processBet("raise", pid, raiseAmt);
+            } else {
+              await processBet(decision, pid);
+            }
+            setProcessing(false);
           }
         };
-
-        // Showdown: randomly pick a winner for this demo
-        const showdown = () => {
-          // In a full game, you would evaluate hands. Here we pick a random player.
-          const winner = Math.floor(Math.random() * 4) + 1;
-          setMessage(`Player ${winner} wins the pot of ${pot} credits!`);
+        
+        // When human (player 1) acts
+        const playerAction = async (action, raiseAmt=0) => {
+          await processBet(action, 1, raiseAmt);
+          // After human acts, run CPU actions
+          await runCpuActions();
+          // If betting round is over, move to next stage
+          if (bettingRoundOver()) {
+            if (stage === "river") {
+              // Showdown – pick best hand (for demo, choose a random active player)
+              const active = Object.keys(players).filter(pid => players[pid].active);
+              const winner = active[Math.floor(Math.random()*active.length)];
+              setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+            } else {
+              await nextStage();
+            }
+          }
         };
-
-        // Example actions (fold, call, raise) – for demo these only update the pot.
-        const fold = () => {
-          setMessage('You folded. Next hand will start.');
-          setTimeout(initGame, 2000);
-        };
-
-        const callCheck = () => {
-          // For demo, add a fixed bet to the pot and update player cash (for player 1)
-          const bet = 50;
-          setPot(pot + bet);
-          setPlayers((prev) => ({
-            ...prev,
-            1: { ...prev[1], cash: prev[1].cash - bet }
-          }));
-          setMessage(`Player 1 calls/checks with ${bet} credits.`);
-        };
-
-        const raiseBet = () => {
-          const raise = 100; // fixed raise amount
-          setPot(pot + raise);
-          setPlayers((prev) => ({
-            ...prev,
-            1: { ...prev[1], cash: prev[1].cash - raise }
-          }));
-          setMessage(`Player 1 raises by ${raise} credits.`);
-        };
-
-        // Initialize the game when component mounts
-        useEffect(() => {
-          initGame();
-        }, []);
-
-        // Render a card
-        const renderCard = (card) => {
-          return (
-            <div className="card">
-              {card.rank}
-              {card.suit}
-            </div>
-          );
-        };
-
+        
+        // Render UI
         return (
           <div className="table">
-            <div className="overlay">
-              <div className="info">Stage: {stage} | Pot: {pot}</div>
-              {/* Render community cards in center */}
-              <div
-                className="community"
-                style={{
-                  top: '40%',
-                  left: '30%',
-                  position: 'absolute'
-                }}
-              >
-                {community.map((card, idx) => (
-                  <div key={idx}>{renderCard(card)}</div>
-                ))}
-              </div>
-
-              {/* Render players */}
-              {Object.keys(players).map((pid) => (
-                <div
-                  key={pid}
-                  className="player"
-                  style={playerPositions[pid]}
-                >
-                  <div>Player {pid}</div>
-                  <div>
-                    {players[pid].cards.map((card, idx) => (
-                      <span key={idx}>{renderCard(card)}</span>
-                    ))}
-                  </div>
-                  <div>Cash: {players[pid].cash}</div>
-                </div>
+            {/* If table.png is not available, show fallback */}
+            {/* <div className="fallback-table"></div> */}
+            <div className="info">Stage: {stage.toUpperCase()} | POT: {pot}</div>
+            
+            {/* Community Cards */}
+            <div className="community">
+              {community.map((card, idx) => (
+                <React.Fragment key={idx}>
+                  {renderCard(card)}
+                </React.Fragment>
               ))}
-
-              {/* Controls */}
-              <div className="controls">
-                <button className="btn-fold" onClick={fold}>
-                  Fold
-                </button>
-                <button className="btn-call" onClick={callCheck}>
-                  Call/Check
-                </button>
-                <button className="btn-raise" onClick={raiseBet}>
-                  Raise
-                </button>
-                {stage !== 'River' && (
-                  <button className="btn-next" onClick={nextStage}>
-                    Next Stage
-                  </button>
-                )}
-                {stage === 'River' && (
-                  <button className="btn-showdown" onClick={showdown}>
-                    Showdown
-                  </button>
-                )}
-                <button onClick={initGame}>New Hand</button>
-              </div>
-
-              {/* Message display */}
-              {message && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '10%',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '1.5rem',
-                    background: 'rgba(0,0,0,0.7)',
-                    padding: '10px 20px',
-                    borderRadius: '8px'
-                  }}
-                >
-                  {message}
+            </div>
+            
+            {/* Players */}
+            {Object.entries(players).map(([pid, data]) => (
+              <div key={pid} className={`player p${pid}`}>
+                <div>Player {pid} {pid==1 && "(You)"}</div>
+                <div style={{display: 'flex', gap: '5px', justifyContent: 'center'}}>
+                  {data.hand.map((card, idx) => (
+                    <React.Fragment key={idx}>
+                      {/* For CPU players, hide cards (show back) unless showdown */}
+                      { (pid === "1" || stage === "river") 
+                        ? renderCard(card) 
+                        : renderCard(card, false)
+                      }
+                    </React.Fragment>
+                  ))}
                 </div>
+                <div>Balance: {data.balance}</div>
+              </div>
+            ))}
+            
+            {/* Controls for human player */}
+            <div className="controls">
+              <button className="btn-fold" onClick={() => playerAction("fold")} disabled={processing}>Fold</button>
+              <button className="btn-call" onClick={() => playerAction("call")} disabled={processing}>Call/Check</button>
+              <button className="btn-raise" onClick={() => {
+                const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
+                playerAction("raise", amt);
+              }} disabled={processing}>Raise</button>
+              {stage !== "river" && (
+                <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
+              )}
+              {stage === "river" && (
+                <button className="btn-showdown" onClick={async () => {
+                  // For showdown, let CPU decide and then randomly choose winner.
+                  await runCpuActions();
+                  const active = Object.keys(players).filter(pid => players[pid].active);
+                  const winner = active[Math.floor(Math.random()*active.length)];
+                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                }} disabled={processing}>Showdown</button>
               )}
             </div>
+            {/* Message display */}
+            {message && (
+              <div style={{
+                position: 'absolute',
+                top: '10%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                fontSize: '1.5rem',
+                background: 'rgba(0,0,0,0.7)',
+                padding: '10px 20px',
+                borderRadius: '8px'
+              }}>
+                {message}
+              </div>
+            )}
           </div>
         );
       };
-
-      // Render the PokerGame component
-      ReactDOM.render(<PokerGame />, document.getElementById('root'));
+      
+      // Render the PokerGameComponent into the root element
+      ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
   </body>
 </html>
