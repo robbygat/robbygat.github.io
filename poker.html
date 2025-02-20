@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
-    <!-- Google Fonts: Bungee for a fun look, and Roboto for body text -->
+    <!-- Google Fonts: Bungee for fun titles and Roboto for body text -->
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -22,8 +22,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Very dark green for website background */
-        --bg-green: #006400;       /* Lighter green for poker table */
+        --bg-dark-green: #002200;  /* Website background */
+        --bg-green: #006400;       /* Poker table background */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --fun-font: 'Bungee', cursive;
         --body-font: 'Roboto', sans-serif;
@@ -34,7 +34,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background (black particles) */
+      /* Particles background */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -111,14 +111,27 @@
         background: var(--bg-green);
         z-index: -1;
       }
-      /* Community Cards */
+      /* Community Cards: center them within the oval */
       .community {
         position: absolute;
-        top: 38%;
+        top: 35%;
         left: 50%;
-        transform: translateX(-50%);
+        transform: translate(-50%, -50%);
         display: flex;
         gap: 10px;
+        z-index: 2;
+      }
+      /* Info Box moved below community cards */
+      .info {
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, 0);
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1.2rem;
         z-index: 2;
       }
       /* Player Areas */
@@ -147,7 +160,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles (always face-up) */
+      /* Card Styles */
       .card {
         width: 90px;
         height: 135px;
@@ -181,7 +194,7 @@
       /* Suit colors */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: show blue with "??" */
+      /* Hidden CPU cards */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -305,6 +318,10 @@
     </div>
     <!-- Main React Root -->
     <div id="root"></div>
+    <!-- Info Box positioned below community cards -->
+    <div class="info" id="info-box">
+      Stage: <span id="stage-info">PRE-FLOP</span> | POT: <span id="pot-info">0</span> | Blinds: SB 10 / BB 20
+    </div>
     <!-- particles.js configuration (black particles) -->
     <script>
       particlesJS("particles-js", {
@@ -337,9 +354,9 @@
         "retina_detect": true
       });
     </script>
-    <!-- Remove all other sound effects -->
+    <!-- Remove all sound effects (no background soundtrack) -->
     <script>
-      // The sound elements have been removed as per request.
+      // No sound elements are used in this version.
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
@@ -347,7 +364,6 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -364,8 +380,6 @@
         }
         return deck;
       };
-      
-      // Format a card for PokerSolver.
       const formatCardForSolver = (card) => {
         let rank = card.rank === "10" ? "T" : card.rank;
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
@@ -424,7 +438,7 @@
         const smallBlindAmt = 10;
         const moveTime = 30; // seconds per move
         
-        // Track the dealer button to rotate blinds.
+        // Track dealer button to rotate blinds.
         const [button, setButton] = useState(1);
         
         // Game state
@@ -485,7 +499,7 @@
               totalBet: 0
             };
           }
-          // Determine blinds based on the current button.
+          // Determine blinds based on current button.
           let smallBlind = nextPlayer(button);
           let bigBlind = nextPlayer(smallBlind);
           newPlayers[smallBlind].balance -= smallBlindAmt;
@@ -504,8 +518,13 @@
           setCurrentPlayer(nextPlayer(bigBlind));
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
-          setButton(nextPlayer(button)); // Rotate dealer.
+          setButton(nextPlayer(button)); // Rotate dealer button.
           if (handCount > 0) updateLedger(handCount + 1, players);
+          // Update info box.
+          const stageInfo = document.getElementById("stage-info");
+          const potInfo = document.getElementById("pot-info");
+          if(stageInfo) stageInfo.textContent = "PRE-FLOP";
+          if(potInfo) potInfo.textContent = smallBlindAmt + bigBlindAmt;
         };
         
         // Initialize a new game (overall reset).
@@ -536,9 +555,16 @@
           }
           setDeck(newDeck);
           setCommunity(newCommunity);
-          if (newCommunity.length === 3) setStage("flop");
-          else if (newCommunity.length === 4) setStage("turn");
-          else if (newCommunity.length === 5) setStage("river");
+          if (newCommunity.length === 3) {
+            setStage("flop");
+            document.getElementById("stage-info").textContent = "FLOP";
+          } else if (newCommunity.length === 4) {
+            setStage("turn");
+            document.getElementById("stage-info").textContent = "TURN";
+          } else if (newCommunity.length === 5) {
+            setStage("river");
+            document.getElementById("stage-info").textContent = "RIVER";
+          }
         };
         
         // Get current bet.
@@ -642,7 +668,6 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // Set turn to next player.
           setCurrentPlayer(2);
           await runCpuActions();
           if (bettingRoundOver()) {
@@ -667,7 +692,6 @@
             }
           }
           resetTimer();
-          // Cycle turn: simple cycle 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -686,13 +710,14 @@
         
         return (
           <div className="table">
-            <div className="info">
-              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
-            </div>
             <div className="community">
               {community.map((card, idx) => (
                 <Card key={idx} card={card} animate={true} />
               ))}
+            </div>
+            {/* Info Box below community cards */}
+            <div className="info" id="info-box">
+              Stage: <span id="stage-info">{stage.toUpperCase()}</span> | POT: <span id="pot-info">{pot}</span> | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
             </div>
             {Object.entries(players).map(([pid, data]) => (
               <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
@@ -736,7 +761,8 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced AI, integrate a backend with websockets and a trained ML model.
+      // Placeholder: For real-time multiplayer and advanced ML-based AI,
+      // integrate a backend with websockets and a trained model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
