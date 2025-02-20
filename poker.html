@@ -5,26 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
     <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- GSAP for animations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- React Three Fiber (for 3D table) -->
-    <script src="https://unpkg.com/@react-three/fiber@8.0.27/dist/react-three-fiber.umd.js"></script>
-    <!-- Material UI -->
-    <script src="https://unpkg.com/@mui/material@5.11.0/umd/material-ui.development.js"></script>
-    <!-- PokerSolver for hand evaluation -->
+    <!-- PokerSolver library for hand evaluation -->
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
-    <!-- React, ReactDOM and Babel -->
+    <!-- React and Babel CDN -->
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -34,8 +22,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background: very dark green */
-        --bg-green: #006400;       /* Poker table background: lighter green */
+        --bg-dark-green: #002200;  /* Website background (darker green) */
+        --bg-green: #006400;       /* Poker table background (lighter green) */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -62,19 +50,27 @@
         align-items: center;
         justify-content: space-between;
         padding: 10px 20px;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.8);
       }
-      header h2 { color: var(--primary-color); font-size: 1.8rem; }
+      header h2 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+      }
       header a {
         color: var(--primary-color);
         text-decoration: none;
         font-size: 1.2rem;
         transition: transform 0.3s;
       }
-      header a:hover { transform: scale(1.2); color: var(--accent-color); }
-      /* Timer and Stats */
-      .timer, .stats {
+      header a:hover {
+        transform: scale(1.2);
+        color: var(--accent-color);
+      }
+      /* Timer Display */
+      .timer {
         position: fixed;
+        top: 70px;
+        right: 20px;
         background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 5px 10px;
@@ -82,30 +78,40 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      .timer { top: 70px; right: 20px; }
-      .stats { top: 70px; left: 20px; }
-      /* 3D Table Container */
-      .table3D {
+      /* Game Stats (hand counter, etc.) */
+      .stats {
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        background: rgba(0,0,0,0.8);
+        color: var(--primary-color);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        z-index: 1000;
+      }
+      /* Main Table Area */
+      .table {
         position: relative;
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
       }
-      /* Overlay UI Container */
-      .game-ui {
+      .table::before {
+        content: "";
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        pointer-events: none;
+        top: 50px;
+        left: 50px;
+        right: 50px;
+        bottom: 50px;
+        border: 10px solid darkgreen;
+        border-radius: 50%;
+        background: var(--bg-green);
+        z-index: -1;
       }
       /* Community Cards */
-      .community, .player, .controls, .game-info {
-        pointer-events: auto;
-      }
       .community {
         position: absolute;
-        top: 40%;
+        top: 38%;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
@@ -119,8 +125,6 @@
         z-index: 2;
         padding: 5px;
         transition: box-shadow 0.3s;
-        background: rgba(0,0,0,0.4);
-        border-radius: 5px;
       }
       .player.active {
         box-shadow: 0 0 15px var(--accent-color);
@@ -129,7 +133,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles */
+      /* Card Styles (no flip animation inversion) */
       .card {
         width: 90px;
         height: 135px;
@@ -143,9 +147,10 @@
         position: relative;
         width: 100%;
         height: 100%;
-        transition: transform 0.8s ease;
+        transition: transform 0.8s ease-in-out;
         transform-style: preserve-3d;
       }
+      /* We no longer flip the card for display; all cards show their face normally */
       .card-face {
         position: absolute;
         width: 100%;
@@ -156,7 +161,10 @@
         justify-content: center;
         font-size: 1.5rem;
       }
-      .card-front { background: #fff; }
+      .card-front {
+        background: #fff;
+      }
+      /* Red for hearts and diamonds, black for clubs and spades */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
       /* Controls */
@@ -180,7 +188,9 @@
         cursor: pointer;
         transition: background 0.3s, transform 0.3s;
       }
-      .controls button:hover { transform: scale(1.05); }
+      .controls button:hover {
+        transform: scale(1.05);
+      }
       .btn-fold { background: #d9534f; color: #fff; }
       .btn-call { background: #5cb85c; color: #fff; }
       .btn-raise { background: #0275d8; color: #fff; }
@@ -200,12 +210,14 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
+      /* Extra Animations */
       @keyframes fadeInBounce {
         0% { opacity: 0; transform: scale(0.5); }
         50% { opacity: 0.7; transform: scale(1.2); }
         100% { opacity: 1; transform: scale(1); }
       }
       .animate-bounce { animation: fadeInBounce 0.8s ease-out; }
+      /* Responsive adjustments */
       @media (max-width: 768px) {
         .card { width: 70px; height: 105px; }
         .player { font-size: 0.9rem; }
@@ -214,22 +226,19 @@
     </style>
   </head>
   <body>
-    <!-- Particles Background -->
+    <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home Button -->
+    <!-- Header with Home button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
     </header>
-    <!-- Timer and Stats -->
+    <!-- Timer Display -->
     <div class="timer" id="timer">30</div>
+    <!-- Game Stats Display -->
     <div class="stats" id="stats">Hands: 0</div>
-    <!-- 3D Table Container -->
-    <div class="table3D" id="table3D">
-      <!-- React Three Fiber will render the 3D table here -->
-    </div>
-    <!-- Overlay UI Container -->
-    <div class="game-ui" id="root"></div>
+    <!-- Main React Root -->
+    <div id="root"></div>
     <!-- particles.js configuration (black particles) -->
     <script>
       particlesJS("particles-js", {
@@ -262,29 +271,13 @@
         "retina_detect": true
       });
     </script>
-    <!-- Main Application Script -->
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
-      const { Canvas } = ReactThreeFiber;
-      const { Button, Dialog, DialogActions, DialogContent, DialogTitle } = MaterialUI;
-      
-      // --- 3D Table Component ---
-      const Table3D = () => {
-        return (
-          <>
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} />
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <circleGeometry args={[5, 64]} />
-              <meshStandardMaterial color="#006400" />
-            </mesh>
-          </>
-        );
-      };
       
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -301,19 +294,26 @@
         }
         return deck;
       };
+      
+      // For hand evaluation using PokerSolver
       const formatCardForSolver = (card) => {
+        // Map rank: "10" becomes "T", others unchanged.
         let rank = card.rank === "10" ? "T" : card.rank;
-        const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
+        // Map suit: ♠ -> s, ♥ -> h, ♦ -> d, ♣ -> c.
+        let suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card component for 2D overlay UI.
-      const Card2D = ({ card, reveal }) => {
+      // Card Component: Shows full card face normally.
+      const Card = ({ card, animate }) => {
+        let faceClass = "card-front";
+        if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
+        else faceClass += " black";
         return (
-          <div className="card animate-bounce">
+          <div className={`card animate-bounce ${animate ? "flip" : ""}`}>
             <div className="card-inner">
-              <div className="card-face card-front">
-                {reveal ? `${card.rank}${card.suit}` : "?"}
+              <div className={`card-face card-front ${faceClass}`}>
+                {card.rank}{card.suit}
               </div>
             </div>
           </div>
@@ -322,6 +322,7 @@
       
       // --- Smarter AI Simulation ---
       const aiDecision = async (playerHand, community) => {
+        // Use a simple evaluation: count high cards.
         const highRanks = ["J", "Q", "K", "A"];
         const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
         let highCount = countHigh(playerHand) + countHigh(community);
@@ -331,7 +332,7 @@
         return "call";
       };
       
-      // --- Main Poker Game Component ---
+      // --- Poker Game Component ---
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
@@ -339,6 +340,7 @@
         const smallBlindAmt = 25;
         const moveTime = 30; // seconds per move
         
+        // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
@@ -350,13 +352,13 @@
         const [handCount, setHandCount] = useState(0);
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
-        const [newGameDialog, setNewGameDialog] = useState(false);
         
-        // Highlight current player's area.
+        // Highlight the current player's area.
         const getPlayerClass = (pid) => {
-          return `player p${pid} ${currentPlayer == pid ? "active" : ""}`;
+          return `player p${pid} ${pid == 1 && currentPlayer === 1 ? "active" : (pid == currentPlayer ? "active" : "")}`;
         };
         
+        // Reset timer when currentPlayer changes.
         useEffect(() => {
           resetTimer();
           return () => clearInterval(timerRef.current);
@@ -377,7 +379,7 @@
           }, 1000);
         };
         
-        // Initialize a new hand (round) while preserving balances.
+        // Initialize a new hand while preserving overall game balance.
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -391,7 +393,7 @@
               totalBet: 0
             };
           }
-          // Post blinds.
+          // Post blinds: player2 posts small, player3 posts big.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -403,12 +405,12 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4);
+          setCurrentPlayer(4); // action starts with player4.
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
         };
         
-        // Initialize a new game.
+        // Initialize a new game (overall reset).
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -419,6 +421,7 @@
           initHand();
         };
         
+        // On mount, start a new game.
         useEffect(() => {
           initGame();
         }, []);
@@ -432,11 +435,12 @@
           }
           setDeck(newDeck);
           setCommunity(newCommunity);
-          if(newCommunity.length === 3) setStage("flop");
-          else if(newCommunity.length === 4) setStage("turn");
-          else if(newCommunity.length === 5) setStage("river");
+          if (newCommunity.length === 3) setStage("flop");
+          else if (newCommunity.length === 4) setStage("turn");
+          else if (newCommunity.length === 5) setStage("river");
         };
         
+        // Get current bet.
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
@@ -445,6 +449,7 @@
           return maxBet;
         };
         
+        // Process a bet action.
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
           if (action === "fold") {
@@ -473,6 +478,7 @@
           setPlayers(newPlayers);
         };
         
+        // Check if betting round is over.
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -480,36 +486,46 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Use PokerSolver to evaluate hands at showdown.
+        // Evaluate hands using PokerSolver when showdown.
         const evaluateHands = () => {
-          let bestHand = null;
+          // Build array of hand strings for each active player.
+          let bestScore = null;
           let winner = null;
           for (let pid in players) {
             if (!players[pid].active) continue;
             let hole = players[pid].hand.map(c => formatCardForSolver(c));
             let communityCards = community.map(c => formatCardForSolver(c));
+            // Use PokerSolver to evaluate best 5-card hand.
             const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
-            if (!bestHand || solved.rank < bestHand.rank) {
-              bestHand = solved;
+            // Lower rank value is better.
+            if (bestScore === null || solved.rank < bestScore.rank) {
+              bestScore = solved;
               winner = pid;
             }
           }
           return winner;
         };
         
+        // Advance to next stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
+          // Reset bets.
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
           setPlayers(newPlayers);
-          if (stage === "pre-flop") { dealCommunity(3); }
-          else if (stage === "flop") { dealCommunity(1); }
-          else if (stage === "turn") { dealCommunity(1); }
+          if (stage === "pre-flop") {
+            dealCommunity(3); // flop.
+          } else if (stage === "flop") {
+            dealCommunity(1); // turn.
+          } else if (stage === "turn") {
+            dealCommunity(1); // river.
+          }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
         };
         
+        // CPU actions.
         const runCpuActions = async () => {
           for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
@@ -525,22 +541,30 @@
           }
         };
         
+        // Handle human action.
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
+              // At showdown, evaluate hands.
               setMessage("Showdown!");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // Automatically start next hand after 3 seconds.
-              setTimeout(() => { initHand(); }, 3000);
+              // After delay, start next hand.
+              setTimeout(() => {
+                initHand();
+              }, 3000);
               if (players[1].balance <= 0) {
-                setTimeout(() => { setNewGameDialog(true); }, 3000);
+                setTimeout(() => {
+                  if (window.confirm("LOZER!! You ran out of points. Start a new game?")) {
+                    initGame();
+                  }
+                }, 3000);
               }
             } else {
               await nextStage();
@@ -549,96 +573,67 @@
           resetTimer();
         };
         
+        // "New Game" button.
         const newGame = () => {
           if (window.confirm("Start a new game? All progress will be reset.")) {
             initGame();
           }
         };
         
+        // Update game stats (hand counter).
         useEffect(() => {
           const statsElem = document.getElementById("stats");
           if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
         }, [handCount]);
         
         return (
-          <>
-            {/* 3D Table */}
-            <Canvas className="table3D">
-              <Table3D />
-            </Canvas>
-            {/* 2D Overlay UI */}
-            <div className="game-ui">
-              <div className="info">
-                Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
-              </div>
-              <div className="community">
-                {community.map((card, idx) => (
-                  <Card2D key={idx} card={card} reveal={true} />
-                ))}
-              </div>
-              {Object.entries(players).map(([pid, data]) => (
-                <div key={pid} className={getPlayerClass(pid)}>
-                  <div>Player {pid} {pid === "1" && "(You)"}</div>
-                  <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
-                    {data.hand.map((card, idx) => (
-                      <Card2D key={idx} card={ (pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" } } reveal={ (pid === "1" || stage === "river") } />
-                    ))}
-                  </div>
-                  <div>
-                    Balance: {data.balance} | Bet: {data.totalBet}
-                  </div>
-                </div>
+          <div className="table">
+            <div className="info">
+              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
+            </div>
+            <div className="community">
+              {community.map((card, idx) => (
+                <Card key={idx} card={card} animate={true} />
               ))}
-              <div className="controls">
-                <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
-                <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
-                <button className="btn-raise" onClick={() => {
-                  const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
-                  handlePlayerAction("raise", amt);
-                }} disabled={processing}>Raise</button>
-                {stage !== "river" && (
-                  <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
-                )}
-                {stage === "river" && (
-                  <button className="btn-showdown" onClick={async () => {
-                    await runCpuActions();
-                    const winner = evaluateHands();
-                    setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                  }} disabled={processing}>Showdown</button>
-                )}
-                <button className="btn-new" onClick={newGame}>New Game</button>
-              </div>
-              {message && (
-                <div className="game-info">
-                  {message}
+            </div>
+            {Object.entries(players).map(([pid, data]) => (
+              <div key={pid} className={getPlayerClass(pid)}>
+                <div>Player {pid} {pid === "1" && "(You)"}</div>
+                <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
+                  {data.hand.map((card, idx) => (
+                    // For CPU players, do not reveal hole cards until showdown.
+                    <Card key={idx} card={ (pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" } } animate={true} />
+                  ))}
                 </div>
-              )}
-            </div>
-            <Dialog open={newGameDialog} onClose={() => setNewGameDialog(false)}>
-              <DialogTitle>{"LOZER!! You ran out of points."}</DialogTitle>
-              <DialogContent>Start a new game?</DialogContent>
-              <DialogActions>
-                <Button onClick={() => { setNewGameDialog(false); newGame(); }} color="primary">
-                  Yes
-                </Button>
-                <Button onClick={() => setNewGameDialog(false)} color="secondary" autoFocus>
-                  No
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </>
-        );
-      };
-      
-      // Simple Card2D component for 2D UI overlay.
-      const Card2D = ({ card, reveal }) => {
-        return (
-          <div className="card animate-bounce">
-            <div className="card-inner">
-              <div className="card-face card-front">
-                {reveal ? `${card.rank}${card.suit}` : "?"}
+                <div>
+                  Balance: {data.balance} | Bet: {data.totalBet}
+                </div>
               </div>
+            ))}
+            <div className="controls">
+              <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
+              <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
+              <button className="btn-raise" onClick={() => {
+                const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
+                handlePlayerAction("raise", amt);
+              }} disabled={processing}>Raise</button>
+              {stage !== "river" && (
+                <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
+              )}
+              {stage === "river" && (
+                <button className="btn-showdown" onClick={async () => {
+                  await runCpuActions();
+                  const winner = evaluateHands();
+                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                }} disabled={processing}>Showdown</button>
+              )}
+              <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
+            {message && (
+              <div className="game-info">
+                {message}
+              </div>
+            )}
           </div>
         );
       };
