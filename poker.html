@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
     <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
@@ -28,8 +22,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background: very dark green */
-        --bg-green: #006400;       /* Poker table background: lighter green */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -174,7 +168,7 @@
       /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: when not revealed, show blue background with "??" */
+      /* Hidden CPU cards: display blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -262,11 +256,10 @@
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button -->
+    <!-- Header with Home button and Volume Control -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
-      <!-- Volume Control -->
       <div class="volume-control">
         Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
@@ -329,13 +322,14 @@
         "retina_detect": true
       });
     </script>
-    <!-- Sound Effects and Background Music (calming vaporwave synth) -->
+    <!-- Sound Effects and Vaporwave Soundtrack -->
     <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
     <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
     <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <!-- Vaporwave synth soundtrack (replace URL with your chosen vaporwave loop) -->
     <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
     <script>
-      // Set initial volume for all sounds based on volume slider.
+      // Set initial volume for all sounds.
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
         const sounds = document.querySelectorAll("audio");
@@ -382,9 +376,8 @@
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
-        else if (card.suit === "?") faceClass = "card-front"; // will be handled by hidden styling
         else faceClass += " black";
-        // If card.suit is "?", add hidden class to display blue card with "??"
+        // If card.suit is "?" then it is hidden, and styling will show blue.
         const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
@@ -650,8 +643,8 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // For proper Texas Hold'em rules, if a bet is made you must call at minimum.
-          // (This simple simulation forces the next actions to follow accordingly.)
+          // Set turn to next player.
+          setCurrentPlayer(2);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
@@ -661,7 +654,6 @@
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
-              // Popup winner message.
               window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
               // After delay, start next hand.
@@ -678,7 +670,7 @@
             }
           }
           resetTimer();
-          // Cycle turn indicator: simple cycle 1->2->3->4->1.
+          // Cycle turn indicator: 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -710,7 +702,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, show hidden card until showdown.
+                    // For CPU players, hide hole cards until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -749,7 +741,8 @@
         );
       };
       
-      // Placeholder: For real‑time multiplayer and advanced ML‑based AI, integrate a backend with websockets and a trained model.
+      // Placeholder: For real-time multiplayer and advanced ML‑based AI,
+      // integrate a backend (e.g. Node.js with websockets) and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
