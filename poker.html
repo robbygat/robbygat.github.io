@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
     <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Three.js for 3D background -->
@@ -97,7 +94,6 @@
         width: 100%;
         min-height: 100vh;
       }
-      /* Transparent poker table background: 70% opacity */
       .table::before {
         content: "";
         position: absolute;
@@ -107,7 +103,7 @@
         bottom: 50px;
         border: 10px solid darkgreen;
         border-radius: 50%;
-        background: rgba(0, 100, 0, 0.7);
+        background: rgba(0, 100, 0, 0.7); /* 70% opacity */
         z-index: -1;
       }
       /* Community Cards */
@@ -221,7 +217,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger: Tracks chip counts per hand */
+      /* Ledger */
       .ledger {
         position: fixed;
         top: 150px;
@@ -327,7 +323,6 @@
     <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/wood_plank_flicks.ogg"></audio>
     <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
     <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
-    <!-- (No background music in this version) -->
     <script>
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
@@ -345,7 +340,6 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -370,7 +364,7 @@
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Uses deckofcardsapi.com for card images.
+      // Card Component: Loads card image from deckofcardsapi.com.
       const Card = ({ card, animate }) => {
         const imgUrl = card.suit === "?" 
           ? "https://deckofcardsapi.com/static/img/back.png" 
@@ -380,7 +374,7 @@
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
             <div className="card-inner">
               <div className="card-face card-front">
-                <img src={imgUrl} alt={card.suit === "?" ? "Hidden" : `${card.rank}${card.suit}`} />
+                <img src={imgUrl} alt={card.suit === "?" ? "Hidden" : `${card.rank}${card.suit}`} crossOrigin="anonymous" />
               </div>
             </div>
           </div>
@@ -429,7 +423,7 @@
         const initialBalance = 1000;
         const bigBlindAmt = 50;
         const smallBlindAmt = 25;
-        const moveTime = 30; // seconds per move
+        const moveTime = 30;
         
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
@@ -716,9 +710,6 @@
           </div>
         );
       };
-      
-      // Placeholder: For full real-time multiplayer and advanced ML-based AI,
-      // integrate a backend (e.g., Node.js with websockets) and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
