@@ -28,8 +28,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Very dark green for website background */
-        --bg-green: #006400;       /* Lighter green for poker table */
+        --bg-dark-green: #002200;  /* Website background */
+        --bg-green: #006400;       /* Poker table background */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -39,7 +39,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background (black particles) */
+      /* Particles background */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -71,18 +71,6 @@
       header a:hover {
         transform: scale(1.2);
         color: var(--accent-color);
-      }
-      /* Volume Control: now in bottom right corner */
-      .volume-control {
-        position: fixed;
-        bottom: 100px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(0, 0, 0, 0.8);
-        padding: 5px 10px;
-        border-radius: 5px;
-        color: var(--primary-color);
-        font-size: 1rem;
       }
       /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
@@ -141,7 +129,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles (always face-up) */
+      /* Card Styles */
       .card {
         width: 90px;
         height: 135px;
@@ -171,7 +159,7 @@
       .card-front {
         background: #fff;
       }
-      /* Suit colors: hearts and diamonds red; clubs and spades black */
+      /* Suit colors */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
       /* Hidden CPU cards: show blue with "??" */
@@ -226,7 +214,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger: Tracks chip counts per hand */
+      /* Ledger */
       .ledger {
         position: fixed;
         top: 150px;
@@ -330,23 +318,10 @@
         "retina_detect": true
       });
     </script>
-    <!-- Sound Effects and Vaporwave Synth Sound Effects -->
-    <!-- (Replace these URLs with your chosen calming vaporwave synth samples) -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
-    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
-    <!-- Removed background soundtrack per request -->
+    <!-- Remove all sound effects (no background soundtrack) -->
     <script>
-      // Set initial volume for all sounds.
-      const volumeSlider = document.getElementById("volume-slider");
-      const setVolumeAll = (vol) => {
-        const sounds = document.querySelectorAll("audio");
-        sounds.forEach(sound => sound.volume = vol);
-      };
-      volumeSlider.addEventListener("input", (e) => {
-        setVolumeAll(e.target.value);
-      });
-      // No background music is played now.
+      // Remove any calls to playSound in our code by not defining any sound-playing functions.
+      // Also, remove audio elements for sound effects.
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
@@ -423,22 +398,16 @@
         ledgerBody.appendChild(row);
       };
       
-      // --- Sound Effects Helper ---
-      const playSound = (id) => {
-        const sound = document.getElementById(id);
-        if (sound) {
-          sound.currentTime = 0;
-          sound.play();
-        }
-      };
-      
       // --- Poker Game Component ---
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
-        const bigBlindAmt = 50;
-        const smallBlindAmt = 25;
+        const bigBlindAmt = 20;  // Updated blinds.
+        const smallBlindAmt = 10;
         const moveTime = 30; // seconds per move
+        
+        // We'll track the button position to rotate blinds.
+        const [button, setButton] = useState(1);
         
         // Game state
         const [deck, setDeck] = useState([]);
@@ -481,7 +450,12 @@
           }, 1000);
         };
         
-        // Initialize a new hand (preserving overall balance).
+        // Determine next player (clockwise).
+        const nextPlayer = (pid) => {
+          return (pid % numPlayers) + 1;
+        };
+        
+        // Initialize a new hand (preserving overall balance, rotating blinds).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -495,22 +469,28 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
-          newPlayers[2].balance -= smallBlindAmt;
-          newPlayers[2].bet = smallBlindAmt;
-          newPlayers[2].totalBet = smallBlindAmt;
-          newPlayers[3].balance -= bigBlindAmt;
-          newPlayers[3].bet = bigBlindAmt;
-          newPlayers[3].totalBet = bigBlindAmt;
+          // Determine blinds based on the current button.
+          // For simplicity, assign: small blind = nextPlayer(button), big blind = nextPlayer(small blind)
+          let smallBlind = nextPlayer(button);
+          let bigBlind = nextPlayer(smallBlind);
+          newPlayers[smallBlind].balance -= smallBlindAmt;
+          newPlayers[smallBlind].bet = smallBlindAmt;
+          newPlayers[smallBlind].totalBet = smallBlindAmt;
+          newPlayers[bigBlind].balance -= bigBlindAmt;
+          newPlayers[bigBlind].bet = bigBlindAmt;
+          newPlayers[bigBlind].totalBet = bigBlindAmt;
+          
           setPot(smallBlindAmt + bigBlindAmt);
           setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4.
+          // Action starts with the player after big blind.
+          setCurrentPlayer(nextPlayer(bigBlind));
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
-          playSound("sound-newhand");
+          // Rotate the button for the next hand.
+          setButton(prev => nextPlayer(prev));
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
@@ -524,6 +504,7 @@
           setHandCount(0);
           const ledgerBody = document.getElementById("ledger-body");
           if (ledgerBody) ledgerBody.innerHTML = "";
+          setButton(1);
           initHand();
         };
         
@@ -569,7 +550,6 @@
               newPlayers[playerId].totalBet += betNeeded;
               setPot(prev => prev + betNeeded);
               setMessage(`Player ${playerId} calls.`);
-              playSound("sound-bet");
             }
           } else if (action === "raise") {
             if (newPlayers[playerId].balance >= raiseAmt) {
@@ -578,7 +558,6 @@
               newPlayers[playerId].totalBet += raiseAmt;
               setPot(prev => prev + raiseAmt);
               setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
-              playSound("sound-bet");
             }
           } else if (action === "check") {
             setMessage(`Player ${playerId} checks.`);
@@ -649,12 +628,12 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // For realistic Texas Hold'em, the player must at least call.
+          // Set turn to next player.
+          setCurrentPlayer(2);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
               setMessage("Showdown!");
-              playSound("sound-showdown");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
@@ -674,7 +653,7 @@
             }
           }
           resetTimer();
-          // Cycle turn: simple cycle 1->2->3->4->1.
+          // Cycle turn indicator: simple cycle 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -730,7 +709,6 @@
                   await runCpuActions();
                   const winner = evaluateHands();
                   setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                  playSound("sound-showdown");
                   window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
                 }} disabled={processing}>Showdown</button>
               )}
