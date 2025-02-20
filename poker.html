@@ -4,16 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
-    <!-- Google Fonts: Orbitron for headers, Roboto for body -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Google Fonts: Roboto and Press Start 2P for a gamified feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
     <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
@@ -28,19 +22,19 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background */
-        --bg-green: #006400;       /* Poker table background */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
-        --header-font: 'Orbitron', sans-serif;
-        --body-font: 'Roboto', sans-serif;
+        --font-family: 'Roboto', sans-serif;
+        --gamified-font: 'Press Start 2P', cursive;
       }
       body {
-        font-family: var(--body-font);
+        font-family: var(--font-family);
         background-color: var(--bg-dark-green);
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background */
+      /* Particles background (red particles) */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -60,7 +54,6 @@
         background: rgba(0, 0, 0, 0.8);
       }
       header h2 {
-        font-family: var(--header-font);
         color: var(--primary-color);
         font-size: 1.8rem;
       }
@@ -74,13 +67,13 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Volume Control */
+      /* Volume Control (bottom right) */
       .volume-control {
         position: fixed;
         bottom: 100px;
         right: 20px;
         z-index: 1000;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         padding: 5px 10px;
         border-radius: 5px;
         color: var(--primary-color);
@@ -122,22 +115,9 @@
         position: absolute;
         top: 38%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translateX(-50%);
         display: flex;
         gap: 10px;
-        z-index: 2;
-      }
-      /* Info Box */
-      .info {
-        position: absolute;
-        top: 55%;
-        left: 50%;
-        transform: translate(-50%, 0);
-        background: rgba(0, 0, 0, 0.8);
-        color: var(--primary-color);
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 1.2rem;
         z-index: 2;
       }
       /* Player Areas */
@@ -145,28 +125,23 @@
         position: absolute;
         text-align: center;
         z-index: 2;
-        padding: 10px;
+        padding: 5px;
         transition: box-shadow 0.3s, border 0.3s;
       }
       .player.active {
         border: 2px solid red;
         box-shadow: 0 0 15px var(--accent-color);
       }
-      .player p {
-        font-family: var(--header-font);
-        font-size: 1.6rem;
-        margin-bottom: 5px;
-      }
-      .player .balance {
-        font-family: var(--header-font);
-        font-size: 1.8rem;
-        margin-top: 5px;
-      }
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles */
+      /* Increase balance font size and use gamified font */
+      .player div:last-child {
+        font-size: 1.3rem;
+        font-family: var(--gamified-font);
+      }
+      /* Card Styles (always face-up) */
       .card {
         width: 90px;
         height: 135px;
@@ -175,7 +150,6 @@
         background: #fff;
         overflow: hidden;
         perspective: 1000px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       }
       .card-inner {
         position: relative;
@@ -193,15 +167,14 @@
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        font-weight: bold;
       }
       .card-front {
         background: #fff;
       }
-      /* Suit colors */
+      /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards */
+      /* Hidden CPU cards: show blue with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -295,7 +268,7 @@
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
     </header>
-    <!-- Volume Control -->
+    <!-- Volume Control (moved to bottom right) -->
     <div class="volume-control">
       Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
     </div>
@@ -325,11 +298,7 @@
     </div>
     <!-- Main React Root -->
     <div id="root"></div>
-    <!-- Info Box positioned below community cards -->
-    <div class="info" id="info-box">
-      Stage: <span id="stage-info">PRE-FLOP</span> | POT: <span id="pot-info">0</span> | Blinds: SB 10 / BB 20
-    </div>
-    <!-- particles.js configuration: neon red particles -->
+    <!-- particles.js configuration (red particles) -->
     <script>
       particlesJS("particles-js", {
         "particles": {
@@ -361,9 +330,9 @@
         "retina_detect": true
       });
     </script>
-    <!-- Remove all sound elements -->
+    <!-- Remove all sound effects -->
     <script>
-      // No sound elements are present in this version.
+      // No sound will be played.
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
@@ -371,6 +340,7 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -387,13 +357,15 @@
         }
         return deck;
       };
+      
+      // Format a card for PokerSolver.
       const formatCardForSolver = (card) => {
         let rank = card.rank === "10" ? "T" : card.rank;
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Bold text inside cards.
+      // Card Component: Displays a full card face.
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
@@ -445,7 +417,7 @@
         const smallBlindAmt = 10;
         const moveTime = 30; // seconds per move
         
-        // Track dealer button to rotate blinds.
+        // Track the dealer button (rotates each hand).
         const [button, setButton] = useState(1);
         
         // Game state
@@ -489,10 +461,10 @@
           }, 1000);
         };
         
-        // Get next player (clockwise).
+        // Determine next player (clockwise).
         const nextPlayer = (pid) => (pid % numPlayers) + 1;
         
-        // Initialize a new hand (with blind rotation).
+        // Initialize a new hand (preserving overall balance and rotating blinds).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -506,7 +478,7 @@
               totalBet: 0
             };
           }
-          // Determine blinds based on current button.
+          // Determine blinds based on button position.
           let smallBlind = nextPlayer(button);
           let bigBlind = nextPlayer(smallBlind);
           newPlayers[smallBlind].balance -= smallBlindAmt;
@@ -525,12 +497,9 @@
           setCurrentPlayer(nextPlayer(bigBlind));
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
-          setButton(nextPlayer(button)); // Rotate dealer button.
+          // Rotate the dealer button.
+          setButton(prev => nextPlayer(prev));
           if (handCount > 0) updateLedger(handCount + 1, players);
-          const stageInfo = document.getElementById("stage-info");
-          const potInfo = document.getElementById("pot-info");
-          if (stageInfo) stageInfo.textContent = "PRE-FLOP";
-          if (potInfo) potInfo.textContent = smallBlindAmt + bigBlindAmt;
         };
         
         // Initialize a new game (overall reset).
@@ -561,16 +530,9 @@
           }
           setDeck(newDeck);
           setCommunity(newCommunity);
-          if (newCommunity.length === 3) {
-            setStage("flop");
-            document.getElementById("stage-info").textContent = "FLOP";
-          } else if (newCommunity.length === 4) {
-            setStage("turn");
-            document.getElementById("stage-info").textContent = "TURN";
-          } else if (newCommunity.length === 5) {
-            setStage("river");
-            document.getElementById("stage-info").textContent = "RIVER";
-          }
+          if (newCommunity.length === 3) setStage("flop");
+          else if (newCommunity.length === 4) setStage("turn");
+          else if (newCommunity.length === 5) setStage("river");
         };
         
         // Get current bet.
@@ -716,23 +678,23 @@
         
         return (
           <div className="table">
+            <div className="info">
+              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
+            </div>
             <div className="community">
               {community.map((card, idx) => (
                 <Card key={idx} card={card} animate={true} />
               ))}
             </div>
-            <div className="info" id="info-box">
-              Stage: <span id="stage-info">{stage.toUpperCase()}</span> | POT: <span id="pot-info">{pot}</span> | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
-            </div>
             {Object.entries(players).map(([pid, data]) => (
               <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
-                <p>Player {pid} {pid === "1" && "(You)"}</p>
+                <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
-                <div className="balance">
+                <div style={{ fontSize: "1.3rem", fontFamily: "var(--gamified-font)" }}>
                   Balance: {data.balance} | Bet: {data.totalBet}
                 </div>
               </div>
@@ -766,8 +728,7 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced ML-based AI,
-      // integrate a backend with websockets and a trained model.
+      // Placeholder: For real-time multiplayer and advanced AI, integrate a backend with websockets and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
