@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Texas Hold'em Poker</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome (optional for icons) -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- React and Babel CDN -->
+    <script
+      src="https://unpkg.com/react@17/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        background-color: #1e1e1e;
+        color: #fff;
+      }
+      .table {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+        background: url('table.png') no-repeat center center;
+        background-size: cover;
+      }
+      .overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      .player {
+        position: absolute;
+        text-align: center;
+      }
+      .card {
+        display: inline-block;
+        background: #fff;
+        color: #000;
+        border: 2px solid #fff;
+        border-radius: 4px;
+        width: 60px;
+        height: 90px;
+        line-height: 90px;
+        font-size: 1.2rem;
+        margin: 0 5px;
+      }
+      .community {
+        position: absolute;
+        display: flex;
+        gap: 10px;
+      }
+      .controls {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: #222;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      button {
+        font-size: 1rem;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-fold { background: #d9534f; color: #fff; }
+      .btn-call { background: #5cb85c; color: #fff; }
+      .btn-raise { background: #0275d8; color: #fff; }
+      .btn-next { background: #888; color: #fff; }
+      .btn-showdown { background: #ff9900; color: #fff; }
+      .info {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      // Helper functions
+      const suits = ['♠', '♥', '♦', '♣'];
+      const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+      const createDeck = () => {
+        let deck = [];
+        suits.forEach((suit) => {
+          ranks.forEach((rank) => {
+            deck.push({ suit, rank });
+          });
+        });
+        return deck;
+      };
+
+      const shuffleDeck = (deck) => {
+        for (let i = deck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+        return deck;
+      };
+
+      // Main Poker Game Component
+      const PokerGame = () => {
+        // Game state
+        const [deck, setDeck] = useState([]);
+        const [players, setPlayers] = useState({});
+        const [community, setCommunity] = useState([]);
+        const [stage, setStage] = useState('Pre-flop');
+        const [pot, setPot] = useState(0);
+        const [message, setMessage] = useState('');
+
+        // Setup positions for 4 players (using percentages)
+        const playerPositions = {
+          1: { top: '75%', left: '45%' },
+          2: { top: '35%', left: '10%' },
+          3: { top: '5%', left: '45%' },
+          4: { top: '35%', left: '80%' }
+        };
+
+        // Deal initial cards to 4 players (2 cards each)
+        const initGame = () => {
+          let newDeck = shuffleDeck(createDeck());
+          const newPlayers = {};
+          for (let i = 1; i <= 4; i++) {
+            newPlayers[i] = {
+              cards: [newDeck.pop(), newDeck.pop()],
+              cash: 1000
+            };
+          }
+          setDeck(newDeck);
+          setPlayers(newPlayers);
+          setCommunity([]);
+          setStage('Pre-flop');
+          setPot(0);
+          setMessage('');
+        };
+
+        // Deal community cards
+        const dealCommunity = (num) => {
+          let newDeck = [...deck];
+          const newCommunity = [...community];
+          for (let i = 0; i < num; i++) {
+            newCommunity.push(newDeck.pop());
+          }
+          setDeck(newDeck);
+          setCommunity(newCommunity);
+        };
+
+        // Advance game stage
+        const nextStage = () => {
+          // For simplicity, we are not resetting bets here.
+          if (stage === 'Pre-flop') {
+            dealCommunity(3);
+            setStage('Flop');
+          } else if (stage === 'Flop') {
+            dealCommunity(1);
+            setStage('Turn');
+          } else if (stage === 'Turn') {
+            dealCommunity(1);
+            setStage('River');
+          }
+        };
+
+        // Showdown: randomly pick a winner for this demo
+        const showdown = () => {
+          // In a full game, you would evaluate hands. Here we pick a random player.
+          const winner = Math.floor(Math.random() * 4) + 1;
+          setMessage(`Player ${winner} wins the pot of ${pot} credits!`);
+        };
+
+        // Example actions (fold, call, raise) – for demo these only update the pot.
+        const fold = () => {
+          setMessage('You folded. Next hand will start.');
+          setTimeout(initGame, 2000);
+        };
+
+        const callCheck = () => {
+          // For demo, add a fixed bet to the pot and update player cash (for player 1)
+          const bet = 50;
+          setPot(pot + bet);
+          setPlayers((prev) => ({
+            ...prev,
+            1: { ...prev[1], cash: prev[1].cash - bet }
+          }));
+          setMessage(`Player 1 calls/checks with ${bet} credits.`);
+        };
+
+        const raiseBet = () => {
+          const raise = 100; // fixed raise amount
+          setPot(pot + raise);
+          setPlayers((prev) => ({
+            ...prev,
+            1: { ...prev[1], cash: prev[1].cash - raise }
+          }));
+          setMessage(`Player 1 raises by ${raise} credits.`);
+        };
+
+        // Initialize the game when component mounts
+        useEffect(() => {
+          initGame();
+        }, []);
+
+        // Render a card
+        const renderCard = (card) => {
+          return (
+            <div className="card">
+              {card.rank}
+              {card.suit}
+            </div>
+          );
+        };
+
+        return (
+          <div className="table">
+            <div className="overlay">
+              <div className="info">Stage: {stage} | Pot: {pot}</div>
+              {/* Render community cards in center */}
+              <div
+                className="community"
+                style={{
+                  top: '40%',
+                  left: '30%',
+                  position: 'absolute'
+                }}
+              >
+                {community.map((card, idx) => (
+                  <div key={idx}>{renderCard(card)}</div>
+                ))}
+              </div>
+
+              {/* Render players */}
+              {Object.keys(players).map((pid) => (
+                <div
+                  key={pid}
+                  className="player"
+                  style={playerPositions[pid]}
+                >
+                  <div>Player {pid}</div>
+                  <div>
+                    {players[pid].cards.map((card, idx) => (
+                      <span key={idx}>{renderCard(card)}</span>
+                    ))}
+                  </div>
+                  <div>Cash: {players[pid].cash}</div>
+                </div>
+              ))}
+
+              {/* Controls */}
+              <div className="controls">
+                <button className="btn-fold" onClick={fold}>
+                  Fold
+                </button>
+                <button className="btn-call" onClick={callCheck}>
+                  Call/Check
+                </button>
+                <button className="btn-raise" onClick={raiseBet}>
+                  Raise
+                </button>
+                {stage !== 'River' && (
+                  <button className="btn-next" onClick={nextStage}>
+                    Next Stage
+                  </button>
+                )}
+                {stage === 'River' && (
+                  <button className="btn-showdown" onClick={showdown}>
+                    Showdown
+                  </button>
+                )}
+                <button onClick={initGame}>New Hand</button>
+              </div>
+
+              {/* Message display */}
+              {message && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '10%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '1.5rem',
+                    background: 'rgba(0,0,0,0.7)',
+                    padding: '10px 20px',
+                    borderRadius: '8px'
+                  }}
+                >
+                  {message}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      // Render the PokerGame component
+      ReactDOM.render(<PokerGame />, document.getElementById('root'));
+    </script>
+  </body>
+</html>
