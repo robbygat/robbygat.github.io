@@ -28,8 +28,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background: very dark green */
-        --bg-green: #006400;       /* Poker table background: lighter green */
+        --bg-dark-green: #002200;  /* Very dark green for website background */
+        --bg-green: #006400;       /* Lighter green for poker table */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -133,6 +133,7 @@
         padding: 5px;
         transition: box-shadow 0.3s, border 0.3s;
       }
+      /* Active player gets a red border */
       .player.active {
         border: 2px solid red;
         box-shadow: 0 0 15px var(--accent-color);
@@ -174,7 +175,7 @@
       /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: when not revealed, show blue background with "??" */
+      /* Hidden CPU cards: blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -262,11 +263,10 @@
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button -->
+    <!-- Header with Home button and Volume Control -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
-      <!-- Volume Control -->
       <div class="volume-control">
         Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
@@ -382,9 +382,8 @@
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
-        else if (card.suit === "?") faceClass = "card-front"; // will be handled by hidden styling
+        else if (card.suit === "?") faceClass += " blue";
         else faceClass += " black";
-        // If card.suit is "?", add hidden class to display blue card with "??"
         const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
@@ -556,7 +555,8 @@
           return maxBet;
         };
         
-        // Process a bet action.
+        // Process a bet action:
+        // This function handles fold, call, and raise with proper chip deduction and pot updates.
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
           if (action === "fold") {
@@ -573,7 +573,15 @@
               playSound("sound-bet");
             }
           } else if (action === "raise") {
-            if (newPlayers[playerId].balance >= raiseAmt) {
+            // Enforce that the player must call first
+            let betNeeded = currentBet() - newPlayers[playerId].bet;
+            if (newPlayers[playerId].balance >= betNeeded + raiseAmt) {
+              // First, call the current bet.
+              newPlayers[playerId].balance -= betNeeded;
+              newPlayers[playerId].bet += betNeeded;
+              newPlayers[playerId].totalBet += betNeeded;
+              setPot(prev => prev + betNeeded);
+              // Then, raise by the additional amount.
               newPlayers[playerId].balance -= raiseAmt;
               newPlayers[playerId].bet += raiseAmt;
               newPlayers[playerId].totalBet += raiseAmt;
@@ -587,7 +595,7 @@
           setPlayers(newPlayers);
         };
         
-        // Check if betting round is over.
+        // bettingRoundOver now checks if all active players have matched the highest bet or folded.
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -615,6 +623,7 @@
         // Advance to next stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
+          // Reset bets for new round.
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
@@ -630,7 +639,7 @@
           resetTimer();
         };
         
-        // CPU actions.
+        // CPU actions run sequentially after the human player.
         const runCpuActions = async () => {
           for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
@@ -650,8 +659,7 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // For proper Texas Hold'em rules, if a bet is made you must call at minimum.
-          // (This simple simulation forces the next actions to follow accordingly.)
+          // CPU actions run sequentially after human action.
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
@@ -678,7 +686,7 @@
             }
           }
           resetTimer();
-          // Cycle turn indicator: simple cycle 1->2->3->4->1.
+          // Cycle turn indicator (simple cycle: 1 -> 2 -> 3 -> 4 -> 1).
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -710,7 +718,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, show hidden card until showdown.
+                    // For CPU players, show hidden cards (blue with "??") until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -749,7 +757,8 @@
         );
       };
       
-      // Placeholder: For real‑time multiplayer and advanced ML‑based AI, integrate a backend with websockets and a trained model.
+      // For real-time multiplayer and advanced AI, integrate a backend (e.g. Node.js with websockets)
+      // and a trained machine-learning model (via TensorFlow.js or a Python-based service).
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
