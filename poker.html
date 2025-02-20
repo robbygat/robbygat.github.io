@@ -14,10 +14,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <!-- three.js for moving background -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- particles.js (fallback, not used in three.js version) -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script> -->
+    <!-- particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
     <!-- React and Babel CDN -->
@@ -30,34 +28,29 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Very dark green website background */
-        --bg-green: #006400;       /* Lighter green poker table */
+        --bg-dark-green: #002200;  /* Website background: very dark green */
+        --bg-green: #006400;       /* Poker table background: lighter green */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
       body {
         font-family: var(--font-family);
         background-color: var(--bg-dark-green);
-        overflow: hidden;
+        overflow-x: hidden;
         position: relative;
       }
-      /* Three.js canvas as background */
-      #threejs-canvas {
+      /* Particles background (black particles) */
+      #particles-js {
         position: fixed;
-        top: 0; left: 0;
         width: 100%;
         height: 100%;
-        z-index: -4;
-      }
-      /* UI Containers (on top of three.js canvas) */
-      header, .timer, .stats, .turn-indicator, .volume-control, .ledger, .controls, .game-info {
-        position: fixed;
+        z-index: -3;
+        background: var(--bg-dark-green);
       }
       /* Header */
       header {
+        position: sticky;
         top: 0;
-        left: 0;
-        right: 0;
         z-index: 1000;
         display: flex;
         align-items: center;
@@ -65,11 +58,23 @@
         padding: 10px 20px;
         background: rgba(0, 0, 0, 0.8);
       }
-      header h2 { color: var(--primary-color); font-size: 1.8rem; }
-      header a { color: var(--primary-color); text-decoration: none; font-size: 1.2rem; transition: transform 0.3s; }
-      header a:hover { transform: scale(1.2); color: var(--accent-color); }
+      header h2 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+      }
+      header a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: transform 0.3s;
+      }
+      header a:hover {
+        transform: scale(1.2);
+        color: var(--accent-color);
+      }
       /* Volume Control */
       .volume-control {
+        position: fixed;
         top: 10px;
         right: 20px;
         z-index: 1000;
@@ -80,27 +85,26 @@
         font-size: 1rem;
       }
       /* Timer, Stats, and Turn Indicator */
+      .timer, .stats, .turn-indicator {
+        position: fixed;
+        background: rgba(0,0,0,0.8);
+        color: var(--primary-color);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        z-index: 1000;
+      }
       .timer { top: 70px; right: 20px; }
       .stats { top: 70px; left: 20px; }
       .turn-indicator { top: 110px; left: 20px; }
-      /* Ledger */
-      .ledger {
-        top: 150px;
-        right: 20px;
-        z-index: 1000;
-        background: rgba(0,0,0,0.8);
-        color: var(--primary-color);
-        padding: 10px;
-        border-radius: 8px;
-        font-size: 1rem;
-        max-height: 40vh;
-        overflow-y: auto;
-      }
-      .ledger h3 { margin-bottom: 5px; }
-      .ledger table { width: 100%; border-collapse: collapse; }
-      .ledger th, .ledger td { border: 1px solid var(--primary-color); padding: 2px 5px; text-align: center; }
-      /* Main Table (Poker Table) */
+      /* Main Table Area */
       .table {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+      }
+      .table::before {
+        content: "";
         position: absolute;
         top: 50px;
         left: 50px;
@@ -109,53 +113,13 @@
         border: 10px solid darkgreen;
         border-radius: 50%;
         background: var(--bg-green);
-        z-index: -2;
+        z-index: -1;
       }
-      /* Controls */
-      .controls {
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        background: #222;
-        padding: 15px;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-      .controls button {
-        font-size: 1rem;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.3s, transform 0.3s;
-      }
-      .controls button:hover { transform: scale(1.05); }
-      .btn-fold { background: #d9534f; color: #fff; }
-      .btn-call { background: #5cb85c; color: #fff; }
-      .btn-raise { background: #0275d8; color: #fff; }
-      .btn-next { background: #888; color: #fff; }
-      .btn-showdown { background: #ff9900; color: #fff; }
-      .btn-new { background: #444; color: #fff; }
-      /* Game Info Message */
-      .game-info {
-        bottom: 70px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        background: rgba(0, 0, 0, 0.8);
-        color: var(--primary-color);
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 1.2rem;
-      }
-      /* Three.js Poker Table (simply styled container) */
       /* Community Cards */
-      .community { 
-        position: absolute; 
-        top: 38%; 
-        left: 50%; 
+      .community {
+        position: absolute;
+        top: 38%;
+        left: 50%;
         transform: translateX(-50%);
         display: flex;
         gap: 10px;
@@ -169,7 +133,10 @@
         padding: 5px;
         transition: box-shadow 0.3s, border 0.3s;
       }
-      .player.active { border: 2px solid red; box-shadow: 0 0 15px var(--accent-color); }
+      .player.active {
+        border: 2px solid red;
+        box-shadow: 0 0 15px var(--accent-color);
+      }
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
@@ -201,16 +168,81 @@
         justify-content: center;
         font-size: 1.5rem;
       }
-      .card-front { background: #fff; }
-      /* Suit colors: hearts & diamonds red, clubs & spades black */
+      .card-front {
+        background: #fff;
+      }
+      /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: blue background with "??" */
+      /* Hidden CPU cards: when not revealed, show blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
       }
-      .card.hidden .card-face::after { content: "??"; font-size: 1.5rem; }
+      .card.hidden .card-face::after {
+        content: "??";
+        font-size: 1.5rem;
+      }
+      /* Controls */
+      .controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #222;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        z-index: 1000;
+      }
+      .controls button {
+        font-size: 1rem;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.3s;
+      }
+      .controls button:hover {
+        transform: scale(1.05);
+      }
+      .btn-fold { background: #d9534f; color: #fff; }
+      .btn-call { background: #5cb85c; color: #fff; }
+      .btn-raise { background: #0275d8; color: #fff; }
+      .btn-next { background: #888; color: #fff; }
+      .btn-showdown { background: #ff9900; color: #fff; }
+      .btn-new { background: #444; color: #fff; }
+      /* Game Info Message */
+      .game-info {
+        position: fixed;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        z-index: 1000;
+      }
+      /* Ledger: Tracks chip counts per hand */
+      .ledger {
+        position: fixed;
+        top: 150px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        max-height: 40vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+      .ledger h3 { margin-bottom: 5px; }
+      .ledger table { width: 100%; border-collapse: collapse; }
+      .ledger th, .ledger td { border: 1px solid var(--primary-color); padding: 2px 5px; text-align: center; }
       /* Extra Animations */
       @keyframes fadeInBounce {
         0% { opacity: 0; transform: scale(0.5); }
@@ -228,19 +260,22 @@
     </style>
   </head>
   <body>
-    <!-- Three.js canvas for moving background -->
-    <canvas id="threejs-canvas"></canvas>
-    <!-- Header with Home button and Volume Control -->
+    <!-- Particles background -->
+    <div id="particles-js"></div>
+    <!-- Header with Home button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
+      <!-- Volume Control -->
       <div class="volume-control">
         Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
     </header>
-    <!-- Timer, Stats, and Turn Indicator -->
+    <!-- Timer Display -->
     <div class="timer" id="timer">30</div>
+    <!-- Game Stats Display -->
     <div class="stats" id="stats">Hands: 0</div>
+    <!-- Turn Indicator -->
     <div class="turn-indicator" id="turn">Turn: Player ?</div>
     <!-- Ledger -->
     <div class="ledger" id="ledger">
@@ -255,41 +290,44 @@
             <th>P4</th>
           </tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body">
+          <!-- Ledger rows will be added here -->
+        </tbody>
       </table>
     </div>
     <!-- Main React Root -->
     <div id="root"></div>
-    <!-- Three.js script for moving green and black background -->
+    <!-- particles.js configuration (black particles) -->
     <script>
-      // Basic three.js scene with moving geometry.
-      let scene, camera, renderer, geometry, material, mesh;
-      function initThreeJS() {
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x002200);
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("threejs-canvas"), alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        // Create a rotating torus knot as background decoration.
-        geometry = new THREE.TorusKnotGeometry(50, 15, 100, 16);
-        material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-        mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
-        camera.position.z = 150;
-        animate();
-      }
-      function animate() {
-        requestAnimationFrame(animate);
-        mesh.rotation.x += 0.005;
-        mesh.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+      particlesJS("particles-js", {
+        "particles": {
+          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": "#000000" },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.5 },
+          "size": { "value": 3, "random": true },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#000000",
+            "opacity": 0.4,
+            "width": 1
+          },
+          "move": { "enable": true, "speed": 2 }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": { "enable": true, "mode": "repulse" },
+            "onclick": { "enable": true, "mode": "push" }
+          },
+          "modes": {
+            "repulse": { "distance": 100, "duration": 0.4 },
+            "push": { "particles_nb": 4 }
+          }
+        },
+        "retina_detect": true
       });
-      initThreeJS();
     </script>
     <!-- Sound Effects and Background Music (calming vaporwave synth) -->
     <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
@@ -297,6 +335,7 @@
     <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
     <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
     <script>
+      // Set initial volume for all sounds based on volume slider.
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
         const sounds = document.querySelectorAll("audio");
@@ -305,6 +344,7 @@
       volumeSlider.addEventListener("input", (e) => {
         setVolumeAll(e.target.value);
       });
+      // Start background music.
       document.getElementById("background-music").play();
     </script>
     <script type="text/babel">
@@ -313,6 +353,7 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -329,53 +370,31 @@
         }
         return deck;
       };
+      
+      // Format a card for PokerSolver.
       const formatCardForSolver = (card) => {
         let rank = card.rank === "10" ? "T" : card.rank;
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component uses deckofcardsapi.com for real images.
+      // Card Component: Displays a full card face.
       const Card = ({ card, animate }) => {
-        // If card is hidden (for CPU), we show a blue card with "??".
-        if (card.suit === "?") {
-          return (
-            <div className={`card animate-bounce hidden ${animate ? "flip" : ""}`}>
-              <div className="card-inner">
-                <div className="card-face card-front">
-                  {/* Hidden card; CSS will show "??" */}
-                </div>
-              </div>
-            </div>
-          );
-        }
-        // Otherwise, build the API code.
-        let code = card.rank === "10" ? "0" : card.rank;
-        const suitMap = { '♠': 'S', '♥': 'H', '♦': 'D', '♣': 'C' };
-        code += suitMap[card.suit];
-        // Determine face color.
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
+        else if (card.suit === "?") faceClass = "card-front"; // will be handled by hidden styling
         else faceClass += " black";
+        // If card.suit is "?", add hidden class to display blue card with "??"
+        const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
-          <div className={`card animate-bounce ${animate ? "flip" : ""}`}>
+          <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
             <div className="card-inner">
               <div className={`card-face card-front ${faceClass}`}>
-                <img src={`https://deckofcardsapi.com/static/img/${code}.png`} alt={`${card.rank}${card.suit}`} style={{width: "100%", height: "100%"}} />
+                {card.suit === "?" ? "" : `${card.rank}${card.suit}`}
               </div>
             </div>
           </div>
         );
-      };
-      
-      // --- Turn Order Helper ---
-      const nextPlayer = (current, players) => {
-        let next = current;
-        const keys = Object.keys(players).map(Number);
-        do {
-          next = (next % keys.length) + 1;
-        } while (!players[next].active && next !== current);
-        return next;
       };
       
       // --- Advanced AI Simulation Placeholder ---
@@ -422,9 +441,6 @@
         const smallBlindAmt = 25;
         const moveTime = 30; // seconds per move
         
-        // New state for dealer.
-        const [dealer, setDealer] = useState(1);
-        
         // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
@@ -466,7 +482,7 @@
           }, 1000);
         };
         
-        // Initialize a new hand.
+        // Initialize a new hand (preserving overall balance).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -480,32 +496,26 @@
               totalBet: 0
             };
           }
-          // Rotate dealer.
-          const newDealer = (dealer % numPlayers) + 1;
-          setDealer(newDealer);
-          // Determine blinds.
-          const smallBlindPos = nextPlayer(newDealer, newPlayers);
-          const bigBlindPos = nextPlayer(smallBlindPos, newPlayers);
-          newPlayers[smallBlindPos].balance -= smallBlindAmt;
-          newPlayers[smallBlindPos].bet = smallBlindAmt;
-          newPlayers[smallBlindPos].totalBet = smallBlindAmt;
-          newPlayers[bigBlindPos].balance -= bigBlindAmt;
-          newPlayers[bigBlindPos].bet = bigBlindAmt;
-          newPlayers[bigBlindPos].totalBet = bigBlindAmt;
+          // Post blinds: player2 posts small, player3 posts big.
+          newPlayers[2].balance -= smallBlindAmt;
+          newPlayers[2].bet = smallBlindAmt;
+          newPlayers[2].totalBet = smallBlindAmt;
+          newPlayers[3].balance -= bigBlindAmt;
+          newPlayers[3].bet = bigBlindAmt;
+          newPlayers[3].totalBet = bigBlindAmt;
           setPot(smallBlindAmt + bigBlindAmt);
           setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          // Pre-flop action starts with player after big blind.
-          setCurrentPlayer(nextPlayer(bigBlindPos, newPlayers));
+          setCurrentPlayer(4); // action starts with player4.
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
           playSound("sound-newhand");
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
-        // Initialize a new game.
+        // Initialize a new game (overall reset).
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -518,7 +528,10 @@
           initHand();
         };
         
-        useEffect(() => { initGame(); }, []);
+        // On mount, start a new game.
+        useEffect(() => {
+          initGame();
+        }, []);
         
         // Deal community cards.
         const dealCommunity = (count) => {
@@ -585,7 +598,7 @@
         // Evaluate hands using PokerSolver at showdown.
         const evaluateHands = () => {
           let bestScore = null;
-          let winners = [];
+          let winner = null;
           for (let pid in players) {
             if (!players[pid].active) continue;
             let hole = players[pid].hand.map(c => formatCardForSolver(c));
@@ -593,12 +606,10 @@
             const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
             if (bestScore === null || solved.rank < bestScore.rank) {
               bestScore = solved;
-              winners = [pid];
-            } else if (solved.rank === bestScore.rank) {
-              winners.push(pid);
+              winner = pid;
             }
           }
-          return winners.length === 1 ? winners[0] : winners;
+          return winner;
         };
         
         // Advance to next stage.
@@ -610,14 +621,10 @@
           setPlayers(newPlayers);
           if (stage === "pre-flop") {
             dealCommunity(3); // flop.
-            // Post-flop action starts with player after dealer.
-            setCurrentPlayer(nextPlayer(dealer, newPlayers));
           } else if (stage === "flop") {
             dealCommunity(1); // turn.
-            setCurrentPlayer(nextPlayer(dealer, newPlayers));
           } else if (stage === "turn") {
             dealCommunity(1); // river.
-            setCurrentPlayer(nextPlayer(dealer, newPlayers));
           }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
@@ -639,36 +646,25 @@
           }
         };
         
-        // Handle human (player 1) action.
+        // Handle human action.
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
-          // Enforce that if a bet exists, you must at least call.
-          if (action === "raise" && players[1].bet < currentBet()) {
-            alert("You must call the current bet to stay in the hand.");
-            return;
-          }
           await processBet(action, 1, raiseAmt);
-          // Set turn to next active CPU.
-          setCurrentPlayer(nextPlayer(1, players));
+          // For proper Texas Hold'em rules, if a bet is made you must call at minimum.
+          // (This simple simulation forces the next actions to follow accordingly.)
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
               setMessage("Showdown!");
               playSound("sound-showdown");
-              const result = evaluateHands();
+              const winner = evaluateHands();
               let newPlayers = { ...players };
-              if (Array.isArray(result)) {
-                let split = Math.floor(pot / result.length);
-                result.forEach(winner => { newPlayers[winner].balance += split; });
-                setPlayers(newPlayers);
-                window.alert(`Showdown! Players ${result.join(", ")} split the pot of ${pot} credits!`);
-                setMessage(`Showdown! Players ${result.join(", ")} split the pot of ${pot} credits!`);
-              } else {
-                newPlayers[result].balance += pot;
-                setPlayers(newPlayers);
-                window.alert(`Showdown! Player ${result} wins the pot of ${pot} credits!`);
-                setMessage(`Showdown! Player ${result} wins the pot of ${pot} credits!`);
-              }
+              newPlayers[winner].balance += pot;
+              setPlayers(newPlayers);
+              // Popup winner message.
+              window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              // After delay, start next hand.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -682,7 +678,8 @@
             }
           }
           resetTimer();
-          setCurrentPlayer(prev => nextPlayer(prev, players));
+          // Cycle turn indicator: simple cycle 1->2->3->4->1.
+          setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
         // "New Game" button.
@@ -701,7 +698,7 @@
         return (
           <div className="table">
             <div className="info">
-              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt} | Dealer: Player {dealer}
+              Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
             </div>
             <div className="community">
               {community.map((card, idx) => (
@@ -713,6 +710,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
+                    // For CPU players, show hidden card until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -734,32 +732,25 @@
               {stage === "river" && (
                 <button className="btn-showdown" onClick={async () => {
                   await runCpuActions();
-                  const result = evaluateHands();
-                  let newPlayers = { ...players };
-                  if (Array.isArray(result)) {
-                    let split = Math.floor(pot / result.length);
-                    result.forEach(winner => { newPlayers[winner].balance += split; });
-                    setPlayers(newPlayers);
-                    window.alert(`Showdown! Players ${result.join(", ")} split the pot of ${pot} credits!`);
-                    setMessage(`Showdown! Players ${result.join(", ")} split the pot of ${pot} credits!`);
-                  } else {
-                    newPlayers[result].balance += pot;
-                    setPlayers(newPlayers);
-                    window.alert(`Showdown! Player ${result} wins the pot of ${pot} credits!`);
-                    setMessage(`Showdown! Player ${result} wins the pot of ${pot} credits!`);
-                  }
+                  const winner = evaluateHands();
+                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                  playSound("sound-showdown");
+                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
                 }} disabled={processing}>Showdown</button>
               )}
               <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
             {message && (
-              <div className="game-info">{message}</div>
+              <div className="game-info">
+                {message}
+              </div>
             )}
           </div>
         );
       };
       
-      // For advanced features (real-time multiplayer, advanced AI), integrate a Node.js backend and ML service.
+      // Placeholder: For real‑time multiplayer and advanced ML‑based AI, integrate a backend with websockets and a trained model.
+      
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
   </body>
