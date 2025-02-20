@@ -16,11 +16,11 @@
     />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <!-- GSAP -->
+    <!-- GSAP for animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <!-- React Three Fiber -->
+    <!-- React Three Fiber (for 3D table) -->
     <script src="https://unpkg.com/@react-three/fiber@8.0.27/dist/react-three-fiber.umd.js"></script>
-    <!-- Material UI (MUI) -->
+    <!-- Material UI -->
     <script src="https://unpkg.com/@mui/material@5.11.0/umd/material-ui.development.js"></script>
     <!-- PokerSolver for hand evaluation -->
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
@@ -29,13 +29,13 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      /* Global Reset and Variables */
+      /* Reset and Global Variables */
       * { margin: 0; padding: 0; box-sizing: border-box; }
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Website background */
-        --bg-green: #006400;       /* Poker table background */
+        --bg-dark-green: #002200;  /* Website background: very dark green */
+        --bg-green: #006400;       /* Poker table background: lighter green */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -45,7 +45,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background */
+      /* Particles background (black particles) */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -62,7 +62,7 @@
         align-items: center;
         justify-content: space-between;
         padding: 10px 20px;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
       }
       header h2 { color: var(--primary-color); font-size: 1.8rem; }
       header a {
@@ -84,22 +84,22 @@
       }
       .timer { top: 70px; right: 20px; }
       .stats { top: 70px; left: 20px; }
-      /* 3D Table rendered by React Three Fiber will be a canvas in a container */
+      /* 3D Table Container */
       .table3D {
         position: relative;
         width: 100%;
         height: 100vh;
       }
-      /* Overlay for 2D game UI */
+      /* Overlay UI Container */
       .game-ui {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        pointer-events: none; /* UI overlays that don't block 3D scene */
+        pointer-events: none;
       }
-      /* Community Cards, Player Areas, Controls, Game Info */
+      /* Community Cards */
       .community, .player, .controls, .game-info {
         pointer-events: auto;
       }
@@ -112,6 +112,7 @@
         gap: 10px;
         z-index: 2;
       }
+      /* Player Areas */
       .player {
         position: absolute;
         text-align: center;
@@ -128,6 +129,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
+      /* Card Styles */
       .card {
         width: 90px;
         height: 135px;
@@ -157,6 +159,7 @@
       .card-front { background: #fff; }
       .card-front.red { color: red; }
       .card-front.black { color: black; }
+      /* Controls */
       .controls {
         position: fixed;
         bottom: 0;
@@ -184,6 +187,7 @@
       .btn-next { background: #888; color: #fff; }
       .btn-showdown { background: #ff9900; color: #fff; }
       .btn-new { background: #444; color: #fff; }
+      /* Game Info Message */
       .game-info {
         position: fixed;
         bottom: 70px;
@@ -210,9 +214,9 @@
     </style>
   </head>
   <body>
-    <!-- Particles background -->
+    <!-- Particles Background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button -->
+    <!-- Header with Home Button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
@@ -220,9 +224,11 @@
     <!-- Timer and Stats -->
     <div class="timer" id="timer">30</div>
     <div class="stats" id="stats">Hands: 0</div>
-    <!-- Main 3D Table Container -->
-    <div class="table3D" id="table3D"></div>
-    <!-- Overlay for 2D UI -->
+    <!-- 3D Table Container -->
+    <div class="table3D" id="table3D">
+      <!-- React Three Fiber will render the 3D table here -->
+    </div>
+    <!-- Overlay UI Container -->
     <div class="game-ui" id="root"></div>
     <!-- particles.js configuration (black particles) -->
     <script>
@@ -256,15 +262,14 @@
         "retina_detect": true
       });
     </script>
-    <!-- Main Application Script using Babel -->
+    <!-- Main Application Script -->
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
       const { Canvas } = ReactThreeFiber;
       const { Button, Dialog, DialogActions, DialogContent, DialogTitle } = MaterialUI;
       
-      // --- 3D Table Component using React Three Fiber ---
+      // --- 3D Table Component ---
       const Table3D = () => {
-        // Create a simple circular table with lighting.
         return (
           <>
             <ambientLight intensity={0.5} />
@@ -296,17 +301,14 @@
         }
         return deck;
       };
-      
-      // Format card for PokerSolver (10 becomes T)
       const formatCardForSolver = (card) => {
         let rank = card.rank === "10" ? "T" : card.rank;
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component for 2D UI
+      // Card component for 2D overlay UI.
       const Card2D = ({ card, reveal }) => {
-        // If not revealed (for opponents) show a blank card (e.g., "?" instead)
         return (
           <div className="card animate-bounce">
             <div className="card-inner">
@@ -337,7 +339,6 @@
         const smallBlindAmt = 25;
         const moveTime = 30; // seconds per move
         
-        // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
@@ -351,7 +352,11 @@
         const timerRef = useRef(null);
         const [newGameDialog, setNewGameDialog] = useState(false);
         
-        // Reset timer on currentPlayer change
+        // Highlight current player's area.
+        const getPlayerClass = (pid) => {
+          return `player p${pid} ${currentPlayer == pid ? "active" : ""}`;
+        };
+        
         useEffect(() => {
           resetTimer();
           return () => clearInterval(timerRef.current);
@@ -362,9 +367,9 @@
           setTimer(moveTime);
           timerRef.current = setInterval(() => {
             setTimer(prev => {
-              if(prev <= 1) {
+              if (prev <= 1) {
                 clearInterval(timerRef.current);
-                if(currentPlayer === 1) handlePlayerAction("call");
+                if (currentPlayer === 1) handlePlayerAction("call");
                 return moveTime;
               }
               return prev - 1;
@@ -372,7 +377,7 @@
           }, 1000);
         };
         
-        // Initialize a new hand (round)
+        // Initialize a new hand (round) while preserving balances.
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -386,7 +391,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
+          // Post blinds.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -403,7 +408,7 @@
           setHandCount(prev => prev + 1);
         };
         
-        // Initialize a new game (reset balances and hand count)
+        // Initialize a new game.
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -432,45 +437,42 @@
           else if(newCommunity.length === 5) setStage("river");
         };
         
-        // Get current bet.
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
-            if(p.bet > maxBet) maxBet = p.bet;
+            if (p.bet > maxBet) maxBet = p.bet;
           });
           return maxBet;
         };
         
-        // Process bet action.
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
-          if(action === "fold") {
+          if (action === "fold") {
             newPlayers[playerId].active = false;
             setMessage(`Player ${playerId} folds.`);
-          } else if(action === "call") {
+          } else if (action === "call") {
             let betNeeded = currentBet() - newPlayers[playerId].bet;
-            if(newPlayers[playerId].balance >= betNeeded) {
+            if (newPlayers[playerId].balance >= betNeeded) {
               newPlayers[playerId].balance -= betNeeded;
               newPlayers[playerId].bet += betNeeded;
               newPlayers[playerId].totalBet += betNeeded;
               setPot(prev => prev + betNeeded);
               setMessage(`Player ${playerId} calls.`);
             }
-          } else if(action === "raise") {
-            if(newPlayers[playerId].balance >= raiseAmt) {
+          } else if (action === "raise") {
+            if (newPlayers[playerId].balance >= raiseAmt) {
               newPlayers[playerId].balance -= raiseAmt;
               newPlayers[playerId].bet += raiseAmt;
               newPlayers[playerId].totalBet += raiseAmt;
               setPot(prev => prev + raiseAmt);
               setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
             }
-          } else if(action === "check") {
+          } else if (action === "check") {
             setMessage(`Player ${playerId} checks.`);
           }
           setPlayers(newPlayers);
         };
         
-        // Check if betting round is over.
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -478,7 +480,7 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Evaluate hands using PokerSolver.
+        // Use PokerSolver to evaluate hands at showdown.
         const evaluateHands = () => {
           let bestHand = null;
           let winner = null;
@@ -495,25 +497,25 @@
           return winner;
         };
         
-        // Advance stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
-          for(let pid in newPlayers) { newPlayers[pid].bet = 0; }
+          for (let pid in newPlayers) {
+            newPlayers[pid].bet = 0;
+          }
           setPlayers(newPlayers);
-          if(stage === "pre-flop") { dealCommunity(3); }
-          else if(stage === "flop") { dealCommunity(1); }
-          else if(stage === "turn") { dealCommunity(1); }
+          if (stage === "pre-flop") { dealCommunity(3); }
+          else if (stage === "flop") { dealCommunity(1); }
+          else if (stage === "turn") { dealCommunity(1); }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
         };
         
-        // CPU actions.
         const runCpuActions = async () => {
-          for(let pid = 2; pid <= numPlayers; pid++) {
+          for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
             setProcessing(true);
             const decision = await aiDecision(players[pid].hand, community);
-            if(decision === "raise") {
+            if (decision === "raise") {
               let raiseAmt = Math.floor(Math.random() * 150) + 50;
               await processBet("raise", pid, raiseAmt);
             } else {
@@ -523,25 +525,22 @@
           }
         };
         
-        // Handle human action.
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              // Evaluate hand.
               setMessage("Showdown!");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              // Automatically start next hand after 3 seconds.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
-                setTimeout(() => {
-                  setNewGameDialog(true);
-                }, 3000);
+                setTimeout(() => { setNewGameDialog(true); }, 3000);
               }
             } else {
               await nextStage();
@@ -550,29 +549,24 @@
           resetTimer();
         };
         
-        // "New Game" resets the overall game.
         const newGame = () => {
           if (window.confirm("Start a new game? All progress will be reset.")) {
             initGame();
           }
         };
         
-        // Update stats display.
         useEffect(() => {
           const statsElem = document.getElementById("stats");
           if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
         }, [handCount]);
         
-        // Highlight current player (for demo, we simulate currentPlayer changes)
-        // In a real game, you'd setCurrentPlayer based on betting order.
-        
         return (
           <>
-            {/* 3D Table rendered via React Three Fiber */}
+            {/* 3D Table */}
             <Canvas className="table3D">
               <Table3D />
             </Canvas>
-            {/* Overlay 2D UI */}
+            {/* 2D Overlay UI */}
             <div className="game-ui">
               <div className="info">
                 Stage: {stage.toUpperCase()} | POT: {pot} | Blinds: SB {smallBlindAmt} / BB {bigBlindAmt}
@@ -583,7 +577,7 @@
                 ))}
               </div>
               {Object.entries(players).map(([pid, data]) => (
-                <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
+                <div key={pid} className={getPlayerClass(pid)}>
                   <div>Player {pid} {pid === "1" && "(You)"}</div>
                   <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                     {data.hand.map((card, idx) => (
@@ -615,15 +609,14 @@
                 <button className="btn-new" onClick={newGame}>New Game</button>
               </div>
               {message && (
-                <div className="game-info">{message}</div>
+                <div className="game-info">
+                  {message}
+                </div>
               )}
             </div>
-            {/* Dialog for new game prompt */}
             <Dialog open={newGameDialog} onClose={() => setNewGameDialog(false)}>
               <DialogTitle>{"LOZER!! You ran out of points."}</DialogTitle>
-              <DialogContent>
-                Start a new game?
-              </DialogContent>
+              <DialogContent>Start a new game?</DialogContent>
               <DialogActions>
                 <Button onClick={() => { setNewGameDialog(false); newGame(); }} color="primary">
                   Yes
@@ -637,7 +630,7 @@
         );
       };
       
-      // Simple Card2D component for UI overlay.
+      // Simple Card2D component for 2D UI overlay.
       const Card2D = ({ card, reveal }) => {
         return (
           <div className="card animate-bounce">
