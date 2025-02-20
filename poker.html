@@ -72,6 +72,16 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
+      /* Volume Control in header */
+      .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--primary-color);
+      }
+      .volume-control input[type="range"] {
+        width: 100px;
+      }
       /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
         position: fixed;
@@ -159,24 +169,26 @@
       .card-front {
         background: #fff;
       }
-      /* Suit colors: hearts and diamonds in red; clubs and spades in black */
+      /* Suit colors */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden cards for CPU (blue background, question marks) */
+      /* Hidden cards for CPU: blue background with question marks */
+      .card.hidden {
+        background: blue !important;
+      }
       .card.hidden .card-face {
-        background: blue;
-        color: #fff;
+        color: #fff !important;
       }
       .card.hidden .card-face::after {
         content: "??";
         font-size: 1.5rem;
       }
-      /* Controls */
+      /* Controls (moved below center cards) */
       .controls {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        top: 55%;
+        left: 50%;
+        transform: translate(-50%, 50%);
         background: #222;
         padding: 15px;
         display: flex;
@@ -198,13 +210,12 @@
       .btn-fold { background: #d9534f; color: #fff; }
       .btn-call { background: #5cb85c; color: #fff; }
       .btn-raise { background: #0275d8; color: #fff; }
-      .btn-next { background: #888; color: #fff; }
       .btn-showdown { background: #ff9900; color: #fff; }
       .btn-new { background: #444; color: #fff; }
       /* Game Info Message */
       .game-info {
         position: fixed;
-        bottom: 70px;
+        bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.8);
@@ -214,7 +225,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger: Tracks chip counts per hand */
+      /* Ledger */
       .ledger {
         position: fixed;
         top: 150px;
@@ -250,10 +261,14 @@
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button -->
+    <!-- Header with Home button and Volume Control -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
+      <div class="volume-control">
+        <label for="volume">Volume</label>
+        <input type="range" id="volume" min="0" max="1" step="0.05" value="0.5" />
+      </div>
     </header>
     <!-- Timer Display -->
     <div class="timer" id="timer">30</div>
@@ -274,9 +289,7 @@
             <th>P4</th>
           </tr>
         </thead>
-        <tbody id="ledger-body">
-          <!-- Ledger rows will be added here -->
-        </tbody>
+        <tbody id="ledger-body"></tbody>
       </table>
     </div>
     <!-- Main React Root -->
@@ -313,17 +326,19 @@
         "retina_detect": true
       });
     </script>
-    <!-- Sound Effects (softer, calming sounds) -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
-    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <!-- Sound Effects and Vaporwave Synth (calming) -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth1.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth2.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth3.ogg"></audio>
+    <!-- Background Music (Vaporwave synth soundtrack) -->
+    <audio id="bg-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth_bg.ogg" loop></audio>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
       
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a standard 52-card deck.
+      // Create a full 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -352,7 +367,7 @@
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
-        else if (card.suit === '?' ) faceClass = "card-front blue"; // When hidden, apply blue style.
+        else if (card.suit === "?") faceClass = "card-front blue";
         else faceClass += " black";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${card.suit === "?" ? "hidden" : ""}`}>
@@ -396,8 +411,18 @@
       const playSound = (id) => {
         const sound = document.getElementById(id);
         if (sound) {
+          sound.volume = parseFloat(document.getElementById("volume").value);
           sound.currentTime = 0;
           sound.play();
+        }
+      };
+      
+      // Start background music.
+      const startBgMusic = () => {
+        const music = document.getElementById("bg-music");
+        if (music) {
+          music.volume = parseFloat(document.getElementById("volume").value);
+          music.play();
         }
       };
       
@@ -464,7 +489,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
+          // Post blinds: player2 (small) and player3 (big)
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -494,6 +519,7 @@
           const ledgerBody = document.getElementById("ledger-body");
           if (ledgerBody) ledgerBody.innerHTML = "";
           initHand();
+          startBgMusic();
         };
         
         // On mount, start a new game.
@@ -580,8 +606,8 @@
           return winner;
         };
         
-        // Advance to next stage.
-        const nextStage = async () => {
+        // Advance to next stage automatically (no "Next Stage" button).
+        const autoAdvanceStage = async () => {
           let newPlayers = { ...players };
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
@@ -618,22 +644,18 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // Set turn to next player.
-          setCurrentPlayer(2);
+          // Force players to at least match current bet (call or fold) before further action.
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              // At showdown, reveal all cards and determine winner.
               setMessage("Showdown!");
               playSound("sound-showdown");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
-              // Show winner popup.
               window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // After a short delay, start next hand.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -643,11 +665,12 @@
                 }, 3000);
               }
             } else {
-              await nextStage();
+              // Automatically advance stage after a short delay.
+              setTimeout(() => { autoAdvanceStage(); }, 1500);
             }
           }
           resetTimer();
-          // Cycle turn indicator (1->2->3->4->1).
+          // Cycle turn indicator.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -679,8 +702,11 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, hide hole cards (display "?" with blue background) until showdown.
-                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
+                    <Card
+                      key={idx}
+                      card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }}
+                      animate={true}
+                    />
                   ))}
                 </div>
                 <div>
@@ -692,21 +718,9 @@
               <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
               <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
               <button className="btn-raise" onClick={() => {
-                const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
+                const amt = parseInt(prompt("Enter raise amount (must match current bet at least):", "100")) || 100;
                 handlePlayerAction("raise", amt);
               }} disabled={processing}>Raise</button>
-              {stage !== "river" && (
-                <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
-              )}
-              {stage === "river" && (
-                <button className="btn-showdown" onClick={async () => {
-                  await runCpuActions();
-                  const winner = evaluateHands();
-                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                  playSound("sound-showdown");
-                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-                }} disabled={processing}>Showdown</button>
-              )}
               <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
             {message && (
@@ -718,7 +732,7 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced AI, integrate a backend with websockets and a trained ML model.
+      // Advanced features like real-time multiplayer and ML‑based AI can be integrated via a backend.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
