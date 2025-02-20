@@ -14,12 +14,14 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <!-- React and Babel CDN -->
+    <!-- particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- React and Babel -->
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      /* Basic resets and variables */
+      /* Reset & Variables */
       * {
         margin: 0;
         padding: 0;
@@ -28,15 +30,24 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
+        --poker-green: #35654d;
         --font-family: 'Roboto', sans-serif;
-        --timer-color: #ffcc00;
       }
       body {
         font-family: var(--font-family);
-        background: linear-gradient(135deg, #006600, #008000);
+        background-color: var(--poker-green);
         color: var(--primary-color);
+        overflow-x: hidden;
       }
-      /* Header with Home button */
+      /* Particles container */
+      #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background-color: var(--poker-green);
+      }
+      /* Header */
       header {
         display: flex;
         align-items: center;
@@ -63,103 +74,25 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Poker table background */
+      /* Table Background */
       .table {
         position: relative;
         width: 100%;
-        height: 100vh;
-        background: radial-gradient(ellipse at center, #006600 0%, #004d00 100%);
+        min-height: 100vh;
+        background: url('table.png') no-repeat center center;
+        background-size: cover;
       }
-      /* Community and player card layouts */
-      .community {
+      .fallback-table {
         position: absolute;
-        top: 38%;
-        left: 30%;
-        display: flex;
-        gap: 10px;
-        transition: opacity 0.5s;
+        top: 50px;
+        left: 50px;
+        right: 50px;
+        bottom: 50px;
+        border: 10px solid darkgreen;
+        border-radius: 50%;
+        background: seagreen;
       }
-      .player {
-        position: absolute;
-        text-align: center;
-        transition: transform 0.5s;
-      }
-      /* Player positions */
-      .player.p1 { top: 68%; left: 44%; }
-      .player.p2 { top: 42%; left: 8%; }
-      .player.p3 { top: 8%; left: 44%; }
-      .player.p4 { top: 42%; left: 80%; }
-      /* Card container with flip animation */
-      .card-container {
-        perspective: 600px;
-      }
-      .card {
-        width: 90px;
-        height: 135px;
-        border: 2px solid #fff;
-        border-radius: 8px;
-        background: #fff;
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.6s;
-      }
-      .card.flip {
-        transform: rotateY(180deg);
-      }
-      .card-face {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.5rem;
-        border-radius: 8px;
-      }
-      .card-front {
-        background: #fff;
-      }
-      .card-back {
-        background: darkblue;
-        transform: rotateY(180deg);
-      }
-      /* Color cards: hearts & diamonds red, clubs & spades black */
-      .card.red {
-        color: red;
-      }
-      .card.black {
-        color: black;
-      }
-      /* Controls styling */
-      .controls {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.85);
-        padding: 15px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-      }
-      .controls button {
-        font-size: 1rem;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: transform 0.3s;
-      }
-      .controls button:hover {
-        transform: scale(1.1);
-      }
-      .btn-fold { background: #d9534f; color: #fff; }
-      .btn-call { background: #5cb85c; color: #fff; }
-      .btn-raise { background: #0275d8; color: #fff; }
-      .btn-next { background: #888; color: #fff; }
-      .btn-showdown { background: #ff9900; color: #fff; }
-      .btn-new { background: #444; color: #fff; }
+      /* Info text */
       .info {
         position: absolute;
         top: 10px;
@@ -167,22 +100,106 @@
         transform: translateX(-50%);
         font-size: 1.5rem;
         font-weight: bold;
+        z-index: 1;
       }
-      .timer {
+      /* Community Cards */
+      .community {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 1.5rem;
-        color: var(--timer-color);
+        top: 40%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 1;
       }
-      /* Display bet amounts under player balance */
-      .player .bet {
+      /* Player Areas */
+      .player {
+        position: absolute;
+        text-align: center;
+        z-index: 1;
+      }
+      .player.p1 { top: 70%; left: 45%; }
+      .player.p2 { top: 40%; left: 10%; }
+      .player.p3 { top: 10%; left: 45%; }
+      .player.p4 { top: 40%; left: 80%; }
+      /* Card Container with Flip Animation */
+      .card-container {
+        perspective: 1000px;
+        width: 90px;
+        height: 135px;
+      }
+      .card {
+        width: 100%;
+        height: 100%;
+        border: 2px solid #fff;
+        border-radius: 8px;
+        position: absolute;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: transform 0.6s;
+      }
+      .card.front {
+        background: #fff;
+      }
+      .card.back {
+        background: darkblue;
+        color: #fff;
+        transform: rotateY(180deg);
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+      .flip .card.front {
+        transform: rotateY(180deg);
+      }
+      .flip .card.back {
+        transform: rotateY(360deg);
+      }
+      /* Controls */
+      .controls {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background: #222;
+        padding: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        z-index: 1;
+      }
+      .controls button {
         font-size: 1rem;
-        margin-top: 5px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .btn-fold { background: #d9534f; color: #fff; }
+      .btn-call { background: #5cb85c; color: #fff; }
+      .btn-raise { background: #0275d8; color: #fff; }
+      .btn-next { background: #888; color: #fff; }
+      .btn-showdown { background: #ff9900; color: #fff; }
+      .btn-new { background: #ff9900; color: #000; }
+      /* Timer display */
+      .timer {
+        font-size: 1.2rem;
+        margin-left: 15px;
+        color: #ff4081;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .info { font-size: 1.2rem; }
+        header a, header button { font-size: 1rem; }
+        .controls button { font-size: 0.9rem; padding: 8px 15px; }
       }
     </style>
   </head>
   <body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
     <!-- Header with Home button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
@@ -195,7 +212,7 @@
       
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
-      const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
       
       const createDeck = () => {
         let deck = [];
@@ -206,7 +223,6 @@
         });
         return deck;
       };
-      
       const shuffleDeck = (deck) => {
         for (let i = deck.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -215,103 +231,95 @@
         return deck;
       };
       
-      // Render card with flip animation. If faceUp false, show back.
+      // Render a card with flip animation.
+      // For face-up cards, set color based on suit:
+      // Hearts/diamonds = red; clubs/spades = black.
       const Card = ({ card, faceUp, flip }) => {
-        // Determine font color based on suit.
         const isRed = card && (card.suit === '♥' || card.suit === '♦');
-        const cardClass = isRed ? 'card red' : 'card black';
         return (
-          <div className="card-container" onClick={flip}>
-            <div className={`${cardClass} ${faceUp ? "flip" : ""}`}>
-              <div className="card-face card-front">
-                {card ? (<span>{card.rank}{card.suit}</span>) : null}
-              </div>
-              <div className="card-face card-back">
-                {/* Card back design */}
-              </div>
+          <div className={`card-container ${flip ? 'flip' : ''}`}>
+            <div className="card front" style={{ color: isRed ? 'red' : 'black' }}>
+              {card.rank}{card.suit}
+            </div>
+            <div className="card back">
+              P
             </div>
           </div>
         );
       };
       
-      // --- AI API Simulation ---
+      // --- AI Simulation ---
       const aiDecision = async (playerHand, community) => {
-        await new Promise(res => setTimeout(res, 500)); // simulate delay
+        await new Promise(res => setTimeout(res, 500));
         const choices = ['call', 'raise', 'fold', 'check'];
         return choices[Math.floor(Math.random() * choices.length)];
       };
       
-      // --- Game Logic and Component ---
+      // --- Poker Game Component ---
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
-        const bigBlind = 50;
-        const smallBlind = 25;
-        const moveTimeLimit = 30; // seconds per move
+        const bigBlindAmt = 50;
+        const smallBlindAmt = 25;
         
-        // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
         const [stage, setStage] = useState("pre-flop");
         const [pot, setPot] = useState(0);
+        const [currentPlayer, setCurrentPlayer] = useState(1);
         const [message, setMessage] = useState("");
         const [processing, setProcessing] = useState(false);
-        const [timer, setTimer] = useState(moveTimeLimit);
+        const [timer, setTimer] = useState(30);
         const timerRef = useRef(null);
         
-        // Initialize game
-        useEffect(() => {
-          initGame();
-        }, []);
-        
-        // Timer effect – counts down 30 seconds per move
-        useEffect(() => {
-          if (processing) return; // pause timer while processing
-          timerRef.current = setInterval(() => {
-            setTimer(prev => {
-              if (prev <= 1) {
-                clearInterval(timerRef.current);
-                // Auto-fold if time runs out
-                playerAction("fold");
-                return moveTimeLimit;
-              }
-              return prev - 1;
-            });
-          }, 1000);
-          return () => clearInterval(timerRef.current);
-        }, [processing, stage, players]);
-        
-        // Reset timer on every player action
-        const resetTimer = () => {
-          clearInterval(timerRef.current);
-          setTimer(moveTimeLimit);
-        };
-        
+        // Start a new game (new hand)
         const initGame = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
             newPlayers[i] = {
               hand: [newDeck.pop(), newDeck.pop()],
-              balance: initialBalance,
+              balance: i === 1 ? players[1]?.balance || initialBalance : initialBalance,
               active: true,
               bet: 0
             };
           }
-          // Post blinds (for demo, players 2 and 3)
-          newPlayers[2].balance -= smallBlind; newPlayers[2].bet = smallBlind;
-          newPlayers[3].balance -= bigBlind; newPlayers[3].bet = bigBlind;
-          setPot(smallBlind + bigBlind);
+          // Post blinds (assume players 2 and 3 for demo)
+          newPlayers[2].balance -= smallBlindAmt; newPlayers[2].bet = smallBlindAmt;
+          newPlayers[3].balance -= bigBlindAmt; newPlayers[3].bet = bigBlindAmt;
+          setPot(smallBlindAmt + bigBlindAmt);
           setDeck(newDeck);
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setMessage("Pre-flop: Your move (Player 1).");
+          setCurrentPlayer(4); // action starts with player 4
+          setMessage("Pre-flop: Your move if you're player 1.");
           resetTimer();
         };
         
-        // Deal community cards
+        // Reset timer to 30 sec
+        const resetTimer = () => {
+          setTimer(30);
+          if (timerRef.current) clearInterval(timerRef.current);
+          timerRef.current = setInterval(() => {
+            setTimer(prev => {
+              if (prev <= 1) {
+                clearInterval(timerRef.current);
+                // Auto-call if time expires
+                playerAction("call");
+                return 30;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+        };
+        
+        useEffect(() => {
+          initGame();
+          return () => clearInterval(timerRef.current);
+        }, []);
+        
         const dealCommunity = (count) => {
           let newDeck = [...deck];
           let newCommunity = [...community];
@@ -323,9 +331,9 @@
           if (newCommunity.length === 3) setStage("flop");
           else if (newCommunity.length === 4) setStage("turn");
           else if (newCommunity.length === 5) setStage("river");
+          resetTimer();
         };
         
-        // Current maximum bet among players
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
@@ -334,16 +342,7 @@
           return maxBet;
         };
         
-        // Check if betting round is over (all active players have matched the bet)
-        const bettingRoundOver = () => {
-          let active = Object.entries(players)
-            .filter(([pid, p]) => p.active)
-            .map(([pid, p]) => p);
-          return active.every(p => p.bet === currentBet());
-        };
-        
-        // Process bet action
-        const processBet = async (action, playerId, raiseAmt = 0) => {
+        const processBet = async (action, playerId, raiseAmt=0) => {
           let newPlayers = { ...players };
           if (action === "fold") {
             newPlayers[playerId].active = false;
@@ -369,7 +368,29 @@
           setPlayers(newPlayers);
         };
         
-        // CPU actions using simulated AI
+        const bettingRoundOver = () => {
+          let active = Object.entries(players)
+            .filter(([pid, p]) => p.active)
+            .map(([pid, p]) => p);
+          return active.every(p => p.bet === currentBet());
+        };
+        
+        const nextStage = async () => {
+          // Reset bets
+          let newPlayers = { ...players };
+          Object.keys(newPlayers).forEach(pid => newPlayers[pid].bet = 0);
+          setPlayers(newPlayers);
+          if (stage === "pre-flop") {
+            dealCommunity(3);
+          } else if (stage === "flop") {
+            dealCommunity(1);
+          } else if (stage === "turn") {
+            dealCommunity(1);
+          }
+          setMessage(`Stage: ${stage.toUpperCase()}`);
+        };
+        
+        // CPU actions
         const runCpuActions = async () => {
           for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
@@ -382,23 +403,16 @@
               await processBet(decision, pid);
             }
             setProcessing(false);
-            resetTimer();
           }
         };
         
-        // Handle player action (human, player 1)
-        const playerAction = async (action, raiseAmt = 0) => {
-          // Check if player 1 is out of points.
-          if (players[1].balance <= 0) {
-            setMessage("LOZER!! You are out of points. Start a new game?");
-            return;
-          }
+        const playerAction = async (action, raiseAmt=0) => {
+          clearInterval(timerRef.current);
           await processBet(action, 1, raiseAmt);
-          resetTimer();
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              // Showdown: for demo, choose random active player
+              // Showdown: reveal all hands
               const active = Object.keys(players).filter(pid => players[pid].active);
               const winner = active[Math.floor(Math.random() * active.length)];
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
@@ -406,41 +420,24 @@
               await nextStage();
             }
           }
-        };
-        
-        // Advance to next stage
-        const nextStage = async () => {
-          if (stage === "pre-flop") {
-            // Deal flop: three cards
-            dealCommunity(3);
-          } else if (stage === "flop" || stage === "turn") {
-            dealCommunity(1);
-          }
-          // Reset bets for next round
-          let newPlayers = { ...players };
-          for (let pid in newPlayers) {
-            newPlayers[pid].bet = 0;
-          }
-          setPlayers(newPlayers);
-          setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
+          // If player 1 has 0 balance, prompt new game
+          if (players[1] && players[1].balance <= 0) {
+            setMessage("LOZER!! You've run out of credits. Start a new game?");
+          }
         };
         
-        // Start a new hand (new game round)
-        const newHand = () => {
-          initGame();
-        };
-        
-        // Render the UI
+        // Render UI
         return (
           <div className="table">
-            <div className="info">Stage: {stage.toUpperCase()} | POT: {pot}</div>
-            <div className="timer">Time: {timer}s</div>
+            <div className="info">
+              Stage: {stage.toUpperCase()} | POT: {pot} | Time: <span className="timer">{timer}s</span>
+            </div>
             
             {/* Community Cards */}
             <div className="community">
               {community.map((card, idx) => (
-                <Card key={idx} card={card} faceUp={true} flip={()=>{}} />
+                <Card key={idx} card={card} faceUp={true} flip={true} />
               ))}
             </div>
             
@@ -453,22 +450,18 @@
                     <Card
                       key={idx}
                       card={card}
-                      faceUp={pid === "1" || stage === "river"}
-                      flip={()=>{}}
+                      faceUp={ pid === "1" || stage === "river" }
+                      flip={true}
                     />
                   ))}
                 </div>
-                <div>Balance: {data.balance}</div>
-                <div className="bet">Bet: {data.bet}</div>
+                <div>Balance: {data.balance} | Bet: {data.bet}</div>
               </div>
             ))}
             
             {/* Controls */}
             <div className="controls">
-              {/* If player 1 is out of balance, offer New Hand */}
-              {players[1] && players[1].balance <= 0 ? (
-                <button className="btn-new" onClick={newHand}>LOZER!! New Game?</button>
-              ) : (
+              {players[1] && players[1].balance > 0 ? (
                 <>
                   <button className="btn-fold" onClick={() => playerAction("fold")} disabled={processing}>Fold</button>
                   <button className="btn-call" onClick={() => playerAction("call")} disabled={processing}>Call/Check</button>
@@ -487,14 +480,16 @@
                       setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
                     }} disabled={processing}>Showdown</button>
                   )}
-                  <button className="btn-new" onClick={newHand} disabled={processing}>New Hand</button>
                 </>
+              ) : (
+                <button className="btn-new" onClick={initGame}>New Game</button>
               )}
             </div>
+            
             {message && (
               <div style={{
                 position: 'absolute',
-                top: '15%',
+                top: '10%',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 fontSize: '1.5rem',
@@ -510,6 +505,32 @@
       };
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
+    </script>
+    <!-- Particles.js green configuration -->
+    <script>
+      particlesJS("particles-js", {
+        "particles": {
+          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": "#00ff00" },
+          "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000" } },
+          "opacity": { "value": 0.5, "random": false },
+          "size": { "value": 3, "random": true },
+          "line_linked": { "enable": true, "distance": 150, "color": "#00ff00", "opacity": 0.4, "width": 1 },
+          "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": { "enable": true, "mode": "repulse" },
+            "onclick": { "enable": true, "mode": "push" }
+          },
+          "modes": {
+            "repulse": { "distance": 100, "duration": 0.4 },
+            "push": { "particles_nb": 4 }
+          }
+        },
+        "retina_detect": true
+      });
     </script>
   </body>
 </html>
