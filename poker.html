@@ -28,8 +28,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #002200;  /* Very dark green for website background */
-        --bg-green: #006400;       /* Lighter green for poker table */
+        --bg-dark-green: #002200;  /* Website background: very dark green */
+        --bg-green: #006400;       /* Poker table background: lighter green */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -72,15 +72,17 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Volume Control in header */
+      /* Volume Control */
       .volume-control {
-        display: flex;
-        align-items: center;
-        gap: 5px;
+        position: fixed;
+        top: 10px;
+        right: 20px;
+        z-index: 1000;
+        background: rgba(0,0,0,0.8);
+        padding: 5px 10px;
+        border-radius: 5px;
         color: var(--primary-color);
-      }
-      .volume-control input[type="range"] {
-        width: 100px;
+        font-size: 1rem;
       }
       /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
@@ -169,26 +171,24 @@
       .card-front {
         background: #fff;
       }
-      /* Suit colors */
+      /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden cards for CPU: blue background with question marks */
-      .card.hidden {
-        background: blue !important;
-      }
+      /* Hidden CPU cards: when not revealed, show blue background with "??" */
       .card.hidden .card-face {
-        color: #fff !important;
+        background: blue;
+        color: #fff;
       }
       .card.hidden .card-face::after {
         content: "??";
         font-size: 1.5rem;
       }
-      /* Controls (moved below center cards) */
+      /* Controls */
       .controls {
         position: fixed;
-        top: 55%;
-        left: 50%;
-        transform: translate(-50%, 50%);
+        bottom: 0;
+        left: 0;
+        right: 0;
         background: #222;
         padding: 15px;
         display: flex;
@@ -210,12 +210,13 @@
       .btn-fold { background: #d9534f; color: #fff; }
       .btn-call { background: #5cb85c; color: #fff; }
       .btn-raise { background: #0275d8; color: #fff; }
+      .btn-next { background: #888; color: #fff; }
       .btn-showdown { background: #ff9900; color: #fff; }
       .btn-new { background: #444; color: #fff; }
       /* Game Info Message */
       .game-info {
         position: fixed;
-        bottom: 20px;
+        bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.8);
@@ -225,7 +226,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger */
+      /* Ledger: Tracks chip counts per hand */
       .ledger {
         position: fixed;
         top: 150px;
@@ -261,13 +262,13 @@
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button and Volume Control -->
+    <!-- Header with Home button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
+      <!-- Volume Control -->
       <div class="volume-control">
-        <label for="volume">Volume</label>
-        <input type="range" id="volume" min="0" max="1" step="0.05" value="0.5" />
+        Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
       </div>
     </header>
     <!-- Timer Display -->
@@ -289,7 +290,9 @@
             <th>P4</th>
           </tr>
         </thead>
-        <tbody id="ledger-body"></tbody>
+        <tbody id="ledger-body">
+          <!-- Ledger rows will be added here -->
+        </tbody>
       </table>
     </div>
     <!-- Main React Root -->
@@ -326,19 +329,31 @@
         "retina_detect": true
       });
     </script>
-    <!-- Sound Effects and Vaporwave Synth (calming) -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth1.ogg"></audio>
-    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth2.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth3.ogg"></audio>
-    <!-- Background Music (Vaporwave synth soundtrack) -->
-    <audio id="bg-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_synth_bg.ogg" loop></audio>
+    <!-- Sound Effects and Background Music (calming vaporwave synth) -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
+    <script>
+      // Set initial volume for all sounds based on volume slider.
+      const volumeSlider = document.getElementById("volume-slider");
+      const setVolumeAll = (vol) => {
+        const sounds = document.querySelectorAll("audio");
+        sounds.forEach(sound => sound.volume = vol);
+      };
+      volumeSlider.addEventListener("input", (e) => {
+        setVolumeAll(e.target.value);
+      });
+      // Start background music.
+      document.getElementById("background-music").play();
+    </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
       
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Create a full 52-card deck.
+      // Create a standard 52-card deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -367,10 +382,12 @@
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
-        else if (card.suit === "?") faceClass = "card-front blue";
+        else if (card.suit === "?") faceClass = "card-front"; // will be handled by hidden styling
         else faceClass += " black";
+        // If card.suit is "?", add hidden class to display blue card with "??"
+        const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
-          <div className={`card animate-bounce ${animate ? "flip" : ""} ${card.suit === "?" ? "hidden" : ""}`}>
+          <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
             <div className="card-inner">
               <div className={`card-face card-front ${faceClass}`}>
                 {card.suit === "?" ? "" : `${card.rank}${card.suit}`}
@@ -411,18 +428,8 @@
       const playSound = (id) => {
         const sound = document.getElementById(id);
         if (sound) {
-          sound.volume = parseFloat(document.getElementById("volume").value);
           sound.currentTime = 0;
           sound.play();
-        }
-      };
-      
-      // Start background music.
-      const startBgMusic = () => {
-        const music = document.getElementById("bg-music");
-        if (music) {
-          music.volume = parseFloat(document.getElementById("volume").value);
-          music.play();
         }
       };
       
@@ -489,7 +496,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 (small) and player3 (big)
+          // Post blinds: player2 posts small, player3 posts big.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -519,7 +526,6 @@
           const ledgerBody = document.getElementById("ledger-body");
           if (ledgerBody) ledgerBody.innerHTML = "";
           initHand();
-          startBgMusic();
         };
         
         // On mount, start a new game.
@@ -606,8 +612,8 @@
           return winner;
         };
         
-        // Advance to next stage automatically (no "Next Stage" button).
-        const autoAdvanceStage = async () => {
+        // Advance to next stage.
+        const nextStage = async () => {
           let newPlayers = { ...players };
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
@@ -644,7 +650,8 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // Force players to at least match current bet (call or fold) before further action.
+          // For proper Texas Hold'em rules, if a bet is made you must call at minimum.
+          // (This simple simulation forces the next actions to follow accordingly.)
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
@@ -654,8 +661,10 @@
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
+              // Popup winner message.
               window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+              // After delay, start next hand.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -665,12 +674,11 @@
                 }, 3000);
               }
             } else {
-              // Automatically advance stage after a short delay.
-              setTimeout(() => { autoAdvanceStage(); }, 1500);
+              await nextStage();
             }
           }
           resetTimer();
-          // Cycle turn indicator.
+          // Cycle turn indicator: simple cycle 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -702,11 +710,8 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    <Card
-                      key={idx}
-                      card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }}
-                      animate={true}
-                    />
+                    // For CPU players, show hidden card until showdown.
+                    <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
                 <div>
@@ -718,9 +723,21 @@
               <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
               <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
               <button className="btn-raise" onClick={() => {
-                const amt = parseInt(prompt("Enter raise amount (must match current bet at least):", "100")) || 100;
+                const amt = parseInt(prompt("Enter raise amount:", "100")) || 100;
                 handlePlayerAction("raise", amt);
               }} disabled={processing}>Raise</button>
+              {stage !== "river" && (
+                <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>
+              )}
+              {stage === "river" && (
+                <button className="btn-showdown" onClick={async () => {
+                  await runCpuActions();
+                  const winner = evaluateHands();
+                  setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                  playSound("sound-showdown");
+                  window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
+                }} disabled={processing}>Showdown</button>
+              )}
               <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
             {message && (
@@ -732,7 +749,7 @@
         );
       };
       
-      // Advanced features like real-time multiplayer and ML‑based AI can be integrated via a backend.
+      // Placeholder: For real‑time multiplayer and advanced ML‑based AI, integrate a backend with websockets and a trained model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
