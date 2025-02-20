@@ -72,10 +72,10 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Timer and Stats */
+      /* Timer, Stats, and Turn Indicator */
       .timer, .stats, .turn-indicator {
         position: fixed;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 5px 10px;
         border-radius: 5px;
@@ -122,13 +122,14 @@
         transition: box-shadow 0.3s;
       }
       .player.active {
+        border: 2px solid red;
         box-shadow: 0 0 15px var(--accent-color);
       }
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles (simple face display) */
+      /* Card Styles (always face-up) */
       .card {
         width: 90px;
         height: 135px;
@@ -158,7 +159,7 @@
       .card-front {
         background: #fff;
       }
-      /* Card font colors: hearts and diamonds red; clubs and spades black */
+      /* Suit colors */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
       /* Controls */
@@ -204,6 +205,32 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
+      /* Ledger: Display each hand's chip counts */
+      .ledger {
+        position: fixed;
+        top: 150px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: var(--primary-color);
+        padding: 10px;
+        border-radius: 8px;
+        font-size: 1rem;
+        max-height: 40vh;
+        overflow-y: auto;
+        z-index: 1000;
+      }
+      .ledger h3 {
+        margin-bottom: 5px;
+      }
+      .ledger table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .ledger th, .ledger td {
+        border: 1px solid var(--primary-color);
+        padding: 2px 5px;
+        text-align: center;
+      }
       /* Extra Animations */
       @keyframes fadeInBounce {
         0% { opacity: 0; transform: scale(0.5); }
@@ -216,6 +243,7 @@
         .card { width: 70px; height: 105px; }
         .player { font-size: 0.9rem; }
         .controls button { font-size: 0.9rem; padding: 8px 15px; }
+        .ledger { font-size: 0.8rem; top: 180px; right: 10px; }
       }
     </style>
   </head>
@@ -233,6 +261,24 @@
     <div class="stats" id="stats">Hands: 0</div>
     <!-- Turn Indicator -->
     <div class="turn-indicator" id="turn">Turn: Player ?</div>
+    <!-- Ledger -->
+    <div class="ledger" id="ledger">
+      <h3>Ledger</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Hand</th>
+            <th>P1</th>
+            <th>P2</th>
+            <th>P3</th>
+            <th>P4</th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body">
+          <!-- Ledger rows go here -->
+        </tbody>
+      </table>
+    </div>
     <!-- Main React Root -->
     <div id="root"></div>
     <!-- particles.js configuration (black particles) -->
@@ -267,6 +313,10 @@
         "retina_detect": true
       });
     </script>
+    <!-- Sound Effects -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+    <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
       
@@ -291,14 +341,14 @@
         return deck;
       };
       
-      // Format a card for PokerSolver (T for 10, and lowercase suit letters).
+      // Format card for PokerSolver.
       const formatCardForSolver = (card) => {
         let rank = card.rank === "10" ? "T" : card.rank;
         const suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Displays full card face.
+      // Card Component: Displays a full card face.
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
@@ -316,8 +366,6 @@
       
       // --- Advanced AI Simulation Placeholder ---
       const aiDecision = async (playerHand, community) => {
-        // A smarter AI might use real ML models.
-        // Here we simulate with basic high-card count logic.
         const highRanks = ["J", "Q", "K", "A"];
         const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
         let highCount = countHigh(playerHand) + countHigh(community);
@@ -325,6 +373,32 @@
         if (highCount >= 3) return "raise";
         if (highCount === 0) return "fold";
         return "call";
+      };
+      
+      // --- Ledger Management ---
+      const updateLedger = (handCount, players) => {
+        const ledgerBody = document.getElementById("ledger-body");
+        if (!ledgerBody) return;
+        // Create a new row for the current hand.
+        const row = document.createElement("tr");
+        const handCell = document.createElement("td");
+        handCell.textContent = handCount;
+        row.appendChild(handCell);
+        for (let i = 1; i <= 4; i++) {
+          const cell = document.createElement("td");
+          cell.textContent = players[i] ? players[i].balance : 0;
+          row.appendChild(cell);
+        }
+        ledgerBody.appendChild(row);
+      };
+      
+      // --- Sound Effects Helper ---
+      const playSound = (id) => {
+        const sound = document.getElementById(id);
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play();
+        }
       };
       
       // --- Poker Game Component ---
@@ -348,6 +422,12 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
+        // Update turn indicator.
+        const updateTurnIndicator = () => {
+          const turnElem = document.getElementById("turn");
+          if (turnElem) turnElem.textContent = `Turn: Player ${currentPlayer}`;
+        };
+        
         // Reset timer when currentPlayer changes.
         useEffect(() => {
           resetTimer();
@@ -370,14 +450,6 @@
           }, 1000);
         };
         
-        // Update turn indicator.
-        const updateTurnIndicator = () => {
-          const turnElem = document.getElementById("turn");
-          if (turnElem) {
-            turnElem.textContent = `Turn: Player ${currentPlayer}`;
-          }
-        };
-        
         // Initialize a new hand (preserving overall balance).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
@@ -392,7 +464,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 (small) and player3 (big).
+          // Post blinds: player2 posts small, player3 posts big.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -404,12 +476,15 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // Action starts with player4.
+          setCurrentPlayer(4); // action starts with player4.
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
+          playSound("sound-newhand");
+          // Update ledger with previous hand results if any.
+          if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
-        // Initialize a new game (reset overall game state).
+        // Initialize a new game (overall reset).
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -417,6 +492,9 @@
           }
           setPlayers(newPlayers);
           setHandCount(0);
+          // Clear ledger
+          const ledgerBody = document.getElementById("ledger-body");
+          if (ledgerBody) ledgerBody.innerHTML = "";
           initHand();
         };
         
@@ -462,6 +540,7 @@
               newPlayers[playerId].totalBet += betNeeded;
               setPot(prev => prev + betNeeded);
               setMessage(`Player ${playerId} calls.`);
+              playSound("sound-bet");
             }
           } else if (action === "raise") {
             if (newPlayers[playerId].balance >= raiseAmt) {
@@ -470,6 +549,7 @@
               newPlayers[playerId].totalBet += raiseAmt;
               setPot(prev => prev + raiseAmt);
               setMessage(`Player ${playerId} raises by ${raiseAmt}.`);
+              playSound("sound-bet");
             }
           } else if (action === "check") {
             setMessage(`Player ${playerId} checks.`);
@@ -540,16 +620,19 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
+          // Set next turn (for demo, simply cycle through players).
+          setCurrentPlayer(2);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
               setMessage("Showdown!");
+              playSound("sound-showdown");
               const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // Automatically start next hand after delay.
+              // After a short delay, start next hand.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -563,6 +646,8 @@
             }
           }
           resetTimer();
+          // Cycle turn indicator (for demo, we simply cycle from 1->2->3->4->1)
+          setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
         // "New Game" button.
@@ -593,7 +678,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, hide hole cards (show "?" instead) until showdown.
+                    // For CPU players, hide hole cards (display "?" placeholder) until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -630,11 +715,8 @@
         );
       };
       
-      // Placeholder: For real-time server-side state management and advanced AI,
-      // you could integrate a Node.js backend with WebSocket support and a trained
-      // ML model (e.g., via TensorFlow.js or a Python‑based service).
-      // This client‑side code is designed with modularity in mind so that those
-      // advanced features can be added later.
+      // For a production system, you could integrate a real-time backend (e.g. Node.js with websockets)
+      // and a machine-learning based AI (via TensorFlow.js or a Python service) for advanced game state management.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
