@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- PokerSolver library for hand evaluation -->
+    <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
     <!-- React and Babel CDN -->
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
@@ -20,8 +22,8 @@
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-dark-green: #003300;  /* Website background */
-        --bg-green: #006400;       /* Poker table background */
+        --bg-dark-green: #002200;  /* Website background (darker green) */
+        --bg-green: #006400;       /* Poker table background (lighter green) */
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -69,7 +71,7 @@
         position: fixed;
         top: 70px;
         right: 20px;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 5px 10px;
         border-radius: 5px;
@@ -81,7 +83,7 @@
         position: fixed;
         top: 70px;
         left: 20px;
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 5px 10px;
         border-radius: 5px;
@@ -121,12 +123,17 @@
         position: absolute;
         text-align: center;
         z-index: 2;
+        padding: 5px;
+        transition: box-shadow 0.3s;
+      }
+      .player.active {
+        box-shadow: 0 0 15px var(--accent-color);
       }
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles with Smooth Flip Animation */
+      /* Card Styles (no flip animation inversion) */
       .card {
         width: 90px;
         height: 135px;
@@ -143,9 +150,7 @@
         transition: transform 0.8s ease-in-out;
         transform-style: preserve-3d;
       }
-      .card.flip .card-inner {
-        transform: rotateY(180deg);
-      }
+      /* We no longer flip the card for display; all cards show their face normally */
       .card-face {
         position: absolute;
         width: 100%;
@@ -198,7 +203,7 @@
         bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
+        background: rgba(0,0,0,0.8);
         color: var(--primary-color);
         padding: 10px 20px;
         border-radius: 8px;
@@ -290,7 +295,16 @@
         return deck;
       };
       
-      // Card Component: Always shows full card face with red/black font.
+      // For hand evaluation using PokerSolver
+      const formatCardForSolver = (card) => {
+        // Map rank: "10" becomes "T", others unchanged.
+        let rank = card.rank === "10" ? "T" : card.rank;
+        // Map suit: ♠ -> s, ♥ -> h, ♦ -> d, ♣ -> c.
+        let suitMap = { '♠': 's', '♥': 'h', '♦': 'd', '♣': 'c' };
+        return `${rank}${suitMap[card.suit]}`;
+      };
+      
+      // Card Component: Shows full card face normally.
       const Card = ({ card, animate }) => {
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
@@ -308,12 +322,11 @@
       
       // --- Smarter AI Simulation ---
       const aiDecision = async (playerHand, community) => {
-        // Count high cards
+        // Use a simple evaluation: count high cards.
         const highRanks = ["J", "Q", "K", "A"];
         const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
         let highCount = countHigh(playerHand) + countHigh(community);
         await new Promise(res => setTimeout(res, 500));
-        // Basic logic: if very strong hand, raise; if weak, fold; otherwise call.
         if (highCount >= 3) return "raise";
         if (highCount === 0) return "fold";
         return "call";
@@ -340,7 +353,12 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
-        // Reset timer when currentPlayer changes
+        // Highlight the current player's area.
+        const getPlayerClass = (pid) => {
+          return `player p${pid} ${pid == 1 && currentPlayer === 1 ? "active" : (pid == currentPlayer ? "active" : "")}`;
+        };
+        
+        // Reset timer when currentPlayer changes.
         useEffect(() => {
           resetTimer();
           return () => clearInterval(timerRef.current);
@@ -361,12 +379,11 @@
           }, 1000);
         };
         
-        // Initialize a new hand
+        // Initialize a new hand while preserving overall game balance.
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
-            // Preserve balance from previous hand (if any)
             let balance = players[i] ? players[i].balance : initialBalance;
             newPlayers[i] = {
               hand: [newDeck.pop(), newDeck.pop()],
@@ -388,14 +405,13 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4
+          setCurrentPlayer(4); // action starts with player4.
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
         };
         
-        // Initialize a new game (reset overall balance)
+        // Initialize a new game (overall reset).
         const initGame = () => {
-          // For a new game, reset hand count and overall balances.
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
             newPlayers[i] = { balance: initialBalance };
@@ -405,12 +421,12 @@
           initHand();
         };
         
-        // On mount, start a new game
+        // On mount, start a new game.
         useEffect(() => {
           initGame();
         }, []);
         
-        // Deal community cards: flop = 3, then turn & river = 1 each.
+        // Deal community cards.
         const dealCommunity = (count) => {
           let newDeck = [...deck];
           let newCommunity = [...community];
@@ -424,7 +440,7 @@
           else if (newCommunity.length === 5) setStage("river");
         };
         
-        // Get current bet (maximum bet among players)
+        // Get current bet.
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
@@ -433,7 +449,7 @@
           return maxBet;
         };
         
-        // Process a bet action
+        // Process a bet action.
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
           if (action === "fold") {
@@ -462,7 +478,7 @@
           setPlayers(newPlayers);
         };
         
-        // Check if betting round is over (all active players have matched current bet)
+        // Check if betting round is over.
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -470,26 +486,46 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Advance to next stage if betting round is over
+        // Evaluate hands using PokerSolver when showdown.
+        const evaluateHands = () => {
+          // Build array of hand strings for each active player.
+          let bestScore = null;
+          let winner = null;
+          for (let pid in players) {
+            if (!players[pid].active) continue;
+            let hole = players[pid].hand.map(c => formatCardForSolver(c));
+            let communityCards = community.map(c => formatCardForSolver(c));
+            // Use PokerSolver to evaluate best 5-card hand.
+            const solved = PokerSolver.Hand.solve([...hole, ...communityCards]);
+            // Lower rank value is better.
+            if (bestScore === null || solved.rank < bestScore.rank) {
+              bestScore = solved;
+              winner = pid;
+            }
+          }
+          return winner;
+        };
+        
+        // Advance to next stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
-          // Reset bets for next round
+          // Reset bets.
           for (let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
           setPlayers(newPlayers);
           if (stage === "pre-flop") {
-            dealCommunity(3); // flop
+            dealCommunity(3); // flop.
           } else if (stage === "flop") {
-            dealCommunity(1); // turn
+            dealCommunity(1); // turn.
           } else if (stage === "turn") {
-            dealCommunity(1); // river
+            dealCommunity(1); // river.
           }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
         };
         
-        // CPU actions using smarter AI simulation
+        // CPU actions.
         const runCpuActions = async () => {
           for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
@@ -505,27 +541,24 @@
           }
         };
         
-        // Handle human (player 1) action
+        // Handle human action.
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
-              // Showdown: reveal opponent cards and determine winner (for demo, random among active)
+              // At showdown, evaluate hands.
               setMessage("Showdown!");
-              const active = Object.keys(players).filter(pid => players[pid].active);
-              const winner = active[Math.floor(Math.random() * active.length)];
-              // Award the pot to the winner
+              const winner = evaluateHands();
               let newPlayers = { ...players };
               newPlayers[winner].balance += pot;
               setPlayers(newPlayers);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // After a short delay, automatically start the next hand.
+              // After delay, start next hand.
               setTimeout(() => {
                 initHand();
               }, 3000);
-              // If player 1 is broke, prompt for new game.
               if (players[1].balance <= 0) {
                 setTimeout(() => {
                   if (window.confirm("LOZER!! You ran out of points. Start a new game?")) {
@@ -540,14 +573,14 @@
           resetTimer();
         };
         
-        // "New Game" button resets the overall game.
+        // "New Game" button.
         const newGame = () => {
           if (window.confirm("Start a new game? All progress will be reset.")) {
             initGame();
           }
         };
         
-        // Update game stats display (hand counter)
+        // Update game stats (hand counter).
         useEffect(() => {
           const statsElem = document.getElementById("stats");
           if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
@@ -564,15 +597,12 @@
               ))}
             </div>
             {Object.entries(players).map(([pid, data]) => (
-              <div key={pid} className={`player p${pid}`}>
+              <div key={pid} className={getPlayerClass(pid)}>
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, show card backs until showdown.
-                    <Card key={idx} card={card} animate={true} 
-                      // Human player always sees their cards; opponents see blank faces until stage === river.
-                      // We use stage==="river" to reveal all cards.
-                    />
+                    // For CPU players, do not reveal hole cards until showdown.
+                    <Card key={idx} card={ (pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" } } animate={true} />
                   ))}
                 </div>
                 <div>
@@ -593,8 +623,7 @@
               {stage === "river" && (
                 <button className="btn-showdown" onClick={async () => {
                   await runCpuActions();
-                  const active = Object.keys(players).filter(pid => players[pid].active);
-                  const winner = active[Math.floor(Math.random() * active.length)];
+                  const winner = evaluateHands();
                   setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
                 }} disabled={processing}>Showdown</button>
               )}
