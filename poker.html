@@ -36,7 +36,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Particles background */
+      /* Particles background (black particles) */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -125,6 +125,7 @@
         height: 135px;
         border: 2px solid #fff;
         border-radius: 8px;
+        background: #fff;
         overflow: hidden;
         perspective: 1000px;
       }
@@ -135,34 +136,24 @@
         transition: transform 0.8s ease-in-out;
         transform-style: preserve-3d;
       }
-      .card.flip .card-inner {
-        transform: rotateY(180deg);
-      }
+      /* We'll always show the front, so no flipping on opponents */
+      /* Card Faces */
       .card-face {
         position: absolute;
         width: 100%;
         height: 100%;
         backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
       }
       .card-front {
         background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
       }
-      /* Card text color based on suit */
+      /* For red suits */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      .card-back {
-        background: darkblue;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        color: var(--primary-color);
-        transform: rotateY(180deg);
-      }
       /* Controls */
       .controls {
         position: fixed;
@@ -206,7 +197,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Additional Animations */
+      /* Extra Animations */
       @keyframes fadeInBounce {
         0% { opacity: 0; transform: scale(0.5); }
         50% { opacity: 0.7; transform: scale(1.2); }
@@ -235,22 +226,19 @@
     <div class="timer" id="timer">30</div>
     <!-- Main React Root -->
     <div id="root"></div>
-    <!-- particles.js configuration (green particles) -->
+    <!-- particles.js configuration (black particles) -->
     <script>
       particlesJS("particles-js", {
         "particles": {
-          "number": {
-            "value": 80,
-            "density": { "enable": true, "value_area": 800 }
-          },
-          "color": { "value": "#00ff00" },
+          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": "#000000" },
           "shape": { "type": "circle" },
           "opacity": { "value": 0.5 },
           "size": { "value": 3, "random": true },
           "line_linked": {
             "enable": true,
             "distance": 150,
-            "color": "#00ff00",
+            "color": "#000000",
             "opacity": 0.4,
             "width": 1
           },
@@ -276,21 +264,7 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-      // Convert a card to Deck of Cards API code.
-      const getCardCode = (card) => {
-        // For 10, use "0". For others, just use first letter (if face card, they are already letter).
-        let rank = card.rank === "10" ? "0" : card.rank;
-        let suitLetter = "";
-        switch(card.suit) {
-          case '♠': suitLetter = "S"; break;
-          case '♥': suitLetter = "H"; break;
-          case '♦': suitLetter = "D"; break;
-          case '♣': suitLetter = "C"; break;
-          default: suitLetter = "";
-        }
-        return `${rank}${suitLetter}`;
-      };
-      // Create and shuffle a deck.
+      // No card backs: show full card face.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -308,43 +282,34 @@
         return deck;
       };
       
-      // Card Component: Uses the Deck of Cards API to show images.
-      const Card = ({ card, faceUp, animate }) => {
-        const [imgUrl, setImgUrl] = useState("");
-        useEffect(() => {
-          if (faceUp && card) {
-            const code = getCardCode(card);
-            setImgUrl(`https://deckofcardsapi.com/static/img/${code}.png`);
-          }
-        }, [card, faceUp]);
-        // Determine class based on suit color.
-        let frontClass = "card-front";
-        if (card && (card.suit === '♥' || card.suit === '♦')) frontClass += " red";
-        else frontClass += " black";
+      // Card Component: Always shows card face.
+      const Card = ({ card, animate }) => {
+        // Determine font color based on suit.
+        let faceClass = "card-front";
+        if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
+        else faceClass += " black";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""}`}>
             <div className="card-inner">
-              <div className={`card-face card-front ${frontClass}`}>
-                {faceUp && imgUrl 
-                  ? <img src={imgUrl} alt={`${card.rank}${card.suit}`} style={{width: "100%", height: "100%"}} />
-                  : ""
-                }
-              </div>
-              <div className="card-face card-back">
-                {/* Back of card design */}
-                <img src="https://via.placeholder.com/90x135/00008b/ffffff?text=Card" alt="Card Back" style={{width: "100%", height: "100%"}} />
+              <div className={`card-face card-front ${faceClass}`}>
+                {card.rank}{card.suit}
               </div>
             </div>
           </div>
         );
       };
       
-      // --- AI API Simulation (replace with real endpoint if available) ---
+      // --- AI API Simulation (a bit smarter) ---
       const aiDecision = async (playerHand, community) => {
-        // Simulate a delay and return a decision.
+        // Simple logic: count high cards (J, Q, K, A) in hand and community.
+        const highRanks = ["J", "Q", "K", "A"];
+        const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
+        let highCount = countHigh(playerHand) + countHigh(community);
         await new Promise(res => setTimeout(res, 500));
-        const choices = ['call', 'raise', 'fold', 'check'];
-        return choices[Math.floor(Math.random() * choices.length)];
+        // If very strong, raise; if weak, fold; else call/check.
+        if(highCount >= 3) return "raise";
+        if(highCount === 0) return "fold";
+        return "call";
       };
       
       // --- Poker Game Component ---
@@ -367,7 +332,7 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
-        // Reset timer on change of current player.
+        // Reset timer when currentPlayer changes
         useEffect(() => {
           resetTimer();
           return () => clearInterval(timerRef.current);
@@ -380,6 +345,7 @@
             setTimer(prev => {
               if(prev <= 1) {
                 clearInterval(timerRef.current);
+                // Auto-call if time runs out for human (player1)
                 if(currentPlayer === 1) handlePlayerAction("call");
                 return moveTime;
               }
@@ -388,11 +354,7 @@
           }, 1000);
         };
         
-        // Initialize game
-        useEffect(() => {
-          initGame();
-        }, []);
-        
+        // Initialize a new game (or hand)
         const initGame = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -422,7 +384,12 @@
           setMessage("Pre-flop: Your move if you're Player 1.");
         };
         
-        // Deal community cards (flop = 3, then turn & river = 1 each)
+        // Use this effect to allow multiple hands automatically.
+        useEffect(() => {
+          initGame();
+        }, []);
+        
+        // Deal community cards: flop = 3, then turn & river = 1 each.
         const dealCommunity = (count) => {
           let newDeck = [...deck];
           let newCommunity = [...community];
@@ -474,7 +441,7 @@
           setPlayers(newPlayers);
         };
         
-        // Check if betting round is over (all active players have matched current bet)
+        // Check if betting round is over (all active players have matched the current bet)
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -482,9 +449,10 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Advance stage if betting round over
+        // Advance to next stage if betting round is over
         const nextStage = async () => {
           let newPlayers = { ...players };
+          // Reset bets
           for(let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
@@ -500,7 +468,7 @@
           resetTimer();
         };
         
-        // CPU actions using AI simulation
+        // CPU actions using smarter AI simulation
         const runCpuActions = async () => {
           for(let pid = 2; pid <= numPlayers; pid++) {
             if(!players[pid].active) continue;
@@ -516,19 +484,19 @@
           }
         };
         
-        // Handle human action
+        // Handle human (player 1) action
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if(!players[1].active) return;
           await processBet(action, 1, raiseAmt);
           await runCpuActions();
           if(bettingRoundOver()) {
             if(stage === "river") {
-              // Showdown – reveal opponent cards
+              // Showdown: reveal all cards and pick a winner (for demo, randomly)
               setMessage(`Showdown!`);
               const active = Object.keys(players).filter(pid => players[pid].active);
-              const winner = active[Math.floor(Math.random()*active.length)];
+              const winner = active[Math.floor(Math.random() * active.length)];
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // Check if player 1 is broke
+              // If player 1 is out of credits, prompt restart.
               if(players[1].balance <= 0) {
                 setTimeout(() => {
                   if(window.confirm("LOZER!! You ran out of points. Start a new game?")) {
@@ -543,7 +511,7 @@
           resetTimer();
         };
         
-        // New Hand: reset game state
+        // New Hand: allow multiple hands automatically
         const newHand = () => {
           if(window.confirm("Start a new hand?")) {
             initGame();
@@ -557,7 +525,7 @@
             </div>
             <div className="community">
               {community.map((card, idx) => (
-                <Card key={idx} card={card} faceUp={true} animate={true} />
+                <Card key={idx} card={card} animate={true} />
               ))}
             </div>
             {Object.entries(players).map(([pid, data]) => (
@@ -565,12 +533,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    <Card
-                      key={idx}
-                      card={card}
-                      faceUp={ (pid === "1" || stage === "river") }
-                      animate={true}
-                    />
+                    <Card key={idx} card={card} animate={true} />
                   ))}
                 </div>
                 <div>
@@ -592,7 +555,7 @@
                 <button className="btn-showdown" onClick={async () => {
                   await runCpuActions();
                   const active = Object.keys(players).filter(pid => players[pid].active);
-                  const winner = active[Math.floor(Math.random()*active.length)];
+                  const winner = active[Math.floor(Math.random() * active.length)];
                   setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
                 }} disabled={processing}>Showdown</button>
               )}
