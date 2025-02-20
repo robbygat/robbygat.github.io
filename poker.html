@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Texas Hold'em Poker</title>
+    <title>Texas Hold'em Poker - Vaporwave Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
     <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
@@ -17,48 +17,71 @@
         --primary-color: #00eaff;
         --secondary-color: #ff007a;
         --bg-dark: #0a0f1c;
-        --table-green: #1a3c34;
+        --table-purple: #2a1a3c;
+        --glow-blue: rgba(0, 234, 255, 0.5);
+        --glow-pink: rgba(255, 0, 122, 0.5);
         --font-family: 'Orbitron', sans-serif;
       }
       body {
         font-family: var(--font-family);
         background-color: var(--bg-dark);
         color: var(--primary-color);
-        overflow-x: hidden;
+        overflow: hidden;
       }
-      #particles-js {
+      #three-js-bg {
         position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         z-index: -1;
-        background: var(--bg-dark);
       }
       header {
         position: sticky;
         top: 0;
-        z-index: 1000;
+        z-index: 2000;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 30px;
+        padding: 20px 40px;
         background: rgba(10, 15, 28, 0.9);
-        box-shadow: 0 2px 10px rgba(0, 234, 255, 0.3);
+        box-shadow: 0 4px 20px var(--glow-blue);
+        border-bottom: 2px solid var(--secondary-color);
       }
-      header a { color: var(--primary-color); text-decoration: none; font-size: 1.2rem; }
-      header a:hover { color: var(--secondary-color); transform: scale(1.1); transition: 0.3s; }
-      header h2 { font-size: 2rem; text-transform: uppercase; letter-spacing: 2px; }
+      header a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 1.5rem;
+        transition: all 0.3s;
+      }
+      header a:hover {
+        color: var(--secondary-color);
+        transform: scale(1.2);
+        text-shadow: 0 0 10px var(--glow-pink);
+      }
+      header h2 {
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 0 0 15px var(--glow-blue);
+      }
       .timer, .stats, .turn-indicator {
         position: fixed;
-        background: rgba(10, 15, 28, 0.85);
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 1.1rem;
+        background: rgba(10, 15, 28, 0.9);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 1.3rem;
         z-index: 1000;
-        box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+        box-shadow: 0 0 15px var(--glow-blue);
+        transition: all 0.3s;
       }
-      .timer { top: 80px; right: 30px; }
-      .stats { top: 80px; left: 30px; }
-      .turn-indicator { top: 120px; left: 30px; }
+      .timer { top: 90px; right: 40px; }
+      .stats { top: 90px; left: 40px; }
+      .turn-indicator { top: 140px; left: 40px; }
+      .timer:hover, .stats:hover, .turn-indicator:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--glow-pink);
+      }
       .table {
         position: relative;
         width: 100%;
@@ -66,19 +89,20 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 20px;
       }
       .table-surface {
-        width: 80%;
-        height: 70vh;
-        background: var(--table-green);
+        width: 85%;
+        height: 75vh;
+        background: var(--table-purple);
         border-radius: 50%;
-        border: 5px solid #00eaff;
-        box-shadow: 0 0 30px rgba(0, 234, 255, 0.5);
+        border: 6px solid var(--primary-color);
+        box-shadow: 0 0 40px var(--glow-blue), inset 0 0 20px var(--glow-pink);
         position: relative;
         overflow: hidden;
-        background-image: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 255, 255, 0.05) 20px, rgba(255, 255, 255, 0.05) 40px), 
-                         url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><text x="10" y="50" font-size="50" fill="rgba(255,255,255,0.1)" font-family="Orbitron">poker</text></svg>');
-        background-size: auto, 200px 200px;
+        background-image: repeating-linear-gradient(135deg, transparent, transparent 30px, rgba(255, 0, 122, 0.05) 30px, rgba(255, 0, 122, 0.05) 60px),
+                         url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><text x="20" y="60" font-size="60" fill="rgba(255,255,255,0.1)" font-family="Orbitron">poker</text></svg>');
+        background-size: auto, 250px 250px;
       }
       .community {
         position: absolute;
@@ -86,55 +110,69 @@
         left: 50%;
         transform: translate(-50%, -50%);
         display: flex;
-        gap: 15px;
+        gap: 20px;
+        z-index: 10;
       }
       .player {
         position: absolute;
         text-align: center;
-        padding: 10px;
-        background: rgba(10, 15, 28, 0.7);
-        border-radius: 10px;
-        transition: all 0.3s;
+        padding: 15px;
+        background: rgba(10, 15, 28, 0.85);
+        border-radius: 15px;
+        box-shadow: 0 0 15px var(--glow-blue);
+        transition: all 0.4s;
       }
       .player.active {
-        border: 2px solid var(--secondary-color);
-        box-shadow: 0 0 20px var(--secondary-color);
+        border: 3px solid var(--secondary-color);
+        box-shadow: 0 0 25px var(--glow-pink);
+        transform: scale(1.05);
       }
       .player.p1 { bottom: 5%; left: 45%; }
-      .player.p2 { top: 25%; left: 5%; }
+      .player.p2 { top: 20%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
-      .player.p4 { top: 25%; right: 5%; }
+      .player.p4 { top: 20%; right: 5%; }
       .card {
-        width: 80px;
-        height: 120px;
-        border-radius: 8px;
+        width: 90px;
+        height: 135px;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 234, 255, 0.3);
+        box-shadow: 0 0 15px var(--glow-blue);
+        transition: transform 0.3s;
       }
+      .card:hover { transform: scale(1.1); }
       .card img { width: 100%; height: 100%; object-fit: cover; }
       .controls {
         position: fixed;
-        bottom: 20px;
+        bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(10, 15, 28, 0.9);
-        padding: 15px;
-        border-radius: 25px;
+        background: rgba(10, 15, 28, 0.95);
+        padding: 20px;
+        border-radius: 30px;
         display: flex;
-        gap: 15px;
-        box-shadow: 0 0 20px rgba(0, 234, 255, 0.2);
+        gap: 20px;
+        box-shadow: 0 0 25px var(--glow-blue);
+        z-index: 1000;
       }
       .controls button {
-        padding: 10px 20px;
+        padding: 12px 25px;
         border: none;
-        border-radius: 20px;
+        border-radius: 25px;
         font-family: var(--font-family);
-        font-size: 1rem;
+        font-size: 1.2rem;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.4s;
         text-transform: uppercase;
+        letter-spacing: 2px;
+        background: var(--primary-color);
+        color: var(--bg-dark);
       }
-      .controls button:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--secondary-color); }
+      .controls button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px var(--glow-pink);
+        background: var(--secondary-color);
+        color: #fff;
+      }
       .btn-fold { background: #ff4d4d; }
       .btn-call { background: #00cc00; }
       .btn-raise { background: #007bff; }
@@ -143,43 +181,63 @@
       .btn-new { background: #444; }
       .game-info {
         position: fixed;
-        bottom: 80px;
+        bottom: 100px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(10, 15, 28, 0.85);
-        padding: 10px 20px;
-        border-radius: 15px;
-        font-size: 1.2rem;
-        box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+        background: rgba(10, 15, 28, 0.9);
+        padding: 15px 30px;
+        border-radius: 20px;
+        font-size: 1.4rem;
+        box-shadow: 0 0 20px var(--glow-blue);
+        text-shadow: 0 0 10px var(--glow-pink);
       }
       .ledger {
         position: fixed;
-        top: 160px;
-        right: 30px;
-        background: rgba(10, 15, 28, 0.85);
-        padding: 15px;
-        border-radius: 15px;
+        top: 190px;
+        right: 40px;
+        background: rgba(10, 15, 28, 0.9);
+        padding: 20px;
+        border-radius: 20px;
         max-height: 50vh;
         overflow-y: auto;
-        box-shadow: 0 0 10px rgba(0, 234, 255, 0.2);
+        box-shadow: 0 0 20px var(--glow-blue);
+        z-index: 1000;
+      }
+      .ledger h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px var(--glow-pink);
       }
       .ledger table { width: 100%; border-collapse: collapse; }
-      .ledger th, .ledger td { padding: 5px; text-align: center; border: 1px solid var(--primary-color); }
-      @keyframes glow {
-        0% { box-shadow: 0 0 5px var(--primary-color); }
-        50% { box-shadow: 0 0 20px var(--primary-color); }
-        100% { box-shadow: 0 0 5px var(--primary-color); }
+      .ledger th, .ledger td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid var(--primary-color);
+        font-size: 1.1rem;
       }
-      .animate-glow { animation: glow 2s infinite; }
+      @keyframes pulseGlow {
+        0% { box-shadow: 0 0 10px var(--glow-blue); }
+        50% { box-shadow: 0 0 30px var(--glow-pink); }
+        100% { box-shadow: 0 0 10px var(--glow-blue); }
+      }
+      .animate-pulse { animation: pulseGlow 2s infinite; }
+      @keyframes neonFade {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
+      }
+      .animate-fade { animation: neonFade 3s infinite; }
       @media (max-width: 768px) {
-        .card { width: 60px; height: 90px; }
-        .controls button { padding: 8px 15px; font-size: 0.9rem; }
-        .ledger { top: 200px; right: 10px; font-size: 0.9rem; }
+        .card { width: 70px; height: 105px; }
+        .controls { flex-wrap: wrap; padding: 10px; }
+        .controls button { padding: 10px 15px; font-size: 1rem; }
+        .ledger { top: 220px; right: 10px; font-size: 0.9rem; }
+        header h2 { font-size: 1.8rem; }
       }
     </style>
   </head>
   <body>
-    <div id="particles-js"></div>
+    <div id="three-js-bg"></div>
     <header>
       <a href="index.html"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
@@ -195,30 +253,77 @@
       </table>
     </div>
     <div id="root"></div>
+    <audio id="bg-music" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="action-sound">
+      <source src="https://www.myinstants.com/media/sounds/retro-sci-fi-bleep.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="win-sound">
+      <source src="https://www.myinstants.com/media/sounds/synth-chime.mp3" type="audio/mpeg" />
+    </audio>
     <script>
-      particlesJS("particles-js", {
-        "particles": {
-          "number": { "value": 100, "density": { "enable": true, "value_area": 800 } },
-          "color": { "value": "#ff0000" },
-          "shape": { "type": "circle" },
-          "opacity": { "value": 0.5 },
-          "size": { "value": 3, "random": true },
-          "line_linked": { "enable": true, "distance": 150, "color": "#ff0000", "opacity": 0.4, "width": 1 },
-          "move": { "enable": true, "speed": 3 }
-        },
-        "interactivity": {
-          "detect_on": "canvas",
-          "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" } },
-          "modes": { "repulse": { "distance": 100 }, "push": { "particles_nb": 4 } }
-        },
-        "retina_detect": true
+      // Three.js Vaporwave Background
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.getElementById("three-js-bg").appendChild(renderer.domElement);
+
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0xff007a, wireframe: true });
+      const cubes = [];
+      for (let i = 0; i < 50; i++) {
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.set(
+          Math.random() * 100 - 50,
+          Math.random() * 100 - 50,
+          Math.random() * 100 - 50
+        );
+        cube.rotation.set(Math.random(), Math.random(), Math.random());
+        cubes.push(cube);
+        scene.add(cube);
+      }
+
+      const ambientLight = new THREE.AmbientLight(0x00eaff, 0.5);
+      scene.add(ambientLight);
+      const pointLight = new THREE.PointLight(0xff007a, 1, 100);
+      pointLight.position.set(10, 10, 10);
+      scene.add(pointLight);
+
+      camera.position.z = 50;
+
+      function animate() {
+        requestAnimationFrame(animate);
+        cubes.forEach(cube => {
+          cube.rotation.x += 0.01;
+          cube.rotation.y += 0.01;
+          cube.position.z += Math.sin(Date.now() * 0.001) * 0.05;
+        });
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
       });
+
+      // Sound Management
+      const bgMusic = document.getElementById("bg-music");
+      const actionSound = document.getElementById("action-sound");
+      const winSound = document.getElementById("win-sound");
+      bgMusic.volume = 0.3;
+      actionSound.volume = 0.5;
+      winSound.volume = 0.7;
+      bgMusic.play().catch(() => console.log("Autoplay blocked"));
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
 
       const Card = ({ card }) => (
-        <div className="card animate-glow">
+        <div className="card animate-pulse">
           <img src={card.image} alt={`${card.rank} of ${card.suit}`} />
         </div>
       );
@@ -226,10 +331,11 @@
       const aiDecision = async (hand, community, currentBet, playerBalance) => {
         const highRanks = ["J", "Q", "K", "A"];
         const countHigh = (cards) => cards.filter(c => highRanks.includes(c.rank)).length;
-        let strength = countHigh(hand) + countHigh(community);
-        await new Promise(res => setTimeout(res, 1000));
-        if (strength >= 3 && playerBalance > currentBet * 2) return { action: "raise", amount: currentBet * 2 };
+        const strength = countHigh(hand) + countHigh(community);
+        await new Promise(res => setTimeout(res, 1500));
+        if (strength >= 4 && playerBalance > currentBet * 3) return { action: "raise", amount: currentBet * 3 };
         if (strength <= 1) return { action: "fold" };
+        if (strength === 2 && Math.random() > 0.5) return { action: "call" };
         return { action: "call" };
       };
 
@@ -237,7 +343,14 @@
         const ledgerBody = document.getElementById("ledger-body");
         if (!ledgerBody) return;
         const row = document.createElement("tr");
-        row.innerHTML = `<td>${handCount}</td><td>${players[1].balance}</td><td>${players[2].balance}</td><td>${players[3].balance}</td><td>${players[4].balance}</td>`;
+        row.className = "animate-fade";
+        row.innerHTML = `
+          <td>${handCount}</td>
+          <td>${players[1].balance}</td>
+          <td>${players[2].balance}</td>
+          <td>${players[3].balance}</td>
+          <td>${players[4].balance}</td>
+        `;
         ledgerBody.appendChild(row);
       };
 
@@ -254,7 +367,7 @@
         const [stage, setStage] = useState("pre-flop");
         const [pot, setPot] = useState(0);
         const [currentPlayer, setCurrentPlayer] = useState(1);
-        const [message, setMessage] = useState("");
+        const [message, setMessage] = useState("Welcome to Vaporwave Poker!");
         const [processing, setProcessing] = useState(false);
         const [handCount, setHandCount] = useState(0);
         const [timer, setTimer] = useState(moveTime);
@@ -305,16 +418,16 @@
         };
 
         const initHand = async () => {
-          const newCards = await drawCards(8 + 5); // 8 for players, 5 for community
+          const newCards = await drawCards(13); // 8 for players, 5 for community
           let newPlayers = {};
-          let dealer = (handCount % numPlayers) + 1;
-          let smallBlind = nextPlayer(dealer);
-          let bigBlind = nextPlayer(smallBlind);
+          const dealer = (handCount % numPlayers) + 1;
+          const smallBlind = nextPlayer(dealer);
+          const bigBlind = nextPlayer(smallBlind);
 
           for (let i = 1; i <= numPlayers; i++) {
             const balance = players[i] ? players[i].balance : initialBalance;
             newPlayers[i] = {
-              hand: [newCards.pop(), newCards.pop()],
+              hand: [newCards.shift(), newCards.shift()],
               balance,
               active: true,
               bet: 0,
@@ -334,7 +447,7 @@
           setCommunity([]);
           setStage("pre-flop");
           setCurrentPlayer(nextPlayer(bigBlind));
-          setMessage("Pre-flop: Your move!");
+          setMessage("Pre-flop: Place your bets!");
           setHandCount(prev => prev + 1);
           if (handCount > 0) updateLedger(handCount, players);
         };
@@ -356,6 +469,7 @@
           if (community.length + count === 3) setStage("flop");
           else if (community.length + count === 4) setStage("turn");
           else if (community.length + count === 5) setStage("river");
+          actionSound.play();
         };
 
         const currentBet = () => Math.max(...Object.values(players).map(p => p.bet));
@@ -375,7 +489,7 @@
               player.bet = betToMatch;
               player.totalBet += needed;
               setPot(prev => prev + needed);
-              setMessage(`Player ${playerId} calls.`);
+              setMessage(`Player ${playerId} calls ${needed}.`);
             }
           } else if (action === "raise") {
             const totalBet = betToMatch + raiseAmt;
@@ -389,6 +503,7 @@
             }
           }
           setPlayers(newPlayers);
+          actionSound.play();
         };
 
         const bettingRoundOver = () => {
@@ -437,7 +552,7 @@
         };
 
         const handlePlayerAction = async (action, raiseAmt = 0) => {
-          if (currentPlayer !== 1 || !players[1].active) return;
+          if (currentPlayer !== 1 || !players[1].active || processing) return;
           setProcessing(true);
           await processBet(action, 1, raiseAmt);
           setCurrentPlayer(2);
@@ -450,7 +565,8 @@
               winners.forEach(w => newPlayers[w].balance += splitPot);
               setPlayers(newPlayers);
               setMessage(`Showdown! ${winners.map(w => `Player ${w}`).join(", ")} win ${splitPot} each!`);
-              setTimeout(() => initHand(), 3000);
+              winSound.play();
+              setTimeout(() => initHand(), 4000);
             } else {
               await nextStage();
             }
@@ -461,29 +577,32 @@
         };
 
         const newGame = () => {
-          if (window.confirm("Start a new game? Progress will be reset.")) initGame();
+          if (window.confirm("Start a new game? All progress will be reset.")) {
+            initGame();
+            setMessage("New game started!");
+          }
         };
 
         useEffect(() => {
           const statsElem = document.getElementById("stats");
-          if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
-        }, [handCount]);
+          if (statsElem) statsElem.textContent = `Hands: ${handCount} | Pot: ${pot}`;
+        }, [handCount, pot]);
 
         return (
           <div className="table">
             <div className="table-surface">
-              <div className="community">
+              <div className="community animate-fade">
                 {community.map((card, idx) => <Card key={idx} card={card} />)}
               </div>
               {Object.entries(players).map(([pid, data]) => (
                 <div key={pid} className={`player p${pid} ${currentPlayer == pid ? "active" : ""}`}>
-                  <div>Player {pid} {pid === "1" && "(You)"}</div>
-                  <div style={{ display: "flex", gap: "10px" }}>
+                  <div className="animate-fade">Player {pid} {pid === "1" && "(You)"}</div>
+                  <div style={{ display: "flex", gap: "15px" }}>
                     {data.hand.map((card, idx) => (
                       <Card key={idx} card={pid === "1" || stage === "river" ? card : { image: "https://deckofcardsapi.com/static/img/back.png" }} />
                     ))}
                   </div>
-                  <div>Balance: {data.balance} | Bet: {data.totalBet}</div>
+                  <div className="animate-fade">Balance: {data.balance} | Bet: {data.totalBet}</div>
                 </div>
               ))}
             </div>
@@ -491,14 +610,14 @@
               <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
               <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call</button>
               <button className="btn-raise" onClick={() => {
-                const amt = parseInt(prompt("Enter raise amount:", "50")) || 50;
-                handlePlayerAction("raise", amt);
+                const amt = parseInt(prompt("Enter raise amount (min 20):", "50")) || 50;
+                if (amt >= 20) handlePlayerAction("raise", amt);
               }} disabled={processing}>Raise</button>
-              {stage !== "river" && <button className="btn-next" onClick={nextStage} disabled={processing}>Next</button>}
+              {stage !== "river" && <button className="btn-next" onClick={nextStage} disabled={processing}>Next Stage</button>}
               {stage === "river" && <button className="btn-showdown" onClick={handlePlayerAction} disabled={processing}>Showdown</button>}
               <button className="btn-new" onClick={newGame}>New Game</button>
             </div>
-            {message && <div className="game-info">{message}</div>}
+            {message && <div className="game-info animate-fade">{message}</div>}
           </div>
         );
       };
