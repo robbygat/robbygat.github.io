@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Texas Hold'em Poker</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <!-- particles.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
@@ -66,13 +72,13 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
-      /* Volume Control */
+      /* Volume Control: now in bottom right corner */
       .volume-control {
         position: fixed;
-        top: 10px;
+        bottom: 100px;
         right: 20px;
         z-index: 1000;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0, 0, 0, 0.8);
         padding: 5px 10px;
         border-radius: 5px;
         color: var(--primary-color);
@@ -168,7 +174,7 @@
       /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: display blue background with "??" */
+      /* Hidden CPU cards: show blue with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -250,20 +256,22 @@
         .player { font-size: 0.9rem; }
         .controls button { font-size: 0.9rem; padding: 8px 15px; }
         .ledger { font-size: 0.8rem; top: 180px; right: 10px; }
+        .volume-control { font-size: 0.8rem; bottom: 70px; right: 10px; }
       }
     </style>
   </head>
   <body>
     <!-- Particles background -->
     <div id="particles-js"></div>
-    <!-- Header with Home button and Volume Control -->
+    <!-- Header with Home button -->
     <header>
       <a href="index.html" aria-label="Home"><i class="fas fa-home"></i> Home</a>
       <h2>Poker Arena</h2>
-      <div class="volume-control">
-        Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
-      </div>
     </header>
+    <!-- Volume Control (moved to bottom right) -->
+    <div class="volume-control">
+      Volume: <input id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
+    </div>
     <!-- Timer Display -->
     <div class="timer" id="timer">30</div>
     <!-- Game Stats Display -->
@@ -322,12 +330,12 @@
         "retina_detect": true
       });
     </script>
-    <!-- Sound Effects and Vaporwave Soundtrack -->
+    <!-- Sound Effects and Vaporwave Synth Sound Effects -->
+    <!-- (Replace these URLs with your chosen calming vaporwave synth samples) -->
     <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg"></audio>
     <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
     <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
-    <!-- Vaporwave synth soundtrack (replace URL with your chosen vaporwave loop) -->
-    <audio id="background-music" src="https://actions.google.com/sounds/v1/ambiences/vaporwave_loop.ogg" loop></audio>
+    <!-- Removed background soundtrack per request -->
     <script>
       // Set initial volume for all sounds.
       const volumeSlider = document.getElementById("volume-slider");
@@ -338,8 +346,7 @@
       volumeSlider.addEventListener("input", (e) => {
         setVolumeAll(e.target.value);
       });
-      // Start background music.
-      document.getElementById("background-music").play();
+      // No background music is played now.
     </script>
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
@@ -377,7 +384,6 @@
         let faceClass = "card-front";
         if (card.suit === '♥' || card.suit === '♦') faceClass += " red";
         else faceClass += " black";
-        // If card.suit is "?" then it is hidden, and styling will show blue.
         const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
           <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
@@ -643,8 +649,7 @@
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
-          // Set turn to next player.
-          setCurrentPlayer(2);
+          // For realistic Texas Hold'em, the player must at least call.
           await runCpuActions();
           if (bettingRoundOver()) {
             if (stage === "river") {
@@ -656,7 +661,6 @@
               setPlayers(newPlayers);
               window.alert(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // After delay, start next hand.
               setTimeout(() => { initHand(); }, 3000);
               if (players[1].balance <= 0) {
                 setTimeout(() => {
@@ -670,7 +674,7 @@
             }
           }
           resetTimer();
-          // Cycle turn indicator: 1->2->3->4->1.
+          // Cycle turn: simple cycle 1->2->3->4->1.
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
@@ -702,7 +706,7 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, hide hole cards until showdown.
+                    // For CPU players, show hidden cards until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
@@ -741,8 +745,8 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced ML‑based AI,
-      // integrate a backend (e.g. Node.js with websockets) and a trained ML model.
+      // Placeholder: For real-time multiplayer and advanced AI,
+      // integrate a backend with websockets and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
