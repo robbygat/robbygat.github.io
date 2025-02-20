@@ -11,7 +11,7 @@
     />
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <!-- Three.js for 3D background (if desired) -->
+    <!-- Three.js for 3D background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- PokerSolver library for hand evaluation -->
     <script src="https://unpkg.com/pokersolver@2.2.0/dist/pokersolver.min.js"></script>
@@ -36,7 +36,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Instead of particles.js, we use a Three.js wireframe cubes background (if desired) */
+      /* Three.js canvas for rotating wireframe cubes background */
       #threejs-canvas {
         position: fixed;
         top: 0;
@@ -97,6 +97,7 @@
         width: 100%;
         min-height: 100vh;
       }
+      /* Transparent poker table background: 70% opacity */
       .table::before {
         content: "";
         position: absolute;
@@ -106,7 +107,7 @@
         bottom: 50px;
         border: 10px solid darkgreen;
         border-radius: 50%;
-        background: var(--bg-green);
+        background: rgba(0, 100, 0, 0.7);
         z-index: -1;
       }
       /* Community Cards */
@@ -135,7 +136,7 @@
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles */
+      /* Card Styles (always face-up) */
       .card {
         width: 90px;
         height: 135px;
@@ -165,15 +166,17 @@
       .card-front {
         background: #fff;
       }
-      /* Use deckofcardsapi.com images for card faces */
-      .card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+      /* Suit colors: hearts and diamonds red; clubs and spades black */
+      .card-front.red { color: red; }
+      .card-front.black { color: black; }
+      /* Hidden CPU cards: display blue background with "??" */
+      .card.hidden .card-face {
+        background: blue;
+        color: #fff;
       }
-      /* Hidden CPU cards: use deckofcardsapi back image */
-      .card.hidden img {
-        content: url("https://deckofcardsapi.com/static/img/back.png");
+      .card.hidden .card-face::after {
+        content: "??";
+        font-size: 1.5rem;
       }
       /* Controls */
       .controls {
@@ -218,7 +221,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger */
+      /* Ledger: Tracks chip counts per hand */
       .ledger {
         position: fixed;
         top: 150px;
@@ -279,14 +282,12 @@
             <th>P4</th>
           </tr>
         </thead>
-        <tbody id="ledger-body">
-          <!-- Ledger rows will be added here -->
-        </tbody>
+        <tbody id="ledger-body"></tbody>
       </table>
     </div>
     <!-- Main React Root -->
     <div id="root"></div>
-    <!-- Three.js script to create a rotating wireframe cubes background -->
+    <!-- Three.js script to create rotating wireframe cubes background -->
     <script>
       let scene, camera, renderer, cubes = [];
       function initThreeJS() {
@@ -322,13 +323,12 @@
       });
       initThreeJS();
     </script>
-    <!-- Sound Effects and Vaporwave Synth Soundtrack (new URLs) -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+    <!-- Sound Effects and Synth-Style Soundtrack -->
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/wood_plank_flicks.ogg"></audio>
     <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
     <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
-    <!-- (Background music removed per request.) -->
+    <!-- (No background music in this version) -->
     <script>
-      // Set initial volume for all sounds.
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
         const sounds = document.querySelectorAll("audio");
@@ -337,7 +337,6 @@
       volumeSlider.addEventListener("input", (e) => {
         setVolumeAll(e.target.value);
       });
-      // Set initial volume.
       setVolumeAll(volumeSlider.value);
     </script>
     <script type="text/babel">
@@ -371,14 +370,14 @@
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Loads card image from deckofcardsapi.com.
+      // Card Component: Uses deckofcardsapi.com for card images.
       const Card = ({ card, animate }) => {
-        // If card is hidden (CPU's card), show default back image.
         const imgUrl = card.suit === "?" 
           ? "https://deckofcardsapi.com/static/img/back.png" 
           : `https://deckofcardsapi.com/static/img/${getCardCode(card)}.png`;
+        const hiddenClass = card.suit === "?" ? "hidden" : "";
         return (
-          <div className={`card animate-bounce ${animate ? "flip" : ""} ${card.suit === "?" ? "hidden" : ""}`}>
+          <div className={`card animate-bounce ${animate ? "flip" : ""} ${hiddenClass}`}>
             <div className="card-inner">
               <div className="card-face card-front">
                 <img src={imgUrl} alt={card.suit === "?" ? "Hidden" : `${card.rank}${card.suit}`} />
@@ -432,7 +431,6 @@
         const smallBlindAmt = 25;
         const moveTime = 30; // seconds per move
         
-        // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
@@ -445,13 +443,11 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
-        // Update turn indicator.
         const updateTurnIndicator = () => {
           const turnElem = document.getElementById("turn");
           if (turnElem) turnElem.textContent = `Turn: Player ${currentPlayer}`;
         };
         
-        // Reset timer when currentPlayer changes.
         useEffect(() => {
           resetTimer();
           updateTurnIndicator();
@@ -473,7 +469,6 @@
           }, 1000);
         };
         
-        // Initialize a new hand (preserving overall balance).
         const initHand = () => {
           let newDeck = shuffleDeck(createDeck());
           let newPlayers = {};
@@ -487,7 +482,6 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -499,14 +493,13 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4.
+          setCurrentPlayer(4);
           setMessage("Pre-flop: Your move if you're Player 1.");
           setHandCount(prev => prev + 1);
           playSound("sound-newhand");
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
-        // Initialize a new game (overall reset).
         const initGame = () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -519,12 +512,10 @@
           initHand();
         };
         
-        // On mount, start a new game.
         useEffect(() => {
           initGame();
         }, []);
         
-        // Deal community cards.
         const dealCommunity = (count) => {
           let newDeck = [...deck];
           let newCommunity = [...community];
@@ -538,7 +529,6 @@
           else if (newCommunity.length === 5) setStage("river");
         };
         
-        // Get current bet.
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
@@ -547,7 +537,6 @@
           return maxBet;
         };
         
-        // Process a bet action.
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
           if (action === "fold") {
@@ -578,7 +567,6 @@
           setPlayers(newPlayers);
         };
         
-        // Check if betting round is over.
         const bettingRoundOver = () => {
           const activePlayers = Object.entries(players)
             .filter(([pid, p]) => p.active)
@@ -586,7 +574,6 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Evaluate hands using PokerSolver at showdown.
         const evaluateHands = () => {
           let bestScore = null;
           let winner = null;
@@ -603,7 +590,6 @@
           return winner;
         };
         
-        // Advance to next stage.
         const nextStage = async () => {
           let newPlayers = { ...players };
           for (let pid in newPlayers) {
@@ -611,17 +597,16 @@
           }
           setPlayers(newPlayers);
           if (stage === "pre-flop") {
-            dealCommunity(3); // flop.
+            dealCommunity(3);
           } else if (stage === "flop") {
-            dealCommunity(1); // turn.
+            dealCommunity(1);
           } else if (stage === "turn") {
-            dealCommunity(1); // river.
+            dealCommunity(1);
           }
           setMessage(`Stage: ${stage.toUpperCase()}`);
           resetTimer();
         };
         
-        // CPU actions.
         const runCpuActions = async () => {
           for (let pid = 2; pid <= numPlayers; pid++) {
             if (!players[pid].active) continue;
@@ -637,7 +622,6 @@
           }
         };
         
-        // Handle human action.
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if (!players[1].active) return;
           await processBet(action, 1, raiseAmt);
@@ -669,14 +653,12 @@
           setCurrentPlayer(prev => (prev % numPlayers) + 1);
         };
         
-        // "New Game" button.
         const newGame = () => {
           if (window.confirm("Start a new game? All progress will be reset.")) {
             initGame();
           }
         };
         
-        // Update game stats (hand counter).
         useEffect(() => {
           const statsElem = document.getElementById("stats");
           if (statsElem) statsElem.textContent = `Hands: ${handCount}`;
@@ -697,7 +679,6 @@
                 <div>Player {pid} {pid === "1" && "(You)"}</div>
                 <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    // For CPU players, hide hole cards until showdown.
                     <Card key={idx} card={(pid === "1" || stage === "river") ? card : { rank: "?", suit: "?" }} animate={true} />
                   ))}
                 </div>
