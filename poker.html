@@ -33,7 +33,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* Three.js canvas for rotating wireframe cubes background */
+      /* Three.js canvas with low z-index */
       #threejs-canvas {
         position: fixed;
         top: 0;
@@ -41,6 +41,11 @@
         width: 100%;
         height: 100%;
         z-index: -4;
+      }
+      /* Main UI elements get a higher z-index */
+      #root, header, .timer, .stats, .turn-indicator, .ledger {
+        position: relative;
+        z-index: 10;
       }
       /* Header */
       header {
@@ -93,6 +98,7 @@
         position: relative;
         width: 100%;
         min-height: 100vh;
+        z-index: 5;
       }
       .table::before {
         content: "";
@@ -165,7 +171,7 @@
       /* Suit colors: hearts and diamonds red; clubs and spades black */
       .card-front.red { color: red; }
       .card-front.black { color: black; }
-      /* Hidden CPU cards: display blue background with "??" */
+      /* Hidden CPU cards: blue background with "??" */
       .card.hidden .card-face {
         background: blue;
         color: #fff;
@@ -217,7 +223,7 @@
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Ledger: Tracks chip counts per hand */
+      /* Ledger */
       .ledger {
         position: fixed;
         top: 150px;
@@ -283,7 +289,7 @@
     </div>
     <!-- Main React Root -->
     <div id="root"></div>
-    <!-- Three.js configuration for rotating wireframe cubes -->
+    <!-- Three.js script for rotating wireframe cubes background -->
     <script>
       let scene, camera, renderer, cubes = [];
       function initThreeJS() {
@@ -320,9 +326,9 @@
       initThreeJS();
     </script>
     <!-- Sound Effects and New Synth-Style Sound URLs -->
-    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
+    <audio id="sound-bet" src="https://actions.google.com/sounds/v1/alarms/wood_plank_flicks.ogg"></audio>
     <audio id="sound-showdown" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
-    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/double_beep.ogg"></audio>
+    <audio id="sound-newhand" src="https://actions.google.com/sounds/v1/alarms/medium_bell_ring.ogg"></audio>
     <script>
       const volumeSlider = document.getElementById("volume-slider");
       const setVolumeAll = (vol) => {
@@ -365,7 +371,7 @@
         return `${rank}${suitMap[card.suit]}`;
       };
       
-      // Card Component: Uses deckofcardsapi.com for images.
+      // Card Component: Loads image from deckofcardsapi.com.
       const Card = ({ card, animate }) => {
         const imgUrl = card.suit === "?" 
           ? "https://deckofcardsapi.com/static/img/back.png" 
@@ -426,7 +432,6 @@
         const smallBlindAmt = 25;
         const moveTime = 30;
         
-        // Game state
         const [deck, setDeck] = useState([]);
         const [players, setPlayers] = useState({});
         const [community, setCommunity] = useState([]);
@@ -465,13 +470,13 @@
           }, 1000);
         };
         
-        // Initialize a new hand using deckofcardsapi.com
+        // Initialize a new hand via deckofcardsapi.com.
         const initHand = async () => {
-          // Fetch a new shuffled deck
+          // Fetch a new deck from deckofcardsapi.com.
           const deckRes = await fetch("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
           const deckData = await deckRes.json();
           const deck_id = deckData.deck_id;
-          // Draw 2 cards for each player (total 8) and 5 community cards (total 13 cards drawn)
+          // Draw 13 cards (8 for players' hole cards, 5 for community).
           const drawRes = await fetch(`https://deckofcardsapi.com/api/deck/${deck_id}/draw/?count=13`);
           const drawData = await drawRes.json();
           const cards = drawData.cards;
@@ -485,7 +490,7 @@
               totalBet: 0
             };
           }
-          // Post blinds: player2 posts small, player3 posts big.
+          // Post blinds: player2 small, player3 big.
           newPlayers[2].balance -= smallBlindAmt;
           newPlayers[2].bet = smallBlindAmt;
           newPlayers[2].totalBet = smallBlindAmt;
@@ -493,9 +498,9 @@
           newPlayers[3].bet = bigBlindAmt;
           newPlayers[3].totalBet = bigBlindAmt;
           setPot(smallBlindAmt + bigBlindAmt);
-          setDeck([]); // We no longer track deck locally
+          setDeck([]); // Deck is managed via API
           setPlayers(newPlayers);
-          // Community cards: remaining 5 cards from draw.
+          // The remaining 5 cards become community cards.
           setCommunity(cards.slice(8, 13));
           setStage("pre-flop");
           setCurrentPlayer(4);
@@ -505,7 +510,6 @@
           if (handCount > 0) updateLedger(handCount + 1, players);
         };
         
-        // Initialize a new game (overall reset).
         const initGame = async () => {
           let newPlayers = {};
           for (let i = 1; i <= numPlayers; i++) {
@@ -522,16 +526,13 @@
           initGame();
         }, []);
         
-        // For stages after pre-flop, we simulate drawing additional community cards from our local copy.
+        // For post-flop stages, we simulate that community cards are already drawn.
         const dealCommunity = (count) => {
-          // For simplicity, we'll simulate by reusing our community array.
-          // (In a full integration, you’d draw new cards from the deck API if needed.)
-          let newCommunity = [...community];
-          // In this demo, we assume the 5 community cards were already drawn.
-          setCommunity(newCommunity);
-          if (newCommunity.length === 3) setStage("flop");
-          else if (newCommunity.length === 4) setStage("turn");
-          else if (newCommunity.length === 5) setStage("river");
+          // In this integration, all 5 community cards are drawn with the deck API.
+          setCommunity(community); // No change.
+          if (community.length === 3) setStage("flop");
+          else if (community.length === 4) setStage("turn");
+          else if (community.length === 5) setStage("river");
         };
         
         const currentBet = () => {
@@ -602,8 +603,6 @@
           }
           setPlayers(newPlayers);
           if (stage === "pre-flop") {
-            // In our API integration, community cards are already drawn.
-            // In a complete integration you might fetch additional cards.
             setStage("flop");
           } else if (stage === "flop") {
             setStage("turn");
@@ -724,8 +723,8 @@
         );
       };
       
-      // Placeholder: For real-time multiplayer and advanced AI,
-      // integrate a backend (e.g., Node.js with websockets) and an ML model.
+      // Placeholder: For full real-time multiplayer and advanced ML-based AI,
+      // integrate a backend (e.g., Node.js with websockets) and a trained ML model.
       
       ReactDOM.render(<PokerGameComponent />, document.getElementById('root'));
     </script>
