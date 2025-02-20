@@ -21,16 +21,12 @@
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-      /* Reset and Variables */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      /* Reset and Global Variables */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
       :root {
         --primary-color: #ffffff;
         --accent-color: #ff4081;
-        --bg-green: #006400; /* Dark green for table */
+        --bg-green: #006400;
         --bg-gradient: linear-gradient(135deg, #008000, #006400);
         --font-family: 'Roboto', sans-serif;
       }
@@ -40,7 +36,7 @@
         overflow-x: hidden;
         position: relative;
       }
-      /* particles.js container with green particles */
+      /* Particles background */
       #particles-js {
         position: fixed;
         width: 100%;
@@ -73,13 +69,24 @@
         transform: scale(1.2);
         color: var(--accent-color);
       }
+      /* Timer Display */
+      .timer {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        background: rgba(0,0,0,0.8);
+        color: var(--primary-color);
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 1.2rem;
+        z-index: 1000;
+      }
       /* Main Table Area */
       .table {
         position: relative;
         width: 100%;
         min-height: 100vh;
       }
-      /* Fallback table background if no image */
       .table::before {
         content: "";
         position: absolute;
@@ -102,61 +109,59 @@
         gap: 10px;
         z-index: 2;
       }
-      /* Player areas */
+      /* Player Areas */
       .player {
         position: absolute;
         text-align: center;
         z-index: 2;
       }
-      /* Define player positions (responsive) */
       .player.p1 { bottom: 10%; left: 45%; }
       .player.p2 { top: 35%; left: 5%; }
       .player.p3 { top: 5%; left: 45%; }
       .player.p4 { top: 35%; right: 5%; }
-      /* Card Styles */
+      /* Card Styles with Flip Animation */
       .card {
         width: 90px;
         height: 135px;
         border: 2px solid #fff;
         border-radius: 8px;
+        overflow: hidden;
+        perspective: 1000px;
+      }
+      .card-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.8s ease-in-out;
+        transform-style: preserve-3d;
+      }
+      .card.flip .card-inner {
+        transform: rotateY(180deg);
+      }
+      .card-face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+      }
+      .card-front {
         background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        transition: transform 0.6s;
-        transform-style: preserve-3d;
-        position: relative;
       }
-      .card.flip {
-        transform: rotateY(180deg);
-      }
-      .card .front,
-      .card .back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
+      /* Card text color based on suit */
+      .card-front.red { color: red; }
+      .card-front.black { color: black; }
+      .card-back {
+        background: darkblue;
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-      .card .front {
-        background: #fff;
-      }
-      .card .back {
-        background: darkblue;
-        color: #fff;
+        font-size: 1.5rem;
+        color: var(--primary-color);
         transform: rotateY(180deg);
-        font-size: 2rem;
-        font-weight: bold;
-      }
-      /* Color for card faces (red for hearts/diamonds, black for clubs/spades) */
-      .card.red .front {
-        color: red;
-      }
-      .card.black .front {
-        color: black;
       }
       /* Controls */
       .controls {
@@ -188,45 +193,38 @@
       .btn-next { background: #888; color: #fff; }
       .btn-showdown { background: #ff9900; color: #fff; }
       .btn-new { background: #444; color: #fff; }
-      /* Info/message area (placed at bottom above controls) */
+      /* Game Info Message */
       .game-info {
         position: fixed;
         bottom: 70px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.8);
-        color: #fff;
+        background: rgba(0,0,0,0.8);
+        color: var(--primary-color);
         padding: 10px 20px;
         border-radius: 8px;
         font-size: 1.2rem;
         z-index: 1000;
       }
-      /* Timer display */
-      .timer {
-        position: fixed;
-        top: 70px;
-        right: 20px;
-        background: rgba(0, 0, 0, 0.8);
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 1.2rem;
-        z-index: 1000;
+      /* Additional Animations */
+      @keyframes fadeInBounce {
+        0% { opacity: 0; transform: scale(0.5); }
+        50% { opacity: 0.7; transform: scale(1.2); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      .animate-bounce {
+        animation: fadeInBounce 0.8s ease-out;
       }
       /* Responsive adjustments */
       @media (max-width: 768px) {
-        .card {
-          width: 70px;
-          height: 105px;
-          font-size: 1.2rem;
-        }
+        .card { width: 70px; height: 105px; }
         .player { font-size: 0.9rem; }
         .controls button { font-size: 0.9rem; padding: 8px 15px; }
       }
     </style>
   </head>
   <body>
-    <!-- Particles.js container -->
+    <!-- Particles background -->
     <div id="particles-js"></div>
     <!-- Header with Home button -->
     <header>
@@ -235,7 +233,7 @@
     </header>
     <!-- Timer Display -->
     <div class="timer" id="timer">30</div>
-    <!-- Main React root -->
+    <!-- Main React Root -->
     <div id="root"></div>
     <!-- particles.js configuration (green particles) -->
     <script>
@@ -278,6 +276,21 @@
       // --- Helper Functions ---
       const suits = ['♠', '♥', '♦', '♣'];
       const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+      // Convert a card to Deck of Cards API code.
+      const getCardCode = (card) => {
+        // For 10, use "0". For others, just use first letter (if face card, they are already letter).
+        let rank = card.rank === "10" ? "0" : card.rank;
+        let suitLetter = "";
+        switch(card.suit) {
+          case '♠': suitLetter = "S"; break;
+          case '♥': suitLetter = "H"; break;
+          case '♦': suitLetter = "D"; break;
+          case '♣': suitLetter = "C"; break;
+          default: suitLetter = "";
+        }
+        return `${rank}${suitLetter}`;
+      };
+      // Create and shuffle a deck.
       const createDeck = () => {
         let deck = [];
         suits.forEach(suit => {
@@ -295,33 +308,46 @@
         return deck;
       };
       
-      // Render a card with flip animation.
+      // Card Component: Uses the Deck of Cards API to show images.
       const Card = ({ card, faceUp, animate }) => {
-        // Determine text color based on suit.
-        let textColor = "#000";
-        if (card && (card.suit === '♥' || card.suit === '♦')) {
-          textColor = "red";
-        }
+        const [imgUrl, setImgUrl] = useState("");
+        useEffect(() => {
+          if (faceUp && card) {
+            const code = getCardCode(card);
+            setImgUrl(`https://deckofcardsapi.com/static/img/${code}.png`);
+          }
+        }, [card, faceUp]);
+        // Determine class based on suit color.
+        let frontClass = "card-front";
+        if (card && (card.suit === '♥' || card.suit === '♦')) frontClass += " red";
+        else frontClass += " black";
         return (
-          <div className={`card ${faceUp ? (card && (card.suit === '♥' || card.suit === '♦') ? "red" : "black") : ""} ${animate ? "flip" : ""}`}>
-            <div className="front" style={{ color: textColor }}>
-              {card ? `${card.rank}${card.suit}` : ""}
-            </div>
-            <div className="back">
-              P
+          <div className={`card animate-bounce ${animate ? "flip" : ""}`}>
+            <div className="card-inner">
+              <div className={`card-face card-front ${frontClass}`}>
+                {faceUp && imgUrl 
+                  ? <img src={imgUrl} alt={`${card.rank}${card.suit}`} style={{width: "100%", height: "100%"}} />
+                  : ""
+                }
+              </div>
+              <div className="card-face card-back">
+                {/* Back of card design */}
+                <img src="https://via.placeholder.com/90x135/00008b/ffffff?text=Card" alt="Card Back" style={{width: "100%", height: "100%"}} />
+              </div>
             </div>
           </div>
         );
       };
       
-      // --- AI API Simulation ---
+      // --- AI API Simulation (replace with real endpoint if available) ---
       const aiDecision = async (playerHand, community) => {
-        await new Promise(res => setTimeout(res, 500)); // simulate thinking
+        // Simulate a delay and return a decision.
+        await new Promise(res => setTimeout(res, 500));
         const choices = ['call', 'raise', 'fold', 'check'];
         return choices[Math.floor(Math.random() * choices.length)];
       };
       
-      // --- Game Component ---
+      // --- Poker Game Component ---
       const PokerGameComponent = () => {
         const numPlayers = 4;
         const initialBalance = 1000;
@@ -341,7 +367,7 @@
         const [timer, setTimer] = useState(moveTime);
         const timerRef = useRef(null);
         
-        // Timer: Reset on each move.
+        // Reset timer on change of current player.
         useEffect(() => {
           resetTimer();
           return () => clearInterval(timerRef.current);
@@ -354,7 +380,6 @@
             setTimer(prev => {
               if(prev <= 1) {
                 clearInterval(timerRef.current);
-                // Auto-call if timer runs out for human player.
                 if(currentPlayer === 1) handlePlayerAction("call");
                 return moveTime;
               }
@@ -392,11 +417,12 @@
           setPlayers(newPlayers);
           setCommunity([]);
           setStage("pre-flop");
-          setCurrentPlayer(4); // action starts with player4
+          // Action starts with player4.
+          setCurrentPlayer(4);
           setMessage("Pre-flop: Your move if you're Player 1.");
         };
         
-        // Deal community cards: flop = 3, then turn & river = 1 each.
+        // Deal community cards (flop = 3, then turn & river = 1 each)
         const dealCommunity = (count) => {
           let newDeck = [...deck];
           let newCommunity = [...community];
@@ -410,7 +436,7 @@
           else if(newCommunity.length === 5) setStage("river");
         };
         
-        // Get current bet (max bet among players)
+        // Get current bet (max among players)
         const currentBet = () => {
           let maxBet = 0;
           Object.values(players).forEach(p => {
@@ -419,7 +445,7 @@
           return maxBet;
         };
         
-        // Process bet action
+        // Process a bet action
         const processBet = async (action, playerId, raiseAmt = 0) => {
           let newPlayers = { ...players };
           if(action === "fold") {
@@ -456,10 +482,9 @@
           return activePlayers.every(p => p.bet === currentBet());
         };
         
-        // Advance game stage if betting round is over
+        // Advance stage if betting round over
         const nextStage = async () => {
           let newPlayers = { ...players };
-          // Reset bets
           for(let pid in newPlayers) {
             newPlayers[pid].bet = 0;
           }
@@ -475,14 +500,14 @@
           resetTimer();
         };
         
-        // CPU actions
+        // CPU actions using AI simulation
         const runCpuActions = async () => {
           for(let pid = 2; pid <= numPlayers; pid++) {
             if(!players[pid].active) continue;
             setProcessing(true);
             const decision = await aiDecision(players[pid].hand, community);
             if(decision === "raise") {
-              let raiseAmt = Math.floor(Math.random()*150) + 50;
+              let raiseAmt = Math.floor(Math.random() * 150) + 50;
               await processBet("raise", pid, raiseAmt);
             } else {
               await processBet(decision, pid);
@@ -491,23 +516,22 @@
           }
         };
         
-        // When human (player 1) acts
+        // Handle human action
         const handlePlayerAction = async (action, raiseAmt = 0) => {
           if(!players[1].active) return;
           await processBet(action, 1, raiseAmt);
           await runCpuActions();
           if(bettingRoundOver()) {
             if(stage === "river") {
-              // Show opponent cards now (simulate flip animation)
+              // Showdown – reveal opponent cards
               setMessage(`Showdown!`);
-              // For demo, randomly select a winner:
               const active = Object.keys(players).filter(pid => players[pid].active);
               const winner = active[Math.floor(Math.random()*active.length)];
               setMessage(`Showdown! Player ${winner} wins the pot of ${pot} credits!`);
-              // Check if human is broke:
+              // Check if player 1 is broke
               if(players[1].balance <= 0) {
                 setTimeout(() => {
-                  if(window.confirm("LOZER!! You ran out of points. Play a new game?")) {
+                  if(window.confirm("LOZER!! You ran out of points. Start a new game?")) {
                     initGame();
                   }
                 }, 1500);
@@ -519,14 +543,13 @@
           resetTimer();
         };
         
-        // New Hand button resets game state (preserving balance if desired; here we reset for demo)
+        // New Hand: reset game state
         const newHand = () => {
           if(window.confirm("Start a new hand?")) {
             initGame();
           }
         };
         
-        // Render UI
         return (
           <div className="table">
             <div className="info">
@@ -534,28 +557,27 @@
             </div>
             <div className="community">
               {community.map((card, idx) => (
-                // Animate flip when card appears
                 <Card key={idx} card={card} faceUp={true} animate={true} />
               ))}
             </div>
-            {/* Render players */}
             {Object.entries(players).map(([pid, data]) => (
               <div key={pid} className={`player p${pid}`}>
-                <div>Player {pid} {pid === "1" ? "(You)" : ""}</div>
-                <div style={{display: 'flex', gap: '5px', justifyContent: 'center'}}>
+                <div>Player {pid} {pid === "1" && "(You)"}</div>
+                <div style={{ display: 'flex', gap: '5px', justifyContent: 'center' }}>
                   {data.hand.map((card, idx) => (
-                    <Card 
-                      key={idx} 
-                      card={card} 
-                      faceUp={ (pid === "1" || stage === "river") } 
-                      animate={true} 
+                    <Card
+                      key={idx}
+                      card={card}
+                      faceUp={ (pid === "1" || stage === "river") }
+                      animate={true}
                     />
                   ))}
                 </div>
-                <div>Balance: {data.balance} | Bet: {data.totalBet}</div>
+                <div>
+                  Balance: {data.balance} | Bet: {data.totalBet}
+                </div>
               </div>
             ))}
-            {/* Controls */}
             <div className="controls">
               <button className="btn-fold" onClick={() => handlePlayerAction("fold")} disabled={processing}>Fold</button>
               <button className="btn-call" onClick={() => handlePlayerAction("call")} disabled={processing}>Call/Check</button>
@@ -576,13 +598,11 @@
               )}
               <button className="btn-new" onClick={newHand}>New Hand</button>
             </div>
-            {/* Message area is at bottom */}
             {message && (
               <div className="game-info">
                 {message}
               </div>
             )}
-            {/* Timer display is handled by the .timer element outside React */}
           </div>
         );
       };
