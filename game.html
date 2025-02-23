@@ -2,57 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Bitcoin Mining Terminal</title>
-  <!-- External Libraries -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <title>Hacker Terminal Bitcoin Miner</title>
   <style>
+    /* Base Hacker Terminal Aesthetic */
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
+      background: #000;
+      color: #0f0;
       font-family: 'Courier New', Courier, monospace;
-      background: black;
-      color: #00ff00;
-    }
-    #three-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 0;
+      overflow: hidden;
+      height: 100vh;
     }
     #root {
-      position: relative;
-      z-index: 2;
       padding: 20px;
+      height: calc(100vh - 40px);
+      overflow-y: auto;
     }
+    a {
+      text-decoration: none;
+    }
+    /* Terminal container style */
+    .terminal {
+      border: 2px solid #0f0;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 20px #0f0;
+      background: rgba(0,0,0,0.8);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* Button styles */
     button {
-      background-color: rgba(0, 0, 0, 0.7);
-      border: 2px solid #00ff00;
-      color: #00ff00;
-      padding: 10px 20px;
+      background: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 10px 15px;
       margin: 5px;
       cursor: pointer;
       transition: all 0.3s ease;
-      font-family: 'Courier New', Courier, monospace;
+      border-radius: 3px;
+      font-family: inherit;
     }
     button:hover {
-      background-color: rgba(0, 0, 0, 0.9);
+      background: #0f0;
+      color: #000;
     }
+    /* Huge mine button */
     .mine-button {
-      font-size: 3em;
-      padding: 40px;
-      width: 200px;
-      height: 200px;
+      font-size: 2.5em;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
-      border: 4px solid #00ff00;
+      position: relative;
       margin: 20px auto;
       display: block;
-      position: relative;
+      transition: transform 0.2s ease;
+    }
+    .mine-button:hover {
+      transform: scale(1.1);
     }
     .mine-button span {
       position: absolute;
@@ -60,101 +73,99 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    .terminal {
-      border: 2px solid #00ff00;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px #00ff00;
+    /* Panels */
+    .stats, .controls, .mission, .achievements {
+      margin: 20px 0;
     }
     pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
+      font-size: 1.1em;
+      line-height: 1.4em;
     }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+    /* Achievement fade-in/out */
+    .fade {
+      opacity: 0;
+      transition: opacity 1s ease;
     }
-    .news-ticker {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      color: #00ff00;
-      font-size: 0.9em;
-      overflow: hidden;
-      white-space: nowrap;
-      border-top: 2px solid #00ff00;
-      z-index: 3;
+    .fade.show {
+      opacity: 1;
     }
-    .news-content {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scrollNews 20s linear infinite;
-    }
-    @keyframes scrollNews {
-      from { transform: translateX(0%); }
-      to { transform: translateX(-100%); }
-    }
-    .achievement-blink {
-      animation: blink 0.2s alternate 5;
-    }
-    @keyframes blink {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-    .save-btn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 4;
-    }
+    /* Link Button to Index */
     .index-link {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 4;
+      bottom: 20px;
+      right: 20px;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #000;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #0f0;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <canvas id="three-bg"></canvas>
   <div id="root"></div>
-  <a href="index.html" class="index-link"><button>Return to Index</button></a>
-  <!-- React code -->
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect, useRef } = React;
-
+  <a class="index-link" href="index.html"><button>Return to Index</button></a>
+  <!-- React and Babel Scripts -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    
     function Game() {
-      // --- Game State Variables ---
+      // --- Basic Variables ---
       const [cryptoBalance, setCryptoBalance] = useState(0);
       const [cryptoPerSecond, setCryptoPerSecond] = useState(1);
       const [upgradeCost, setUpgradeCost] = useState(10);
       const [manualMineGain, setManualMineGain] = useState(1);
+      
+      // --- AI Upgrade Variables ---
       const [aiUpgradeCost, setAiUpgradeCost] = useState(50);
       const [aiMultiplier, setAiMultiplier] = useState(1.0);
       const [aiLevel, setAiLevel] = useState(0);
+      
+      // --- Advanced Rig Variables ---
       const [advancedRigCost, setAdvancedRigCost] = useState(200);
       const [advancedRigLevel, setAdvancedRigLevel] = useState(0);
       const advancedRigIncrease = 5;
+      
+      // --- Software Optimization Variables ---
       const [softwareUpgradeCost, setSoftwareUpgradeCost] = useState(500);
       const [softwareUpgradeLevel, setSoftwareUpgradeLevel] = useState(0);
-      const constSoftwareUpgradeDiscount = 0.1;
+      const softwareUpgradeDiscount = 0.1;
+      
+      // --- Neural Interface Variables ---
       const [neuralUpgradeCost, setNeuralUpgradeCost] = useState(10000);
       const [neuralUpgradeLevel, setNeuralUpgradeLevel] = useState(0);
       const [neuralMultiplier, setNeuralMultiplier] = useState(1.0);
+      
+      // --- Quantum Amplifier Variables ---
       const [quantumAmplifierCost, setQuantumAmplifierCost] = useState(5000);
       const [quantumAmplifierLevel, setQuantumAmplifierLevel] = useState(0);
+      
+      // --- Accelerator Variables ---
       const [acceleratorUpgradeCost, setAcceleratorUpgradeCost] = useState(2000);
       const [acceleratorUpgradeLevel, setAcceleratorUpgradeLevel] = useState(0);
       const [acceleratorMultiplier, setAcceleratorMultiplier] = useState(1.0);
+      
+      // --- Auto Miner (Manager) Variables ---
       const [autoMinerCount, setAutoMinerCount] = useState(0);
       const [autoMinerCost, setAutoMinerCost] = useState(1000);
+      
+      // --- Prestige Variables ---
       const [prestigePoints, setPrestigePoints] = useState(0);
-      const [prestigeThreshold, setPrestigeThreshold] = useState(10000000); // 10M satoshis = 0.1 BTC
+      const [prestigeThreshold, setPrestigeThreshold] = useState(1000000);
       const [prestigeBonus, setPrestigeBonus] = useState(1.0);
-      const [achievements, setAchievements] = useState({
+      
+      // --- Achievements ---
+      const initialAchievements = {
         first_upgrade: false,
         thousand_crypto: false,
         ai_level_5: false,
@@ -170,76 +181,39 @@
         click_marathon: false,
         manager_tycoon: false,
         upgrade_hoarder: false
-      });
+      };
+      const [achievements, setAchievements] = useState(initialAchievements);
       const [achievementMessage, setAchievementMessage] = useState("");
-      const [achievementBlink, setAchievementBlink] = useState(false);
+      const [achievementVisible, setAchievementVisible] = useState(false);
+      
+      // --- Quantum Event Variables ---
       const [quantumEventActive, setQuantumEventActive] = useState(false);
       const [quantumEventMultiplier, setQuantumEventMultiplier] = useState(1.0);
-      const quantumEventDuration = 5000; // in milliseconds
+      const quantumEventDuration = 5; // seconds
+      
+      // --- Manual Mining Tier Variables ---
       const [manualClicksTotal, setManualClicksTotal] = useState(0);
       const [currentManualTierIndex, setCurrentManualTierIndex] = useState(0);
+      
+      // --- Manager Mission Variables ---
       const [missionManager, setMissionManager] = useState({goal: 5, progress: 0, reward: 500, completed: false});
       
-      // Howler sound for achievement
-      const achievementSound = useRef(new Howl({ src: ['https://freesound.org/data/previews/341/341695_5260878-lq.mp3'], volume: 0.5 }));
-
-      // --- Auto-save and Load Game ---
-      useEffect(() => {
-        const saved = localStorage.getItem("bitcoinGameSave");
-        if (saved) {
-          const data = JSON.parse(saved);
-          setCryptoBalance(data.cryptoBalance || 0);
-          setCryptoPerSecond(data.cryptoPerSecond || 1);
-          setUpgradeCost(data.upgradeCost || 10);
-          setManualMineGain(data.manualMineGain || 1);
-          setAiUpgradeCost(data.aiUpgradeCost || 50);
-          setAiMultiplier(data.aiMultiplier || 1.0);
-          setAiLevel(data.aiLevel || 0);
-          setAdvancedRigCost(data.advancedRigCost || 200);
-          setAdvancedRigLevel(data.advancedRigLevel || 0);
-          setSoftwareUpgradeCost(data.softwareUpgradeCost || 500);
-          setSoftwareUpgradeLevel(data.softwareUpgradeLevel || 0);
-          setNeuralUpgradeCost(data.neuralUpgradeCost || 10000);
-          setNeuralUpgradeLevel(data.neuralUpgradeLevel || 0);
-          setNeuralMultiplier(data.neuralMultiplier || 1.0);
-          setQuantumAmplifierCost(data.quantumAmplifierCost || 5000);
-          setQuantumAmplifierLevel(data.quantumAmplifierLevel || 0);
-          setAcceleratorUpgradeCost(data.acceleratorUpgradeCost || 2000);
-          setAcceleratorUpgradeLevel(data.acceleratorUpgradeLevel || 0);
-          setAcceleratorMultiplier(data.acceleratorMultiplier || 1.0);
-          setAutoMinerCount(data.autoMinerCount || 0);
-          setAutoMinerCost(data.autoMinerCost || 1000);
-          setPrestigePoints(data.prestigePoints || 0);
-          setPrestigeThreshold(data.prestigeThreshold || 10000000);
-          setPrestigeBonus(data.prestigeBonus || 1.0);
-          setAchievements(data.achievements || achievements);
-          setManualClicksTotal(data.manualClicksTotal || 0);
-          setCurrentManualTierIndex(data.currentManualTierIndex || 0);
-          setMissionManager(data.missionManager || {goal: 5, progress: 0, reward: 500, completed: false});
+      // --- Format Balance ---
+      const formatBalance = (balance) => {
+        // Show in satoshis until 10,000,000; then display in Bitcoins (1 BTC = 100,000,000 satoshis)
+        if (balance < 10000000) {
+          return Math.floor(balance) + " satoshis";
+        } else {
+          const btc = balance / 100000000;
+          return "₿" + btc.toFixed(4);
         }
-      }, []);
+      };
 
-      useEffect(() => {
-        const saveInterval = setInterval(() => {
-          const data = {
-            cryptoBalance, cryptoPerSecond, upgradeCost, manualMineGain, aiUpgradeCost, aiMultiplier,
-            aiLevel, advancedRigCost, advancedRigLevel, softwareUpgradeCost, softwareUpgradeLevel,
-            neuralUpgradeCost, neuralUpgradeLevel, neuralMultiplier, quantumAmplifierCost, quantumAmplifierLevel,
-            acceleratorUpgradeCost, acceleratorUpgradeLevel, acceleratorMultiplier, autoMinerCount, autoMinerCost,
-            prestigePoints, prestigeThreshold, prestigeBonus, achievements, manualClicksTotal, currentManualTierIndex,
-            missionManager
-          };
-          localStorage.setItem("bitcoinGameSave", JSON.stringify(data));
-        }, 5000);
-        return () => clearInterval(saveInterval);
-      }, [cryptoBalance, cryptoPerSecond, upgradeCost, manualMineGain, aiUpgradeCost, aiMultiplier,
-          aiLevel, advancedRigCost, advancedRigLevel, softwareUpgradeCost, softwareUpgradeLevel,
-          neuralUpgradeCost, neuralUpgradeLevel, neuralMultiplier, quantumAmplifierCost, quantumAmplifierLevel,
-          acceleratorUpgradeCost, acceleratorUpgradeLevel, acceleratorMultiplier, autoMinerCount, autoMinerCost,
-          prestigePoints, prestigeThreshold, prestigeBonus, achievements, manualClicksTotal, currentManualTierIndex,
-          missionManager]);
+      // --- Tier Functions ---
+      const getTierThreshold = (index) => Math.floor(100 * Math.pow(2.3, index));
+      const getTierReward = (index) => Math.round(2 * Math.pow(1.5, index));
 
-      // --- Passive Income ---
+      // --- Passive Income Effect ---
       useEffect(() => {
         const interval = setInterval(() => {
           let income = cryptoPerSecond * aiMultiplier * neuralMultiplier * acceleratorMultiplier * prestigeBonus;
@@ -250,7 +224,7 @@
         return () => clearInterval(interval);
       }, [cryptoPerSecond, aiMultiplier, neuralMultiplier, acceleratorMultiplier, prestigeBonus, autoMinerCount, manualMineGain]);
 
-      // --- Quantum Events ---
+      // --- Quantum Event Effect ---
       useEffect(() => {
         const quantumInterval = setInterval(() => {
           startQuantumEvent();
@@ -268,61 +242,94 @@
         setTimeout(() => {
           setQuantumEventMultiplier(1.0);
           setQuantumEventActive(false);
-        }, quantumEventDuration);
+        }, quantumEventDuration * 1000);
       };
-
-      // --- Format Balance ---
-      const formatBalance = (balance) => {
-        if (balance < 10000000) {
-          return Math.floor(balance) + " satoshis";
-        } else {
-          let btcPercent = (balance / 100000000 * 100).toFixed(2);
-          return "₿ " + btcPercent + "%";
-        }
-      };
-
-      // --- Tier System ---
-      const getTierThreshold = (index) => Math.floor(100 * Math.pow(2.3, index));
-      const getTierReward = (index) => Math.round(2 * Math.pow(1.5, index));
 
       // --- Achievement Check ---
       const checkAchievements = () => {
-        let newAch = { ...achievements };
+        let newAchievements = { ...achievements };
         const totalRate = cryptoPerSecond * aiMultiplier * neuralMultiplier * acceleratorMultiplier * prestigeBonus;
-        if (!newAch.first_upgrade && cryptoPerSecond > 1) { newAch.first_upgrade = true; triggerAchievement("Achievement Unlocked: First Upgrade!"); }
-        if (!newAch.thousand_crypto && cryptoBalance >= 1000) { newAch.thousand_crypto = true; triggerAchievement("Achievement Unlocked: 1,000 Crypto!"); }
-        if (!newAch.ai_level_5 && aiLevel >= 5) { newAch.ai_level_5 = true; triggerAchievement("Achievement Unlocked: AI Level 5!"); }
-        if (!newAch.advanced_rig_level_5 && advancedRigLevel >= 5) { newAch.advanced_rig_level_5 = true; triggerAchievement("Achievement Unlocked: Advanced Rig Master!"); }
-        if (!newAch.software_upgrade_level_3 && softwareUpgradeLevel >= 3) { newAch.software_upgrade_level_3 = true; triggerAchievement("Achievement Unlocked: Software Savant!"); }
-        if (!newAch.neural_interface_level_3 && neuralUpgradeLevel >= 3) { newAch.neural_interface_level_3 = true; triggerAchievement("Achievement Unlocked: Neural Interface Pro!"); }
-        if (!newAch.quantum_amplifier_level_3 && quantumAmplifierLevel >= 3) { newAch.quantum_amplifier_level_3 = true; triggerAchievement("Achievement Unlocked: Quantum Amplifier Expert!"); }
-        if (!newAch.auto_miner_5 && autoMinerCount >= 5) { newAch.auto_miner_5 = true; triggerAchievement("Achievement Unlocked: Manager Overlord!"); }
-        if (!newAch.prestige_master && prestigePoints >= 5) { newAch.prestige_master = true; triggerAchievement("Achievement Unlocked: Prestige Master!"); }
-        if (!newAch.legendary_prestige && prestigePoints >= 10) { newAch.legendary_prestige = true; triggerAchievement("Achievement Unlocked: Legendary Prestige!"); }
-        if (!newAch.income_overdrive && totalRate >= 100) { newAch.income_overdrive = true; triggerAchievement("Achievement Unlocked: Income Overdrive!"); }
-        if (!newAch.clicking_frenzy && manualClicksTotal >= 5000) { newAch.clicking_frenzy = true; triggerAchievement("Achievement Unlocked: Clicking Frenzy!"); }
-        if (!newAch.click_marathon && manualClicksTotal >= 10000) { newAch.click_marathon = true; triggerAchievement("Achievement Unlocked: Click Marathon!"); }
-        if (!newAch.manager_tycoon && autoMinerCount >= 10) { newAch.manager_tycoon = true; triggerAchievement("Achievement Unlocked: Manager Tycoon!"); }
+        if (!newAchievements.first_upgrade && cryptoPerSecond > 1) {
+          newAchievements.first_upgrade = true;
+          showAchievement("Achievement Unlocked: First Upgrade!");
+        }
+        if (!newAchievements.thousand_crypto && cryptoBalance >= 1000) {
+          newAchievements.thousand_crypto = true;
+          showAchievement("Achievement Unlocked: 1,000 Crypto!");
+        }
+        if (!newAchievements.ai_level_5 && aiLevel >= 5) {
+          newAchievements.ai_level_5 = true;
+          showAchievement("Achievement Unlocked: AI Level 5!");
+        }
+        if (!newAchievements.advanced_rig_level_5 && advancedRigLevel >= 5) {
+          newAchievements.advanced_rig_level_5 = true;
+          showAchievement("Achievement Unlocked: Advanced Rig Master!");
+        }
+        if (!newAchievements.software_upgrade_level_3 && softwareUpgradeLevel >= 3) {
+          newAchievements.software_upgrade_level_3 = true;
+          showAchievement("Achievement Unlocked: Software Savant!");
+        }
+        if (!newAchievements.neural_interface_level_3 && neuralUpgradeLevel >= 3) {
+          newAchievements.neural_interface_level_3 = true;
+          showAchievement("Achievement Unlocked: Neural Interface Pro!");
+        }
+        if (!newAchievements.quantum_amplifier_level_3 && quantumAmplifierLevel >= 3) {
+          newAchievements.quantum_amplifier_level_3 = true;
+          showAchievement("Achievement Unlocked: Quantum Amplifier Expert!");
+        }
+        if (!newAchievements.auto_miner_5 && autoMinerCount >= 5) {
+          newAchievements.auto_miner_5 = true;
+          showAchievement("Achievement Unlocked: Manager Overlord!");
+        }
+        if (!newAchievements.prestige_master && prestigePoints >= 5) {
+          newAchievements.prestige_master = true;
+          showAchievement("Achievement Unlocked: Prestige Master!");
+        }
+        if (!newAchievements.legendary_prestige && prestigePoints >= 10) {
+          newAchievements.legendary_prestige = true;
+          showAchievement("Achievement Unlocked: Legendary Prestige!");
+        }
+        if (!newAchievements.income_overdrive && totalRate >= 100) {
+          newAchievements.income_overdrive = true;
+          showAchievement("Achievement Unlocked: Income Overdrive!");
+        }
+        if (!newAchievements.clicking_frenzy && manualClicksTotal >= 5000) {
+          newAchievements.clicking_frenzy = true;
+          showAchievement("Achievement Unlocked: Clicking Frenzy!");
+        }
+        if (!newAchievements.click_marathon && manualClicksTotal >= 10000) {
+          newAchievements.click_marathon = true;
+          showAchievement("Achievement Unlocked: Click Marathon!");
+        }
+        if (!newAchievements.manager_tycoon && autoMinerCount >= 10) {
+          newAchievements.manager_tycoon = true;
+          showAchievement("Achievement Unlocked: Manager Tycoon!");
+        }
         const totalUpgrades = aiLevel + advancedRigLevel + softwareUpgradeLevel + neuralUpgradeLevel + quantumAmplifierLevel + acceleratorUpgradeLevel;
-        if (!newAch.upgrade_hoarder && totalUpgrades >= 50) { newAch.upgrade_hoarder = true; triggerAchievement("Achievement Unlocked: Upgrade Hoarder!"); }
-        setAchievements(newAch);
+        if (!newAchievements.upgrade_hoarder && totalUpgrades >= 50) {
+          newAchievements.upgrade_hoarder = true;
+          showAchievement("Achievement Unlocked: Upgrade Hoarder!");
+        }
+        setAchievements(newAchievements);
       };
 
-      const triggerAchievement = (message) => {
+      const showAchievement = (message) => {
         setAchievementMessage(message);
-        setAchievementBlink(true);
-        achievementSound.current.play();
-        setTimeout(() => setAchievementBlink(false), 1200);
+        setAchievementVisible(true);
+        setTimeout(() => setAchievementVisible(false), 3000);
       };
 
       // --- Button Handlers ---
       const handleMine = () => {
-        let bonus = quantumEventActive ? quantumEventMultiplier * (1 + Math.min((Math.log(cryptoBalance + 1) / Math.log(10)) / 20, 1)) : 1;
+        let bonus = 1;
+        if (quantumEventActive) {
+          bonus = quantumEventMultiplier * (1 + Math.min((Math.log(cryptoBalance + 1) / Math.log(10)) / 20, 1));
+        }
         setCryptoBalance(prev => prev + manualMineGain * bonus);
         setManualClicksTotal(prev => {
           const newTotal = prev + 1;
           const currentThreshold = getTierThreshold(currentManualTierIndex);
-          if(newTotal >= currentThreshold) {
+          if (newTotal >= currentThreshold) {
             setManualMineGain(getTierReward(currentManualTierIndex));
             setCurrentManualTierIndex(prevIndex => prevIndex + 1);
           }
@@ -331,100 +338,116 @@
       };
 
       const handleUpgrade = () => {
-        if(cryptoBalance >= upgradeCost){
+        if (cryptoBalance >= upgradeCost) {
           setCryptoBalance(prev => prev - upgradeCost);
           setCryptoPerSecond(prev => prev + 1);
           setUpgradeCost(Math.floor(upgradeCost * 1.5));
-        } else console.log("Not enough crypto for a hardware upgrade!");
+        } else {
+          console.log("Insufficient crypto for upgrade.");
+        }
       };
 
       const handleAiUpgrade = () => {
-        if(cryptoBalance >= aiUpgradeCost){
+        if (cryptoBalance >= aiUpgradeCost) {
           setCryptoBalance(prev => prev - aiUpgradeCost);
           setAiLevel(prev => prev + 1);
           setAiMultiplier(prev => prev + 0.2);
           setAiUpgradeCost(Math.floor(aiUpgradeCost * 2));
-        } else console.log("Not enough crypto for an AI upgrade!");
+        } else {
+          console.log("Insufficient crypto for AI upgrade.");
+        }
       };
 
       const handleAdvancedRig = () => {
-        if(cryptoBalance >= advancedRigCost){
+        if (cryptoBalance >= advancedRigCost) {
           setCryptoBalance(prev => prev - advancedRigCost);
           setAdvancedRigLevel(prev => prev + 1);
           setCryptoPerSecond(prev => prev + advancedRigIncrease);
           setAdvancedRigCost(Math.floor(advancedRigCost * 1.75));
-        } else console.log("Not enough crypto for an Advanced Rig upgrade!");
+        } else {
+          console.log("Insufficient crypto for Advanced Rig upgrade.");
+        }
       };
 
       const handleSoftwareUpgrade = () => {
-        if(cryptoBalance >= softwareUpgradeCost){
+        if (cryptoBalance >= softwareUpgradeCost) {
           setCryptoBalance(prev => prev - softwareUpgradeCost);
           setSoftwareUpgradeLevel(prev => prev + 1);
-          setUpgradeCost(Math.floor(upgradeCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setAdvancedRigCost(Math.floor(advancedRigCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setAiUpgradeCost(Math.floor(aiUpgradeCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setNeuralUpgradeCost(Math.floor(neuralUpgradeCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setQuantumAmplifierCost(Math.floor(quantumAmplifierCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setAutoMinerCost(Math.floor(autoMinerCost * (1.0 - constSoftwareUpgradeDiscount)));
-          setAcceleratorUpgradeCost(Math.floor(acceleratorUpgradeCost * (1.0 - constSoftwareUpgradeDiscount)));
+          setUpgradeCost(Math.floor(upgradeCost * (1.0 - softwareUpgradeDiscount)));
+          setAdvancedRigCost(Math.floor(advancedRigCost * (1.0 - softwareUpgradeDiscount)));
+          setAiUpgradeCost(Math.floor(aiUpgradeCost * (1.0 - softwareUpgradeDiscount)));
+          setNeuralUpgradeCost(Math.floor(neuralUpgradeCost * (1.0 - softwareUpgradeDiscount)));
+          setQuantumAmplifierCost(Math.floor(quantumAmplifierCost * (1.0 - softwareUpgradeDiscount)));
+          setAutoMinerCost(Math.floor(autoMinerCost * (1.0 - softwareUpgradeDiscount)));
+          setAcceleratorUpgradeCost(Math.floor(acceleratorUpgradeCost * (1.0 - softwareUpgradeDiscount)));
           setSoftwareUpgradeCost(softwareUpgradeCost * 2);
-        } else console.log("Not enough crypto for a Software Upgrade!");
+        } else {
+          console.log("Insufficient crypto for Software Upgrade.");
+        }
       };
 
       const handleNeuralUpgrade = () => {
-        if(cryptoBalance >= neuralUpgradeCost){
+        if (cryptoBalance >= neuralUpgradeCost) {
           setCryptoBalance(prev => prev - neuralUpgradeCost);
           setNeuralUpgradeLevel(prev => prev + 1);
           setNeuralMultiplier(prev => prev + 0.5);
           setNeuralUpgradeCost(Math.floor(neuralUpgradeCost * 3));
-        } else console.log("Not enough crypto for Neural Interface Upgrade!");
+        } else {
+          console.log("Insufficient crypto for Neural Interface Upgrade.");
+        }
       };
 
       const handleQuantumAmplifier = () => {
-        if(cryptoBalance >= quantumAmplifierCost){
+        if (cryptoBalance >= quantumAmplifierCost) {
           setCryptoBalance(prev => prev - quantumAmplifierCost);
           setQuantumAmplifierLevel(prev => prev + 1);
           setQuantumAmplifierCost(Math.floor(quantumAmplifierCost * 1.8));
-        } else console.log("Not enough crypto for Quantum Amplifier Upgrade!");
+        } else {
+          console.log("Insufficient crypto for Quantum Amplifier Upgrade.");
+        }
       };
 
       const handleAcceleratorUpgrade = () => {
-        if(cryptoBalance >= acceleratorUpgradeCost){
+        if (cryptoBalance >= acceleratorUpgradeCost) {
           setCryptoBalance(prev => prev - acceleratorUpgradeCost);
           setAcceleratorUpgradeLevel(prev => prev + 1);
           setAcceleratorMultiplier(prev => prev * 1.2);
           setAcceleratorUpgradeCost(Math.floor(acceleratorUpgradeCost * 2));
-        } else console.log("Not enough crypto for Accelerator Upgrade!");
+        } else {
+          console.log("Insufficient crypto for Accelerator Upgrade.");
+        }
       };
 
       const handleHireManager = () => {
-        if(cryptoBalance >= autoMinerCost){
+        if (cryptoBalance >= autoMinerCost) {
           setCryptoBalance(prev => prev - autoMinerCost);
           setAutoMinerCount(prev => prev + 1);
           setAutoMinerCost(Math.floor(autoMinerCost * 2.5));
           setMissionManager(prev => {
-            if(!prev.completed){
+            if (!prev.completed) {
               const newProgress = prev.progress + 1;
-              if(newProgress >= prev.goal){
+              if (newProgress >= prev.goal) {
                 setCryptoBalance(old => old + prev.reward);
-                return {...prev, progress: newProgress, completed: true};
+                return { ...prev, progress: newProgress, completed: true };
               }
-              return {...prev, progress: newProgress};
+              return { ...prev, progress: newProgress };
             }
             return prev;
           });
-        } else console.log("Not enough crypto to hire a manager!");
+        } else {
+          console.log("Insufficient crypto to hire a manager.");
+        }
       };
 
       const handlePrestige = () => {
-        if(cryptoBalance >= prestigeThreshold){
+        if (cryptoBalance >= prestigeThreshold) {
           const reward = Math.floor(cryptoBalance / prestigeThreshold);
           setPrestigePoints(prev => prev + reward);
           const newBonus = 1.0 + ((prestigePoints + reward) * 0.25);
           setPrestigeBonus(newBonus);
-          let totalRate = cryptoPerSecond * aiMultiplier * neuralMultiplier * acceleratorMultiplier * newBonus;
+          const totalRate = cryptoPerSecond * aiMultiplier * neuralMultiplier * acceleratorMultiplier * newBonus;
           setPrestigeThreshold(Math.floor(prestigeThreshold * (1.5 + (totalRate - 1) * 0.1)));
-          // Reset key variables
+          // Reset game variables
           setCryptoBalance(0);
           setCryptoPerSecond(1);
           setUpgradeCost(10);
@@ -436,19 +459,21 @@
           setAdvancedRigLevel(0);
           setManualClicksTotal(0);
           setCurrentManualTierIndex(0);
-        } else console.log("Not enough satoshis to prestige yet!");
+        } else {
+          console.log("Not enough satoshis to prestige yet!");
+        }
       };
 
       return (
         <div className="terminal">
-          <h1>Bitcoin Mining Terminal</h1>
+          <h1>Hacker Terminal Bitcoin Miner</h1>
           <div className="stats">
             <pre>
 Balance: {formatBalance(cryptoBalance)}
 Income Rate: {cryptoPerSecond} satoshis/sec
 AI Multiplier: x{aiMultiplier.toFixed(2)}
 Advanced Rig Level: {advancedRigLevel}
-Neural Interface Level: {neuralUpgradeLevel} (x{neuralMultiplier.toFixed(2)})
+Neural Interface: Level {neuralUpgradeLevel} (x{neuralMultiplier.toFixed(2)})
 Quantum Amplifier Level: {quantumAmplifierLevel}
 Accelerator Multiplier: x{acceleratorMultiplier.toFixed(2)}
 Auto Miners: {autoMinerCount}
@@ -456,11 +481,14 @@ Prestige: {prestigePoints} (Bonus: x{prestigeBonus.toFixed(2)})
 Manual Click Reward: +{manualMineGain}
             </pre>
           </div>
-          <button className="mine-button" onClick={handleMine}>
+          <button 
+            className="mine-button"
+            onClick={handleMine}
+          >
             <span>₿</span>
           </button>
           <div className="controls">
-            <button onClick={handleUpgrade}>Hardware Upgrade (${upgradeCost})</button>
+            <button onClick={handleUpgrade}>Upgrade (${upgradeCost})</button>
             <button onClick={handleAiUpgrade}>AI Upgrade (${aiUpgradeCost})</button>
             <button onClick={handleAdvancedRig}>Advanced Rig (${advancedRigCost})</button>
             <button onClick={handleSoftwareUpgrade}>Software Upgrade (${softwareUpgradeCost})</button>
@@ -475,96 +503,14 @@ Manual Click Reward: +{manualMineGain}
               {manualClicksTotal - (currentManualTierIndex > 0 ? getTierThreshold(currentManualTierIndex - 1) : 0)} / {getTierThreshold(currentManualTierIndex) - (currentManualTierIndex > 0 ? getTierThreshold(currentManualTierIndex - 1) : 0)} clicks (Reward: x{getTierReward(currentManualTierIndex)})
             </p>
           </div>
-          <div className={achievementBlink ? "achievement-blink" : ""}>
+          <div className={`achievements fade ${achievementVisible ? "show" : ""}`}>
             {achievementMessage}
           </div>
         </div>
       );
     }
 
-    // --- Three.js Background ---
-    function initThree() {
-      const canvas = document.getElementById('three-bg');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 5;
-      
-      // Create a particle system using BufferGeometry
-      const particleCount = 1000;
-      const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-      for (let i = 0; i < particleCount; i++) {
-        positions[i * 3] = THREE.MathUtils.randFloatSpread(20);
-        positions[i * 3 + 1] = THREE.MathUtils.randFloatSpread(20);
-        positions[i * 3 + 2] = THREE.MathUtils.randFloatSpread(20);
-      }
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      
-      const particleMaterial = new THREE.PointsMaterial({
-        color: 0x00ff00,
-        size: 0.1,
-        transparent: true,
-        opacity: 0.8
-      });
-      const particleSystem = new THREE.Points(geometry, particleMaterial);
-      scene.add(particleSystem);
-      
-      function animate() {
-        requestAnimationFrame(animate);
-        particleSystem.rotation.y += 0.0005;
-        renderer.render(scene, camera);
-      }
-      animate();
-      
-      window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-      });
-    }
-    initThree();
-
-    // --- News Ticker Component ---
-    function NewsTicker() {
-      const headlines = [
-        "Bitcoin surges as hackers praise new mining game!",
-        "New study: Terminal games boost crypto IQ",
-        "Elon Musk tweets about Bitcoin mining terminals",
-        "Crypto enthusiasts celebrate blockchain breakthroughs",
-        "Underground miners reveal secret Bitcoin tips",
-        "Bitcoin price predicted to hit new highs!",
-        "Hacker terminal game sparks cryptocurrency craze",
-        "Insider tips: How to mine Bitcoin in your basement",
-        "Virtual currency revolutionizes gaming industry",
-        "Bitcoin mining game rewards top players with NFTs",
-        "Digital gold rush: Bitcoin mining terminal trending",
-        "Crypto news: Terminal aesthetics take over the net",
-        "Secret society of Bitcoin miners exposed!",
-        "Next-gen mining game set to change crypto landscape",
-        "Bitcoin headlines: Terminal game breaks records!"
-      ];
-      return (
-        <div className="news-ticker">
-          <div className="news-content">
-            {headlines.join("  ••  ")}
-          </div>
-        </div>
-      );
-    }
-
-    function App() {
-      return (
-        <>
-          <Game />
-          <NewsTicker />
-          <button className="save-btn" onClick={() => alert("Game auto-saved every 5 seconds!")}>Save Game</button>
-        </>
-      );
-    }
-
-    ReactDOM.render(<App />, document.getElementById('root'));
+    ReactDOM.render(<Game />, document.getElementById('root'));
   </script>
 </body>
 </html>
