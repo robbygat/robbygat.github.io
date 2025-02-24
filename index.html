@@ -623,10 +623,11 @@
     });
   </script>
   
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs (if needed) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <script>
+    // Replace with your own Firebase config if needed
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -643,6 +644,27 @@
   <script type="text/babel">
     const { useState, useEffect } = React;
     
+    // AdBanner component for your A-ADS code
+    const AdBanner = () => {
+      return (
+        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+          <iframe
+            data-aa="2382909"
+            src="//ad.a-ads.com/2382909?size=468x60"
+            style={{
+              width: '468px',
+              height: '60px',
+              border: '0px',
+              padding: '0',
+              overflow: 'hidden',
+              backgroundColor: 'transparent'
+            }}
+            title="Ad Banner"
+          ></iframe>
+        </div>
+      );
+    };
+
     // Header Component (with added Poker and Game buttons)
     const Header = ({ toggleTheme, isDarkMode }) => (
       <div className="header">
@@ -801,6 +823,7 @@
         e.preventDefault();
         const { name, email, message } = formData;
         if (name && email && message) {
+          // Here you’d handle sending the data to the server or Firebase
           setFormData({ name: '', email: '', message: '' });
           setSuccess(true);
           setTimeout(() => setSuccess(false), 5000);
@@ -854,6 +877,7 @@
     // App Component
     const App = () => {
       const [isDarkMode, setIsDarkMode] = useState(false);
+      
       useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
@@ -861,16 +885,22 @@
           document.body.classList.toggle('dark-mode', savedTheme === 'dark');
         }
       }, []);
+      
       const toggleTheme = () => {
         setIsDarkMode(!isDarkMode);
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
       };
+      
       return (
         <>
+          {/* Place the AdBanner at the very top */}
+          <AdBanner />
+
           <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
           <h1>robbygat© by Robert Gatzke</h1>
           <Tagline />
+
           <div className="content" data-aos="fade-up">
             <div className="image-container" data-aos="zoom-in">
               <img 
