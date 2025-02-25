@@ -7,34 +7,22 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 0;
-      overflow: hidden;
-    }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1; /* Background behind content */
-    }
-    #content {
-      position: relative;
-      z-index: 1;
-      padding-top: 50px;
-      color: #000; /* Black text for contrast */
+      margin-top: 50px;
+      background: #fff; /* Plain white background */
     }
     button {
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
       margin: 5px;
-      background: rgba(255, 255, 255, 0.8);
+      background: #f2f2f2;
       border: 1px solid #000;
       border-radius: 5px;
     }
     #status, #balance, #transactions {
       margin-top: 20px;
       font-size: 18px;
-      background: rgba(255, 255, 255, 0.8);
+      background: #f9f9f9;
       padding: 10px;
       border-radius: 5px;
       display: inline-block;
@@ -53,77 +41,25 @@
   </style>
   <!-- Include ethers.js -->
   <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
-  <!-- Include Three.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
-  <div id="content">
-    <h1>ETHERNET</h1>
-    <button id="connectButton">Connect MetaMask Wallet</button>
-    <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
-    
-    <div id="status">Not connected</div>
-    <div id="balance"></div>
-    <div id="transactions"></div>
-  </div>
+  <h1>ETHERNET</h1>
+  <button id="connectButton">Connect MetaMask Wallet</button>
+  <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+  
+  <div id="status">Not connected</div>
+  <div id="balance"></div>
+  <div id="transactions"></div>
 
   <script>
-    // Three.js Background
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const particles = new THREE.Group();
-    const particleCount = 100;
-    const geometry = new THREE.SphereGeometry(0.1, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-
-    for (let i = 0; i < particleCount; i++) {
-      const particle = new THREE.Mesh(geometry, material);
-      particle.position.set(
-        Math.random() * 100 - 50,
-        Math.random() * 100 - 50,
-        Math.random() * 100 - 50
-      );
-      particle.velocity = new THREE.Vector3(
-        (Math.random() - 0.5) * 0.1,
-        (Math.random() - 0.5) * 0.1,
-        (Math.random() - 0.5) * 0.1
-      );
-      particles.add(particle);
-    }
-    scene.add(particles);
-    camera.position.z = 50;
-
-    function animate() {
-      requestAnimationFrame(animate);
-      particles.children.forEach(particle => {
-        particle.position.add(particle.velocity);
-        if (particle.position.x > 50 || particle.position.x < -50) particle.velocity.x *= -1;
-        if (particle.position.y > 50 || particle.position.y < -50) particle.velocity.y *= -1;
-        if (particle.position.z > 50 || particle.position.z < -50) particle.velocity.z *= -1;
-      });
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // Wallet Logic
     const connectButton = document.getElementById('connectButton');
     const disconnectButton = document.getElementById('disconnectButton');
     const statusDiv = document.getElementById('status');
     const balanceDiv = document.getElementById('balance');
     const transactionsDiv = document.getElementById('transactions');
     
-    const ETHERSCAN_API_KEY = "0172ddf22ebd48dfa964f245aa01983f"; // Replace if invalid
     let currentAccount = null;
+    let provider = null;
 
     async function connectWallet() {
       if (typeof window.ethereum === 'undefined') {
@@ -133,18 +69,23 @@
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Ensure we're on Ethereum mainnet (chainId 1)
+        const network = await provider.getNetwork();
+        if (network.chainId !== 1) {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x1' }],
+          });
+        }
+
         statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
 
-        // Ensure mainnet
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x1' }], // Mainnet chain ID
-        });
-
-        fetchBalanceWithEthers(currentAccount);
-        fetchTransactionsWithEthers(currentAccount);
+        fetchBalance();
+        fetchTransactions();
       } catch (error) {
         console.error('Connection error:', error.message);
         statusDiv.innerText = `Connection failed: ${error.message}`;
@@ -153,6 +94,7 @@
 
     function disconnectWallet() {
       currentAccount = null;
+      provider = null;
       statusDiv.innerText = 'Not connected';
       balanceDiv.innerHTML = '';
       transactionsDiv.innerHTML = '';
@@ -160,12 +102,10 @@
       disconnectButton.style.display = 'none';
     }
 
-    async function fetchBalanceWithEthers(address) {
+    async function fetchBalance() {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const network = await provider.getNetwork();
-        if (network.chainId !== 1) throw new Error('Please switch to Ethereum Mainnet in MetaMask');
-        const balance = await provider.getBalance(address);
+        if (!provider) throw new Error('Wallet not connected');
+        const balance = await provider.getBalance(currentAccount);
         const balanceInEth = ethers.utils.formatEther(balance);
         balanceDiv.innerHTML = `<p>Balance: ${parseFloat(balanceInEth).toFixed(4)} ETH</p>`;
       } catch (error) {
@@ -174,23 +114,46 @@
       }
     }
 
-    async function fetchTransactionsWithEthers(address) {
+    async function fetchTransactions() {
       try {
-        const etherscanProvider = new ethers.providers.EtherscanProvider("homestead", ETHERSCAN_API_KEY);
-        const history = await etherscanProvider.getHistory(address);
-        const sortedHistory = history.sort((a, b) => b.blockNumber - a.blockNumber).slice(0, 10);
-        
+        if (!provider) throw new Error('Wallet not connected');
+        // Fetch the latest block number
+        const latestBlock = await provider.getBlockNumber();
+        // Rough estimate: look back ~1000 blocks (adjust as needed)
+        const fromBlock = Math.max(0, latestBlock - 1000);
+
+        // Use ethers.js to filter events for transactions involving the account
+        const sentTx = await provider.getLogs({
+          fromBlock,
+          toBlock: 'latest',
+          address: null,
+          topics: [ethers.utils.id('Transfer(address,address,uint256)'), null, ethers.utils.hexZeroPad(currentAccount, 32)],
+        });
+
+        const receivedTx = await provider.getLogs({
+          fromBlock,
+          toBlock: 'latest',
+          address: null,
+          topics: [ethers.utils.id('Transfer(address,address,uint256)'), ethers.utils.hexZeroPad(currentAccount, 32)],
+        });
+
+        // Combine and process transactions
+        const allTx = [...sentTx, ...receivedTx]
+          .sort((a, b) => b.blockNumber - a.blockNumber)
+          .slice(0, 10);
+
         let txHTML = '<h3>Last 10 Transactions:</h3><ul>';
-        if (sortedHistory.length === 0) {
-          txHTML += '<li>No transactions found.</li>';
+        if (allTx.length === 0) {
+          txHTML += '<li>No recent transactions found.</li>';
         } else {
-          sortedHistory.forEach(tx => {
+          for (const log of allTx) {
+            const tx = await provider.getTransaction(log.transactionHash);
             txHTML += `<li>
               <strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
               <strong>To:</strong> ${tx.to ? tx.to.slice(0, 6) + '...' + tx.to.slice(-4) : 'Contract Creation'} <br>
               <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(4)} ETH
             </li>`;
-          });
+          }
         }
         txHTML += '</ul>';
         transactionsDiv.innerHTML = txHTML;
