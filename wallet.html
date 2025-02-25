@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ETHERNET 2</title>
+  <title>ETHERNET</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Futura&display=swap');
+    
     body {
       font-family: 'Futura', Arial, sans-serif;
+      text-align: center;
       margin: 0;
       padding: 20px;
       background: #000;
@@ -22,7 +24,6 @@
       letter-spacing: 2px;
       color: #fff;
       text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-      margin-bottom: 20px;
     }
     button {
       padding: 12px 25px;
@@ -40,34 +41,36 @@
       color: #000;
     }
     #status, #balance {
+      margin-top: 25px;
       font-size: 1.2rem;
       background: rgba(255, 255, 255, 0.1);
       padding: 15px;
       border-radius: 10px;
       max-width: 600px;
       width: 90%;
-      margin: 10px auto;
     }
     .content-container {
       display: flex;
       justify-content: center;
       gap: 20px;
-      width: 90%;
+      margin-top: 25px;
       max-width: 1200px;
-      margin-top: 20px;
+      width: 90%;
+      flex-wrap: wrap;
     }
     #transactions, #nfts {
-      font-size: 1rem;
-      flex: 1;
+      font-size: 1.2rem;
+      width: 100%;
+      max-width: 580px;
     }
     #transactions h3, #nfts h3 {
       margin: 0 0 10px 0;
     }
-    #transactions .transaction-box, #nfts .nft-box {
+    #transactions .transaction-box {
       background: rgba(255, 255, 255, 0.15);
       padding: 15px;
       border-radius: 10px;
-      max-height: 400px;
+      max-height: 300px;
       overflow-y: auto;
       border: 1px solid #fff;
     }
@@ -79,14 +82,24 @@
     #transactions li {
       background: rgba(255, 255, 255, 0.1);
       margin: 10px 0;
-      padding: 10px;
+      padding: 15px;
       border-radius: 8px;
       text-align: left;
+    }
+    #nfts .nft-box {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+      max-height: 500px;
+      overflow-y: auto;
+      border: 1px solid #fff;
     }
     #nfts .nft-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
+      padding: 0;
+      margin: 0;
     }
     #nfts .nft-item {
       background: rgba(255, 255, 255, 0.1);
@@ -99,24 +112,28 @@
       height: auto;
       border-radius: 5px;
     }
-    #nfts .nft-name {
+    #nfts .nft-item p {
+      margin: 5px 0 0;
       font-size: 0.9rem;
-      margin-top: 5px;
       word-wrap: break-word;
     }
-    .transaction-box::-webkit-scrollbar, .nft-box::-webkit-scrollbar {
+    /* Scrollbar styling */
+    #transactions .transaction-box::-webkit-scrollbar,
+    #nfts .nft-box::-webkit-scrollbar {
       width: 8px;
     }
-    .transaction-box::-webkit-scrollbar-thumb, .nft-box::-webkit-scrollbar-thumb {
+    #transactions .transaction-box::-webkit-scrollbar-thumb,
+    #nfts .nft-box::-webkit-scrollbar-thumb {
       background: #fff;
       border-radius: 4px;
     }
-    .transaction-box::-webkit-scrollbar-track, .nft-box::-webkit-scrollbar-track {
+    #transactions .transaction-box::-webkit-scrollbar-track,
+    #nfts .nft-box::-webkit-scrollbar-track {
       background: #000;
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script src="https://unpkg.com/alchemy-sdk@latest/dist/alchemy-sdk.min.js"></script>
+  <script src="https://unpkg.com/moralis@latest/dist/moralis.js"></script>
 </head>
 <body>
   <h1>ETHERNET</h1>
@@ -139,7 +156,7 @@
     const nftsDiv = document.getElementById('nfts');
     
     const ETHERSCAN_API_KEY = "XSTYJK3VWDUT7JSN6HFJIB4I3S93W2SC3Y";
-    const ALCHEMY_API_KEY = "VXrHTj2zUSF434kdaJEv6ka1Kd_ye8cF"; // Using your newer key
+    const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImM5MDM2YjlkLTM4MWUtNDBiMC05NDFhLTE3M2QyNmI0ODBmNyIsIm9yZ0lkIjoiNDMzMzk5IiwidXNlcklkIjoiNDQ1ODIxIiwidHlwZUlkIjoiNzViN2NiNDUtZWNkNS00YWI2LTg5N2MtMmE0ZWIzN2M0Zjc1IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDA0NTAxMjEsImV4cCI6NDg5NjIxMDEyMX0.SCmVH01gIEJaffB-1gUvNTaix6VQGo_xfqvoo9CtkD0";
     
     let provider;
     let currentAccount = null;
@@ -157,6 +174,7 @@
         disconnectButton.style.display = 'inline-block';
 
         provider = new ethers.providers.Web3Provider(window.ethereum);
+
         await fetchBalance();
         await fetchTransactions();
         await fetchNFTs();
@@ -185,7 +203,7 @@
         balanceDiv.innerHTML = `<p>Balance: ${parseFloat(balanceInEth).toFixed(6)} ETH</p>`;
       } catch (error) {
         console.error('Error fetching balance:', error);
-        balanceDiv.innerHTML = `<p>Unable to fetch balance.</p>`;
+        balanceDiv.innerHTML = `<p>Unable to fetch balance. Please try again.</p>`;
       }
     }
 
@@ -209,35 +227,37 @@
         transactionsDiv.innerHTML = txHTML;
       } catch (error) {
         console.error('Error fetching transactions:', error);
-        transactionsDiv.innerHTML = `<p>Unable to fetch transactions.</p>`;
+        transactionsDiv.innerHTML = `<p>Unable to fetch transactions. Check API key or network.</p>`;
       }
     }
 
     async function fetchNFTs() {
       if (!currentAccount) return;
       try {
-        const alchemy = new Alchemy({ apiKey: ALCHEMY_API_KEY, network: Network.ETH_MAINNET });
-        const nfts = await alchemy.nft.getNftsForOwner(currentAccount);
-        const ownedNfts = nfts.ownedNfts;
-
-        if (ownedNfts.length === 0) {
-          nftsDiv.innerHTML = '<h3>Your NFTs:</h3><div class="nft-box"><p>No NFTs found in this wallet.</p></div>';
-          return;
-        }
+        await Moralis.start({ apiKey: MORALIS_API_KEY });
+        const response = await Moralis.EvmApi.nft.getWalletNFTs({
+          chain: 'eth',
+          address: currentAccount,
+          limit: 50, // Adjust based on your needs or Moralis plan
+        });
+        const nfts = response.result;
 
         let nftHTML = '<h3>Your NFTs:</h3><div class="nft-box"><div class="nft-grid">';
-        ownedNfts.forEach(nft => {
-          const image = nft.media[0]?.gateway || 'https://via.placeholder.com/100';
-          nftHTML += `<div class="nft-item">
-            <img src="${image}" alt="${nft.title}">
-            <div class="nft-name">${nft.title || 'Unnamed'}</div>
-          </div>`;
+        nfts.forEach(nft => {
+          const metadata = nft.metadata ? JSON.parse(nft.metadata) : {};
+          const image = metadata.image || 'https://via.placeholder.com/100';
+          const name = metadata.name || 'Unnamed NFT';
+          nftHTML += `
+            <div class="nft-item">
+              <img src="${image}" alt="${name}">
+              <p>${name}</p>
+            </div>`;
         });
         nftHTML += '</div></div>';
         nftsDiv.innerHTML = nftHTML;
       } catch (error) {
-        console.error('Detailed NFT fetch error:', error.message, error.stack);
-        nftsDiv.innerHTML = `<h3>Your NFTs:</h3><div class="nft-box"><p>Unable to fetch NFTs: ${error.message}</p></div>`;
+        console.error('Error fetching NFTs:', error);
+        nftsDiv.innerHTML = `<p>Unable to fetch NFTs. Check API key or network.</p>`;
       }
     }
 
