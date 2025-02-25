@@ -1,325 +1,198 @@
+<!-- wallet.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ethereum Wallet</title>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <!-- Tailwind CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <!-- Ethers.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-  <!-- Three.js for Background -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <style>
-    /* Base styles */
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      overflow-x: hidden;
-      background: linear-gradient(135deg, #1e0533, #0f0a1a);
-    }
-    #canvas-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.7;
-    }
-    .container {
-      position: relative;
-      z-index: 1;
-      padding: 2rem;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 2.5rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-      transition: all 0.4s ease;
-      margin-bottom: 2rem;
-    }
-    .glass-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-    }
-    .btn {
-      background: linear-gradient(90deg, #ff6f61, #de4d86);
-      padding: 0.75rem 2.5rem;
-      border: none;
-      border-radius: 9999px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-    }
-    .btn:hover {
-      background: linear-gradient(90deg, #de4d86, #ff6f61);
-      transform: scale(1.1);
-    }
-    .btn:focus {
-      outline: none;
-    }
-    .btn::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s ease, height 0.6s ease;
-    }
-    .btn:active::after {
-      width: 200px;
-      height: 200px;
-    }
-    .info-text {
-      background: rgba(0, 0, 0, 0.25);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-top: 1.5rem;
-    }
-    .animate-pulse {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 0.8; }
-      50% { opacity: 1; }
-      100% { opacity: 0.8; }
-    }
-    .spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #fff;
-      border-top: 3px solid #ff6f61;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-left: 1rem;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .ad-container {
-      text-align: center;
-      margin: 2rem 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETHERNET - Wallet</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
+    <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.1/dist/umd/index.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a0933 0%, #2e1b5f 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(147, 112, 219, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #9370DB; }
+            to { text-shadow: 0 0 20px #BA55D3; }
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #9370DB, #BA55D3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(147, 112, 219, 0.6);
+        }
+
+        #walletAddress {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            word-break: break-all;
+            backdrop-filter: blur(5px);
+        }
+
+        .data-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ad-section {
+            margin-top: 40px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+    </style>
 </head>
 <body>
-  <!-- Three.js Background -->
-  <canvas id="canvas-bg"></canvas>
+    <div class="container">
+        <div class="header">
+            <h1>ETHERNET</h1>
+        </div>
 
-  <!-- Top Advertisement -->
-  <div class="ad-container">
-    <iframe data-aa="2382909" src="//ad.a-ads.com/2382909?size=468x60" style="width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;"></iframe>
-  </div>
+        <div class="button-container">
+            <a href="index.html" class="btn">Home</a>
+            <button onclick="connectWallet()" class="btn" id="connectBtn">Connect Wallet</button>
+        </div>
 
-  <div class="container">
-    <h1 class="text-5xl font-bold text-center mb-12 animate-pulse">Ethereum Wallet</h1>
+        <div id="walletAddress"></div>
 
-    <!-- Wallet Creation Section -->
-    <div class="glass-card" id="walletCreationCard">
-      <h2 class="text-3xl font-semibold mb-6">Create Wallet</h2>
-      <button id="createWalletBtn" class="btn">
-        Generate Wallet
-        <span id="createSpinner" class="spinner"></span>
-      </button>
-      <div id="walletDetails" class="hidden info-text mt-4">
-        <p><strong>Address:</strong> <span id="walletAddress" class="break-all text-sm"></span></p>
-        <p class="mt-2">
-          <strong>Seed Phrase:</strong><br>
-          <textarea id="seedPhrase" class="w-full mt-2 p-3 bg-gray-900 rounded-lg text-sm" readonly rows="4"></textarea>
-        </p>
-        <p class="mt-2"><strong>Balance:</strong> <span id="walletBalance">0</span> ETH</p>
-        <p class="mt-2"><strong>ETH Price:</strong> $<span id="ethPrice">0</span></p>
-      </div>
+        <div class="data-section">
+            <h2>Data Source</h2>
+            <p>Connected to Google Sheets Database:</p>
+            <a href="https://docs.google.com/spreadsheets/d/177NWDwpgC56xtQczS-6UGMmNiNBWE8WclKqEVQ4608I/edit?gid=0#gid=0" 
+               target="_blank" 
+               style="color: #BA55D3">View Spreadsheet</a>
+        </div>
+
+        <div class="ad-section">
+            <iframe data-aa='2382909' 
+                    src='//ad.a-ads.com/2382909?size=468x60' 
+                    style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'>
+            </iframe>
+        </div>
+
+        <footer>
+            <p>Operating on Goerli Test Network</p>
+        </footer>
     </div>
 
-    <!-- MetaMask Connection Section -->
-    <div class="glass-card" id="metaMaskCard">
-      <h2 class="text-3xl font-semibold mb-6">Connect MetaMask</h2>
-      <button id="connectMetaMaskBtn" class="btn">
-        Connect
-        <span id="connectSpinner" class="spinner"></span>
-      </button>
-      <div id="metaMaskDetails" class="hidden info-text mt-4">
-        <p><strong>Address:</strong> <span id="metaMaskAddress" class="break-all text-sm"></span></p>
-        <input type="number" step="0.001" id="metaSendAmount" class="w-full mt-3 p-3 bg-gray-900 rounded-lg text-white placeholder-gray-400" placeholder="Amount in ETH">
-        <button id="metaSendBtn" class="btn mt-4">
-          Send to Wallet
-          <span id="sendSpinner" class="spinner"></span>
-        </button>
-        <p id="metaTxStatus" class="mt-3 text-sm"></p>
-      </div>
-    </div>
+    <script>
+        let provider;
+        let web3;
+        const walletAddressDiv = document.getElementById('walletAddress');
+        const connectBtn = document.getElementById('connectBtn');
 
-    <!-- Bottom Advertisement -->
-    <div class="ad-container">
-      <iframe data-aa="2382909" src="//ad.a-ads.com/2382909?size=468x60" style="width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;"></iframe>
-    </div>
+        async function connectWallet() {
+            try {
+                provider = new WalletConnectProvider({
+                    rpc: {
+                        5: "https://goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID" // Replace with your Infura ID
+                    },
+                    chainId: 5, // Goerli network
+                });
 
-    <!-- Return Home Button -->
-    <div class="text-center mt-12">
-      <button class="btn" onclick="window.location.href='index.html'">Return Home</button>
-    </div>
-  </div>
+                // Enable session (triggers QR Code modal)
+                await provider.enable();
+                
+                // Create Web3 instance
+                web3 = new Web3(provider);
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      /* ===== Three.js Animated Background ===== */
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({
-        canvas: document.getElementById('canvas-bg'),
-        alpha: true
-      });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      const geometry = new THREE.TorusKnotGeometry(5, 1.5, 100, 16);
-      const material = new THREE.MeshBasicMaterial({ color: 0xff6f61, wireframe: true });
-      const torus = new THREE.Mesh(geometry, material);
-      scene.add(torus);
-      camera.position.z = 15;
-      function animate() {
-        requestAnimationFrame(animate);
-        torus.rotation.x += 0.01;
-        torus.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      animate();
-      window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-      });
+                // Get accounts
+                const accounts = await web3.eth.getAccounts();
+                
+                // Display address
+                walletAddressDiv.innerHTML = `Connected Wallet: ${accounts[0]}`;
+                connectBtn.textContent = "Disconnect";
+                connectBtn.onclick = disconnectWallet;
 
-      /* ===== Ethereum & MetaMask Configuration ===== */
-      const INFURA_PROJECT_ID = "0172ddf22ebd48dfa964f245aa01983f";
-      const provider = new ethers.providers.InfuraProvider("mainnet", INFURA_PROJECT_ID);
-      let websiteWallet = null;
-      let metaMaskSigner = null;
+                // Subscribe to accounts change
+                provider.on("accountsChanged", (accounts) => {
+                    walletAddressDiv.innerHTML = `Connected Wallet: ${accounts[0]}`;
+                });
 
-      // Helper: Toggle spinner visibility by element id
-      function toggleSpinner(id, show) {
-        document.getElementById(id).style.display = show ? "inline-block" : "none";
-      }
+                // Subscribe to chain change
+                provider.on("chainChanged", (chainId) => {
+                    console.log(`Chain changed to ${chainId}`);
+                });
 
-      /* ===== Create Wallet Functionality ===== */
-      const createWalletBtn = document.getElementById("createWalletBtn");
-      createWalletBtn.addEventListener("click", async () => {
-        toggleSpinner("createSpinner", true);
-        try {
-          // Generate and connect a random wallet
-          websiteWallet = ethers.Wallet.createRandom().connect(provider);
-          document.getElementById("walletAddress").textContent = websiteWallet.address;
-          document.getElementById("seedPhrase").value = websiteWallet.mnemonic.phrase;
-          document.getElementById("walletDetails").classList.remove("hidden");
-          await updateBalance();
-          await updateEthPrice();
-        } catch (err) {
-          console.error("Wallet creation error:", err);
-          alert(`Failed to create wallet: ${err.message}`);
-        } finally {
-          toggleSpinner("createSpinner", false);
+                // Subscribe to disconnect
+                provider.on("disconnect", (code, reason) => {
+                    disconnectWallet();
+                });
+
+            } catch (error) {
+                console.error("Connection error:", error);
+                walletAddressDiv.innerHTML = "Failed to connect wallet";
+            }
         }
-      });
 
-      /* ===== Connect MetaMask Functionality ===== */
-      const connectMetaMaskBtn = document.getElementById("connectMetaMaskBtn");
-      connectMetaMaskBtn.addEventListener("click", async () => {
-        toggleSpinner("connectSpinner", true);
-        if (!window.ethereum) {
-          alert("MetaMask not detected! Please install MetaMask.");
-          toggleSpinner("connectSpinner", false);
-          return;
+        async function disconnectWallet() {
+            if (provider) {
+                await provider.disconnect();
+                walletAddressDiv.innerHTML = "";
+                connectBtn.textContent = "Connect Wallet";
+                connectBtn.onclick = connectWallet;
+            }
         }
-        try {
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-          const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-          metaMaskSigner = web3Provider.getSigner();
-          document.getElementById("metaMaskAddress").textContent = accounts[0];
-          document.getElementById("metaMaskDetails").classList.remove("hidden");
-        } catch (err) {
-          console.error("MetaMask connection error:", err);
-          alert(`Failed to connect MetaMask: ${err.message}`);
-        } finally {
-          toggleSpinner("connectSpinner", false);
-        }
-      });
 
-      /* ===== Send Transaction from MetaMask ===== */
-      const metaSendBtn = document.getElementById("metaSendBtn");
-      metaSendBtn.addEventListener("click", async () => {
-        if (!metaMaskSigner || !websiteWallet) {
-          alert("Please connect MetaMask and create a wallet first!");
-          return;
+        // Check if already connected
+        if (localStorage.getItem('walletconnect')) {
+            connectWallet();
         }
-        const amount = document.getElementById("metaSendAmount").value;
-        if (!amount || isNaN(amount) || Number(amount) <= 0) {
-          alert("Please enter a valid ETH amount!");
-          return;
-        }
-        toggleSpinner("sendSpinner", true);
-        const txStatus = document.getElementById("metaTxStatus");
-        try {
-          // Construct and send transaction using MetaMask signer
-          const tx = {
-            to: websiteWallet.address,
-            value: ethers.utils.parseEther(amount),
-            gasLimit: 21000
-          };
-          txStatus.textContent = "Sending transaction...";
-          const txResponse = await metaMaskSigner.sendTransaction(tx);
-          const receipt = await txResponse.wait();
-          txStatus.textContent = `Success! Tx Hash: ${receipt.transactionHash}`;
-          // Update balance after a short delay
-          setTimeout(updateBalance, 5000);
-        } catch (err) {
-          console.error("Transaction error:", err);
-          txStatus.textContent = `Error: ${err.message}`;
-        } finally {
-          toggleSpinner("sendSpinner", false);
-        }
-      });
-
-      /* ===== Helper: Update Wallet Balance ===== */
-      async function updateBalance() {
-        if (!websiteWallet) return;
-        try {
-          const balance = await provider.getBalance(websiteWallet.address);
-          document.getElementById("walletBalance").textContent = ethers.utils.formatEther(balance).slice(0, 8);
-        } catch (err) {
-          console.error("Balance update error:", err);
-        }
-      }
-
-      /* ===== Helper: Update ETH Price ===== */
-      async function updateEthPrice() {
-        try {
-          const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
-          const data = await response.json();
-          document.getElementById("ethPrice").textContent = data.ethereum.usd.toLocaleString();
-        } catch (err) {
-          console.error("ETH price error:", err);
-        }
-      }
-      
-      // Initial ETH price fetch and auto-update every 15 seconds
-      updateEthPrice();
-      setInterval(updateEthPrice, 15000);
-    });
-  </script>
+    </script>
 </body>
 </html>
