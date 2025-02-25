@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ETHERNET NFT Displayer</title>
+  <title>ETHERNET Wallet Info</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -19,130 +19,163 @@
       margin-top: 20px;
       font-size: 18px;
     }
-    /* Container for the NFT gallery with scroll enabled */
-    #nftContainer {
+    /* Container for the wallet info */
+    #walletInfo {
       margin-top: 30px;
-      max-height: 600px; /* Adjust as needed */
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+    /* Scrollable container for transactions list */
+    #txContainer {
+      max-height: 400px;
       overflow-y: auto;
-      padding: 10px;
-      border: 1px solid #ccc;
+      margin-top: 20px;
+      text-align: left;
     }
-    /* Grid layout for NFTs: 5 columns */
-    #nftGallery {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-gap: 10px;
-    }
-    .nft {
-      border: 1px solid #ccc;
-      padding: 10px;
+    /* Style for each transaction item */
+    .txItem {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      font-size: 14px;
       word-break: break-all;
     }
-    .nft img {
-      max-width: 100%;
-      height: auto;
-    }
   </style>
+  <!-- Include ethers.js from CDN for balance handling -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
 </head>
 <body>
-  <h1>ETHERNET NFT Displayer</h1>
+  <h1>ETHERNET Wallet Info</h1>
   <button id="connectButton">Connect MetaMask Wallet</button>
   <button id="disconnectButton" style="display:none;">Disconnect Wallet</button>
   <div id="status">Not connected</div>
-  <div id="nftContainer">
-    <div id="nftGallery"></div>
+  
+  <div id="walletInfo" style="display:none;">
+    <h2>Wallet Balance: <span id="balance">0</span> ETH</h2>
+    <h3>Recent Transactions (Outgoing):</h3>
+    <div id="txContainer"></div>
   </div>
-
+  
   <script>
-    // Your provided API key for Alchemy (mainnet)
+    // Your provided API key for Alchemy (Ethereum mainnet)
     const API_KEY = "0172ddf22ebd48dfa964f245aa01983f";
-    // Base URL for the Alchemy NFT API on Ethereum mainnet
-    const BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${API_KEY}/getNFTs/`;
+    const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${API_KEY}`;
     
     let currentAccount = null;
-
     const connectButton = document.getElementById('connectButton');
     const disconnectButton = document.getElementById('disconnectButton');
     const statusDiv = document.getElementById('status');
-    const nftGallery = document.getElementById('nftGallery');
-
+    const walletInfoDiv = document.getElementById('walletInfo');
+    const balanceSpan = document.getElementById('balance');
+    const txContainer = document.getElementById('txContainer');
+    
+    // Initialize ethers provider from MetaMask
+    let provider;
+    
     async function connectWallet() {
       if (typeof window.ethereum === 'undefined') {
         statusDiv.innerText = 'MetaMask is not installed!';
         return;
       }
-      
       try {
-        // Request account access
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
         statusDiv.innerText = `Connected: ${currentAccount}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
-        // Fetch and display NFTs for the connected wallet
-        fetchNFTs(currentAccount);
+        walletInfoDiv.style.display = 'block';
+        
+        // Initialize ethers provider using window.ethereum
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        // Fetch balance and transactions
+        fetchBalance();
+        fetchTransactions();
       } catch (error) {
         console.error('Error connecting to MetaMask', error);
         statusDiv.innerText = 'Connection failed!';
       }
     }
-
-    function disconnectWallet() {
-      // Reset the local state
+    
+    async function disconnectWallet() {
       currentAccount = null;
       statusDiv.innerText = 'Not connected';
-      nftGallery.innerHTML = '';
       connectButton.style.display = 'inline-block';
       disconnectButton.style.display = 'none';
+      walletInfoDiv.style.display = 'none';
+      balanceSpan.innerText = '0';
+      txContainer.innerHTML = '';
     }
-
-    async function fetchNFTs(account) {
-      // Construct the API URL for fetching NFTs owned by the account
-      const fetchURL = `${BASE_URL}?owner=${account}`;
+    
+    async function fetchBalance() {
       try {
-        const response = await fetch(fetchURL);
-        const data = await response.json();
-        nftGallery.innerHTML = '';
-        if (data && data.ownedNfts && data.ownedNfts.length > 0) {
-          data.ownedNfts.forEach(nft => {
-            const nftDiv = document.createElement('div');
-            nftDiv.className = 'nft';
-
-            // Extract NFT image URL (handling ipfs:// protocol if necessary)
-            let imgUrl = '';
-            if (nft.metadata && nft.metadata.image) {
-              imgUrl = nft.metadata.image;
-              if (imgUrl.startsWith("ipfs://")) {
-                imgUrl = imgUrl.replace("ipfs://", "https://ipfs.io/ipfs/");
-              }
-            }
-
-            nftDiv.innerHTML = `
-              <h3>${nft.title || 'Unnamed NFT'}</h3>
-              ${imgUrl ? `<img src="${imgUrl}" alt="NFT Image" />` : '<p>No image available</p>'}
-              <p>Contract: ${nft.contract.address}</p>
-            `;
-            nftGallery.appendChild(nftDiv);
-          });
-        } else {
-          nftGallery.innerHTML = '<p>No NFTs found for this wallet.</p>';
-        }
+        const balanceBN = await provider.getBalance(currentAccount);
+        const balanceEth = ethers.utils.formatEther(balanceBN);
+        balanceSpan.innerText = parseFloat(balanceEth).toFixed(4);
       } catch (error) {
-        console.error('Error fetching NFTs:', error);
-        nftGallery.innerHTML = '<p>Error fetching NFTs.</p>';
+        console.error('Error fetching balance:', error);
+        balanceSpan.innerText = 'Error';
       }
     }
-
+    
+    async function fetchTransactions() {
+      // Prepare JSON-RPC request to Alchemy to get asset transfers (recent outgoing transactions)
+      const requestData = {
+        jsonrpc: "2.0",
+        id: 1,
+        method: "alchemy_getAssetTransfers",
+        params: [{
+          fromBlock: "0x0",
+          toBlock: "latest",
+          fromAddress: currentAccount,
+          category: ["external"],
+          maxCount: "0xa" // Fetch up to 10 transactions
+        }]
+      };
+      
+      try {
+        const response = await fetch(ALCHEMY_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        const data = await response.json();
+        txContainer.innerHTML = '';
+        if (data.result && data.result.transfers && data.result.transfers.length > 0) {
+          data.result.transfers.forEach(tx => {
+            const txDiv = document.createElement('div');
+            txDiv.className = 'txItem';
+            // Convert value from hex (in Wei) to ETH
+            const valueWei = ethers.BigNumber.from(tx.value);
+            const valueEth = ethers.utils.formatEther(valueWei);
+            txDiv.innerHTML = `
+              <strong>Txn Hash:</strong> ${tx.hash}<br/>
+              <strong>To:</strong> ${tx.to}<br/>
+              <strong>Value:</strong> ${parseFloat(valueEth).toFixed(4)} ETH<br/>
+              <strong>Block:</strong> ${parseInt(tx.blockNum, 16)}
+            `;
+            txContainer.appendChild(txDiv);
+          });
+        } else {
+          txContainer.innerHTML = '<p>No recent outgoing transactions found.</p>';
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        txContainer.innerHTML = '<p>Error fetching transactions.</p>';
+      }
+    }
+    
     connectButton.addEventListener('click', connectWallet);
     disconnectButton.addEventListener('click', disconnectWallet);
-
-    // Listen for account changes to update the display accordingly
+    
+    // Listen for account changes
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
           currentAccount = accounts[0];
           statusDiv.innerText = `Connected: ${currentAccount}`;
-          fetchNFTs(currentAccount);
+          fetchBalance();
+          fetchTransactions();
         } else {
           disconnectWallet();
         }
