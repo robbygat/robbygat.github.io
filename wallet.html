@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ETHERNET Wallet Info</title>
+  <title>ETHERNET</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin: 20px;
+      margin-top: 50px;
     }
     button {
       padding: 10px 20px;
@@ -15,172 +15,129 @@
       cursor: pointer;
       margin: 5px;
     }
-    #status {
+    #status, #balance, #transactions {
       margin-top: 20px;
       font-size: 18px;
     }
-    /* Container for the wallet info */
-    #walletInfo {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #ccc;
+    ul {
+      list-style-type: none;
+      padding: 0;
     }
-    /* Scrollable container for transactions list */
-    #txContainer {
-      max-height: 400px;
-      overflow-y: auto;
-      margin-top: 20px;
+    li {
+      background: #f2f2f2;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
       text-align: left;
     }
-    /* Style for each transaction item */
-    .txItem {
-      border-bottom: 1px solid #ddd;
-      padding: 10px 0;
-      font-size: 14px;
-      word-break: break-all;
-    }
   </style>
-  <!-- Include ethers.js from CDN for balance handling -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
 </head>
 <body>
-  <h1>ETHERNET Wallet Info</h1>
+  <h1>ETHERNET</h1>
+  <!-- Connect and Disconnect buttons -->
   <button id="connectButton">Connect MetaMask Wallet</button>
-  <button id="disconnectButton" style="display:none;">Disconnect Wallet</button>
+  <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+  
+  <!-- Display connection status, balance, and transactions -->
   <div id="status">Not connected</div>
-  
-  <div id="walletInfo" style="display:none;">
-    <h2>Wallet Balance: <span id="balance">0</span> ETH</h2>
-    <h3>Recent Transactions (Outgoing):</h3>
-    <div id="txContainer"></div>
-  </div>
-  
+  <div id="balance"></div>
+  <div id="transactions"></div>
+
   <script>
-    // Your provided API key for Alchemy (Ethereum mainnet)
-    const API_KEY = "0172ddf22ebd48dfa964f245aa01983f";
-    const ALCHEMY_URL = `https://eth-mainnet.alchemyapi.io/v2/${API_KEY}`;
-    
-    let currentAccount = null;
     const connectButton = document.getElementById('connectButton');
     const disconnectButton = document.getElementById('disconnectButton');
     const statusDiv = document.getElementById('status');
-    const walletInfoDiv = document.getElementById('walletInfo');
-    const balanceSpan = document.getElementById('balance');
-    const txContainer = document.getElementById('txContainer');
+    const balanceDiv = document.getElementById('balance');
+    const transactionsDiv = document.getElementById('transactions');
     
-    // Initialize ethers provider from MetaMask
-    let provider;
+    // Your Etherscan API key (for mainnet)
+    const ETHERSCAN_API_KEY = "0172ddf22ebd48dfa964f245aa01983f";
     
+    let currentAccount = null;
+
+    // Function to connect to MetaMask
     async function connectWallet() {
       if (typeof window.ethereum === 'undefined') {
         statusDiv.innerText = 'MetaMask is not installed!';
         return;
       }
       try {
+        // Request connection to MetaMask wallet
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
         statusDiv.innerText = `Connected: ${currentAccount}`;
+        // Hide the connect button and show the disconnect button
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
-        walletInfoDiv.style.display = 'block';
-        
-        // Initialize ethers provider using window.ethereum
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        // Fetch balance and transactions
-        fetchBalance();
-        fetchTransactions();
+        // Fetch and display wallet balance and transactions
+        fetchBalance(currentAccount);
+        fetchTransactions(currentAccount);
       } catch (error) {
         console.error('Error connecting to MetaMask', error);
         statusDiv.innerText = 'Connection failed!';
       }
     }
-    
-    async function disconnectWallet() {
+
+    // Function to simulate wallet disconnection by clearing displayed data
+    function disconnectWallet() {
       currentAccount = null;
       statusDiv.innerText = 'Not connected';
+      balanceDiv.innerHTML = '';
+      transactionsDiv.innerHTML = '';
       connectButton.style.display = 'inline-block';
       disconnectButton.style.display = 'none';
-      walletInfoDiv.style.display = 'none';
-      balanceSpan.innerText = '0';
-      txContainer.innerHTML = '';
     }
-    
-    async function fetchBalance() {
+
+    // Fetch the ETH balance using the Etherscan API
+    async function fetchBalance(address) {
       try {
-        const balanceBN = await provider.getBalance(currentAccount);
-        const balanceEth = ethers.utils.formatEther(balanceBN);
-        balanceSpan.innerText = parseFloat(balanceEth).toFixed(4);
+        // Etherscan API endpoint for ETH balance (returns balance in wei)
+        const response = await fetch(`https://api.etherscan.io/api?module=account&action=balance&address=${address}&tag=latest&apikey=${ETHERSCAN_API_KEY}`);
+        const data = await response.json();
+        if(data.status === "1") {
+          // Convert wei to ETH
+          const balanceInWei = data.result;
+          const balanceInEth = balanceInWei / 1e18;
+          balanceDiv.innerHTML = `<p>Balance: ${balanceInEth} ETH</p>`;
+        } else {
+          balanceDiv.innerHTML = `<p>Error fetching balance: ${data.message}</p>`;
+        }
       } catch (error) {
         console.error('Error fetching balance:', error);
-        balanceSpan.innerText = 'Error';
+        balanceDiv.innerHTML = `<p>Error fetching balance.</p>`;
       }
     }
-    
-    async function fetchTransactions() {
-      // Prepare JSON-RPC request to Alchemy to get asset transfers (recent outgoing transactions)
-      const requestData = {
-        jsonrpc: "2.0",
-        id: 1,
-        method: "alchemy_getAssetTransfers",
-        params: [{
-          fromBlock: "0x0",
-          toBlock: "latest",
-          fromAddress: currentAccount,
-          category: ["external"],
-          maxCount: "0xa" // Fetch up to 10 transactions
-        }]
-      };
-      
+
+    // Fetch the last 10 transactions using the Etherscan API
+    async function fetchTransactions(address) {
       try {
-        const response = await fetch(ALCHEMY_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        });
+        // Etherscan API endpoint for transaction history (last 10 transactions, sorted descending)
+        const response = await fetch(`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=${ETHERSCAN_API_KEY}`);
         const data = await response.json();
-        txContainer.innerHTML = '';
-        if (data.result && data.result.transfers && data.result.transfers.length > 0) {
-          data.result.transfers.forEach(tx => {
-            const txDiv = document.createElement('div');
-            txDiv.className = 'txItem';
-            // Convert value from hex (in Wei) to ETH
-            const valueWei = ethers.BigNumber.from(tx.value);
-            const valueEth = ethers.utils.formatEther(valueWei);
-            txDiv.innerHTML = `
-              <strong>Txn Hash:</strong> ${tx.hash}<br/>
-              <strong>To:</strong> ${tx.to}<br/>
-              <strong>Value:</strong> ${parseFloat(valueEth).toFixed(4)} ETH<br/>
-              <strong>Block:</strong> ${parseInt(tx.blockNum, 16)}
-            `;
-            txContainer.appendChild(txDiv);
+        if(data.status === "1") {
+          const transactions = data.result;
+          let txHTML = '<h3>Last 10 Transactions:</h3><ul>';
+          transactions.forEach(tx => {
+            txHTML += `<li>
+              <strong>From:</strong> ${tx.from} <br>
+              <strong>To:</strong> ${tx.to} <br>
+              <strong>Value:</strong> ${tx.value / 1e18} ETH
+            </li>`;
           });
+          txHTML += '</ul>';
+          transactionsDiv.innerHTML = txHTML;
         } else {
-          txContainer.innerHTML = '<p>No recent outgoing transactions found.</p>';
+          transactionsDiv.innerHTML = `<p>Error fetching transactions: ${data.message}</p>`;
         }
       } catch (error) {
         console.error('Error fetching transactions:', error);
-        txContainer.innerHTML = '<p>Error fetching transactions.</p>';
+        transactionsDiv.innerHTML = `<p>Error fetching transactions.</p>`;
       }
     }
-    
+
+    // Event listeners for the buttons
     connectButton.addEventListener('click', connectWallet);
     disconnectButton.addEventListener('click', disconnectWallet);
-    
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts.length > 0) {
-          currentAccount = accounts[0];
-          statusDiv.innerText = `Connected: ${currentAccount}`;
-          fetchBalance();
-          fetchTransactions();
-        } else {
-          disconnectWallet();
-        }
-      });
-    }
   </script>
 </body>
 </html>
