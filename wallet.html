@@ -74,14 +74,16 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
       transform: rotate(5deg) scale(1.1);
     }
-    #status {
-      font-size: 1.4rem;
+    #wallet-info {
+      font-size: 1.2rem;
       background: rgba(255, 255, 255, 0.05);
       padding: 15px 30px;
       border-radius: 15px;
       margin: 20px 0;
       box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
       transition: opacity 0.5s ease;
+      word-break: break-all;
+      text-align: center;
     }
     .content-wrapper {
       display: flex;
@@ -189,7 +191,7 @@
     <div class="ad-container">
       <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
     </div>
-    <div id="status">Not connected</div>
+    <div id="wallet-info">Wallet: Not connected</div>
     <div class="content-wrapper">
       <div class="section" id="transactions">
         <h3>Last 10 Transactions</h3>
@@ -205,7 +207,7 @@
   <script>
     const connectButton = document.getElementById('connectButton');
     const disconnectButton = document.getElementById('disconnectButton');
-    const statusDiv = document.getElementById('status');
+    const walletInfoDiv = document.getElementById('wallet-info');
     const transactionsBox = document.getElementById('transactions').querySelector('.box');
     const nftsBox = document.getElementById('nfts').querySelector('.box');
     
@@ -257,22 +259,25 @@
 
     async function connectWallet() {
       if (!window.ethereum) {
-        statusDiv.innerText = 'MetaMask is not installed! Please install it.';
+        walletInfoDiv.innerText = 'MetaMask is not installed! Please install it.';
         return;
       }
       try {
-        console.log('Connecting to MetaMask...');
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        console.log('Attempting to connect to MetaMask...');
+        provider = new ethers.providers.Web3Provider(window.ethereum, "any"); // "any" ensures flexibility across networks
+        const accounts = await provider.send("eth_requestAccounts", []);
         currentAccount = accounts[0];
-        statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
+        console.log('Connected account:', currentAccount);
+
+        // Update wallet info with full address
+        walletInfoDiv.innerText = `Wallet: ${currentAccount}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
 
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        console.log('Chain ID from MetaMask:', chainId);
-        if (chainId !== '0x1') {
-          statusDiv.innerText = 'Please switch to Ethereum Mainnet in MetaMask.';
+        const network = await provider.getNetwork();
+        console.log('Connected chain ID:', network.chainId);
+        if (network.chainId !== 1) { // 1 = Ethereum Mainnet
+          walletInfoDiv.innerText = `Wallet: ${currentAccount} - Please switch to Ethereum Mainnet in MetaMask.`;
           throw new Error('Not on Ethereum Mainnet');
         }
 
@@ -286,15 +291,15 @@
         await fetchTransactions();
         await fetchWalletNFTs();
       } catch (error) {
-        console.error('Error in connectWallet:', error);
-        statusDiv.innerText = `Connection failed: ${error.message}`;
+        console.error('Error connecting to MetaMask:', error);
+        walletInfoDiv.innerText = `Wallet: Connection failed - ${error.message}`;
       }
     }
 
     function disconnectWallet() {
       currentAccount = null;
       provider = null;
-      statusDiv.innerText = 'Not connected';
+      walletInfoDiv.innerText = 'Wallet: Not connected';
       transactionsBox.innerHTML = '';
       nftsBox.innerHTML = '';
       connectButton.style.display = 'inline-block';
@@ -302,7 +307,7 @@
     }
 
     async function fetchTransactions() {
-      if (!currentAccount) return;
+      if (!currentAccount || !provider) return;
       try {
         const etherscanProvider = new ethers.providers.EtherscanProvider("homestead", ETHERSCAN_API_KEY);
         const history = await etherscanProvider.getHistory(currentAccount);
@@ -358,15 +363,19 @@
       }
     }
 
-    connectButton.addEventListener('click', connectWallet);
-    disconnectButton.addEventListener('click', disconnectWallet);
+    connectButton.addEventListener('click', async () => {
+      await connectWallet();
+    });
+
+    disconnectButton.addEventListener('click', () => {
+      disconnectWallet();
+    });
 
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
+      window.ethereum.on('accountsChanged', async (accounts) => {
         if (accounts.length > 0) {
           currentAccount = accounts[0];
-          statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
-          connectWallet();
+          await connectWallet();
         } else {
           disconnectWallet();
         }
@@ -374,13 +383,15 @@
       window.ethereum.on('chainChanged', async (chainId) => {
         if (currentAccount) {
           if (chainId !== '0x1') {
-            statusDiv.innerText = 'Please switch to Ethereum Mainnet in MetaMask.';
+            walletInfoDiv.innerText = `Wallet: ${currentAccount} - Please switch to Ethereum Mainnet in MetaMask.`;
             return;
           }
-          fetchTransactions();
-          fetchWalletNFTs();
+          await fetchTransactions();
+          await fetchWalletNFTs();
         }
       });
+    } else {
+      walletInfoDiv.innerText = 'Wallet: MetaMask not detected. Please install it.';
     }
   </script>
 </body>
