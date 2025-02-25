@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ETHERNET Dashboard</title>
+  <title>ETHERNET NFT Dashboard</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Futura&display=swap');
     body {
@@ -15,6 +15,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      /* Minimalistic moving background */
+      background: linear-gradient(45deg, #000, #1a1a1a, #000);
+      background-size: 200% 200%;
+      animation: moveBackground 10s ease infinite;
+    }
+    @keyframes moveBackground {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
     }
     h1 {
       font-size: 3rem;
@@ -121,6 +130,9 @@
     .section .box::-webkit-scrollbar-track {
       background: #000;
     }
+    .ad-container {
+      margin-top: 20px;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="https://unpkg.com/moralis@2.26.5/dist/moralis.js"></script>
@@ -129,6 +141,9 @@
   <h1>ETHERNET NFT Dashboard</h1>
   <button id="connectButton">Connect MetaMask Wallet</button>
   <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+  <div class="ad-container">
+    <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+  </div>
   
   <div id="status">Not connected</div>
   <div id="balance"></div>
