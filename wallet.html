@@ -259,30 +259,42 @@
 
     async function connectWallet() {
       if (!window.ethereum) {
-        walletInfoDiv.innerText = 'MetaMask is not installed! Please install it.';
+        walletInfoDiv.innerText = 'Wallet: MetaMask is not installed! Please install it.';
+        console.error('MetaMask not detected');
         return;
       }
+
       try {
-        console.log('Attempting to connect to MetaMask...');
-        provider = new ethers.providers.Web3Provider(window.ethereum, "any"); // "any" ensures flexibility across networks
-        const accounts = await provider.send("eth_requestAccounts", []);
+        console.log('Requesting MetaMask connection...');
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
         console.log('Connected account:', currentAccount);
 
-        // Update wallet info with full address
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        const network = await provider.getNetwork();
+        console.log('Connected chain ID:', network.chainId);
+
+        if (network.chainId !== 1) {
+          walletInfoDiv.innerText = `Wallet: ${currentAccount} - Please switch to Ethereum Mainnet in MetaMask.`;
+          console.error('Not on Ethereum Mainnet, current chain ID:', network.chainId);
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x1' }],
+            });
+            console.log('Switched to Ethereum Mainnet');
+          } catch (switchError) {
+            console.error('Failed to switch to Mainnet:', switchError);
+            return;
+          }
+        }
+
         walletInfoDiv.innerText = `Wallet: ${currentAccount}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
 
-        const network = await provider.getNetwork();
-        console.log('Connected chain ID:', network.chainId);
-        if (network.chainId !== 1) { // 1 = Ethereum Mainnet
-          walletInfoDiv.innerText = `Wallet: ${currentAccount} - Please switch to Ethereum Mainnet in MetaMask.`;
-          throw new Error('Not on Ethereum Mainnet');
-        }
-
         if (!moralisInitialized) {
-          console.log('Initializing Moralis with API key...');
+          console.log('Initializing Moralis...');
           await Moralis.start({ apiKey: MORALIS_API_KEY });
           moralisInitialized = true;
           console.log('Moralis initialized successfully');
@@ -291,7 +303,7 @@
         await fetchTransactions();
         await fetchWalletNFTs();
       } catch (error) {
-        console.error('Error connecting to MetaMask:', error);
+        console.error('Connection error:', error);
         walletInfoDiv.innerText = `Wallet: Connection failed - ${error.message}`;
       }
     }
@@ -304,11 +316,13 @@
       nftsBox.innerHTML = '';
       connectButton.style.display = 'inline-block';
       disconnectButton.style.display = 'none';
+      console.log('Wallet disconnected');
     }
 
     async function fetchTransactions() {
       if (!currentAccount || !provider) return;
       try {
+        console.log('Fetching transactions for:', currentAccount);
         const etherscanProvider = new ethers.providers.EtherscanProvider("homestead", ETHERSCAN_API_KEY);
         const history = await etherscanProvider.getHistory(currentAccount);
         const sortedHistory = history.sort((a, b) => b.blockNumber - a.blockNumber);
@@ -363,18 +377,13 @@
       }
     }
 
-    connectButton.addEventListener('click', async () => {
-      await connectWallet();
-    });
-
-    disconnectButton.addEventListener('click', () => {
-      disconnectWallet();
-    });
+    connectButton.addEventListener('click', connectWallet);
+    disconnectButton.addEventListener('click', disconnectWallet);
 
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', async (accounts) => {
         if (accounts.length > 0) {
-          currentAccount = accounts[0];
+          console.log('Accounts changed, reconnecting:', accounts[0]);
           await connectWallet();
         } else {
           disconnectWallet();
@@ -382,6 +391,7 @@
       });
       window.ethereum.on('chainChanged', async (chainId) => {
         if (currentAccount) {
+          console.log('Chain changed to:', chainId);
           if (chainId !== '0x1') {
             walletInfoDiv.innerText = `Wallet: ${currentAccount} - Please switch to Ethereum Mainnet in MetaMask.`;
             return;
@@ -392,6 +402,7 @@
       });
     } else {
       walletInfoDiv.innerText = 'Wallet: MetaMask not detected. Please install it.';
+      console.error('MetaMask not detected in window.ethereum');
     }
   </script>
 </body>
