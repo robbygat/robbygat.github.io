@@ -19,17 +19,24 @@
       margin-top: 20px;
       font-size: 18px;
     }
-    #nftGallery {
+    /* Container for the NFT gallery with scroll enabled */
+    #nftContainer {
       margin-top: 30px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      max-height: 600px; /* Adjust as needed */
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    /* Grid layout for NFTs: 5 columns */
+    #nftGallery {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 10px;
     }
     .nft {
       border: 1px solid #ccc;
       padding: 10px;
-      margin: 10px;
-      width: 200px;
+      word-break: break-all;
     }
     .nft img {
       max-width: 100%;
@@ -42,13 +49,15 @@
   <button id="connectButton">Connect MetaMask Wallet</button>
   <button id="disconnectButton" style="display:none;">Disconnect Wallet</button>
   <div id="status">Not connected</div>
-  <div id="nftGallery"></div>
+  <div id="nftContainer">
+    <div id="nftGallery"></div>
+  </div>
 
   <script>
-    // Your provided API key (assumed for the Goerli testnet via Alchemy)
+    // Your provided API key for Alchemy (mainnet)
     const API_KEY = "0172ddf22ebd48dfa964f245aa01983f";
-    // Base URL for the Alchemy NFT API on Goerli testnet
-    const BASE_URL = `https://eth-goerli.alchemyapi.io/v2/${API_KEY}/getNFTs/`;
+    // Base URL for the Alchemy NFT API on Ethereum mainnet
+    const BASE_URL = `https://eth-mainnet.alchemyapi.io/v2/${API_KEY}/getNFTs/`;
     
     let currentAccount = null;
 
@@ -93,25 +102,21 @@
       try {
         const response = await fetch(fetchURL);
         const data = await response.json();
-        // Clear any previous NFTs
         nftGallery.innerHTML = '';
         if (data && data.ownedNfts && data.ownedNfts.length > 0) {
           data.ownedNfts.forEach(nft => {
-            // Create a container for each NFT
             const nftDiv = document.createElement('div');
             nftDiv.className = 'nft';
 
-            // Get image URL from metadata if available
+            // Extract NFT image URL (handling ipfs:// protocol if necessary)
             let imgUrl = '';
             if (nft.metadata && nft.metadata.image) {
               imgUrl = nft.metadata.image;
-              // Sometimes image URLs can start with ipfs://, so convert them to a gateway URL
               if (imgUrl.startsWith("ipfs://")) {
                 imgUrl = imgUrl.replace("ipfs://", "https://ipfs.io/ipfs/");
               }
             }
 
-            // Add NFT details to the container
             nftDiv.innerHTML = `
               <h3>${nft.title || 'Unnamed NFT'}</h3>
               ${imgUrl ? `<img src="${imgUrl}" alt="NFT Image" />` : '<p>No image available</p>'}
@@ -131,7 +136,7 @@
     connectButton.addEventListener('click', connectWallet);
     disconnectButton.addEventListener('click', disconnectWallet);
 
-    // Optional: Listen for account changes and update display accordingly
+    // Listen for account changes to update the display accordingly
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
