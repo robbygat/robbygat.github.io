@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ETHERNET</title>
+  <title>ETHERNET NFT Dashboard</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Futura&display=swap');
     
     body {
       font-family: 'Futura', Arial, sans-serif;
-      text-align: center;
       margin: 0;
       padding: 20px;
       background: #000;
@@ -58,28 +57,33 @@
       width: 90%;
       flex-wrap: wrap;
     }
-    #transactions, #nfts {
+    .section {
       font-size: 1.2rem;
       width: 100%;
       max-width: 580px;
     }
-    #transactions h3, #nfts h3 {
+    .section h3 {
       margin: 0 0 10px 0;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 10px;
     }
-    #transactions .transaction-box {
+    .section .box {
       background: rgba(255, 255, 255, 0.15);
       padding: 15px;
       border-radius: 10px;
       max-height: 300px;
       overflow-y: auto;
       border: 1px solid #fff;
+      display: none; /* Hidden by default, toggled by JS */
     }
-    #transactions ul {
+    .section ul {
       list-style-type: none;
       padding: 0;
       margin: 0;
     }
-    #transactions li {
+    .section li {
       background: rgba(255, 255, 255, 0.1);
       margin: 10px 0;
       padding: 15px;
@@ -87,19 +91,12 @@
       text-align: left;
     }
     #nfts .nft-box {
-      background: rgba(255, 255, 255, 0.15);
-      padding: 15px;
-      border-radius: 10px;
       max-height: 500px;
-      overflow-y: auto;
-      border: 1px solid #fff;
     }
     #nfts .nft-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      padding: 0;
-      margin: 0;
     }
     #nfts .nft-item {
       background: rgba(255, 255, 255, 0.1);
@@ -117,18 +114,14 @@
       font-size: 0.9rem;
       word-wrap: break-word;
     }
-    /* Scrollbar styling */
-    #transactions .transaction-box::-webkit-scrollbar,
-    #nfts .nft-box::-webkit-scrollbar {
+    .section .box::-webkit-scrollbar {
       width: 8px;
     }
-    #transactions .transaction-box::-webkit-scrollbar-thumb,
-    #nfts .nft-box::-webkit-scrollbar-thumb {
+    .section .box::-webkit-scrollbar-thumb {
       background: #fff;
       border-radius: 4px;
     }
-    #transactions .transaction-box::-webkit-scrollbar-track,
-    #nfts .nft-box::-webkit-scrollbar-track {
+    .section .box::-webkit-scrollbar-track {
       background: #000;
     }
   </style>
@@ -136,15 +129,33 @@
   <script src="https://unpkg.com/moralis@latest/dist/moralis.js"></script>
 </head>
 <body>
-  <h1>ETHERNET</h1>
+  <h1>ETHERNET NFT Dashboard</h1>
   <button id="connectButton">Connect MetaMask Wallet</button>
   <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
   
   <div id="status">Not connected</div>
   <div id="balance"></div>
   <div class="content-container">
-    <div id="transactions"></div>
-    <div id="nfts"></div>
+    <div class="section" id="transactions">
+      <h3 onclick="toggleSection('transactions')">Last 10 Transactions</h3>
+      <div class="box"></div>
+    </div>
+    <div class="section" id="nfts">
+      <h3 onclick="toggleSection('nfts')">Your NFTs</h3>
+      <div class="box nft-box"></div>
+    </div>
+    <div class="section" id="nft-transfers">
+      <h3 onclick="toggleSection('nft-transfers')">NFT Transfers</h3>
+      <div class="box"></div>
+    </div>
+    <div class="section" id="nft-collections">
+      <h3 onclick="toggleSection('nft-collections')">NFT Collections</h3>
+      <div class="box"></div>
+    </div>
+    <div class="section" id="nft-prices">
+      <h3 onclick="toggleSection('nft-prices')">NFT Floor Prices</h3>
+      <div class="box"></div>
+    </div>
   </div>
 
   <script>
@@ -152,8 +163,11 @@
     const disconnectButton = document.getElementById('disconnectButton');
     const statusDiv = document.getElementById('status');
     const balanceDiv = document.getElementById('balance');
-    const transactionsDiv = document.getElementById('transactions');
-    const nftsDiv = document.getElementById('nfts');
+    const transactionsDiv = document.getElementById('transactions').querySelector('.box');
+    const nftsDiv = document.getElementById('nfts').querySelector('.box');
+    const nftTransfersDiv = document.getElementById('nft-transfers').querySelector('.box');
+    const nftCollectionsDiv = document.getElementById('nft-collections').querySelector('.box');
+    const nftPricesDiv = document.getElementById('nft-prices').querySelector('.box');
     
     const ETHERSCAN_API_KEY = "XSTYJK3VWDUT7JSN6HFJIB4I3S93W2SC3Y";
     const MORALIS_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6ImM5MDM2YjlkLTM4MWUtNDBiMC05NDFhLTE3M2QyNmI0ODBmNyIsIm9yZ0lkIjoiNDMzMzk5IiwidXNlcklkIjoiNDQ1ODIxIiwidHlwZUlkIjoiNzViN2NiNDUtZWNkNS00YWI2LTg5N2MtMmE0ZWIzN2M0Zjc1IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3NDA0NTAxMjEsImV4cCI6NDg5NjIxMDEyMX0.SCmVH01gIEJaffB-1gUvNTaix6VQGo_xfqvoo9CtkD0";
@@ -174,10 +188,16 @@
         disconnectButton.style.display = 'inline-block';
 
         provider = new ethers.providers.Web3Provider(window.ethereum);
+        await Moralis.start({ apiKey: MORALIS_API_KEY });
 
-        await fetchBalance();
-        await fetchTransactions();
-        await fetchNFTs();
+        await Promise.all([
+          fetchBalance(),
+          fetchTransactions(),
+          fetchNFTs(),
+          fetchNFTTransfers(),
+          fetchNFTCollections(),
+          fetchNFTFloorPrices()
+        ]);
       } catch (error) {
         console.error('Error connecting to MetaMask:', error);
         statusDiv.innerText = 'Connection failed! Please try again.';
@@ -191,6 +211,9 @@
       balanceDiv.innerHTML = '';
       transactionsDiv.innerHTML = '';
       nftsDiv.innerHTML = '';
+      nftTransfersDiv.innerHTML = '';
+      nftCollectionsDiv.innerHTML = '';
+      nftPricesDiv.innerHTML = '';
       connectButton.style.display = 'inline-block';
       disconnectButton.style.display = 'none';
     }
@@ -203,7 +226,7 @@
         balanceDiv.innerHTML = `<p>Balance: ${parseFloat(balanceInEth).toFixed(6)} ETH</p>`;
       } catch (error) {
         console.error('Error fetching balance:', error);
-        balanceDiv.innerHTML = `<p>Unable to fetch balance. Please try again.</p>`;
+        balanceDiv.innerHTML = `<p>Unable to fetch balance.</p>`;
       }
     }
 
@@ -215,50 +238,126 @@
         const sortedHistory = history.sort((a, b) => b.blockNumber - a.blockNumber);
         const last10 = sortedHistory.slice(0, 10);
 
-        let txHTML = '<h3>Last 10 Transactions:</h3><div class="transaction-box"><ul>';
+        let txHTML = '<ul>';
         last10.forEach(tx => {
-          txHTML += `<li>
-            <strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
+          txHTML += `<li><strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
             <strong>To:</strong> ${tx.to ? tx.to.slice(0, 6) + '...' + tx.to.slice(-4) : 'Contract Creation'} <br>
-            <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(6)} ETH
-          </li>`;
+            <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(6)} ETH</li>`;
         });
-        txHTML += '</ul></div>';
+        txHTML += '</ul>';
         transactionsDiv.innerHTML = txHTML;
+        transactionsDiv.style.display = 'block';
       } catch (error) {
         console.error('Error fetching transactions:', error);
-        transactionsDiv.innerHTML = `<p>Unable to fetch transactions. Check API key or network.</p>`;
+        transactionsDiv.innerHTML = `<p>Unable to fetch transactions.</p>`;
       }
     }
 
     async function fetchNFTs() {
       if (!currentAccount) return;
       try {
-        await Moralis.start({ apiKey: MORALIS_API_KEY });
         const response = await Moralis.EvmApi.nft.getWalletNFTs({
           chain: 'eth',
           address: currentAccount,
-          limit: 50, // Adjust based on your needs or Moralis plan
+          limit: 50,
         });
         const nfts = response.result;
 
-        let nftHTML = '<h3>Your NFTs:</h3><div class="nft-box"><div class="nft-grid">';
+        let nftHTML = '<div class="nft-grid">';
         nfts.forEach(nft => {
           const metadata = nft.metadata ? JSON.parse(nft.metadata) : {};
           const image = metadata.image || 'https://via.placeholder.com/100';
           const name = metadata.name || 'Unnamed NFT';
-          nftHTML += `
-            <div class="nft-item">
-              <img src="${image}" alt="${name}">
-              <p>${name}</p>
-            </div>`;
+          nftHTML += `<div class="nft-item"><img src="${image}" alt="${name}"><p>${name}</p></div>`;
         });
-        nftHTML += '</div></div>';
+        nftHTML += '</div>';
         nftsDiv.innerHTML = nftHTML;
+        nftsDiv.style.display = 'block';
       } catch (error) {
         console.error('Error fetching NFTs:', error);
-        nftsDiv.innerHTML = `<p>Unable to fetch NFTs. Check API key or network.</p>`;
+        nftsDiv.innerHTML = `<p>Unable to fetch NFTs.</p>`;
       }
+    }
+
+    async function fetchNFTTransfers() {
+      if (!currentAccount) return;
+      try {
+        const response = await Moralis.EvmApi.nft.getWalletNFTTransfers({
+          chain: 'eth',
+          address: currentAccount,
+          limit: 10,
+        });
+        const transfers = response.result;
+
+        let transferHTML = '<ul>';
+        transfers.forEach(tx => {
+          transferHTML += `<li><strong>From:</strong> ${tx.fromAddress.slice(0, 6)}...${tx.fromAddress.slice(-4)} <br>
+            <strong>To:</strong> ${tx.toAddress.slice(0, 6)}...${tx.toAddress.slice(-4)} <br>
+            <strong>Token ID:</strong> ${tx.tokenId}</li>`;
+        });
+        transferHTML += '</ul>';
+        nftTransfersDiv.innerHTML = transferHTML;
+        nftTransfersDiv.style.display = 'block';
+      } catch (error) {
+        console.error('Error fetching NFT transfers:', error);
+        nftTransfersDiv.innerHTML = `<p>Unable to fetch NFT transfers.</p>`;
+      }
+    }
+
+    async function fetchNFTCollections() {
+      if (!currentAccount) return;
+      try {
+        const response = await Moralis.EvmApi.nft.getWalletNFTCollections({
+          chain: 'eth',
+          address: currentAccount,
+          limit: 10,
+        });
+        const collections = response.result;
+
+        let collectionHTML = '<ul>';
+        collections.forEach(col => {
+          collectionHTML += `<li><strong>Contract:</strong> ${col.tokenAddress.slice(0, 6)}...${col.tokenAddress.slice(-4)} <br>
+            <strong>Name:</strong> ${col.name || 'Unknown'}</li>`;
+        });
+        collectionHTML += '</ul>';
+        nftCollectionsDiv.innerHTML = collectionHTML;
+        nftCollectionsDiv.style.display = 'block';
+      } catch (error) {
+        console.error('Error fetching NFT collections:', error);
+        nftCollectionsDiv.innerHTML = `<p>Unable to fetch NFT collections.</p>`;
+      }
+    }
+
+    async function fetchNFTFloorPrices() {
+      if (!currentAccount) return;
+      try {
+        const nftResponse = await Moralis.EvmApi.nft.getWalletNFTs({
+          chain: 'eth',
+          address: currentAccount,
+          limit: 1, // Just one NFT to get a contract address
+        });
+        const contractAddress = nftResponse.result[0]?.tokenAddress;
+        if (!contractAddress) throw new Error('No NFT found for pricing');
+
+        const response = await Moralis.EvmApi.nft.getNFTFloorPriceByContract({
+          chain: 'eth',
+          address: contractAddress,
+        });
+        const price = response.result;
+
+        let priceHTML = `<ul><li><strong>Contract:</strong> ${contractAddress.slice(0, 6)}...${contractAddress.slice(-4)} <br>
+          <strong>Floor Price:</strong> ${price.floorPriceUsd || 'N/A'} USD</li></ul>`;
+        nftPricesDiv.innerHTML = priceHTML;
+        nftPricesDiv.style.display = 'block';
+      } catch (error) {
+        console.error('Error fetching NFT floor prices:', error);
+        nftPricesDiv.innerHTML = `<p>Unable to fetch floor prices.</p>`;
+      }
+    }
+
+    function toggleSection(sectionId) {
+      const box = document.getElementById(sectionId).querySelector('.box');
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
     }
 
     connectButton.addEventListener('click', connectWallet);
@@ -272,6 +371,9 @@
           fetchBalance();
           fetchTransactions();
           fetchNFTs();
+          fetchNFTTransfers();
+          fetchNFTCollections();
+          fetchNFTFloorPrices();
         } else {
           disconnectWallet();
         }
@@ -281,6 +383,9 @@
           fetchBalance();
           fetchTransactions();
           fetchNFTs();
+          fetchNFTTransfers();
+          fetchNFTCollections();
+          fetchNFTFloorPrices();
         }
       });
     }
