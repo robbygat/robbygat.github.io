@@ -4,43 +4,70 @@
   <meta charset="UTF-8">
   <title>ETHERNET</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Futura&display=swap');
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Futura', Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
-      background: #fff; /* Plain white background */
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a4a);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    h1 {
+      font-size: 3rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #00d4ff;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
     }
     button {
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 12px 25px;
+      font-size: 1.1rem;
       cursor: pointer;
-      margin: 5px;
-      background: #f2f2f2;
-      border: 1px solid #000;
-      border-radius: 5px;
+      margin: 10px;
+      border: none;
+      border-radius: 25px;
+      background: #00d4ff;
+      color: #1e1e2f;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
     }
     #status, #balance, #transactions {
-      margin-top: 20px;
-      font-size: 18px;
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 5px;
-      display: inline-block;
+      margin-top: 25px;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 600px;
+      width: 90%;
     }
-    ul {
+    #transactions ul {
       list-style-type: none;
       padding: 0;
     }
-    li {
-      background: #f2f2f2;
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
+    #transactions li {
+      background: rgba(255, 255, 255, 0.15);
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
       text-align: left;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    #transactions strong {
+      color: #00d4ff;
     }
   </style>
-  <!-- Include ethers.js -->
-  <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+  <!-- Include ethers.js from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 </head>
 <body>
   <h1>ETHERNET</h1>
@@ -58,40 +85,39 @@
     const balanceDiv = document.getElementById('balance');
     const transactionsDiv = document.getElementById('transactions');
     
+    // Replace with your new Etherscan API key
+    const ETHERSCAN_API_KEY = "XSTYJK3VWDUT7JSN6HFJIB4I3S93W2SC3Y";
+    
+    let provider; // Declare provider globally for reuse
     let currentAccount = null;
-    let provider = null;
 
+    // Connect to MetaMask wallet
     async function connectWallet() {
-      if (typeof window.ethereum === 'undefined') {
-        statusDiv.innerText = 'MetaMask is not installed!';
+      if (!window.ethereum) {
+        statusDiv.innerText = 'MetaMask is not installed! Please install it.';
         return;
       }
       try {
+        // Request connection to MetaMask wallet
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-
-        // Ensure we're on Ethereum mainnet (chainId 1)
-        const network = await provider.getNetwork();
-        if (network.chainId !== 1) {
-          await window.ethereum.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: '0x1' }],
-          });
-        }
-
         statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
 
-        fetchBalance();
-        fetchTransactions();
+        // Initialize provider once wallet is connected
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // Fetch balance and transactions
+        await fetchBalance();
+        await fetchTransactions();
       } catch (error) {
-        console.error('Connection error:', error.message);
-        statusDiv.innerText = `Connection failed: ${error.message}`;
+        console.error('Error connecting to MetaMask:', error);
+        statusDiv.innerText = 'Connection failed! Please try again.';
       }
     }
 
+    // Disconnect the wallet
     function disconnectWallet() {
       currentAccount = null;
       provider = null;
@@ -102,69 +128,67 @@
       disconnectButton.style.display = 'none';
     }
 
+    // Fetch balance using ethers.js and MetaMask provider
     async function fetchBalance() {
+      if (!provider || !currentAccount) return;
       try {
-        if (!provider) throw new Error('Wallet not connected');
         const balance = await provider.getBalance(currentAccount);
         const balanceInEth = ethers.utils.formatEther(balance);
-        balanceDiv.innerHTML = `<p>Balance: ${parseFloat(balanceInEth).toFixed(4)} ETH</p>`;
+        balanceDiv.innerHTML = `<p>Balance: ${parseFloat(balanceInEth).toFixed(6)} ETH</p>`;
       } catch (error) {
-        console.error('Balance fetch error:', error.message);
-        balanceDiv.innerHTML = `<p>Error fetching balance: ${error.message}</p>`;
+        console.error('Error fetching balance:', error);
+        balanceDiv.innerHTML = `<p>Unable to fetch balance. Please try again.</p>`;
       }
     }
 
+    // Fetch the last 10 transactions using Etherscan API
     async function fetchTransactions() {
+      if (!currentAccount) return;
       try {
-        if (!provider) throw new Error('Wallet not connected');
-        // Fetch the latest block number
-        const latestBlock = await provider.getBlockNumber();
-        // Rough estimate: look back ~1000 blocks (adjust as needed)
-        const fromBlock = Math.max(0, latestBlock - 1000);
-
-        // Use ethers.js to filter events for transactions involving the account
-        const sentTx = await provider.getLogs({
-          fromBlock,
-          toBlock: 'latest',
-          address: null,
-          topics: [ethers.utils.id('Transfer(address,address,uint256)'), null, ethers.utils.hexZeroPad(currentAccount, 32)],
-        });
-
-        const receivedTx = await provider.getLogs({
-          fromBlock,
-          toBlock: 'latest',
-          address: null,
-          topics: [ethers.utils.id('Transfer(address,address,uint256)'), ethers.utils.hexZeroPad(currentAccount, 32)],
-        });
-
-        // Combine and process transactions
-        const allTx = [...sentTx, ...receivedTx]
-          .sort((a, b) => b.blockNumber - a.blockNumber)
-          .slice(0, 10);
+        const etherscanProvider = new ethers.providers.EtherscanProvider("homestead", ETHERSCAN_API_KEY);
+        const history = await etherscanProvider.getHistory(currentAccount);
+        const sortedHistory = history.sort((a, b) => b.blockNumber - a.blockNumber);
+        const last10 = sortedHistory.slice(0, 10);
 
         let txHTML = '<h3>Last 10 Transactions:</h3><ul>';
-        if (allTx.length === 0) {
-          txHTML += '<li>No recent transactions found.</li>';
-        } else {
-          for (const log of allTx) {
-            const tx = await provider.getTransaction(log.transactionHash);
-            txHTML += `<li>
-              <strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
-              <strong>To:</strong> ${tx.to ? tx.to.slice(0, 6) + '...' + tx.to.slice(-4) : 'Contract Creation'} <br>
-              <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(4)} ETH
-            </li>`;
-          }
-        }
+        last10.forEach(tx => {
+          txHTML += `<li>
+            <strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
+            <strong>To:</strong> ${tx.to ? tx.to.slice(0, 6) + '...' + tx.to.slice(-4) : 'Contract Creation'} <br>
+            <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(6)} ETH
+          </li>`;
+        });
         txHTML += '</ul>';
         transactionsDiv.innerHTML = txHTML;
       } catch (error) {
-        console.error('Transaction fetch error:', error.message);
-        transactionsDiv.innerHTML = `<p>Error fetching transactions: ${error.message}</p>`;
+        console.error('Error fetching transactions:', error);
+        transactionsDiv.innerHTML = `<p>Unable to fetch transactions. Check API key or network.</p>`;
       }
     }
 
+    // Event listeners
     connectButton.addEventListener('click', connectWallet);
     disconnectButton.addEventListener('click', disconnectWallet);
+
+    // Handle account/network changes
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length > 0) {
+          currentAccount = accounts[0];
+          statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
+          fetchBalance();
+          fetchTransactions();
+        } else {
+          disconnectWallet();
+        }
+      });
+      window.ethereum.on('chainChanged', () => {
+        if (currentAccount) {
+          fetchBalance();
+          fetchTransactions();
+        }
+      });
+    }
   </script>
 </body>
 </html>
