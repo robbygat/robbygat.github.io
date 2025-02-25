@@ -137,7 +137,7 @@
   <script src="https://unpkg.com/moralis@2.26.5/dist/moralis.js"></script>
 </head>
 <body>
-  <h1>ETHERNET</h1>
+  <h1>ETHERNET NFT Dashboard</h1>
   <button id="connectButton">Connect MetaMask Wallet</button>
   <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
   <div class="ad-container">
@@ -213,8 +213,6 @@
         await fetchBalance();
         await fetchTransactions();
         await fetchWalletNFTs();
-        // Commenting out other fetches for now to isolate the NFT issue
-        // Add them back once NFTs work
       } catch (error) {
         console.error('Error in connectWallet:', error);
         statusDiv.innerText = `Connection failed: ${error.message}`;
@@ -273,10 +271,22 @@
           address: currentAccount,
           limit: 50
         });
-        console.log('NFT Response:', response.result);
+        console.log('Raw NFT Response:', response);
+        console.log('NFT Result:', response.result);
+
         let html = '<div class="nft-grid">';
-        response.result.forEach(nft => {
-          const metadata = nft.metadata ? JSON.parse(nft.metadata) : {};
+        response.result.forEach((nft, index) => {
+          let metadata = {};
+          if (nft.metadata) {
+            try {
+              console.log(`NFT ${index} metadata before parsing:`, nft.metadata);
+              metadata = typeof nft.metadata === 'string' ? JSON.parse(nft.metadata) : nft.metadata;
+              console.log(`NFT ${index} metadata after parsing:`, metadata);
+            } catch (parseError) {
+              console.error(`Error parsing metadata for NFT ${index}:`, parseError, 'Raw metadata:', nft.metadata);
+              metadata = {}; // Fallback to empty object
+            }
+          }
           const image = metadata.image || 'https://via.placeholder.com/100';
           const name = metadata.name || 'Unnamed NFT';
           html += `<div class="nft-item"><img src="${image}" alt="${name}"><p>${name}</p></div>`;
@@ -289,13 +299,6 @@
         sections.nfts.innerHTML = `<p>Unable to fetch NFTs: ${error.message}</p>`;
       }
     }
-
-    // Placeholder for other fetch functions (commented out for now)
-    /*
-    async function fetchMultipleNFTs() { ... }
-    async function fetchContractNFTs() { ... }
-    ... (add back once fetchWalletNFTs works)
-    */
 
     function toggleSection(sectionId) {
       const box = document.getElementById(sectionId).querySelector('.box');
