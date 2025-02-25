@@ -11,7 +11,7 @@
       text-align: center;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #1e1e2f, #2a2a4a);
+      background: #000;
       color: #fff;
       min-height: 100vh;
       display: flex;
@@ -23,25 +23,25 @@
       font-size: 3rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #00d4ff;
-      text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+      color: #fff;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
     }
     button {
       padding: 12px 25px;
       font-size: 1.1rem;
       cursor: pointer;
       margin: 10px;
-      border: none;
+      border: 2px solid #fff;
       border-radius: 25px;
-      background: #00d4ff;
-      color: #1e1e2f;
-      transition: transform 0.2s, box-shadow 0.2s;
+      background: #000;
+      color: #fff;
+      transition: background 0.2s, color 0.2s;
     }
     button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+      background: #fff;
+      color: #000;
     }
-    #status, #balance, #transactions {
+    #status, #balance {
       margin-top: 25px;
       font-size: 1.2rem;
       background: rgba(255, 255, 255, 0.1);
@@ -50,20 +50,48 @@
       max-width: 600px;
       width: 90%;
     }
+    #transactions {
+      margin-top: 25px;
+      font-size: 1.2rem;
+      max-width: 600px;
+      width: 90%;
+    }
+    #transactions h3 {
+      margin: 0 0 10px 0;
+    }
+    #transactions .transaction-box {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+      max-height: 300px; /* Fixed height for scrollable box */
+      overflow-y: auto; /* Enable vertical scrolling */
+      border: 1px solid #fff;
+    }
     #transactions ul {
       list-style-type: none;
       padding: 0;
+      margin: 0;
     }
     #transactions li {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
       margin: 10px 0;
       padding: 15px;
       border-radius: 8px;
       text-align: left;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     }
     #transactions strong {
-      color: #00d4ff;
+      color: #fff;
+    }
+    /* Scrollbar styling for a polished look */
+    #transactions .transaction-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    #transactions .transaction-box::-webkit-scrollbar-thumb {
+      background: #fff;
+      border-radius: 4px;
+    }
+    #transactions .transaction-box::-webkit-scrollbar-track {
+      background: #000;
     }
   </style>
   <!-- Include ethers.js from a CDN -->
@@ -85,30 +113,25 @@
     const balanceDiv = document.getElementById('balance');
     const transactionsDiv = document.getElementById('transactions');
     
-    // Replace with your new Etherscan API key
     const ETHERSCAN_API_KEY = "XSTYJK3VWDUT7JSN6HFJIB4I3S93W2SC3Y";
     
-    let provider; // Declare provider globally for reuse
+    let provider;
     let currentAccount = null;
 
-    // Connect to MetaMask wallet
     async function connectWallet() {
       if (!window.ethereum) {
         statusDiv.innerText = 'MetaMask is not installed! Please install it.';
         return;
       }
       try {
-        // Request connection to MetaMask wallet
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         currentAccount = accounts[0];
         statusDiv.innerText = `Connected: ${currentAccount.slice(0, 6)}...${currentAccount.slice(-4)}`;
         connectButton.style.display = 'none';
         disconnectButton.style.display = 'inline-block';
 
-        // Initialize provider once wallet is connected
         provider = new ethers.providers.Web3Provider(window.ethereum);
 
-        // Fetch balance and transactions
         await fetchBalance();
         await fetchTransactions();
       } catch (error) {
@@ -117,7 +140,6 @@
       }
     }
 
-    // Disconnect the wallet
     function disconnectWallet() {
       currentAccount = null;
       provider = null;
@@ -128,7 +150,6 @@
       disconnectButton.style.display = 'none';
     }
 
-    // Fetch balance using ethers.js and MetaMask provider
     async function fetchBalance() {
       if (!provider || !currentAccount) return;
       try {
@@ -141,7 +162,6 @@
       }
     }
 
-    // Fetch the last 10 transactions using Etherscan API
     async function fetchTransactions() {
       if (!currentAccount) return;
       try {
@@ -150,7 +170,7 @@
         const sortedHistory = history.sort((a, b) => b.blockNumber - a.blockNumber);
         const last10 = sortedHistory.slice(0, 10);
 
-        let txHTML = '<h3>Last 10 Transactions:</h3><ul>';
+        let txHTML = '<h3>Last 10 Transactions:</h3><div class="transaction-box"><ul>';
         last10.forEach(tx => {
           txHTML += `<li>
             <strong>From:</strong> ${tx.from.slice(0, 6)}...${tx.from.slice(-4)} <br>
@@ -158,7 +178,7 @@
             <strong>Value:</strong> ${parseFloat(ethers.utils.formatEther(tx.value)).toFixed(6)} ETH
           </li>`;
         });
-        txHTML += '</ul>';
+        txHTML += '</ul></div>';
         transactionsDiv.innerHTML = txHTML;
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -166,11 +186,9 @@
       }
     }
 
-    // Event listeners
     connectButton.addEventListener('click', connectWallet);
     disconnectButton.addEventListener('click', disconnectWallet);
 
-    // Handle account/network changes
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
