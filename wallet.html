@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Ethereum Wallet</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -12,6 +13,7 @@
   <!-- Three.js for Background -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <style>
+    /* Base styles */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -42,6 +44,7 @@
       padding: 2.5rem;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
       transition: all 0.4s ease;
+      margin-bottom: 2rem;
     }
     .glass-card:hover {
       transform: translateY(-8px);
@@ -50,18 +53,20 @@
     .btn {
       background: linear-gradient(90deg, #ff6f61, #de4d86);
       padding: 0.75rem 2.5rem;
+      border: none;
       border-radius: 9999px;
       font-weight: 600;
       transition: all 0.3s ease;
       position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      cursor: pointer;
     }
     .btn:hover {
       background: linear-gradient(90deg, #de4d86, #ff6f61);
       transform: scale(1.1);
+    }
+    .btn:focus {
+      outline: none;
     }
     .btn::after {
       content: '';
@@ -117,37 +122,40 @@
   <!-- Three.js Background -->
   <canvas id="canvas-bg"></canvas>
 
-  <!-- Top Ad -->
+  <!-- Top Advertisement -->
   <div class="ad-container">
-    <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+    <iframe data-aa="2382909" src="//ad.a-ads.com/2382909?size=468x60" style="width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;"></iframe>
   </div>
 
   <div class="container">
     <h1 class="text-5xl font-bold text-center mb-12 animate-pulse">Ethereum Wallet</h1>
 
     <!-- Wallet Creation Section -->
-    <div class="glass-card mb-10">
+    <div class="glass-card" id="walletCreationCard">
       <h2 class="text-3xl font-semibold mb-6">Create Wallet</h2>
       <button id="createWalletBtn" class="btn">
         Generate Wallet
         <span id="createSpinner" class="spinner"></span>
       </button>
-      <div id="walletDetails" class="hidden info-text">
+      <div id="walletDetails" class="hidden info-text mt-4">
         <p><strong>Address:</strong> <span id="walletAddress" class="break-all text-sm"></span></p>
-        <p><strong>Seed Phrase:</strong> <textarea id="seedPhrase" class="w-full mt-2 p-3 bg-gray-900 rounded-lg text-sm" readonly rows="4"></textarea></p>
-        <p><strong>Balance:</strong> <span id="walletBalance">0</span> ETH</p>
-        <p><strong>ETH Price:</strong> $<span id="ethPrice">0</span></p>
+        <p class="mt-2">
+          <strong>Seed Phrase:</strong><br>
+          <textarea id="seedPhrase" class="w-full mt-2 p-3 bg-gray-900 rounded-lg text-sm" readonly rows="4"></textarea>
+        </p>
+        <p class="mt-2"><strong>Balance:</strong> <span id="walletBalance">0</span> ETH</p>
+        <p class="mt-2"><strong>ETH Price:</strong> $<span id="ethPrice">0</span></p>
       </div>
     </div>
 
-    <!-- MetaMask Section -->
-    <div class="glass-card mb-10">
+    <!-- MetaMask Connection Section -->
+    <div class="glass-card" id="metaMaskCard">
       <h2 class="text-3xl font-semibold mb-6">Connect MetaMask</h2>
       <button id="connectMetaMaskBtn" class="btn">
         Connect
         <span id="connectSpinner" class="spinner"></span>
       </button>
-      <div id="metaMaskDetails" class="hidden info-text">
+      <div id="metaMaskDetails" class="hidden info-text mt-4">
         <p><strong>Address:</strong> <span id="metaMaskAddress" class="break-all text-sm"></span></p>
         <input type="number" step="0.001" id="metaSendAmount" class="w-full mt-3 p-3 bg-gray-900 rounded-lg text-white placeholder-gray-400" placeholder="Amount in ETH">
         <button id="metaSendBtn" class="btn mt-4">
@@ -158,23 +166,26 @@
       </div>
     </div>
 
-    <!-- Bottom Ad -->
+    <!-- Bottom Advertisement -->
     <div class="ad-container">
-      <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+      <iframe data-aa="2382909" src="//ad.a-ads.com/2382909?size=468x60" style="width:468px; height:60px; border:0; padding:0; overflow:hidden; background-color: transparent;"></iframe>
     </div>
 
-    <!-- Return Home -->
+    <!-- Return Home Button -->
     <div class="text-center mt-12">
-      <button onclick="window.location.href='index.html'" class="btn">Return Home</button>
+      <button class="btn" onclick="window.location.href='index.html'">Return Home</button>
     </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Three.js Background
+      /* ===== Three.js Animated Background ===== */
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas-bg'), alpha: true });
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById('canvas-bg'),
+        alpha: true
+      });
       renderer.setSize(window.innerWidth, window.innerHeight);
       const geometry = new THREE.TorusKnotGeometry(5, 1.5, 100, 16);
       const material = new THREE.MeshBasicMaterial({ color: 0xff6f61, wireframe: true });
@@ -194,24 +205,24 @@
         camera.updateProjectionMatrix();
       });
 
-      // Ethereum Configuration
+      /* ===== Ethereum & MetaMask Configuration ===== */
       const INFURA_PROJECT_ID = "0172ddf22ebd48dfa964f245aa01983f";
       const provider = new ethers.providers.InfuraProvider("mainnet", INFURA_PROJECT_ID);
-      let websiteWallet, metaMaskSigner;
+      let websiteWallet = null;
+      let metaMaskSigner = null;
 
-      // Spinner Toggle
-      const toggleSpinner = (id, show) => {
+      // Helper: Toggle spinner visibility by element id
+      function toggleSpinner(id, show) {
         document.getElementById(id).style.display = show ? "inline-block" : "none";
-      };
+      }
 
-      // Create Wallet Button
-      document.getElementById("createWalletBtn").addEventListener("click", async () => {
-        console.log("Create Wallet button clicked");
+      /* ===== Create Wallet Functionality ===== */
+      const createWalletBtn = document.getElementById("createWalletBtn");
+      createWalletBtn.addEventListener("click", async () => {
         toggleSpinner("createSpinner", true);
         try {
-          websiteWallet = ethers.Wallet.createRandom();
-          websiteWallet = websiteWallet.connect(provider);
-          console.log("Wallet created:", websiteWallet.address);
+          // Generate and connect a random wallet
+          websiteWallet = ethers.Wallet.createRandom().connect(provider);
           document.getElementById("walletAddress").textContent = websiteWallet.address;
           document.getElementById("seedPhrase").value = websiteWallet.mnemonic.phrase;
           document.getElementById("walletDetails").classList.remove("hidden");
@@ -225,9 +236,9 @@
         }
       });
 
-      // Connect MetaMask Button
-      document.getElementById("connectMetaMaskBtn").addEventListener("click", async () => {
-        console.log("Connect MetaMask button clicked");
+      /* ===== Connect MetaMask Functionality ===== */
+      const connectMetaMaskBtn = document.getElementById("connectMetaMaskBtn");
+      connectMetaMaskBtn.addEventListener("click", async () => {
         toggleSpinner("connectSpinner", true);
         if (!window.ethereum) {
           alert("MetaMask not detected! Please install MetaMask.");
@@ -238,7 +249,6 @@
           const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
           const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
           metaMaskSigner = web3Provider.getSigner();
-          console.log("MetaMask connected:", accounts[0]);
           document.getElementById("metaMaskAddress").textContent = accounts[0];
           document.getElementById("metaMaskDetails").classList.remove("hidden");
         } catch (err) {
@@ -249,38 +259,42 @@
         }
       });
 
-      // Send Funds
-      document.getElementById("metaSendBtn").addEventListener("click", async () => {
+      /* ===== Send Transaction from MetaMask ===== */
+      const metaSendBtn = document.getElementById("metaSendBtn");
+      metaSendBtn.addEventListener("click", async () => {
         if (!metaMaskSigner || !websiteWallet) {
           alert("Please connect MetaMask and create a wallet first!");
           return;
         }
         const amount = document.getElementById("metaSendAmount").value;
-        if (!amount || isNaN(amount) || amount <= 0) {
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
           alert("Please enter a valid ETH amount!");
           return;
         }
         toggleSpinner("sendSpinner", true);
+        const txStatus = document.getElementById("metaTxStatus");
         try {
+          // Construct and send transaction using MetaMask signer
           const tx = {
             to: websiteWallet.address,
             value: ethers.utils.parseEther(amount),
-            gasLimit: 21000,
+            gasLimit: 21000
           };
-          document.getElementById("metaTxStatus").textContent = "Sending transaction...";
+          txStatus.textContent = "Sending transaction...";
           const txResponse = await metaMaskSigner.sendTransaction(tx);
           const receipt = await txResponse.wait();
-          document.getElementById("metaTxStatus").textContent = `Success! Tx Hash: ${receipt.transactionHash}`;
+          txStatus.textContent = `Success! Tx Hash: ${receipt.transactionHash}`;
+          // Update balance after a short delay
           setTimeout(updateBalance, 5000);
         } catch (err) {
-          console.error("Send error:", err);
-          document.getElementById("metaTxStatus").textContent = `Error: ${err.message}`;
+          console.error("Transaction error:", err);
+          txStatus.textContent = `Error: ${err.message}`;
         } finally {
           toggleSpinner("sendSpinner", false);
         }
       });
 
-      // Update Balance
+      /* ===== Helper: Update Wallet Balance ===== */
       async function updateBalance() {
         if (!websiteWallet) return;
         try {
@@ -291,17 +305,19 @@
         }
       }
 
-      // Update ETH Price
+      /* ===== Helper: Update ETH Price ===== */
       async function updateEthPrice() {
         try {
-          const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd", { mode: "cors" });
+          const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd");
           const data = await response.json();
           document.getElementById("ethPrice").textContent = data.ethereum.usd.toLocaleString();
         } catch (err) {
           console.error("ETH price error:", err);
         }
       }
-      updateEthPrice(); // Initial fetch
+      
+      // Initial ETH price fetch and auto-update every 15 seconds
+      updateEthPrice();
       setInterval(updateEthPrice, 15000);
     });
   </script>
