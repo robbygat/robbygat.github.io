@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Japanese N4 - Insane Mode</title>
+    <style>
+        /* Futuristic, Anime-Inspired CSS */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            color: #e94560;
+            overflow-x: hidden;
+        }
+        #container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            font-size: 3em;
+            text-align: center;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff, 0 0 20px #e94560;
+            animation: neonFlicker 2s infinite alternate;
+        }
+        @keyframes neonFlicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        #search-box, #flashcard-box, #anime-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        input {
+            background: #fff;
+            color: #1a1a2e;
+            width: 70%;
+        }
+        button {
+            background: #00d4ff;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+        #results, #flashcard-list, #anime-list {
+            margin-top: 20px;
+            color: #fff;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.5);
+        }
+        .anime-img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background-canvas"></canvas>
+    <div id="container">
+        <h1>Learn Japanese N4 - Musk Mode</h1>
+
+        <!-- Jisho Search Section -->
+        <div id="search-box">
+            <h2>Search Japanese (Jisho API)</h2>
+            <input type="text" id="search-input" placeholder="Enter a word (e.g., 猫)">
+            <button onclick="searchJisho()">Search</button>
+            <button onclick="addToFlashcards()">Add to Flashcards</button>
+            <div id="results"></div>
+        </div>
+
+        <!-- Flashcard Section -->
+        <div id="flashcard-box">
+            <h2>Flashcard System</h2>
+            <button onclick="showFlashcards()">Show Flashcards</button>
+            <button onclick="startFlashcardQuiz()">Start Quiz</button>
+            <div id="flashcard-list"></div>
+        </div>
+
+        <!-- Anime Images Section -->
+        <div id="anime-box">
+            <h2>Anime Vibes</h2>
+            <button onclick="loadAnimeImages()">Load Anime Images</button>
+            <div id="anime-list"></div>
+        </div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script>
+        // Background Particle Animation
+        const canvas = document.getElementById('background-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 212, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        function initParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].size <= 0.2) {
+                    particles.splice(i, 1);
+                    i--;
+                    particles.push(new Particle());
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles();
+        animateParticles();
+
+        // Jisho API Search
+        let currentResult = null;
+        async function searchJisho() {
+            const query = document.getElementById('search-input').value;
+            const url = `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(query)}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayResults(data.data);
+            } catch (error) {
+                console.error('Error fetching Jisho API:', error);
+                document.getElementById('results').innerHTML = 'Error loading data.';
+            }
+        }
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            results.forEach((item, index) => {
+                const word = item.japanese[0].word || item.japanese[0].reading;
+                const reading = item.japanese[0].reading;
+                const meaning = item.senses[0].english_definitions.join(', ');
+                const jlpt = item.jlpt.includes('jlpt-n4') ? ' (N4)' : '';
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<strong>${word}</strong> (${reading}) - ${meaning}${jlpt}`;
+                card.onclick = () => currentResult = { word, reading, meaning };
+                resultsDiv.appendChild(card);
+                // GSAP Animation
+                gsap.from(card, { opacity: 0, y: 50, duration: 0.5, delay: index * 0.1 });
+            });
+        }
+
+        // Flashcard System (Local Storage for Simplicity)
+        let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
+        function addToFlashcards() {
+            if (currentResult) {
+                flashcards.push(currentResult);
+                localStorage.setItem('flashcards', JSON.stringify(flashcards));
+                alert(`${currentResult.word} added to flashcards!`);
+            } else {
+                alert('Search for a word first!');
+            }
+        }
+        function showFlashcards() {
+            const listDiv = document.getElementById('flashcard-list');
+            listDiv.innerHTML = '';
+            flashcards.forEach((card, index) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `<strong>${card.word}</strong> (${card.reading}) - ${card.meaning}`;
+                listDiv.appendChild(div);
+                gsap.from(div, { opacity: 0, x: -50, duration: 0.5, delay: index * 0.1 });
+            });
+        }
+        function startFlashcardQuiz() {
+            if (flashcards.length === 0) {
+                alert('Add some flashcards first!');
+                return;
+            }
+            const listDiv = document.getElementById('flashcard-list');
+            listDiv.innerHTML = '';
+            let currentIndex = 0;
+            function showNextCard() {
+                if (currentIndex >= flashcards.length) {
+                    listDiv.innerHTML = 'Quiz Complete!';
+                    return;
+                }
+                const card = flashcards[currentIndex];
+                listDiv.innerHTML = `<div class="card"><strong>${card.word}</strong><br><button onclick="revealAnswer('${card.reading}', '${card.meaning}')">Reveal</button></div>`;
+                gsap.from('.card', { opacity: 0, scale: 0.8, duration: 0.5 });
+                currentIndex++;
+            }
+            window.revealAnswer = (reading, meaning) => {
+                listDiv.innerHTML += `<p>${reading} - ${meaning}</p><button onclick="showNextCard()">Next</button>`;
+                gsap.from('p', { opacity: 0, y: 20, duration: 0.5 });
+            };
+            showNextCard();
+        }
+
+        // Anime Images via Jikan API
+        async function loadAnimeImages() {
+            const url = 'https://api.jikan.moe/v4/anime?q=naruto&limit=5';
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayAnimeImages(data.data);
+            } catch (error) {
+                console.error('Error fetching Jikan API:', error);
+                document.getElementById('anime-list').innerHTML = 'Error loading anime.';
+            }
+        }
+        function displayAnimeImages(animeList) {
+            const animeDiv = document.getElementById('anime-list');
+            animeDiv.innerHTML = '';
+            animeList.forEach((anime, index) => {
+                const img = document.createElement('img');
+                img.src = anime.images.jpg.image_url;
+                img.className = 'anime-img';
+                img.alt = anime.title;
+                animeDiv.appendChild(img);
+                gsap.from(img, { opacity: 0, rotation: 360, duration: 1, delay: index * 0.2 });
+            });
+        }
+    </script>
+</body>
+</html>
