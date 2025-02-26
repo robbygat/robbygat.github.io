@@ -3,221 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Japanese N4 - Overhauled Epicness</title>
+    <title>Hanasu</title>
     <style>
-        /* Cyberpunk Aesthetic */
+        /* Apple-Inspired Minimalist Design */
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            font-family: 'Orbitron', sans-serif;
-            background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
-            color: #e0e1dd;
-            overflow-x: hidden;
-        }
-        #container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-        }
-        h1 {
-            font-size: 3.5em;
-            text-align: center;
-            color: #00ffcc;
-            text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff0066;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        #anime-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
         }
-        #anime-banner img {
+        #anime-bar {
+            width: 100%;
+            height: 120px;
+            overflow: hidden;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        #anime-bar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             opacity: 0;
             position: absolute;
-            transition: opacity 1s;
+            transition: opacity 0.8s ease-in-out;
         }
-        #anime-banner img.active {
-            opacity: 1;
+        #anime-bar img.active {
+            opacity: 0.7;
+        }
+        #container {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        h1 {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: #1d1d1f;
+            text-align: center;
+            margin: 0;
         }
         .section {
-            background: rgba(255, 255, 255, 0.05);
+            background: #fff;
             padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-            backdrop-filter: blur(10px);
-        }
-        input, button {
-            padding: 12px;
-            margin: 5px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            background: #1b263b;
-            color: #e0e1dd;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
         input {
-            width: 70%;
-            border: 1px solid #00ffcc;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 1em;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        input:focus {
+            border-color: #007aff;
         }
         button {
-            background: #ff0066;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #007aff;
+            color: #fff;
+            font-size: 1em;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.2s;
         }
         button:hover {
-            background: #00ffcc;
-            color: #0d1b2a;
-            transform: scale(1.1);
+            background: #005bb5;
         }
         .card {
-            background: rgba(255, 255, 255, 0.1);
             padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            transition: all 0.3s;
+            background: #f5f5f7;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 1em;
+            line-height: 1.5;
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(255, 0, 102, 0.5);
+        #vocab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="anime-banner"></div>
+    <div id="anime-bar"></div>
     <div id="container">
-        <h1>Learn Japanese N4 - Musk-Worthy</h1>
+        <h1>Hanasu</h1>
 
-        <!-- Live Translation Section -->
-        <div class="section" id="translate-box">
-            <h2>Live Sentence Translation</h2>
-            <input type="text" id="translate-input" placeholder="Type Japanese sentence...">
-            <button onclick="translateSentence()">Translate</button>
+        <!-- Live Translation -->
+        <div class="section">
+            <h2 style="font-size: 1.2em; font-weight: 600;">Translate Japanese</h2>
+            <input type="text" id="translate-input" placeholder="Type a Japanese sentence">
+            <button onclick="translateSentence()" style="margin-top: 10px;">Translate</button>
             <div id="translate-result"></div>
         </div>
 
-        <!-- Wanikani Vocab/Flashcards -->
-        <div class="section" id="vocab-box">
-            <h2>N4 Vocab (Wanikani)</h2>
-            <button onclick="loadWanikaniVocab()">Load N4 Words</button>
-            <button onclick="addToFlashcards()">Add to Flashcards</button>
-            <button onclick="startFlashcardQuiz()">Quiz Me</button>
+        <!-- Wanikani Vocab -->
+        <div class="section">
+            <h2 style="font-size: 1.2em; font-weight: 600;">N4 Vocabulary</h2>
+            <button onclick="loadWanikaniVocab()">Load Words</button>
+            <div id="vocab-buttons">
+                <button onclick="addToFlashcards()">Add to Flashcards</button>
+                <button onclick="startFlashcardQuiz()">Start Quiz</button>
+            </div>
             <div id="vocab-list"></div>
         </div>
 
         <!-- Kanji Lookup -->
-        <div class="section" id="kanji-box">
-            <h2>Kanji Lookup</h2>
-            <input type="text" id="kanji-input" placeholder="Enter a kanji (e.g., 猫)">
-            <button onclick="lookupKanji()">Search</button>
+        <div class="section">
+            <h2 style="font-size: 1.2em; font-weight: 600;">Kanji Lookup</h2>
+            <input type="text" id="kanji-input" placeholder="Enter a kanji">
+            <button onclick="lookupKanji()" style="margin-top: 10px;">Search</button>
             <div id="kanji-result"></div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script>
-        // Replace with your API keys
-        const WANIKANI_API_KEY = 'YOUR_WANIKANI_API_KEY';
-        const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY';
+        // API Keys
+        const WANIKANI_API_KEY = 'bb1b2801-51fc-4a5a-9403-7f8265e8749e';
+        const GOOGLE_API_KEY = 'AIzaSyAbPQl3mw5z4Ei6zzvxGHk1sriMTeMxed0';
 
-        // Anime Banner Rotation
+        // Anime Bar Rotation
         let animeImages = [];
         async function loadAnimeImages() {
-            const url = 'https://api.jikan.moe/v4/anime?q=shonen&limit=10';
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                animeImages = data.data.map(anime => anime.images.jpg.large_image_url);
-                rotateAnimeImages();
-            } catch (error) {
-                console.error('Error fetching Jikan API:', error);
-            }
+            const response = await fetch('https://api.jikan.moe/v4/anime?q=shonen&limit=10');
+            const data = await response.json();
+            animeImages = data.data.map(anime => anime.images.jpg.large_image_url);
+            rotateAnimeImages();
         }
         function rotateAnimeImages() {
-            const banner = document.getElementById('anime-banner');
-            banner.innerHTML = '';
-            animeImages.forEach((src, index) => {
+            const bar = document.getElementById('anime-bar');
+            animeImages.forEach(src => {
                 const img = document.createElement('img');
                 img.src = src;
-                banner.appendChild(img);
+                bar.appendChild(img);
             });
             let current = 0;
-            const imgs = banner.querySelectorAll('img');
+            const imgs = bar.querySelectorAll('img');
             imgs[current].classList.add('active');
             setInterval(() => {
                 imgs[current].classList.remove('active');
                 current = (current + 1) % imgs.length;
                 imgs[current].classList.add('active');
-                gsap.from(imgs[current], { opacity: 0, duration: 1 });
-            }, 5000);
+                gsap.from(imgs[current], { opacity: 0, duration: 0.8 });
+            }, 4000);
         }
         loadAnimeImages();
 
-        // Live Translation (Google Translate API)
+        // Live Translation
         async function translateSentence() {
             const text = document.getElementById('translate-input').value;
             const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}&q=${encodeURIComponent(text)}&source=ja&target=en`;
             try {
                 const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response not OK');
                 const data = await response.json();
                 const translation = data.data.translations[0].translatedText;
-                document.getElementById('translate-result').innerHTML = `<div class="card">${text} → ${translation}</div>`;
-                gsap.from('.card', { opacity: 0, y: 30, duration: 0.5 });
+                document.getElementById('translate-result').innerHTML = `<div class="card">${text}<br>→ ${translation}</div>`;
+                gsap.from('.card', { opacity: 0, y: 20, duration: 0.5 });
             } catch (error) {
-                console.error('Error with Google Translate:', error);
-                document.getElementById('translate-result').innerHTML = 'Translation failed.';
+                console.error('Translation Error:', error);
+                document.getElementById('translate-result').innerHTML = '<div class="card">Error translating. Check your input or connection.</div>';
             }
         }
 
         // Wanikani Vocab
         let currentVocab = null;
         async function loadWanikaniVocab() {
-            const url = 'https://api.wanikani.com/v2/subjects?levels=4'; // N4 roughly aligns with level 4
+            const url = 'https://api.wanikani.com/v2/subjects?levels=4';
             try {
                 const response = await fetch(url, {
                     headers: { 'Authorization': `Bearer ${WANIKANI_API_KEY}` }
                 });
+                if (!response.ok) throw new Error('Wanikani API failed');
                 const data = await response.json();
                 displayVocab(data.data);
+document.getElementById('vocab-buttons').style.display = 'flex';                
             } catch (error) {
-                console.error('Error fetching Wanikani:', error);
-                document.getElementById('vocab-list').innerHTML = 'Error loading vocab.';
+                console.error('Wanikani Error:', error);
+                document.getElementById('vocab-list').innerHTML = '<div class="card">Error loading vocab.</div>';
             }
         }
         function displayVocab(vocabList) {
             const listDiv = document.getElementById('vocab-list');
             listDiv.innerHTML = '';
-            vocabList.slice(0, 10).forEach((item, index) => { // Limit to 10 for simplicity
+            vocabList.slice(0, 5).forEach((item, index) => {
                 if (item.object === 'vocabulary') {
                     const word = item.data.characters;
                     const reading = item.data.readings[0].reading;
                     const meaning = item.data.meanings[0].meaning;
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.innerHTML = `<strong>${word}</strong> (${reading}) - ${meaning}`;
+                    card.innerHTML = `${word} (${reading})<br>${meaning}`;
                     card.onclick = () => currentVocab = { word, reading, meaning };
                     listDiv.appendChild(card);
-                    gsap.from(card, { opacity: 0, x: -50, duration: 0.5, delay: index * 0.1 });
+                    gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
                 }
             });
         }
@@ -228,14 +225,15 @@
             if (currentVocab) {
                 flashcards.push(currentVocab);
                 localStorage.setItem('flashcards', JSON.stringify(flashcards));
-                alert(`${currentVocab.word} added!`);
+                document.getElementById('vocab-list').innerHTML += `<div class="card">Added: ${currentVocab.word}</div>`;
+                gsap.from('.card:last-child', { opacity: 0, y: 20, duration: 0.5 });
             } else {
-                alert('Select a word first!');
+                alert('Select a word first.');
             }
         }
         function startFlashcardQuiz() {
             if (flashcards.length === 0) {
-                alert('Add flashcards first!');
+                alert('Add flashcards first.');
                 return;
             }
             const listDiv = document.getElementById('vocab-list');
@@ -243,12 +241,12 @@
             let currentIndex = 0;
             function showNextCard() {
                 if (currentIndex >= flashcards.length) {
-                    listDiv.innerHTML = 'Quiz Done!';
+                    listDiv.innerHTML = '<div class="card">Quiz Complete!</div>';
                     return;
                 }
                 const card = flashcards[currentIndex];
-                listDiv.innerHTML = `<div class="card"><strong>${card.word}</strong><br><button onclick="revealAnswer('${card.reading}', '${card.meaning}')">Reveal</button></div>`;
-                gsap.from('.card', { opacity: 0, scale: 0.8, duration: 0.5 });
+                listDiv.innerHTML = `<div class="card">${card.word}<br><button onclick="revealAnswer('${card.reading}', '${card.meaning}')">Show Answer</button></div>`;
+                gsap.from('.card', { opacity: 0, scale: 0.9, duration: 0.5 });
                 currentIndex++;
             }
             window.revealAnswer = (reading, meaning) => {
@@ -258,27 +256,27 @@
             showNextCard();
         }
 
-        // Kanji Lookup (Kanji Alive API)
+        // Kanji Lookup
         async function lookupKanji() {
             const kanji = document.getElementById('kanji-input').value;
             const url = `https://kanjialive-api.herokuapp.com/api/public/kanji/${encodeURIComponent(kanji)}`;
             try {
                 const response = await fetch(url);
+                if (!response.ok) throw new Error('Kanji not found');
                 const data = await response.json();
                 const meaning = data.meaning.english;
                 const reading = `${data.kun_yomi[0] || ''} / ${data.on_yomi[0] || ''}`;
                 const strokes = data.stroke_count;
                 document.getElementById('kanji-result').innerHTML = `
                     <div class="card">
-                        <strong>${kanji}</strong><br>
-                        Meaning: ${meaning}<br>
-                        Readings: ${reading}<br>
-                        Strokes: ${strokes}
+                        ${kanji}<br>
+                        ${reading}<br>
+                        ${meaning} (${strokes} strokes)
                     </div>`;
-                gsap.from('.card', { opacity: 0, y: 30, duration: 0.5 });
+                gsap.from('.card', { opacity: 0, y: 20, duration: 0.5 });
             } catch (error) {
-                console.error('Error fetching Kanji Alive:', error);
-                document.getElementById('kanji-result').innerHTML = 'Kanji not found.';
+                console.error('Kanji Error:', error);
+                document.getElementById('kanji-result').innerHTML = '<div class="card">Kanji not found.</div>';
             }
         }
     </script>
