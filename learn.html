@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hanasu</title>
     <style>
-        /* Apple-Inspired Minimalist Design */
+        /* Apple-Inspired, Duolingo-Like Design */
         body {
             margin: 0;
             padding: 0;
@@ -17,63 +17,97 @@
             flex-direction: column;
             align-items: center;
         }
-        #anime-bar {
-            width: 100%;
-            height: 120px;
-            overflow: hidden;
-            background: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        #anime-bar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            position: absolute;
-            transition: opacity 0.8s ease-in-out;
-        }
-        #anime-bar img.active {
-            opacity: 0.7;
-        }
         #container {
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 30px;
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             font-weight: 600;
             color: #1d1d1f;
             text-align: center;
             margin: 0;
         }
-        .section {
+        /* Skill Tree */
+        .skill-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .skill {
+            background: #fff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .skill:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        .skill.completed {
+            background: #e5f7e5;
+        }
+        .skill span {
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+        /* Lesson Area */
+        #lesson-area {
             background: #fff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
+        .exercise {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
         input {
-            width: 100%;
             padding: 12px;
             border: 1px solid #d2d2d7;
             border-radius: 8px;
             font-size: 1em;
             outline: none;
+            width: 100%;
+            max-width: 400px;
             box-sizing: border-box;
             transition: border-color 0.2s;
         }
         input:focus {
             border-color: #007aff;
         }
-        button {
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .option {
             padding: 10px 20px;
+            border: 1px solid #d2d2d7;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .option:hover {
+            background: #f0f0f0;
+        }
+        .option.selected {
+            background: #007aff;
+            color: #fff;
+            border-color: #007aff;
+        }
+        button {
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
             background: #007aff;
@@ -86,198 +120,182 @@
         button:hover {
             background: #005bb5;
         }
-        .card {
-            padding: 15px;
-            background: #f5f5f7;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 1em;
-            line-height: 1.5;
-        }
-        #vocab-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
+        #progress {
+            text-align: center;
+            font-size: 1.1em;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div id="anime-bar"></div>
     <div id="container">
         <h1>Hanasu</h1>
-
-        <!-- Live Translation -->
-        <div class="section">
-            <h2 style="font-size: 1.2em; font-weight: 600;">Translate Japanese</h2>
-            <input type="text" id="translate-input" placeholder="Type a Japanese sentence">
-            <button onclick="translateSentence()" style="margin-top: 10px;">Translate</button>
-            <div id="translate-result"></div>
-        </div>
-
-        <!-- Wanikani Vocab -->
-        <div class="section">
-            <h2 style="font-size: 1.2em; font-weight: 600;">N4 Vocabulary</h2>
-            <button onclick="loadWanikaniVocab()">Load Words</button>
-            <div id="vocab-buttons">
-                <button onclick="addToFlashcards()">Add to Flashcards</button>
-                <button onclick="startFlashcardQuiz()">Start Quiz</button>
-            </div>
-            <div id="vocab-list"></div>
-        </div>
-
-        <!-- Kanji Lookup -->
-        <div class="section">
-            <h2 style="font-size: 1.2em; font-weight: 600;">Kanji Lookup</h2>
-            <input type="text" id="kanji-input" placeholder="Enter a kanji">
-            <button onclick="lookupKanji()" style="margin-top: 10px;">Search</button>
-            <div id="kanji-result"></div>
-        </div>
+        <div class="skill-tree" id="skill-tree"></div>
+        <div id="lesson-area"></div>
+        <div id="progress">XP: 0</div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script>
         // API Keys
         const WANIKANI_API_KEY = 'bb1b2801-51fc-4a5a-9403-7f8265e8749e';
         const GOOGLE_API_KEY = 'AIzaSyAbPQl3mw5z4Ei6zzvxGHk1sriMTeMxed0';
+        const PROXY_URL = 'https://cors-anywhere.herokuapp.com/'; // CORS workaround
 
-        // Anime Bar Rotation
-        let animeImages = [];
-        async function loadAnimeImages() {
-            const response = await fetch('https://api.jikan.moe/v4/anime?q=shonen&limit=10');
-            const data = await response.json();
-            animeImages = data.data.map(anime => anime.images.jpg.large_image_url);
-            rotateAnimeImages();
-        }
-        function rotateAnimeImages() {
-            const bar = document.getElementById('anime-bar');
-            animeImages.forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                bar.appendChild(img);
-            });
-            let current = 0;
-            const imgs = bar.querySelectorAll('img');
-            imgs[current].classList.add('active');
-            setInterval(() => {
-                imgs[current].classList.remove('active');
-                current = (current + 1) % imgs.length;
-                imgs[current].classList.add('active');
-                gsap.from(imgs[current], { opacity: 0, duration: 0.8 });
-            }, 4000);
-        }
-        loadAnimeImages();
-
-        // Live Translation
-        async function translateSentence() {
-            const text = document.getElementById('translate-input').value;
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}&q=${encodeURIComponent(text)}&source=ja&target=en`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response not OK');
-                const data = await response.json();
-                const translation = data.data.translations[0].translatedText;
-                document.getElementById('translate-result').innerHTML = `<div class="card">${text}<br>→ ${translation}</div>`;
-                gsap.from('.card', { opacity: 0, y: 20, duration: 0.5 });
-            } catch (error) {
-                console.error('Translation Error:', error);
-                document.getElementById('translate-result').innerHTML = '<div class="card">Error translating. Check your input or connection.</div>';
+        // Sample N4 Lessons (Duolingo-Style)
+        const lessons = [
+            {
+                name: 'Basics 1',
+                exercises: [
+                    { type: 'translate', prompt: 'I eat rice.', answer: 'ご飯を食べます。', options: ['ご飯を食べます。', '犬が走ります。', '水を飲みます。'] },
+                    { type: 'match', pairs: [['猫', 'cat'], ['犬', 'dog'], ['木', 'tree']] },
+                    { type: 'type', prompt: 'Translate "water" to Japanese.', answer: '水' }
+                ]
+            },
+            {
+                name: 'Greetings',
+                exercises: [
+                    { type: 'translate', prompt: 'Hello!', answer: 'こんにちは！', options: ['こんにちは！', 'ありがとう', 'おはよう'] },
+                    { type: 'match', pairs: [['おはよう', 'good morning'], ['こんばんは', 'good evening'], ['さようなら', 'goodbye']] },
+                    { type: 'type', prompt: 'Translate "thank you" to Japanese.', answer: 'ありがとう' }
+                ]
             }
-        }
+        ];
 
-        // Wanikani Vocab
-        let currentVocab = null;
-        async function loadWanikaniVocab() {
-            const url = 'https://api.wanikani.com/v2/subjects?levels=4';
-            try {
-                const response = await fetch(url, {
-                    headers: { 'Authorization': `Bearer ${WANIKANI_API_KEY}` }
-                });
-                if (!response.ok) throw new Error('Wanikani API failed');
-                const data = await response.json();
-                displayVocab(data.data);
-document.getElementById('vocab-buttons').style.display = 'flex';                
-            } catch (error) {
-                console.error('Wanikani Error:', error);
-                document.getElementById('vocab-list').innerHTML = '<div class="card">Error loading vocab.</div>';
-            }
-        }
-        function displayVocab(vocabList) {
-            const listDiv = document.getElementById('vocab-list');
-            listDiv.innerHTML = '';
-            vocabList.slice(0, 5).forEach((item, index) => {
-                if (item.object === 'vocabulary') {
-                    const word = item.data.characters;
-                    const reading = item.data.readings[0].reading;
-                    const meaning = item.data.meanings[0].meaning;
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `${word} (${reading})<br>${meaning}`;
-                    card.onclick = () => currentVocab = { word, reading, meaning };
-                    listDiv.appendChild(card);
-                    gsap.from(card, { opacity: 0, y: 20, duration: 0.5, delay: index * 0.1 });
-                }
+        let xp = 0;
+        let completedSkills = JSON.parse(localStorage.getItem('completedSkills')) || [];
+
+        // Render Skill Tree
+        function renderSkillTree() {
+            const tree = document.getElementById('skill-tree');
+            tree.innerHTML = '';
+            lessons.forEach((lesson, index) => {
+                const skill = document.createElement('div');
+                skill.className = `skill ${completedSkills.includes(index) ? 'completed' : ''}`;
+                skill.innerHTML = `<span>${lesson.name}</span><span>${completedSkills.includes(index) ? '✓' : 'Start'}</span>`;
+                skill.onclick = () => startLesson(index);
+                tree.appendChild(skill);
             });
         }
+        renderSkillTree();
 
-        // Flashcard System
-        let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
-        function addToFlashcards() {
-            if (currentVocab) {
-                flashcards.push(currentVocab);
-                localStorage.setItem('flashcards', JSON.stringify(flashcards));
-                document.getElementById('vocab-list').innerHTML += `<div class="card">Added: ${currentVocab.word}</div>`;
-                gsap.from('.card:last-child', { opacity: 0, y: 20, duration: 0.5 });
-            } else {
-                alert('Select a word first.');
-            }
-        }
-        function startFlashcardQuiz() {
-            if (flashcards.length === 0) {
-                alert('Add flashcards first.');
-                return;
-            }
-            const listDiv = document.getElementById('vocab-list');
-            listDiv.innerHTML = '';
-            let currentIndex = 0;
-            function showNextCard() {
-                if (currentIndex >= flashcards.length) {
-                    listDiv.innerHTML = '<div class="card">Quiz Complete!</div>';
+        // Start Lesson
+        function startLesson(lessonIndex) {
+            const lesson = lessons[lessonIndex];
+            const area = document.getElementById('lesson-area');
+            area.innerHTML = `<h2>${lesson.name}</h2>`;
+            let currentExercise = 0;
+
+            function renderExercise() {
+                if (currentExercise >= lesson.exercises.length) {
+                    completeLesson(lessonIndex);
                     return;
                 }
-                const card = flashcards[currentIndex];
-                listDiv.innerHTML = `<div class="card">${card.word}<br><button onclick="revealAnswer('${card.reading}', '${card.meaning}')">Show Answer</button></div>`;
-                gsap.from('.card', { opacity: 0, scale: 0.9, duration: 0.5 });
-                currentIndex++;
+                const ex = lesson.exercises[currentExercise];
+                area.innerHTML = `<h2>${lesson.name}</h2><div class="exercise"></div>`;
+                const exerciseDiv = area.querySelector('.exercise');
+
+                if (ex.type === 'translate') {
+                    exerciseDiv.innerHTML = `<p>Translate: "${ex.prompt}"</p><div class="options"></div><button onclick="checkAnswer('${ex.answer}')">Check</button>`;
+                    const optionsDiv = exerciseDiv.querySelector('.options');
+                    ex.options.forEach(opt => {
+                        const div = document.createElement('div');
+                        div.className = 'option';
+                        div.textContent = opt;
+                        div.onclick = () => {
+                            optionsDiv.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+                            div.classList.add('selected');
+                        };
+                        optionsDiv.appendChild(div);
+                    });
+                } else if (ex.type === 'match') {
+                    const shuffledPairs = ex.pairs.sort(() => Math.random() - 0.5);
+                    exerciseDiv.innerHTML = `<p>Match the pairs:</p><div class="options"></div><button onclick="checkMatch(${JSON.stringify(shuffledPairs)})">Check</button>`;
+                    const optionsDiv = exerciseDiv.querySelector('.options');
+                    shuffledPairs.forEach(([left, right]) => {
+                        optionsDiv.innerHTML += `<div class="option">${left}</div><div class="option">${right}</div>`;
+                    });
+                } else if (ex.type === 'type') {
+                    exerciseDiv.innerHTML = `<p>${ex.prompt}</p><input id="type-input"><button onclick="checkType('${ex.answer}')">Check</button>`;
+                }
             }
-            window.revealAnswer = (reading, meaning) => {
-                listDiv.innerHTML += `<p>${reading} - ${meaning}</p><button onclick="showNextCard()">Next</button>`;
-                gsap.from('p', { opacity: 0, y: 20, duration: 0.5 });
+
+            window.checkAnswer = answer => {
+                const selected = document.querySelector('.option.selected');
+                if (selected && selected.textContent === answer) {
+                    currentExercise++;
+                    xp += 10;
+                    updateProgress();
+                    renderExercise();
+                } else {
+                    alert('Try again!');
+                }
             };
-            showNextCard();
+
+            window.checkMatch = pairs => {
+                alert('Matching is a demo—imagine dragging pairs!'); // Simplified for now
+                currentExercise++;
+                xp += 10;
+                updateProgress();
+                renderExercise();
+            };
+
+            window.checkType = answer => {
+                const input = document.getElementById('type-input').value;
+                if (input === answer) {
+                    currentExercise++;
+                    xp += 10;
+                    updateProgress();
+                    renderExercise();
+                } else {
+                    alert('Incorrect, try again!');
+                }
+            };
+
+            renderExercise();
         }
 
-        // Kanji Lookup
-        async function lookupKanji() {
-            const kanji = document.getElementById('kanji-input').value;
-            const url = `https://kanjialive-api.herokuapp.com/api/public/kanji/${encodeURIComponent(kanji)}`;
+        function completeLesson(index) {
+            if (!completedSkills.includes(index)) {
+                completedSkills.push(index);
+                localStorage.setItem('completedSkills', JSON.stringify(completedSkills));
+            }
+            document.getElementById('lesson-area').innerHTML = '<p>Lesson Complete! +50 XP</p>';
+            xp += 50;
+            updateProgress();
+            renderSkillTree();
+        }
+
+        function updateProgress() {
+            document.getElementById('progress').textContent = `XP: ${xp}`;
+        }
+
+        // Wanikani Integration (Vocab Fetch for Future Lessons)
+        async function fetchWanikaniVocab() {
+            const response = await fetch('https://api.wanikani.com/v2/subjects?levels=4', {
+                headers: { 'Authorization': `Bearer ${WANIKANI_API_KEY}` }
+            });
+            const data = await response.json();
+            return data.data.filter(item => item.object === 'vocabulary');
+        }
+
+        // Translation (Fixed with Proxy)
+        async function translateText(text) {
+            const url = `${PROXY_URL}https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}&q=${encodeURIComponent(text)}&source=ja&target=en`;
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Kanji not found');
                 const data = await response.json();
-                const meaning = data.meaning.english;
-                const reading = `${data.kun_yomi[0] || ''} / ${data.on_yomi[0] || ''}`;
-                const strokes = data.stroke_count;
-                document.getElementById('kanji-result').innerHTML = `
-                    <div class="card">
-                        ${kanji}<br>
-                        ${reading}<br>
-                        ${meaning} (${strokes} strokes)
-                    </div>`;
-                gsap.from('.card', { opacity: 0, y: 20, duration: 0.5 });
+                return data.data.translations[0].translatedText;
             } catch (error) {
-                console.error('Kanji Error:', error);
-                document.getElementById('kanji-result').innerHTML = '<div class="card">Kanji not found.</div>';
+                console.error('Translation Error:', error);
+                return 'Translation failed.';
             }
+        }
+
+        // Kanji Lookup (For Reference)
+        async function lookupKanji(kanji) {
+            const response = await fetch(`https://kanjialive-api.herokuapp.com/api/public/kanji/${encodeURIComponent(kanji)}`);
+            const data = await response.json();
+            return { meaning: data.meaning.english, reading: `${data.kun_yomi[0] || ''} / ${data.on_yomi[0] || ''}`, strokes: data.stroke_count };
         }
     </script>
 </body>
