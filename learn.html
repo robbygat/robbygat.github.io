@@ -3,244 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Japanese N4 - Insane Mode</title>
+    <title>Learn Japanese N4 - Overhauled Epicness</title>
     <style>
-        /* Futuristic, Anime-Inspired CSS */
-        html, body {
+        /* Cyberpunk Aesthetic */
+        body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
-            color: #e94560;
+            min-height: 100vh;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77);
+            color: #e0e1dd;
             overflow-x: hidden;
         }
         #container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
             position: relative;
             z-index: 1;
         }
         h1 {
-            font-size: 3em;
+            font-size: 3.5em;
             text-align: center;
-            color: #00d4ff;
-            text-shadow: 0 0 10px #00d4ff, 0 0 20px #e94560;
-            animation: neonFlicker 2s infinite alternate;
+            color: #00ffcc;
+            text-shadow: 0 0 15px #00ffcc, 0 0 30px #ff0066;
+            animation: pulse 2s infinite;
         }
-        @keyframes neonFlicker {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-        #search-box, #flashcard-box, #anime-box {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
-            backdrop-filter: blur(5px);
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        input {
-            background: #fff;
-            color: #1a1a2e;
-            width: 70%;
-        }
-        button {
-            background: #00d4ff;
-            color: #fff;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:hover {
-            transform: scale(1.1);
-        }
-        #results, #flashcard-list, #anime-list {
-            margin-top: 20px;
-            color: #fff;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.5);
-        }
-        .anime-img {
-            width: 100px;
-            height: auto;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        #background-canvas {
+        #anime-banner {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            height: 200px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.7);
             z-index: 0;
-            opacity: 0.3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #anime-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            position: absolute;
+            transition: opacity 1s;
+        }
+        #anime-banner img.active {
+            opacity: 1;
+        }
+        .section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        input, button {
+            padding: 12px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            background: #1b263b;
+            color: #e0e1dd;
+        }
+        input {
+            width: 70%;
+            border: 1px solid #00ffcc;
+        }
+        button {
+            background: #ff0066;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #00ffcc;
+            color: #0d1b2a;
+            transform: scale(1.1);
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(255, 0, 102, 0.5);
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="background-canvas"></canvas>
+    <div id="anime-banner"></div>
     <div id="container">
-        <h1>Learn Japanese N4 - Musk Mode</h1>
+        <h1>Learn Japanese N4 - Musk-Worthy</h1>
 
-        <!-- Jisho Search Section -->
-        <div id="search-box">
-            <h2>Search Japanese (Jisho API)</h2>
-            <input type="text" id="search-input" placeholder="Enter a word (e.g., 猫)">
-            <button onclick="searchJisho()">Search</button>
+        <!-- Live Translation Section -->
+        <div class="section" id="translate-box">
+            <h2>Live Sentence Translation</h2>
+            <input type="text" id="translate-input" placeholder="Type Japanese sentence...">
+            <button onclick="translateSentence()">Translate</button>
+            <div id="translate-result"></div>
+        </div>
+
+        <!-- Wanikani Vocab/Flashcards -->
+        <div class="section" id="vocab-box">
+            <h2>N4 Vocab (Wanikani)</h2>
+            <button onclick="loadWanikaniVocab()">Load N4 Words</button>
             <button onclick="addToFlashcards()">Add to Flashcards</button>
-            <div id="results"></div>
+            <button onclick="startFlashcardQuiz()">Quiz Me</button>
+            <div id="vocab-list"></div>
         </div>
 
-        <!-- Flashcard Section -->
-        <div id="flashcard-box">
-            <h2>Flashcard System</h2>
-            <button onclick="showFlashcards()">Show Flashcards</button>
-            <button onclick="startFlashcardQuiz()">Start Quiz</button>
-            <div id="flashcard-list"></div>
-        </div>
-
-        <!-- Anime Images Section -->
-        <div id="anime-box">
-            <h2>Anime Vibes</h2>
-            <button onclick="loadAnimeImages()">Load Anime Images</button>
-            <div id="anime-list"></div>
+        <!-- Kanji Lookup -->
+        <div class="section" id="kanji-box">
+            <h2>Kanji Lookup</h2>
+            <input type="text" id="kanji-input" placeholder="Enter a kanji (e.g., 猫)">
+            <button onclick="lookupKanji()">Search</button>
+            <div id="kanji-result"></div>
         </div>
     </div>
 
-    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <script>
-        // Background Particle Animation
-        const canvas = document.getElementById('background-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const particles = [];
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 5 + 1;
-                this.speedX = Math.random() * 3 - 1.5;
-                this.speedY = Math.random() * 3 - 1.5;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.size > 0.2) this.size -= 0.1;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(0, 212, 255, 0.8)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        function initParticles() {
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
-            }
-        }
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                if (particles[i].size <= 0.2) {
-                    particles.splice(i, 1);
-                    i--;
-                    particles.push(new Particle());
-                }
-            }
-            requestAnimationFrame(animateParticles);
-        }
-        initParticles();
-        animateParticles();
+        // Replace with your API keys
+        const WANIKANI_API_KEY = 'YOUR_WANIKANI_API_KEY';
+        const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY';
 
-        // Jisho API Search
-        let currentResult = null;
-        async function searchJisho() {
-            const query = document.getElementById('search-input').value;
-            const url = `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(query)}`;
+        // Anime Banner Rotation
+        let animeImages = [];
+        async function loadAnimeImages() {
+            const url = 'https://api.jikan.moe/v4/anime?q=shonen&limit=10';
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                displayResults(data.data);
+                animeImages = data.data.map(anime => anime.images.jpg.large_image_url);
+                rotateAnimeImages();
             } catch (error) {
-                console.error('Error fetching Jisho API:', error);
-                document.getElementById('results').innerHTML = 'Error loading data.';
+                console.error('Error fetching Jikan API:', error);
             }
         }
-        function displayResults(results) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
-            results.forEach((item, index) => {
-                const word = item.japanese[0].word || item.japanese[0].reading;
-                const reading = item.japanese[0].reading;
-                const meaning = item.senses[0].english_definitions.join(', ');
-                const jlpt = item.jlpt.includes('jlpt-n4') ? ' (N4)' : '';
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<strong>${word}</strong> (${reading}) - ${meaning}${jlpt}`;
-                card.onclick = () => currentResult = { word, reading, meaning };
-                resultsDiv.appendChild(card);
-                // GSAP Animation
-                gsap.from(card, { opacity: 0, y: 50, duration: 0.5, delay: index * 0.1 });
+        function rotateAnimeImages() {
+            const banner = document.getElementById('anime-banner');
+            banner.innerHTML = '';
+            animeImages.forEach((src, index) => {
+                const img = document.createElement('img');
+                img.src = src;
+                banner.appendChild(img);
+            });
+            let current = 0;
+            const imgs = banner.querySelectorAll('img');
+            imgs[current].classList.add('active');
+            setInterval(() => {
+                imgs[current].classList.remove('active');
+                current = (current + 1) % imgs.length;
+                imgs[current].classList.add('active');
+                gsap.from(imgs[current], { opacity: 0, duration: 1 });
+            }, 5000);
+        }
+        loadAnimeImages();
+
+        // Live Translation (Google Translate API)
+        async function translateSentence() {
+            const text = document.getElementById('translate-input').value;
+            const url = `https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}&q=${encodeURIComponent(text)}&source=ja&target=en`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const translation = data.data.translations[0].translatedText;
+                document.getElementById('translate-result').innerHTML = `<div class="card">${text} → ${translation}</div>`;
+                gsap.from('.card', { opacity: 0, y: 30, duration: 0.5 });
+            } catch (error) {
+                console.error('Error with Google Translate:', error);
+                document.getElementById('translate-result').innerHTML = 'Translation failed.';
+            }
+        }
+
+        // Wanikani Vocab
+        let currentVocab = null;
+        async function loadWanikaniVocab() {
+            const url = 'https://api.wanikani.com/v2/subjects?levels=4'; // N4 roughly aligns with level 4
+            try {
+                const response = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${WANIKANI_API_KEY}` }
+                });
+                const data = await response.json();
+                displayVocab(data.data);
+            } catch (error) {
+                console.error('Error fetching Wanikani:', error);
+                document.getElementById('vocab-list').innerHTML = 'Error loading vocab.';
+            }
+        }
+        function displayVocab(vocabList) {
+            const listDiv = document.getElementById('vocab-list');
+            listDiv.innerHTML = '';
+            vocabList.slice(0, 10).forEach((item, index) => { // Limit to 10 for simplicity
+                if (item.object === 'vocabulary') {
+                    const word = item.data.characters;
+                    const reading = item.data.readings[0].reading;
+                    const meaning = item.data.meanings[0].meaning;
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `<strong>${word}</strong> (${reading}) - ${meaning}`;
+                    card.onclick = () => currentVocab = { word, reading, meaning };
+                    listDiv.appendChild(card);
+                    gsap.from(card, { opacity: 0, x: -50, duration: 0.5, delay: index * 0.1 });
+                }
             });
         }
 
-        // Flashcard System (Local Storage for Simplicity)
+        // Flashcard System
         let flashcards = JSON.parse(localStorage.getItem('flashcards')) || [];
         function addToFlashcards() {
-            if (currentResult) {
-                flashcards.push(currentResult);
+            if (currentVocab) {
+                flashcards.push(currentVocab);
                 localStorage.setItem('flashcards', JSON.stringify(flashcards));
-                alert(`${currentResult.word} added to flashcards!`);
+                alert(`${currentVocab.word} added!`);
             } else {
-                alert('Search for a word first!');
+                alert('Select a word first!');
             }
-        }
-        function showFlashcards() {
-            const listDiv = document.getElementById('flashcard-list');
-            listDiv.innerHTML = '';
-            flashcards.forEach((card, index) => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `<strong>${card.word}</strong> (${card.reading}) - ${card.meaning}`;
-                listDiv.appendChild(div);
-                gsap.from(div, { opacity: 0, x: -50, duration: 0.5, delay: index * 0.1 });
-            });
         }
         function startFlashcardQuiz() {
             if (flashcards.length === 0) {
-                alert('Add some flashcards first!');
+                alert('Add flashcards first!');
                 return;
             }
-            const listDiv = document.getElementById('flashcard-list');
+            const listDiv = document.getElementById('vocab-list');
             listDiv.innerHTML = '';
             let currentIndex = 0;
             function showNextCard() {
                 if (currentIndex >= flashcards.length) {
-                    listDiv.innerHTML = 'Quiz Complete!';
+                    listDiv.innerHTML = 'Quiz Done!';
                     return;
                 }
                 const card = flashcards[currentIndex];
@@ -255,29 +258,28 @@
             showNextCard();
         }
 
-        // Anime Images via Jikan API
-        async function loadAnimeImages() {
-            const url = 'https://api.jikan.moe/v4/anime?q=naruto&limit=5';
+        // Kanji Lookup (Kanji Alive API)
+        async function lookupKanji() {
+            const kanji = document.getElementById('kanji-input').value;
+            const url = `https://kanjialive-api.herokuapp.com/api/public/kanji/${encodeURIComponent(kanji)}`;
             try {
                 const response = await fetch(url);
                 const data = await response.json();
-                displayAnimeImages(data.data);
+                const meaning = data.meaning.english;
+                const reading = `${data.kun_yomi[0] || ''} / ${data.on_yomi[0] || ''}`;
+                const strokes = data.stroke_count;
+                document.getElementById('kanji-result').innerHTML = `
+                    <div class="card">
+                        <strong>${kanji}</strong><br>
+                        Meaning: ${meaning}<br>
+                        Readings: ${reading}<br>
+                        Strokes: ${strokes}
+                    </div>`;
+                gsap.from('.card', { opacity: 0, y: 30, duration: 0.5 });
             } catch (error) {
-                console.error('Error fetching Jikan API:', error);
-                document.getElementById('anime-list').innerHTML = 'Error loading anime.';
+                console.error('Error fetching Kanji Alive:', error);
+                document.getElementById('kanji-result').innerHTML = 'Kanji not found.';
             }
-        }
-        function displayAnimeImages(animeList) {
-            const animeDiv = document.getElementById('anime-list');
-            animeDiv.innerHTML = '';
-            animeList.forEach((anime, index) => {
-                const img = document.createElement('img');
-                img.src = anime.images.jpg.image_url;
-                img.className = 'anime-img';
-                img.alt = anime.title;
-                animeDiv.appendChild(img);
-                gsap.from(img, { opacity: 0, rotation: 360, duration: 1, delay: index * 0.2 });
-            });
         }
     </script>
 </body>
