@@ -1,1016 +1,879 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>robbygat by Robert Gatzke</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto:wght@400;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
-  
-  <!-- Font Awesome for Social Media Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- AOS Library for Scroll Animations -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  
-  <!-- React and Babel CDN -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <!-- Inline CSS for simplicity -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered GBA Emulator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tensor-flow/0.1.0/tf.min.js"></script>
   <style>
-    /* BASIC PAGE RESET & VARIABLES */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     :root {
-      --primary-color: #ffffff; /* White */
-      --secondary-color: #cccccc; /* Light Grey */
-      --background-light: #000000; /* Black */
-      --background-dark: #121212; /* Dark Black */
-      --text-light: #ffffff; /* White */
-      --text-dark: #e0e0e0; /* Light Grey */
-      --border-light: #ffffff; /* White */
-      --border-dark: #e0e0e0; /* Light Grey */
-      --shadow-light: rgba(255,255,255,0.1);
-      --shadow-dark: rgba(0,0,0,0.1);
-      --accent-color: #ff4081;
-      --transition-speed: 0.3s;
-    }
-    
-    /* three.js Background Canvas */
-    #three-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      display: block;
+      --primary: #8A2BE2;
+      --secondary: #4B0082;
+      --accent: #9370DB;
+      --background: #121212;
+      --surface: #1E1E1E;
+      --text: #E0E0E0;
+      --border-radius: 8px;
     }
     
     body {
-      background-color: var(--background-light);
-      color: var(--text-light);
-      font-family: 'Lora', serif;
-      line-height: 1.6;
-      position: relative;
-      overflow-x: hidden;
-      /* REPEATING TEXT BACKGROUND: "robbygat.com" */
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
-      background-repeat: repeat;
-      background-attachment: fixed;
-      background-size: contain;
-      transition: background-color 0.5s, color 0.5s;
-    }
-    body.dark-mode {
-      background-color: var(--background-dark);
-      color: var(--text-dark);
-      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='200'%3E%3Ctext x='0' y='150' font-family='Lora' font-size='50' fill='grey' opacity='0.05'%3Erobbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%20robbygat.com%3C/text%3E%3C/svg%3E");
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--text);
     }
     
-    /* HEADER / SOCIAL MEDIA BUTTONS */
-    .header {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      padding: 10px 0;
-      background-color: rgba(0, 0, 0, 0.8);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 4px var(--shadow-dark);
-      transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
-    }
-    .header a,
-    .header button {
-      color: var(--text-light);
-      text-decoration: none;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.2rem;
-      transition: transform var(--transition-speed), color var(--transition-speed);
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    .header a:hover,
-    .header button:hover {
-      transform: scale(1.2);
-      color: var(--accent-color);
-    }
-    /* Dark Mode Toggle Switch */
-    .toggle-switch {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-    .toggle-switch input {
-      display: none;
-    }
-    .toggle-switch label {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-light);
-    }
-    .toggle-switch .slider {
-      width: 40px;
-      height: 20px;
-      background-color: #ccc;
-      border-radius: 34px;
-      position: relative;
-      margin-left: 10px;
-      transition: background-color 0.4s;
-    }
-    .toggle-switch .slider::before {
-      content: "";
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      left: 2px;
-      bottom: 2px;
-      background-color: white;
-      border-radius: 50%;
-      transition: transform 0.4s;
-    }
-    .toggle-switch input:checked + label .slider {
-      background-color: var(--primary-color);
-    }
-    .toggle-switch input:checked + label .slider::before {
-      transform: translateX(20px);
-    }
-    
-    /* PAGE TITLE */
-    h1 {
-      text-align: center;
-      letter-spacing: 1px;
-      margin: 1rem auto 0.5rem auto;
-      font-size: 2.5rem;
-      font-family: 'EB Garamond', serif;
-      max-width: 800px;
-      padding: 0 1rem;
-      position: relative;
-      z-index: 1;
-      transition: transform 0.5s ease;
-      animation: fadeInDown 1s ease-out;
-    }
-    h1:hover {
-      transform: scale(1.05);
-    }
-    
-    /* TAGLINE */
-    .tagline {
-      text-align: center;
-      font-style: italic;
-      margin: 0 0 2rem 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.5rem;
-      transition: color 0.3s ease;
-      position: relative;
-      display: inline-block;
-      overflow: hidden;
-      min-height: 2.5em;
-      color: var(--accent-color);
-      text-decoration: line-through;
-      animation: crossOut 2s forwards;
-    }
-    .tagline.unemployed {
-      text-decoration: none;
-      color: var(--accent-color);
-      font-size: 2rem;
-      animation: fadeInUnemployed 2s forwards;
-    }
-    
-    /* MAIN CONTENT WRAPPER */
-    .content {
-      max-width: 900px;
+    .container {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 0 1rem;
-      animation: fadeIn 2s ease-in-out;
+      padding: 20px;
     }
     
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: var(--text-light);
-    }
-    body.dark-mode p {
-      color: var(--text-dark);
-    }
-    
-    /* IMAGE SECTION */
-    .image-container {
+    header {
       text-align: center;
-      margin: 2rem 0;
-      animation: zoomIn 1.5s ease-out;
-    }
-    .image-container img {
-      max-width: 100%;
-      height: auto;
-      filter: grayscale(100%);
-      transition: filter 0.3s ease, transform 0.3s ease;
-      border: 2px solid var(--border-light);
-      padding: 5px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    body.dark-mode .image-container img {
-      border-color: var(--border-dark);
-    }
-    .image-container img:hover {
-      filter: grayscale(0%);
-      transform: scale(1.02);
+      margin-bottom: 30px;
     }
     
-    /* INSTAGRAM DOCK-STYLE IMAGES */
-    .instagram-dock {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      overflow-x: auto;
-      padding: 1rem;
-      animation: fadeInUp 1.5s ease-out;
-    }
-    .instagram-dock img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 10px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .instagram-dock img:hover {
-      transform: scale(1.3);
-      box-shadow: 0 0 15px var(--accent-color);
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #FF6B6B, #556270);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
     }
     
-    /* ROBBYSCRIPT DISPLAY */
-    .robby-script-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-      color: #000000;
-    }
-    body.dark-mode .robby-script-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-      color: var(--text-dark);
-    }
-    .robby-script-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .robby-script-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .robby-script-table th, .robby-script-table td {
-      border: 1px solid var(--border-light);
-      padding: 10px;
-      text-align: center;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-    }
-    body.dark-mode .robby-script-table th, 
-    body.dark-mode .robby-script-table td {
-      border-color: var(--border-dark);
+    .subtitle {
+      color: #9370DB;
+      font-size: 1.2rem;
     }
     
-    /* PDF VIEWER SECTION */
-    .pdf-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-      text-align: center;
-      color: #000000;
-    }
-    body.dark-mode .pdf-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-      color: var(--text-dark);
-    }
-    .pdf-section h2 {
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .pdf-section a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: var(--primary-color);
-      color: #000000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-    }
-    body.dark-mode .pdf-section a {
-      color: var(--text-dark);
-    }
-    .pdf-section a:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-    
-    /* MUSIC SECTION */
-    .music-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-      text-align: center;
-      color: #000000;
-    }
-    body.dark-mode .music-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-      color: var(--text-dark);
-    }
-    .music-section h2 {
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .music-section .music-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: var(--primary-color);
-      color: #000000;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-    }
-    body.dark-mode .music-section .music-button {
-      color: var(--text-dark);
-    }
-    .music-section .music-button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
-    }
-    
-    /* CONTACT ME SECTION */
-    .contact-section {
-      max-width: 900px;
-      margin: 3rem auto;
-      padding: 1rem;
-      background-color: #ffffff;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px var(--shadow-light);
-      animation: fadeInUp 1.5s ease-out;
-    }
-    body.dark-mode .contact-section {
-      background-color: #2e2e2e;
-      border-color: var(--border-dark);
-      box-shadow: 0 4px 8px var(--shadow-dark);
-    }
-    .contact-section h2 {
-      text-align: center;
-      font-family: 'EB Garamond', serif;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    .contact-section form {
+    .emulator-container {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-    }
-    .contact-section input, .contact-section textarea {
-      padding: 10px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: #f2f2f2;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-    body.dark-mode .contact-section input, 
-    body.dark-mode .contact-section textarea {
-      background-color: #3e3e3e;
-      color: #e0e0e0;
-      border-color: var(--border-dark);
-    }
-    .contact-section button {
-      padding: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: var(--primary-color);
-      color: #000000;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color var(--transition-speed) ease, transform var(--transition-speed) ease;
-      font-family: 'Roboto', sans-serif;
-    }
-    body.dark-mode .contact-section button {
-      color: var(--text-dark);
-    }
-    .contact-section button:hover {
-      background-color: var(--secondary-color);
-      transform: scale(1.05);
+      align-items: center;
+      gap: 20px;
     }
     
-    /* Lightbox Styles */
-    .lightbox {
-      display: none;
-      position: fixed;
-      z-index: 2000;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
+    @media (min-width: 900px) {
+      .emulator-container {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+    
+    .emulator {
+      flex: 2;
+      background-color: var(--surface);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .controls {
+      flex: 1;
+      background-color: var(--surface);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    #gameCanvas {
       width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-      animation: fadeIn 0.5s ease-in-out;
+      border-radius: var(--border-radius);
+      background-color: black;
+      image-rendering: pixelated;
     }
-    .lightbox-content {
-      margin: auto;
-      display: block;
-      max-width: 80%;
-      max-height: 80%;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(255,255,255,0.2);
-      transition: transform 0.3s ease;
-    }
-    .lightbox-content:hover {
-      transform: scale(1.05);
-    }
-    .close {
-      position: absolute;
-      top: 30px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      transition: color 0.3s ease;
-      cursor: pointer;
-    }
-    .close:hover,
-    .close:focus {
-      color: #bbb;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    #lightbox-caption {
-      margin: auto;
-      display: block;
-      width: 80%;
-      max-width: 700px;
+    
+    .upload-section {
+      margin-bottom: 20px;
+      padding: 20px;
+      border: 2px dashed var(--accent);
+      border-radius: var(--border-radius);
       text-align: center;
-      color: #ccc;
-      padding: 10px 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 1rem;
+      transition: all 0.3s ease;
     }
     
-    /* Footer */
-    footer {
-      text-align: center;
-      margin: 2rem 0;
-      border-top: 1px solid var(--border-light);
-      padding-top: 1rem;
-      font-family: 'Roboto', sans-serif;
-      color: #666;
-      transition: color 0.5s, border-color 0.5s;
-    }
-    body.dark-mode footer {
-      color: #999;
-      border-color: var(--border-dark);
+    .upload-section:hover {
+      border-color: var(--primary);
+      background-color: rgba(138, 43, 226, 0.1);
     }
     
-    /* Animations */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 40px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
-    }
-    @keyframes zoomIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    @keyframes crossOut {
-      0% { text-decoration: line-through; }
-      100% { text-decoration: line-through; }
-    }
-    @keyframes fadeInUnemployed {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    #romUpload {
+      display: none;
     }
     
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
-      .header a {
-        font-size: 1rem;
-      }
-      .toggle-switch {
-        margin-left: 10px;
-      }
-      .tagline {
-        font-size: 1.2rem;
-      }
-      .tagline.unemployed {
-        font-size: 1.5rem;
-      }
-      .robby-script-section h2,
-      .pdf-section h2,
-      .music-section h2,
-      .contact-section h2 {
-        font-size: 1.5rem;
-      }
-      .instagram-dock img {
-        width: 80px;
-        height: 80px;
-      }
-      .pdf-section a,
-      .music-section .music-button {
-        font-size: 0.9rem;
-        padding: 8px 16px;
-      }
-      .contact-section button {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
+    .upload-label {
+      cursor: pointer;
+      padding: 10px 20px;
+      background-color: var(--primary);
+      color: white;
+      border-radius: var(--border-radius);
+      display: inline-block;
+      transition: all 0.3s ease;
     }
     
-    /* Additional Styles for Art & Game Buttons */
-    .header .art-button, .header .game-button {
-      background-color: transparent;
+    .upload-label:hover {
+      background-color: var(--secondary);
+    }
+    
+    .button {
+      background-color: var(--primary);
+      color: white;
       border: none;
-      color: var(--text-light);
-      font-family: 'Roboto', sans-serif;
-      font-size: 1.2rem;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      transition: transform var(--transition-speed), color var(--transition-speed);
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-bottom: 10px;
     }
-    .header .art-button:hover, .header .game-button:hover {
-      transform: scale(1.2);
-      color: var(--accent-color);
+    
+    .button:hover {
+      background-color: var(--secondary);
+    }
+    
+    .button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+    
+    .control-group {
+      margin-bottom: 20px;
+    }
+    
+    .control-group h3 {
+      border-bottom: 1px solid var(--accent);
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+    
+    .ai-status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+    }
+    
+    .ai-logs {
+      height: 200px;
+      overflow-y: auto;
+      background-color: #000;
+      color: #0F0;
+      font-family: monospace;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      margin-top: 10px;
+    }
+    
+    .game-info {
+      margin-top: 20px;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .tutorial-panel {
+      background-color: var(--surface);
+      width: 80%;
+      max-width: 600px;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    
+    .close-button {
+      float: right;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .gamepad-visual {
+      display: grid;
+      grid-template-areas:
+        ". up ."
+        "left center right"
+        ". down .";
+      width: 150px;
+      margin: 0 auto;
+      gap: 5px;
+    }
+    
+    .dpad-button {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .dpad-button:active, .dpad-button.active {
+      background-color: var(--primary);
+    }
+    
+    .dpad-up { grid-area: up; }
+    .dpad-left { grid-area: left; }
+    .dpad-center { grid-area: center; visibility: hidden; }
+    .dpad-right { grid-area: right; }
+    .dpad-down { grid-area: down; }
+    
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .action-button {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .action-button:active, .action-button.active {
+      background-color: var(--primary);
+    }
+    
+    .action-button.b-button { background-color: #E74C3C; }
+    .action-button.a-button { background-color: #2ECC71; }
+    
+    .action-button.b-button:active, .action-button.b-button.active { background-color: #C0392B; }
+    .action-button.a-button:active, .action-button.a-button.active { background-color: #27AE60; }
+    
+    .shoulder-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .shoulder-button {
+      width: 80px;
+      height: 30px;
+      background-color: #333;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .shoulder-button:active, .shoulder-button.active {
+      background-color: var(--primary);
+    }
+    
+    .center-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .center-button {
+      width: 60px;
+      height: 25px;
+      background-color: #333;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+    }
+    
+    .center-button:active, .center-button.active {
+      background-color: var(--primary);
+    }
+    
+    .key-indicator {
+      display: inline-block;
+      background-color: #333;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 5px;
+      font-size: 0.8rem;
     }
   </style>
 </head>
 <body>
-  <!-- three.js Background Canvas -->
-  <canvas id="three-bg"></canvas>
-  
-  <!-- React Root -->
-  <div id="root"></div>
-  
-  <!-- AOS Initialization -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 1000,
-      once: true
-    });
-  </script>
-  
-  <!-- Firebase SDKs (if needed) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script>
-    // Replace with your own Firebase config if needed
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-  
-  <!-- React Components -->
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <div class="container">
+    <header>
+      <h1>AI-Powered GBA Emulator</h1>
+      <p class="subtitle">Upload your GBA ROM and play or let AI take control</p>
+    </header>
     
-    // AdBanner component for your A-ADS code
-    const AdBanner = () => {
-      return (
-        <div style={{ textAlign: 'center', margin: '10px 0' }}>
-          <iframe
-            data-aa="2382909"
-            src="//ad.a-ads.com/2382909?size=468x60"
-            style={{
-              width: '468px',
-              height: '60px',
-              border: '0px',
-              padding: '0',
-              overflow: 'hidden',
-              backgroundColor: 'transparent'
-            }}
-            title="Ad Banner"
-          ></iframe>
+    <div class="emulator-container">
+      <div class="emulator">
+        <div class="upload-section">
+          <p>Drag & drop your GBA ROM or click to select</p>
+          <input type="file" id="romUpload" accept=".gba">
+          <label for="romUpload" class="upload-label">Select ROM File</label>
         </div>
-      );
-    };
-
-    // Header Component (with added Poker and Game buttons)
-    const Header = ({ toggleTheme, isDarkMode }) => (
-      <div className="header">
-        <a href="https://x.com/robbygat" target="_blank" aria-label="X (Twitter)" className="fab fa-twitter"></a>
-        <a href="https://youtube.com/@robbygat" target="_blank" aria-label="YouTube"><i className="fab fa-youtube"></i></a>
-        <a href="https://instagram.com/robbygat" target="_blank" aria-label="Instagram"><i className="fab fa-instagram"></i></a>
-        <a href="https://tiktok.com/@robbygat" target="_blank" aria-label="TikTok"><i className="fab fa-tiktok"></i></a>
-        <button className="art-button" onClick={() => window.location.href='art.html'} aria-label="Art Page">Art</button>
-        <button className="art-button" onClick={() => window.location.href='poker.html'} aria-label="Poker Game">Poker</button>
-        <button className="game-button" onClick={() => window.location.href='game.html'} aria-label="Game">Game</button>
-        <button className="wallet-button" onClick={() => window.location.href='wallet.html'} aria-label="wallet">Wallet</button>
-        <ToggleSwitch toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+        
+        <canvas id="gameCanvas" width="240" height="160"></canvas>
+        
+        <div class="game-info">
+          <h3>Game Info</h3>
+          <p id="gameTitle">No ROM loaded</p>
+          <p id="gameSize"></p>
+        </div>
       </div>
-    );
-    
-    // Toggle Switch Component
-    const ToggleSwitch = ({ toggleTheme, isDarkMode }) => (
-      <div className="toggle-switch">
-        <input type="checkbox" id="theme-toggle" checked={isDarkMode} onChange={toggleTheme} />
-        <label htmlFor="theme-toggle">
-          {isDarkMode ? "Dark" : "Light"}
-          <div className="slider"></div>
-        </label>
-      </div>
-    );
-    
-    // Tagline Component
-    const Tagline = () => {
-      const [isUnemployed, setIsUnemployed] = useState(false);
-      useEffect(() => {
-        const timer = setTimeout(() => {
-          setIsUnemployed(true);
-        }, 2000);
-        return () => clearTimeout(timer);
-      }, []);
-      return (
-        <div className={`tagline ${isUnemployed ? 'unemployed' : ''}`} id="tagline">
-          {isUnemployed ? 'UNEMPLOYED' : 'linguist, photographer, musician, actor, journalist, model'}
-        </div>
-      );
-    };
-    
-    // Instagram Dock Component
-    const InstagramDock = () => {
-      const instagramImages = [
-        "instagram1.png", "instagram2.png", "instagram3.png", "instagram4.png", "instagram5.png",
-        "instagram6.png", "instagram7.png", "instagram8.png", "instagram9.png", "instagram10.png",
-        "instagram11.png", "instagram12.png", "instagram13.png", "instagram14.png", "instagram15.png",
-        "instagram16.png", "instagram17.png", "instagram18.png", "instagram19.png", "instagram20.png",
-        "instagram21.png", "instagram22.png", "instagram23.png"
-      ];
-      return (
-        <div className="instagram-dock" data-aos="fade-up">
-          {instagramImages.map((img, index) => (
-            <img 
-              key={index} 
-              src={img} 
-              alt={`Instagram ${index + 1}`} 
-              onClick={() => openLightbox(img, `Instagram ${index + 1}`)} 
-            />
-          ))}
-        </div>
-      );
-    };
-    
-    // Function to open Lightbox (outside React)
-    const openLightbox = (src, alt) => {
-      const lightbox = document.getElementById('lightbox');
-      const lightboxImg = document.getElementById('lightbox-img');
-      const lightboxCaption = document.getElementById('lightbox-caption');
-      lightbox.style.display = 'block';
-      lightboxImg.src = src;
-      lightboxCaption.textContent = alt;
-    };
-    
-    // RobbyScript Display Component
-    const RobbyScriptDisplay = () => {
-      const robbyScript = {
-        '𝌯': 'p',
-        '𝍍': 'b',
-        '𝌲': 't',
-        '𝍊': 'd',
-        '𝌬': 'k',
-        '𝍐': 'g',
-        '𝍑': 's',
-        '𝍁': 'z',
-        '𝍂': 'ʃ',
-        '𝌵': 'ʒ',
-        '𝌸': 'f',
-        '𝍌': 'v',
-        '𝍄': 'h',
-        '𝍇': 'm',
-        '𝌶': 'ŋ',
-        '𝌹': 'n',
-        '𝍋': 'l',
-        '𝍈': 'i',
-        '𝌿': 'e',
-        '𝍅': 'a',
-        '𝌴': 'o',
-        '𝍎': 'u',
-        '𝍏': 'ɛ',
-        '𝌷': 'ɔ',
-        '𝍀': 'æ'
-      };
-      return (
-        <div className="robby-script-section" data-aos="fade-up">
-          <h2>Robbyscript</h2>
-          <table className="robby-script-table">
-            <thead>
-              <tr>
-                <th>Robbyscript</th>
-                <th>IPA</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(robbyScript).map(([key, value], index) => (
-                <tr key={index}>
-                  <td>{key}</td>
-                  <td>{value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    };
-    
-    // PDF Viewer Component
-    const PDFViewer = () => (
-      <div className="pdf-section" data-aos="fade-up">
-        <h2>Read "To Whoever Finds This"</h2>
-        <a href="To%20Whoever%20Finds%20This.pdf" target="_blank" rel="noopener noreferrer">
-          Open PDF
-        </a>
-      </div>
-    );
-    
-    // Music Section Component
-    const MusicSection = () => (
-      <div className="music-section" data-aos="fade-up">
-        <h2>Albums by INTERNET COWBOY</h2>
-        <a href="https://internetcowboy.bandcamp.com" target="_blank" rel="noopener noreferrer" className="music-button">
-          My Music
-        </a>
-      </div>
-    );
-    
-    // Contact Form Component
-    const ContactForm = () => {
-      const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-      const [success, setSuccess] = useState(false);
-      const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-      };
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        const { name, email, message } = formData;
-        if (name && email && message) {
-          // Here you’d handle sending the data to the server or Firebase
-          setFormData({ name: '', email: '', message: '' });
-          setSuccess(true);
-          setTimeout(() => setSuccess(false), 5000);
-        }
-      };
-      return (
-        <div className="contact-section" data-aos="fade-up">
-          <h2>Contact Me</h2>
-          <form onSubmit={handleSubmit}>
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="Your Name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              required 
-            />
-            <input 
-              type="email" 
-              name="email" 
-              placeholder="Your Email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
-            />
-            <textarea 
-              name="message" 
-              rows="5" 
-              placeholder="Your Message..." 
-              value={formData.message} 
-              onChange={handleChange} 
-              required 
-            ></textarea>
-            <button type="submit">Send Message</button>
-            {success && <div className="success-message">Your message has been sent!</div>}
-          </form>
-        </div>
-      );
-    };
-    
-    // Footer Component
-    const Footer = () => {
-      const currentYear = new Date().getFullYear();
-      return (
-        <footer>
-          &copy; {currentYear} robbygat.com | Tachikawa, Tokyo (立川市) | by Robert Gatzke
-        </footer>
-      );
-    };
-    
-    // App Component
-    const App = () => {
-      const [isDarkMode, setIsDarkMode] = useState(false);
       
-      useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-          setIsDarkMode(savedTheme === 'dark');
-          document.body.classList.toggle('dark-mode', savedTheme === 'dark');
-        }
-      }, []);
-      
-      const toggleTheme = () => {
-        setIsDarkMode(!isDarkMode);
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('theme', !isDarkMode ? 'dark' : 'light');
-      };
-      
-      return (
-        <>
-          {/* Place the AdBanner at the very top */}
-          <AdBanner />
-
-          <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-          <h1>robbygat© by Robert Gatzke</h1>
-          <Tagline />
-
-          <div className="content" data-aos="fade-up">
-            <div className="image-container" data-aos="zoom-in">
-              <img 
-                src="websiteimage.jpg" 
-                alt="Portfolio image of robbygat in black and white style"
-              />
-            </div>
+      <div class="controls">
+        <div class="control-group">
+          <h3>Emulator Controls</h3>
+          <button id="startButton" class="button" disabled>Start Game</button>
+          <button id="pauseButton" class="button" disabled>Pause</button>
+          <button id="resetButton" class="button" disabled>Reset</button>
+          <button id="saveStateButton" class="button" disabled>Save State</button>
+          <button id="loadStateButton" class="button" disabled>Load State</button>
+        </div>
+        
+        <div class="control-group">
+          <h3>AI Controls</h3>
+          <button id="aiPlayButton" class="button" disabled>Let AI Play</button>
+          <button id="aiStopButton" class="button" disabled>Stop AI</button>
+          <button id="aiTrainButton" class="button" disabled>Train AI</button>
+          
+          <div class="ai-status">
+            <p>AI Status: <span id="aiStatusText">Inactive</span></p>
+            <div class="ai-logs" id="aiLogs"></div>
           </div>
-          <InstagramDock />
-          <RobbyScriptDisplay />
-          <PDFViewer />
-          <MusicSection />
-          <ContactForm />
-          <Footer />
-        </>
-      );
-    };
-    
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
-  
-  <!-- Lightbox Container -->
-  <div id="lightbox" class="lightbox">
-    <span class="close">&times;</span>
-    <img class="lightbox-content" id="lightbox-img" />
-    <div id="lightbox-caption"></div>
+        </div>
+        
+        <div class="control-group">
+          <h3>Controller</h3>
+          <div class="shoulder-buttons">
+            <div class="shoulder-button" id="lButton">L <span class="key-indicator">Q</span></div>
+            <div class="shoulder-button" id="rButton">R <span class="key-indicator">E</span></div>
+          </div>
+          
+          <div class="gamepad-visual">
+            <div class="dpad-button dpad-up" id="upButton">↑ <span class="key-indicator">W</span></div>
+            <div class="dpad-button dpad-left" id="leftButton">← <span class="key-indicator">A</span></div>
+            <div class="dpad-button dpad-center"></div>
+            <div class="dpad-button dpad-right" id="rightButton">→ <span class="key-indicator">D</span></div>
+            <div class="dpad-button dpad-down" id="downButton">↓ <span class="key-indicator">S</span></div>
+          </div>
+          
+          <div class="action-buttons">
+            <div class="action-button b-button" id="bButton">B <span class="key-indicator">K</span></div>
+            <div class="action-button a-button" id="aButton">A <span class="key-indicator">L</span></div>
+          </div>
+          
+          <div class="center-buttons">
+            <div class="center-button" id="selectButton">SELECT <span class="key-indicator">N</span></div>
+            <div class="center-button" id="startButtonSmall">START <span class="key-indicator">M</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   
-  <!-- Lightbox Script -->
+  <div class="overlay" id="tutorialOverlay">
+    <div class="tutorial-panel">
+      <button class="close-button" id="closeTutorial">×</button>
+      <h2>Welcome to the AI-Powered GBA Emulator!</h2>
+      <p>This emulator allows you to play your favorite Game Boy Advance games in the browser and even watch an AI learn to play them.</p>
+      <h3>Quick Start:</h3>
+      <ol>
+        <li>Upload your GBA ROM file (.gba)</li>
+        <li>Click "Start Game" to begin playing</li>
+        <li>Use keyboard controls or the on-screen buttons</li>
+        <li>Try the "Let AI Play" button to watch the AI agent play</li>
+      </ol>
+      <h3>Keyboard Controls:</h3>
+      <p>D-Pad: W, A, S, D<br>
+      A Button: L<br>
+      B Button: K<br>
+      L Button: Q<br>
+      R Button: E<br>
+      Start: M<br>
+      Select: N</p>
+      <button class="button" id="startTutorial">Got it!</button>
+    </div>
+  </div>
+
   <script>
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const closeBtn = document.querySelector('.close');
-    if (closeBtn && lightbox) {
-      closeBtn.addEventListener('click', () => {
-        lightbox.style.display = 'none';
-      });
-      window.addEventListener('click', (e) => {
-        if (e.target == lightbox) {
-          lightbox.style.display = 'none';
-        }
-      });
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightbox.style.display === 'block') {
-          lightbox.style.display = 'none';
-        }
-      });
-    } else {
-      console.error('Lightbox elements not found. Please check the HTML structure.');
-    }
-  </script>
-  
-  <!-- three.js Library and Background Animation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script>
-    // Simple moving starfield background using three.js
-    let scene, camera, renderer, stars, starGeo;
-    function init() {
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
-      camera.position.z = 1;
-      camera.rotation.x = Math.PI/2;
+    // Main application code
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const romUpload = document.getElementById('romUpload');
+      const uploadSection = document.querySelector('.upload-section');
+      const gameCanvas = document.getElementById('gameCanvas');
+      const startButton = document.getElementById('startButton');
+      const pauseButton = document.getElementById('pauseButton');
+      const resetButton = document.getElementById('resetButton');
+      const saveStateButton = document.getElementById('saveStateButton');
+      const loadStateButton = document.getElementById('loadStateButton');
+      const aiPlayButton = document.getElementById('aiPlayButton');
+      const aiStopButton = document.getElementById('aiStopButton');
+      const aiTrainButton = document.getElementById('aiTrainButton');
+      const aiStatusText = document.getElementById('aiStatusText');
+      const aiLogs = document.getElementById('aiLogs');
+      const gameTitle = document.getElementById('gameTitle');
+      const gameSize = document.getElementById('gameSize');
+      const tutorialOverlay = document.getElementById('tutorialOverlay');
+      const closeTutorial = document.getElementById('closeTutorial');
+      const startTutorial = document.getElementById('startTutorial');
+
+      // Game controller buttons
+      const controlButtons = {
+        up: document.getElementById('upButton'),
+        down: document.getElementById('downButton'),
+        left: document.getElementById('leftButton'),
+        right: document.getElementById('rightButton'),
+        a: document.getElementById('aButton'),
+        b: document.getElementById('bButton'),
+        l: document.getElementById('lButton'),
+        r: document.getElementById('rButton'),
+        select: document.getElementById('selectButton'),
+        start: document.getElementById('startButtonSmall')
+      };
+
+      // Global variables
+      let gbaEmulator = null;
+      let romData = null;
+      let isGameRunning = false;
+      let isAIPlaying = false;
+      let aiAgent = null;
+      let gameLoop = null;
+      let currentKeys = new Set();
+      let frameBuffer = null;
+      let frameCount = 0;
       
-      renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three-bg'), alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      starGeo = new THREE.BufferGeometry();
-      const starCount = 6000;
-      const positions = new Float32Array(starCount * 3);
-      for (let i = 0; i < starCount * 3; i++) {
-        positions[i] = (Math.random() * 600) - 300;
+      // Close tutorial
+      closeTutorial.addEventListener('click', () => {
+        tutorialOverlay.style.display = 'none';
+      });
+      
+      startTutorial.addEventListener('click', () => {
+        tutorialOverlay.style.display = 'none';
+      });
+
+      // Initialize mock GBA emulator
+      // In a real implementation, this would use the actual gba.js library
+      class GBAEmulator {
+        constructor(romData) {
+          this.romData = romData;
+          this.running = false;
+          this.frameBuffer = new Uint8Array(240 * 160 * 4); // RGBA buffer
+          this.saveState = null;
+          
+          // Initialize with random pixels for demo
+          for (let i = 0; i < this.frameBuffer.length; i += 4) {
+            this.frameBuffer[i] = Math.floor(Math.random() * 255);     // R
+            this.frameBuffer[i + 1] = Math.floor(Math.random() * 255); // G
+            this.frameBuffer[i + 2] = Math.floor(Math.random() * 255); // B
+            this.frameBuffer[i + 3] = 255;                             // A
+          }
+          
+          // Extract ROM info (mock implementation)
+          this.romInfo = {
+            title: this.extractTitle(),
+            size: this.romData.byteLength
+          };
+        }
+        
+        extractTitle() {
+          // In a real implementation, this would extract the title from the ROM header
+          // For demo purposes, we'll use the filename
+          if (this.romData.name) {
+            return this.romData.name.replace('.gba', '');
+          }
+          return "Unknown Game";
+        }
+        
+        start() {
+          this.running = true;
+          this.renderLoop();
+        }
+        
+        pause() {
+          this.running = false;
+        }
+        
+        reset() {
+          // Reset emulator state
+          this.running = false;
+          
+          // Reinitialize frame buffer with random pixels for demo
+          for (let i = 0; i < this.frameBuffer.length; i += 4) {
+            this.frameBuffer[i] = Math.floor(Math.random() * 255);     // R
+            this.frameBuffer[i + 1] = Math.floor(Math.random() * 255); // G
+            this.frameBuffer[i + 2] = Math.floor(Math.random() * 255); // B
+            this.frameBuffer[i + 3] = 255;                             // A
+          }
+        }
+        
+        renderLoop() {
+          if (!this.running) return;
+          
+          // Update frame buffer
+          this.updateFrameBuffer();
+          
+          // Request next frame
+          requestAnimationFrame(() => this.renderLoop());
+        }
+        
+        updateFrameBuffer() {
+          // In a real implementation, this would run one frame of the GBA emulation
+          // For demo purposes, we'll just modify a few pixels
+          for (let i = 0; i < 1000; i++) {
+            const idx = Math.floor(Math.random() * (this.frameBuffer.length / 4)) * 4;
+            this.frameBuffer[idx] = Math.floor(Math.random() * 255);     // R
+            this.frameBuffer[idx + 1] = Math.floor(Math.random() * 255); // G
+            this.frameBuffer[idx + 2] = Math.floor(Math.random() * 255); // B
+          }
+          
+          // Render to canvas
+          const ctx = gameCanvas.getContext('2d');
+          const imgData = new ImageData(new Uint8ClampedArray(this.frameBuffer), 240, 160);
+          ctx.putImageData(imgData, 0, 0);
+        }
+        
+        saveCurrentState() {
+          // In a real implementation, this would serialize the emulator state
+          this.saveState = "Mock save state";
+          return true;
+        }
+        
+        loadSavedState() {
+          if (!this.saveState) return false;
+          // In a real implementation, this would deserialize and load the state
+          return true;
+        }
+        
+        setKeys(keys) {
+          // In a real implementation, this would set the keys to be pressed
+          // keys is a Set of 'up', 'down', 'left', 'right', 'a', 'b', 'l', 'r', 'start', 'select'
+          this.currentKeys = keys;
+        }
+        
+        getFrame() {
+          // In a real implementation, this would return the current frame data
+          return this.frameBuffer;
+        }
       }
-      starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const sprite = new THREE.TextureLoader().load('https://threejs.org/examples/textures/sprites/disc.png');
-      const starMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.7,
-        map: sprite,
-        blending: THREE.AdditiveBlending,
-        transparent: true
-      });
-      stars = new THREE.Points(starGeo, starMaterial);
-      scene.add(stars);
       
-      animate();
-    }
-    
-    function animate() {
-      starGeo.attributes.position.array.forEach((value, index, arr) => {
-        // Move stars downward and reset when off-screen
-        if (index % 3 === 1) {
-          arr[index] -= 0.2;
-          if (arr[index] < -300) {
-            arr[index] = 300;
+      // AI Agent implementation
+      class AIAgent {
+        constructor(emulator) {
+          this.emulator = emulator;
+          this.isActive = false;
+          this.model = null;
+          this.isTrained = false;
+          
+          // For demo purposes, we'll use a simple pattern of actions
+          this.actionPatterns = [
+            new Set(['right', 'b']),
+            new Set(['right']),
+            new Set(['right', 'a']),
+            new Set(['right']),
+            new Set(['right', 'b']),
+            new Set(['up']),
+            new Set(['up', 'a']),
+            new Set(['left']),
+            new Set(['left', 'b']),
+            new Set(['down']),
+            new Set(['down', 'a']),
+            new Set(['right'])
+          ];
+          this.currentPatternIndex = 0;
+          this.frameCounter = 0;
+        }
+        
+        async train() {
+          aiStatusText.textContent = "Training...";
+          addAILog("Starting AI training...");
+          
+          // Simulate training progress
+          for (let i = 0; i < 5; i++) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            addAILog(`Training progress: ${(i+1)*20}%`);
+          }
+          
+          this.isTrained = true;
+          aiStatusText.textContent = "Trained";
+          addAILog("AI training complete! The agent has learned basic game patterns.");
+          return true;
+        }
+        
+        start() {
+          if (!this.isTrained) {
+            addAILog("WARNING: Starting untrained AI. Performance may be random.");
+          }
+          
+          this.isActive = true;
+          aiStatusText.textContent = "Active";
+          addAILog("AI agent started");
+          
+          // Reset counters
+          this.currentPatternIndex = 0;
+          this.frameCounter = 0;
+        }
+        
+        stop() {
+          this.isActive = false;
+          aiStatusText.textContent = this.isTrained ? "Trained" : "Inactive";
+          addAILog("AI agent stopped");
+        }
+        
+        getNextAction() {
+          if (!this.isActive) return new Set();
+          
+          // Simple pattern-based AI for demo
+          // In a real implementation, this would use the model to predict actions
+          this.frameCounter++;
+          
+          // Change pattern every 60 frames (about 1 second)
+          if (this.frameCounter >= 60) {
+            this.frameCounter = 0;
+            this.currentPatternIndex = (this.currentPatternIndex + 1) % this.actionPatterns.length;
+            
+            // Log every few pattern changes
+            if (this.currentPatternIndex % 3 === 0) {
+              const actionNames = Array.from(this.actionPatterns[this.currentPatternIndex]).join('+');
+              addAILog(`AI decision: ${actionNames || 'wait'}`);
+            }
+          }
+          
+          return this.actionPatterns[this.currentPatternIndex];
+        }
+      }
+      
+      // Helper function to add a log entry to the AI log
+      function addAILog(message) {
+        const logEntry = document.createElement('div');
+        logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+        aiLogs.appendChild(logEntry);
+        aiLogs.scrollTop = aiLogs.scrollHeight;
+      }
+      
+      // File upload handling
+      romUpload.addEventListener('change', handleFileSelect);
+      uploadSection.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.style.borderColor = 'var(--primary)';
+        uploadSection.style.backgroundColor = 'rgba(138, 43, 226, 0.1)';
+      });
+      
+      uploadSection.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.style.borderColor = 'var(--accent)';
+        uploadSection.style.backgroundColor = '';
+      });
+      
+      uploadSection.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadSection.style.borderColor = 'var(--accent)';
+        uploadSection.style.backgroundColor = '';
+        
+        if (e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0];
+          if (file.name.endsWith('.gba')) {
+            romUpload.files = e.dataTransfer.files;
+            handleFileSelect(e);
+          } else {
+            alert('Please upload a valid GBA ROM file (.gba)');
           }
         }
       });
-      starGeo.attributes.position.needsUpdate = true;
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
-    }
-    
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth/window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-    
-    init();
-  </script>
-</body>
-</html>
+      
+      function handleFileSelect(event) {
+        const file = event.target.files[0] || event.dataTransfer.files[0];
+        
+        if (!file) return;
+        if (!file.name.endsWith('.gba')) {
+          alert('Please upload a valid GBA ROM file (.gba)');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          romData = e.target.result;
+          
+          // Add the file name to the romData object for reference
+          romData.name = file.name;
+          
+          // Update UI to show file info
+          gameTitle.textContent = file.name;
+          gameSize.textContent = `Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+          
+          // Enable start button
+          startButton.disabled = false;
+          resetButton.disabled = false;
+          
+          // Update upload section
+          uploadSection.style.borderColor = 'var(--primary)';
+          document.querySelector('.upload-section p').textContent = `ROM loaded: ${file.name}`;
+        };
+        
+        reader.readAsArrayBuffer(file);
+      }
+      
+      // Button event handlers
+      startButton.addEventListener('click', () => {
+        if (!romData) {
+          alert('Please upload a ROM file first');
+          return;
+        }
+        
+        if (!gbaEmulator) {
+          gbaEmulator = new GBAEmulator(romData);
+          
+          // Initialize AI agent
+          aiAgent = new AIAgent(gbaEmulator);
+          
+          // Update UI with ROM info
+          gameTitle.textContent = gbaEmulator.romInfo.title;
+          gameSize.textContent = `Size: ${(gbaEmulator.romInfo.size / (1024 * 1024)).toFixed(2)} MB`;
+          
+          // Enable all buttons
+          pauseButton.disabled = false;
+          saveStateButton.disabled = false;
+          loadStateButton.disabled = false;
+          aiPlayButton.disabled = false;
+          aiTrainButton.disabled = false;
+        }
+        
+        // Start emulation
+        gbaEmulator.start();
+        isGameRunning = true;
+        
+        // Update button states
+        startButton.disabled = true;
+        pauseButton.disabled = false;
+        
+        // Start game loop
+        startGameLoop();
+      });
+      
+      pauseButton.addEventListener('click', () => {
+        if (!gbaEmulator || !isGameRunning) return;
+        
+        gbaEmulator.pause();
+        isGameRunning = false;
+        
+        // Update button states
+        startButton.disabled = false;
+        pauseButton.disabled = true;
+        
+        // Stop game loop
+        stopGameLoop();
+      });
+      
+      resetButton.addEventListener('click', () => {
+        if (!gbaEmulator) return;
+        
+        // Stop AI if running
+        if (isAIPlaying && aiAgent) {
+          aiAgent.stop();
+          isAIPlaying = false;
+          aiPlayButton.disabled = false;
+          aiStopButton.disabled = true;
+        }
+        
+        gbaEmulator.reset();
+        isGameRunning = false;
+        
+        // Update button states
+        startButton.disabled = false;
+        pauseButton.disabled = true;
+        
+        // Stop game loop
+        stopGameLoop();
+      });
+      
+      saveStateButton.addEventListener('click', () => {
+        if (!gbaEmulator) return;
+        
+        if (gbaEmulator.saveCurrentState()) {
+          loadStateButton.disabled = false;
+          addAILog("Game state saved");
+        }
+      });
+      
+      loadStateButton.addEventListener('click', () => {
+        if (!gbaEmulator) return;
+        
+        if (gbaEmulator.loadSavedState()) {
+          addAILog("Game state loaded");
+          if (!isGameRunning) {
+            startButton.disabled = false;
+          }
+        }
+      });
+      
+      aiPlayButton.addEventListener('click', () => {
+        if (!gbaEmulator || !aiAgent) return;
+        
+        // Start AI
+        aiAgent.start();
+        isAIPlaying = true;
+        
+        // Update button states
+        aiPlayButton.disabled = true;
+        aiStopButton.disabled = false;
+        
+        // If game is not running, start it
+        if (!isGameRunning) {
+          gbaEmulator.start();
+          isGameRunning = true;
+          startButton.disabled = true;
+          pauseButton.disabled = false;
+          startGameLoop();
+        }
+      });
+      
+      aiStopButton.addEventListener('click', () => {
+        if (!aiAgent) return;
+        
+        // Stop AI
+        aiAgent.stop();
+        isAIPlaying = false;
+        
+        // Update button states
+        aiPlayButton.disabled = false;
+        aiStopButton.disabled = true;
+        
+        // Clear all active buttons
+        currentKeys.clear();
+        updateButtonVisuals();
+      });
+      
+      aiTrainButton.addEventListener('click', async () => {
+        if (!aiAgent) return;
+        
+        // Disable buttons during training
+        aiTrainButton.disable
