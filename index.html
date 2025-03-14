@@ -3,891 +3,809 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimalist Poker</title>
+    <title>Adventure Platformer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.5.0/p5.min.js"></script>
     <style>
-        :root {
-            --primary-color: #2d3436;
-            --secondary-color: #0984e3;
-            --table-color: #10ac84;
-            --text-color: #dfe6e9;
-            --card-color: #ffffff;
-            --button-color: #0984e3;
-            --button-hover: #74b9ff;
-            --chip-color: #fdcb6e;
-        }
-        
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--primary-color);
-            color: var(--text-color);
-            height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            background-color: #222;
             overflow: hidden;
         }
-        
-        .game-container {
-            width: 90%;
-            max-width: 1000px;
-            height: 90vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
-        
-        .table {
-            width: 100%;
-            height: 80%;
-            background-color: var(--table-color);
-            border-radius: 250px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 50px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
-        .player-area, .ai-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            padding: 25px;
-            margin: 15px 0;
-            z-index: 1;
-        }
-        
-        .community-cards {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 30px 0;
-        }
-        
-        .card {
-            width: 80px;
-            height: 120px;
-            background-color: var(--card-color);
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-            position: relative;
-            color: #000;
-        }
-        
-        .card.red {
-            color: #e74c3c;
-        }
-        
-        .card-back {
-            background-color: #3498db;
-            background-image: linear-gradient(135deg, #3498db 25%, #2980b9 25%, #2980b9 50%, #3498db 50%, #3498db 75%, #2980b9 75%, #2980b9 100%);
-            background-size: 20px 20px;
-        }
-        
-        .suit {
-            position: absolute;
-            font-size: 14px;
-        }
-        
-        .suit.top {
-            top: 5px;
-            left: 5px;
-        }
-        
-        .suit.bottom {
-            bottom: 5px;
-            right: 5px;
-            transform: rotate(180deg);
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .player-cards, .ai-cards {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .player-info, .ai-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .chips {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .chip-icon {
-            width: 20px;
-            height: 20px;
-            background-color: var(--chip-color);
-            border-radius: 50%;
-            border: 2px solid #f39c12;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        button {
-            background-color: var(--button-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-        
-        button:hover {
-            background-color: var(--button-hover);
-        }
-        
-        button:disabled {
-            background-color: #7f8c8d;
-            cursor: not-allowed;
-        }
-        
-        .bet-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        input[type="range"] {
-            width: 150px;
-        }
-        
-        .bet-amount {
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        .pot {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .message {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0,0,0,0.7);
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-weight: bold;
-            z-index: 10;
-            text-align: center;
-        }
-        
-        .player-bet, .ai-bet {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background-color: rgba(0,0,0,0.5);
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-
-        .win-message {
-            color: #f1c40f;
-            font-size: 1.2em;
-            margin-top: 10px;
-        }
-        
-        .header {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .game-title {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .dealer-button {
-            width: 30px;
-            height: 30px;
-            background-color: white;
-            border-radius: 50%;
-            color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .thinking {
-            font-style: italic;
-            color: #bdc3c7;
-            margin-top: 5px;
+        canvas {
+            display: block;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="header">
-            <div class="game-title">Minimalist Poker</div>
-            <button id="new-hand-btn">New Hand</button>
-        </div>
-        
-        <div class="table">
-            <div class="ai-area">
-                <div class="ai-cards">
-                    <div class="card card-back"></div>
-                    <div class="card card-back"></div>
-                </div>
-                <div class="ai-info">
-                    <div class="name">AI Player</div>
-                    <div class="chips">
-                        <div class="chip-icon"></div>
-                        <span id="ai-chips">1000</span>
-                    </div>
-                    <div id="ai-thinking" class="thinking hidden">Thinking...</div>
-                </div>
-                <div id="ai-bet" class="ai-bet hidden">
-                    <div class="chip-icon"></div>
-                    <span id="ai-bet-amount">0</span>
-                </div>
-            </div>
-            
-            <div class="community-cards" id="community">
-                <!-- Community cards will be added here by JavaScript -->
-            </div>
-            
-            <div class="pot hidden" id="pot-display">
-                <div class="chip-icon"></div>
-                <span id="pot">0</span>
-            </div>
-            
-            <div class="player-area">
-                <div id="player-bet" class="player-bet hidden">
-                    <div class="chip-icon"></div>
-                    <span id="player-bet-amount">0</span>
-                </div>
-                <div class="player-info">
-                    <div class="name">You</div>
-                    <div class="chips">
-                        <div class="chip-icon"></div>
-                        <span id="player-chips">1000</span>
-                    </div>
-                </div>
-                <div class="player-cards" id="player-cards">
-                    <!-- Player cards will be added here by JavaScript -->
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <div class="action-buttons">
-                <button id="check-btn" disabled>Check</button>
-                <button id="call-btn" disabled>Call</button>
-                <button id="fold-btn" disabled>Fold</button>
-            </div>
-            <div class="bet-controls">
-                <button id="bet-btn" disabled>Bet</button>
-                <input type="range" id="bet-slider" min="1" max="1000" value="10">
-                <div class="bet-amount" id="bet-amount">10</div>
-            </div>
-        </div>
-        
-        <div class="message hidden" id="message">
-            <!-- Game messages will appear here -->
-        </div>
-    </div>
-
     <script>
-        // Card definitions
-        const SUITS = ['♠', '♥', '♣', '♦'];
-        const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-        const RED_SUITS = ['♥', '♦'];
+        // Game Constants
+        const CANVAS_WIDTH = 800;
+        const CANVAS_HEIGHT = 500;
+        const GROUND_LEVEL = CANVAS_HEIGHT - 50;
+        const GRAVITY = 0.8;
+        const PLAYER_SPEED = 5;
+        const JUMP_FORCE = 15;
+        const BLOCK_SIZE = 40;
         
-        // Game state
-        let deck = [];
-        let playerCards = [];
-        let aiCards = [];
-        let communityCards = [];
-        let playerChips = 1000;
-        let aiChips = 1000;
-        let pot = 0;
-        let currentBet = 0;
-        let playerBet = 0;
-        let aiBet = 0;
-        let gamePhase = 'INIT'; // INIT, PREFLOP, FLOP, TURN, RIVER, SHOWDOWN
-        let playerTurn = true;
-        let handInProgress = false;
-        let dealerPosition = 'PLAYER'; // Alternates between 'PLAYER' and 'AI'
+        // Game Variables
+        let player;
+        let platforms = [];
+        let enemies = [];
+        let collectibles = [];
+        let particles = [];
+        let clouds = [];
+        let currentLevel = 0;
+        let score = 0;
+        let gameState = "START"; // START, PLAYING, GAME_OVER
+        let cameraX = 0;
+        let bgLayers = [];
         
-        // DOM Elements
-        const playerCardsEl = document.getElementById('player-cards');
-        const communityCardsEl = document.getElementById('community');
-        const playerChipsEl = document.getElementById('player-chips');
-        const aiChipsEl = document.getElementById('ai-chips');
-        const potEl = document.getElementById('pot');
-        const potDisplayEl = document.getElementById('pot-display');
-        const messageEl = document.getElementById('message');
-        const checkBtn = document.getElementById('check-btn');
-        const callBtn = document.getElementById('call-btn');
-        const betBtn = document.getElementById('bet-btn');
-        const foldBtn = document.getElementById('fold-btn');
-        const betSlider = document.getElementById('bet-slider');
-        const betAmountEl = document.getElementById('bet-amount');
-        const newHandBtn = document.getElementById('new-hand-btn');
-        const playerBetEl = document.getElementById('player-bet');
-        const playerBetAmountEl = document.getElementById('player-bet-amount');
-        const aiBetEl = document.getElementById('ai-bet');
-        const aiBetAmountEl = document.getElementById('ai-bet-amount');
-        const aiThinkingEl = document.getElementById('ai-thinking');
+        // Player sprites
+        let playerSprites = {
+            idle: [],
+            run: [],
+            jump: [],
+            fall: []
+        };
         
-        // Initialize game
-        function initGame() {
-            // Reset game elements
-            playerCardsEl.innerHTML = '';
-            communityCardsEl.innerHTML = '';
-            messageEl.classList.add('hidden');
-            potDisplayEl.classList.add('hidden');
-            playerBetEl.classList.add('hidden');
-            aiBetEl.classList.add('hidden');
+        // Enemy sprites
+        let enemySprites = {
+            walk: [],
+            squished: null
+        };
+        
+        // Game sprites and images
+        let coinSprite;
+        let blockSprites = {};
+        let cloudImage;
+        let bgImages = [];
+        let flagImage;
+        let heartImage;
+        
+        // Game sound effects
+        let jumpSound;
+        let coinSound;
+        let enemySquishSound;
+        let gameOverSound;
+        let victorySound;
+        let themeSong;
+        
+        // Level definitions
+        const levels = [
+            {
+                platforms: [
+                    { x: 0, y: GROUND_LEVEL, width: 800, height: 50, type: "ground" },
+                    { x: 250, y: 350, width: 200, height: 40, type: "platform" },
+                    { x: 500, y: 280, width: 120, height: 40, type: "platform" },
+                    { x: 700, y: 200, width: 150, height: 40, type: "platform" },
+                    { x: 900, y: 300, width: 250, height: 40, type: "platform" },
+                    { x: 1200, y: 350, width: 100, height: 40, type: "platform" },
+                    { x: 1350, y: 270, width: 120, height: 40, type: "platform" },
+                    { x: 1520, y: 200, width: 100, height: 40, type: "platform" },
+                    { x: 1650, y: 300, width: 250, height: 40, type: "platform" },
+                    { x: 1950, y: GROUND_LEVEL, width: 500, height: 50, type: "ground" }
+                ],
+                enemies: [
+                    { x: 400, y: 310, type: "walker", direction: -1, range: 150 },
+                    { x: 900, y: 260, type: "walker", direction: 1, range: 200 },
+                    { x: 1700, y: 260, type: "walker", direction: -1, range: 150 }
+                ],
+                collectibles: [
+                    { x: 300, y: 300, type: "coin" },
+                    { x: 350, y: 300, type: "coin" },
+                    { x: 550, y: 230, type: "coin" },
+                    { x: 750, y: 150, type: "coin" },
+                    { x: 950, y: 250, type: "coin" },
+                    { x: 1000, y: 250, type: "coin" },
+                    { x: 1400, y: 220, type: "coin" },
+                    { x: 1550, y: 150, type: "coin" },
+                    { x: 1700, y: 250, type: "coin" },
+                    { x: 1750, y: 250, type: "coin" }
+                ],
+                end: { x: 2200, y: GROUND_LEVEL - 200, type: "flag" },
+                background: 0
+            },
+            {
+                platforms: [
+                    { x: 0, y: GROUND_LEVEL, width: 400, height: 50, type: "ground" },
+                    { x: 450, y: GROUND_LEVEL, width: 200, height: 50, type: "ground" },
+                    { x: 700, y: GROUND_LEVEL, width: 300, height: 50, type: "ground" },
+                    { x: 1050, y: GROUND_LEVEL, width: 200, height: 50, type: "ground" },
+                    { x: 1300, y: GROUND_LEVEL, width: 600, height: 50, type: "ground" },
+                    { x: 250, y: 350, width: 100, height: 40, type: "platform" },
+                    { x: 400, y: 280, width: 80, height: 40, type: "platform" },
+                    { x: 530, y: 350, width: 80, height: 40, type: "platform" },
+                    { x: 900, y: 320, width: 120, height: 40, type: "platform" },
+                    { x: 1050, y: 250, width: 100, height: 40, type: "platform" },
+                    { x: 1200, y: 180, width: 80, height: 40, type: "platform" },
+                    { x: 1350, y: 250, width: 100, height: 40, type: "platform" },
+                    { x: 1550, y: 300, width: 150, height: 40, type: "platform" }
+                ],
+                enemies: [
+                    { x: 300, y: 310, type: "walker", direction: -1, range: 100 },
+                    { x: 550, y: 310, type: "walker", direction: 1, range: 80 },
+                    { x: 800, y: GROUND_LEVEL - 40, type: "walker", direction: 1, range: 200 },
+                    { x: 900, y: 280, type: "walker", direction: -1, range: 100 },
+                    { x: 1400, y: GROUND_LEVEL - 40, type: "walker", direction: -1, range: 250 },
+                    { x: 1600, y: 260, type: "walker", direction: 1, range: 120 }
+                ],
+                collectibles: [
+                    { x: 260, y: 300, type: "coin" },
+                    { x: 300, y: 300, type: "coin" },
+                    { x: 410, y: 230, type: "coin" },
+                    { x: 450, y: 230, type: "coin" },
+                    { x: 540, y: 300, type: "coin" },
+                    { x: 580, y: 300, type: "coin" },
+                    { x: 900, y: 270, type: "coin" },
+                    { x: 950, y: 270, type: "coin" },
+                    { x: 1050, y: 200, type: "coin" },
+                    { x: 1100, y: 200, type: "coin" },
+                    { x: 1200, y: 130, type: "coin" },
+                    { x: 1350, y: 200, type: "coin" },
+                    { x: 1400, y: 200, type: "coin" },
+                    { x: 1570, y: 250, type: "coin" },
+                    { x: 1620, y: 250, type: "coin" }
+                ],
+                end: { x: 1800, y: GROUND_LEVEL - 200, type: "flag" },
+                background: 1
+            }
+        ];
+        
+        // Preload game assets
+        function preload() {
+            // Load player sprites
+            for (let i = 1; i <= 4; i++) {
+                playerSprites.idle.push(loadImage(`https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/walking_dude_idle_0${i}.png`));
+                playerSprites.run.push(loadImage(`https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/running_bot_0${i}.png`));
+            }
+            playerSprites.jump.push(loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/phaser-dude.png'));
+            playerSprites.fall.push(loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/phaser-dude.png'));
             
-            // Create a fresh deck and shuffle it
-            createDeck();
-            shuffleDeck();
+            // Load enemy sprites
+            enemySprites.walk.push(loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/slime.png'));
+            enemySprites.squished = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/slimeeyes.png');
             
-            // Reset game state
-            playerCards = [];
-            aiCards = [];
-            communityCards = [];
-            pot = 0;
-            currentBet = 0;
-            playerBet = 0;
-            aiBet = 0;
-            potEl.textContent = pot;
-            playerChipsEl.textContent = playerChips;
-            aiChipsEl.textContent = aiChips;
+            // Load game sprites
+            coinSprite = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/coin.png');
+            blockSprites.platform = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/platform.png');
+            blockSprites.ground = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/platform.png');
+            cloudImage = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/cloud.png');
+            flagImage = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/flag.png');
+            heartImage = loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/heart.png');
             
-            // Switch dealer position
-            dealerPosition = dealerPosition === 'PLAYER' ? 'AI' : 'PLAYER';
+            // Load background images
+            bgImages.push(loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/skies/sky1.png'));
+            bgImages.push(loadImage('https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/skies/sky2.png'));
             
-            // Check if we can start a new hand
-            if (playerChips <= 0 || aiChips <= 0) {
-                showMessage(playerChips <= 0 ? 'Game over! You ran out of chips.' : 'Game over! AI ran out of chips.');
+            // Create parallax background layers
+            for (let i = 0; i < 3; i++) {
+                bgLayers.push({
+                    img: loadImage(`https://raw.githubusercontent.com/photonstorm/phaser-examples/master/examples/assets/sprites/mountains-${i + 1}.png`),
+                    scrollFactor: 0.2 * (i + 1)
+                });
+            }
+            
+            // Load sounds (commented out to avoid issues with sound loading in some browsers)
+            /*
+            soundFormats('mp3', 'ogg');
+            jumpSound = loadSound('assets/sounds/jump.mp3');
+            coinSound = loadSound('assets/sounds/coin.mp3');
+            enemySquishSound = loadSound('assets/sounds/squish.mp3');
+            gameOverSound = loadSound('assets/sounds/game_over.mp3');
+            victorySound = loadSound('assets/sounds/victory.mp3');
+            themeSong = loadSound('assets/sounds/theme.mp3');
+            */
+        }
+        
+        // Setup function
+        function setup() {
+            createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+            imageMode(CENTER);
+            resetGame();
+            
+            // Create clouds
+            for (let i = 0; i < 10; i++) {
+                clouds.push({
+                    x: random(-500, 2000),
+                    y: random(50, 150),
+                    speed: random(0.2, 0.5),
+                    scale: random(0.5, 1.5),
+                    alpha: random(150, 255)
+                });
+            }
+        }
+        
+        // Reset game state
+        function resetGame() {
+            player = {
+                x: 100,
+                y: 300,
+                width: 30,
+                height: 50,
+                velocityX: 0,
+                velocityY: 0,
+                isJumping: false,
+                direction: 1, // 1 for right, -1 for left
+                animation: "idle",
+                frameCount: 0,
+                currentFrame: 0,
+                lives: 3,
+                invulnerable: false,
+                invulnerableTimer: 0
+            };
+            
+            score = 0;
+            loadLevel(currentLevel);
+            gameState = "PLAYING";
+            cameraX = 0;
+            
+            // Play theme song (commented out)
+            // if (themeSong) themeSong.loop();
+        }
+        
+        // Load a specific level
+        function loadLevel(levelIndex) {
+            if (levelIndex >= levels.length) {
+                gameState = "VICTORY";
                 return;
             }
             
-            handInProgress = true;
-            startNewHand();
+            const level = levels[levelIndex];
+            platforms = level.platforms;
+            enemies = JSON.parse(JSON.stringify(level.enemies)); // Deep copy
+            collectibles = JSON.parse(JSON.stringify(level.collectibles)); // Deep copy
+            endFlag = level.end;
+            currentBackground = level.background;
         }
         
-        // Create and shuffle a deck
-        function createDeck() {
-            deck = [];
-            for (const suit of SUITS) {
-                for (const value of VALUES) {
-                    deck.push({ suit, value });
+        // Main draw function
+        function draw() {
+            if (gameState === "START") {
+                drawStartScreen();
+            } else if (gameState === "PLAYING") {
+                updateGame();
+                drawGame();
+            } else if (gameState === "GAME_OVER") {
+                drawGameOverScreen();
+            } else if (gameState === "VICTORY") {
+                drawVictoryScreen();
+            } else if (gameState === "LEVEL_COMPLETE") {
+                drawLevelCompleteScreen();
+            }
+        }
+        
+        // Update game state
+        function updateGame() {
+            updatePlayer();
+            updateEnemies();
+            updateCollectibles();
+            updateParticles();
+            updateClouds();
+            checkLevelComplete();
+            
+            // Camera follows player
+            cameraX = -player.x + width / 3;
+            cameraX = constrain(cameraX, -2500, 0); // Limit camera position
+            
+            // Check if player fell off the screen
+            if (player.y > height + 100) {
+                playerDie();
+            }
+            
+            // Update invulnerability timer
+            if (player.invulnerable) {
+                player.invulnerableTimer--;
+                if (player.invulnerableTimer <= 0) {
+                    player.invulnerable = false;
                 }
             }
         }
         
-        function shuffleDeck() {
-            for (let i = deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [deck[i], deck[j]] = [deck[j], deck[i]];
+        // Draw game elements
+        function drawGame() {
+            // Draw background
+            background(100, 180, 255);
+            
+            // Draw background image
+            image(bgImages[currentBackground], width/2, height/2, width, height);
+            
+            push();
+            translate(cameraX, 0);
+            
+            // Draw parallax background layers
+            for (let layer of bgLayers) {
+                image(layer.img, width/2 - cameraX * layer.scrollFactor, height - layer.img.height/2, layer.img.width, layer.img.height);
             }
-        }
-        
-        // Deal cards
-        function dealPlayerCards() {
-            playerCards = [deck.pop(), deck.pop()];
-            renderPlayerCards();
-        }
-        
-        function dealAICards() {
-            aiCards = [deck.pop(), deck.pop()];
-            // AI cards are face down until showdown
-        }
-        
-        function dealCommunityCards(count) {
-            for (let i = 0; i < count; i++) {
-                communityCards.push(deck.pop());
+            
+            // Draw clouds
+            for (let cloud of clouds) {
+                push();
+                tint(255, cloud.alpha);
+                image(cloudImage, cloud.x, cloud.y, cloudImage.width * cloud.scale, cloudImage.height * cloud.scale);
+                pop();
             }
-            renderCommunityCards();
+            
+            // Draw platforms
+            for (let platform of platforms) {
+                // Repeat the platform image to fill the width
+                const img = blockSprites[platform.type] || blockSprites.platform;
+                const tileSize = platform.height;
+                for (let x = platform.x; x < platform.x + platform.width; x += tileSize) {
+                    image(img, x + tileSize/2, platform.y + tileSize/2, tileSize, tileSize);
+                }
+            }
+            
+            // Draw collectibles
+            for (let collectible of collectibles) {
+                if (collectible.type === "coin") {
+                    image(coinSprite, collectible.x, collectible.y, 25, 25);
+                }
+            }
+            
+            // Draw end flag
+            if (endFlag) {
+                image(flagImage, endFlag.x, endFlag.y, 50, 100);
+            }
+            
+            // Draw enemies
+            for (let enemy of enemies) {
+                if (!enemy.squished) {
+                    push();
+                    scale(enemy.direction, 1); // Flip based on direction
+                    if (enemy.type === "walker") {
+                        image(enemySprites.walk[0], enemy.direction * enemy.x, enemy.y, 40, 30);
+                    }
+                    pop();
+                } else {
+                    image(enemySprites.squished, enemy.x, enemy.y + 10, 40, 20);
+                }
+            }
+            
+            // Draw particles
+            for (let particle of particles) {
+                noStroke();
+                fill(particle.color[0], particle.color[1], particle.color[2], particle.alpha);
+                ellipse(particle.x, particle.y, particle.size, particle.size);
+            }
+            
+            // Draw player
+            push();
+            scale(player.direction, 1); // Flip based on direction
+            
+            if (player.invulnerable && frameCount % 6 < 3) {
+                // Blink when invulnerable
+                tint(255, 127);
+            }
+            
+            const currentAnim = playerSprites[player.animation];
+            if (currentAnim && currentAnim.length > 0) {
+                image(currentAnim[player.currentFrame], player.direction * player.x, player.y, player.width * 1.5, player.height * 1.5);
+            }
+            pop();
+            
+            pop(); // End camera translation
+            
+            // Draw UI elements (not affected by camera)
+            drawUI();
         }
         
-        // Render cards
-        function renderPlayerCards() {
-            playerCardsEl.innerHTML = '';
-            playerCards.forEach(card => {
-                const cardEl = createCardElement(card);
-                playerCardsEl.appendChild(cardEl);
-            });
-        }
-        
-        function renderCommunityCards() {
-            communityCardsEl.innerHTML = '';
-            communityCards.forEach(card => {
-                const cardEl = createCardElement(card);
-                communityCardsEl.appendChild(cardEl);
-            });
-        }
-        
-        function createCardElement(card) {
-            const cardEl = document.createElement('div');
-            cardEl.className = `card ${RED_SUITS.includes(card.suit) ? 'red' : ''}`;
-            
-            const valueEl = document.createElement('div');
-            valueEl.textContent = card.value;
-            cardEl.appendChild(valueEl);
-            
-            const suitTopEl = document.createElement('div');
-            suitTopEl.className = 'suit top';
-            suitTopEl.textContent = card.suit;
-            cardEl.appendChild(suitTopEl);
-            
-            const suitBottomEl = document.createElement('div');
-            suitBottomEl.className = 'suit bottom';
-            suitBottomEl.textContent = card.suit;
-            cardEl.appendChild(suitBottomEl);
-            
-            return cardEl;
-        }
-        
-        // Game flow
-        function startNewHand() {
-            gamePhase = 'PREFLOP';
-            
-            // Post blinds
-            const smallBlind = 5;
-            const bigBlind = 10;
-            
-            if (dealerPosition === 'PLAYER') {
-                // Player is dealer, AI posts small blind
-                placeBet('AI', smallBlind);
-                placeBet('PLAYER', bigBlind);
-                playerTurn = false; // AI acts first preflop
+        // Update player state
+        function updatePlayer() {
+            // Handle horizontal movement
+            if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) { // Left arrow or A
+                player.velocityX = -PLAYER_SPEED;
+                player.direction = -1;
+                if (!player.isJumping) {
+                    player.animation = "run";
+                }
+            } else if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) { // Right arrow or D
+                player.velocityX = PLAYER_SPEED;
+                player.direction = 1;
+                if (!player.isJumping) {
+                    player.animation = "run";
+                }
             } else {
-                // AI is dealer, player posts small blind
-                placeBet('PLAYER', smallBlind);
-                placeBet('AI', bigBlind);
-                playerTurn = true; // Player acts first preflop
+                player.velocityX = 0;
+                if (!player.isJumping) {
+                    player.animation = "idle";
+                }
             }
             
-            currentBet = bigBlind;
+            // Apply gravity
+            player.velocityY += GRAVITY;
             
-            // Deal cards
-            dealPlayerCards();
-            dealAICards();
+            // Update position
+            player.x += player.velocityX;
+            player.y += player.velocityY;
             
-            // Update UI
-            updateControls();
-            potDisplayEl.classList.remove('hidden');
-            
-            if (!playerTurn) {
-                // AI's turn
-                setTimeout(aiAction, 1000);
+            // Check for platform collisions
+            let onGround = false;
+            for (let platform of platforms) {
+                if (collideRectRect(
+                    player.x - player.width/2, player.y - player.height/2, player.width, player.height,
+                    platform.x, platform.y, platform.width, platform.height
+                )) {
+                    // Check if landing on top of platform
+                    if (player.velocityY > 0 && player.y - player.height/2 < platform.y) {
+                        player.y = platform.y - player.height/2;
+                        player.velocityY = 0;
+                        onGround = true;
+                    }
+                    // Check if hitting side of platform
+                    else if (player.velocityX > 0 && player.x + player.width/2 > platform.x && player.x < platform.x) {
+                        player.x = platform.x - player.width/2;
+                    } 
+                    else if (player.velocityX < 0 && player.x - player.width/2 < platform.x + platform.width && player.x > platform.x + platform.width) {
+                        player.x = platform.x + platform.width + player.width/2;
+                    }
+                    // Check if hitting bottom of platform
+                    else if (player.velocityY < 0) {
+                        player.y = platform.y + platform.height + player.height/2;
+                        player.velocityY = 1;
+                    }
+                }
             }
-        }
-        
-        function placeBet(player, amount) {
-            // Cap bet at player's chip stack
-            let actualAmount;
-            if (player === 'PLAYER') {
-                actualAmount = Math.min(amount, playerChips);
-                playerChips -= actualAmount;
-                playerBet += actualAmount;
-                playerChipsEl.textContent = playerChips;
-                playerBetAmountEl.textContent = playerBet;
-                playerBetEl.classList.remove('hidden');
+            
+            // Update jumping state
+            if (onGround) {
+                player.isJumping = false;
             } else {
-                actualAmount = Math.min(amount, aiChips);
-                aiChips -= actualAmount;
-                aiBet += actualAmount;
-                aiChipsEl.textContent = aiChips;
-                aiBetAmountEl.textContent = aiBet;
-                aiBetEl.classList.remove('hidden');
+                player.isJumping = true;
+                player.animation = player.velocityY < 0 ? "jump" : "fall";
             }
             
-            pot += actualAmount;
-            potEl.textContent = pot;
-            
-            return actualAmount;
-        }
-        
-        function nextPhase() {
-            // Reset bets for the next betting round
-            playerBet = 0;
-            aiBet = 0;
-            playerBetEl.classList.add('hidden');
-            aiBetEl.classList.add('hidden');
-            currentBet = 0;
-            
-            switch (gamePhase) {
-                case 'PREFLOP':
-                    gamePhase = 'FLOP';
-                    dealCommunityCards(3);
-                    break;
-                case 'FLOP':
-                    gamePhase = 'TURN';
-                    dealCommunityCards(1);
-                    break;
-                case 'TURN':
-                    gamePhase = 'RIVER';
-                    dealCommunityCards(1);
-                    break;
-                case 'RIVER':
-                    gamePhase = 'SHOWDOWN';
-                    showdown();
-                    return;
+            // Check for enemy collisions
+            for (let enemy of enemies) {
+                if (!enemy.squished && collideRectRect(
+                    player.x - player.width/2, player.y - player.height/2, player.width, player.height,
+                    enemy.x - 20, enemy.y - 15, 40, 30
+                )) {
+                    // If player is falling onto enemy, squish enemy
+                    if (player.velocityY > 0 && player.y - player.height/2 < enemy.y - 10) {
+                        enemy.squished = true;
+                        player.velocityY = -JUMP_FORCE * 0.7; // Bounce off enemy
+                        score += 100;
+                        createParticles(enemy.x, enemy.y, 10, [0, 255, 0]);
+                        // Play squish sound (commented out)
+                        // if (enemySquishSound) enemySquishSound.play();
+                    } 
+                    // Otherwise player gets hurt
+                    else if (!player.invulnerable) {
+                        playerHit();
+                    }
+                }
             }
             
-            // Determine who acts first (always the player in position)
-            playerTurn = dealerPosition === 'PLAYER';
-            
-            // Start the betting round
-            updateControls();
-            
-            if (!playerTurn) {
-                setTimeout(aiAction, 1000);
-            }
-        }
-        
-        function showdown() {
-            // Reveal AI cards
-            const aiCardsContainer = document.querySelector('.ai-cards');
-            aiCardsContainer.innerHTML = '';
-            aiCards.forEach(card => {
-                const cardEl = createCardElement(card);
-                aiCardsContainer.appendChild(cardEl);
-            });
-            
-            // Determine winner
-            const winner = determineWinner();
-            
-            if (winner === 'PLAYER') {
-                playerChips += pot;
-                playerChipsEl.textContent = playerChips;
-                showMessage('You win the pot!');
-            } else if (winner === 'AI') {
-                aiChips += pot;
-                aiChipsEl.textContent = aiChips;
-                showMessage('AI wins the pot!');
-            } else {
-                // Split pot
-                const halfPot = Math.floor(pot / 2);
-                playerChips += halfPot;
-                aiChips += pot - halfPot; // Account for odd chip
-                playerChipsEl.textContent = playerChips;
-                aiChipsEl.textContent = aiChips;
-                showMessage('Split pot!');
+            // Check for collectible collisions
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const collectible = collectibles[i];
+                if (dist(player.x, player.y, collectible.x, collectible.y) < 30) {
+                    if (collectible.type === "coin") {
+                        score += 50;
+                        collectibles.splice(i, 1);
+                        createParticles(collectible.x, collectible.y, 5, [255, 215, 0]);
+                        // Play coin sound (commented out)
+                        // if (coinSound) coinSound.play();
+                    }
+                }
             }
             
-            handInProgress = false;
-            updateControls();
-        }
-        
-        // Determine hand winner - simple for demo (randomly)
-        function determineWinner() {
-            // For this demo, we'll do a simplistic random winner
-            // In a real game, we would evaluate poker hand strength
+            // Check for level completion
+            if (endFlag && dist(player.x, player.y, endFlag.x, endFlag.y) < 50) {
+                completeLevel();
+            }
             
-            // Create a simple representation of the hand strength (random for demo)
-            const playerStrength = Math.random();
-            const aiStrength = Math.random();
-            
-            if (playerStrength > aiStrength) {
-                return 'PLAYER';
-            } else if (aiStrength > playerStrength) {
-                return 'AI';
-            } else {
-                return 'TIE';
+            // Animate player
+            player.frameCount++;
+            if (player.frameCount > 5) {
+                player.frameCount = 0;
+                player.currentFrame = (player.currentFrame + 1) % playerSprites[player.animation].length;
             }
         }
         
-        // AI logic
-        function aiAction() {
-            // Show thinking indicator
-            aiThinkingEl.classList.remove('hidden');
-            
-            // Simulate AI "thinking"
-            setTimeout(() => {
-                aiThinkingEl.classList.add('hidden');
-                
-                // Simple AI logic - make decisions based on hand strength and game state
-                const handStrength = evaluateAIHand();
-                const amountToCall = currentBet - aiBet;
-                
-                if (amountToCall === 0) {
-                    // No bet to call - can check or bet
-                    if (handStrength < 0.3) {
-                        // Weak hand - check
-                        aiCheck();
-                    } else if (handStrength < 0.7) {
-                        // Medium hand - sometimes bet, sometimes check
-                        if (Math.random() > 0.5) {
-                            aiCheck();
-                        } else {
-                            const betAmount = Math.min(
-                                Math.max(20, Math.floor(pot * 0.5)),
-                                aiChips
-                            );
-                            aiPlaceBet(betAmount);
+        // Update enemies
+        function updateEnemies() {
+            for (let enemy of enemies) {
+                if (!enemy.squished) {
+                    // Move enemy
+                    enemy.x += enemy.direction * 2;
+                    
+                    // Check if enemy hit its movement boundaries
+                    if (enemy.initialX === undefined) {
+                        enemy.initialX = enemy.x;
+                    }
+                    
+                    if (enemy.x < enemy.initialX - enemy.range || enemy.x > enemy.initialX + enemy.range) {
+                        enemy.direction *= -1;
+                    }
+                    
+                    // Check if enemy is on platform
+                    let onPlatform = false;
+                    for (let platform of platforms) {
+                        if (enemy.x >= platform.x && enemy.x <= platform.x + platform.width &&
+                            enemy.y >= platform.y - 15 && enemy.y <= platform.y + 5) {
+                            onPlatform = true;
+                            break;
                         }
-                    } else {
-                        // Strong hand - bet
-                        const betAmount = Math.min(
-                            Math.max(20, Math.floor(pot * 0.75)),
-                            aiChips
-                        );
-                        aiPlaceBet(betAmount);
+                    }
+                    
+                    // Change direction if not on platform
+                    if (!onPlatform) {
+                        enemy.direction *= -1;
+                        enemy.x += enemy.direction * 10; // Move back onto platform
                     }
                 } else {
-                    // There's a bet to call
-                    if (handStrength < 0.2) {
-                        // Very weak hand - fold
-                        aiFold();
-                    } else if (handStrength < 0.6) {
-                        // Medium hand - call if affordable
-                        if (amountToCall > aiChips / 2) {
-                            aiFold();
-                        } else {
-                            aiCall();
-                        }
-                    } else {
-                        // Strong hand - call or raise
-                        if (Math.random() > 0.6 && aiChips > amountToCall * 3) {
-                            // Raise
-                            const raiseAmount = Math.min(
-                                amountToCall * 2 + Math.floor(Math.random() * 20),
-                                aiChips
-                            );
-                            aiPlaceBet(raiseAmount);
-                        } else {
-                            // Call
-                            aiCall();
-                        }
+                    // Squished enemy disappears after a while
+                    if (enemy.squishedTimer === undefined) {
+                        enemy.squishedTimer = 30;
+                    }
+                    enemy.squishedTimer--;
+                    if (enemy.squishedTimer <= 0) {
+                        enemy.remove = true;
                     }
                 }
+            }
+            
+            // Remove squished enemies
+            enemies = enemies.filter(enemy => !enemy.remove);
+        }
+        
+        // Update collectibles (simple animation)
+        function updateCollectibles() {
+            for (let collectible of collectibles) {
+                if (collectible.type === "coin") {
+                    // Make coins float up and down
+                    if (collectible.floatOffset === undefined) {
+                        collectible.floatOffset = random(0, TWO_PI);
+                        collectible.originalY = collectible.y;
+                    }
+                    collectible.y = collectible.originalY + sin(frameCount * 0.05 + collectible.floatOffset) * 5;
+                }
+            }
+        }
+        
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.x += particle.velocityX;
+                particle.y += particle.velocityY;
+                particle.velocityY += 0.2; // Gravity
+                particle.alpha -= 5;
+                particle.size *= 0.95;
                 
-                // Switch to player's turn
-                playerTurn = true;
-                updateControls();
+                if (particle.alpha <= 0 || particle.size < 0.5) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+        
+        // Update clouds
+        function updateClouds() {
+            for (let cloud of clouds) {
+                cloud.x += cloud.speed;
+                if (cloud.x > 2500) {
+                    cloud.x = -500;
+                    cloud.y = random(50, 150);
+                }
+            }
+        }
+        
+        // Create particles
+        function createParticles(x, y, count, color) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    velocityX: random(-3, 3),
+                    velocityY: random(-5, 0),
+                    size: random(5, 10),
+                    color: color,
+                    alpha: 255
+                });
+            }
+        }
+        
+        // Player jump function
+        function playerJump() {
+            if (!player.isJumping) {
+                player.velocityY = -JUMP_FORCE;
+                player.isJumping = true;
+                player.animation = "jump";
                 
-            }, 1500); // Thinking delay
-        }
-        
-        function evaluateAIHand() {
-            // In a real implementation, this would analyze the cards
-            // For this demo, return a random strength between 0 and 1
-            // Higher values indicate stronger hands
-            
-            // Slight bias based on game phase - AI plays tighter early, looser later
-            let baseProbability;
-            switch (gamePhase) {
-                case 'PREFLOP':
-                    baseProbability = 0.3;
-                    break;
-                case 'FLOP':
-                    baseProbability = 0.4;
-                    break;
-                case 'TURN':
-                    baseProbability = 0.5;
-                    break;
-                case 'RIVER':
-                    baseProbability = 0.6;
-                    break;
-                default:
-                    baseProbability = 0.5;
-            }
-            
-            return Math.random() * baseProbability + (1 - baseProbability) * Math.random();
-        }
-        
-        function aiCheck() {
-            showMessage('AI checks');
-            checkBettingRound();
-        }
-        
-        function aiCall() {
-            const amountToCall = currentBet - aiBet;
-            showMessage(`AI calls ${amountToCall}`);
-            placeBet('AI', amountToCall);
-            checkBettingRound();
-        }
-        
-        function aiPlaceBet(amount) {
-            const totalBet = amount + (currentBet - aiBet);
-            showMessage(`AI bets ${totalBet}`);
-            placeBet('AI', totalBet);
-            currentBet = aiBet;
-        }
-        
-        function aiFold() {
-            showMessage('AI folds');
-            playerChips += pot;
-            playerChipsEl.textContent = playerChips;
-            handInProgress = false;
-            updateControls();
-        }
-        
-        // Player actions
-        function playerCheck() {
-            showMessage('You check');
-            playerTurn = false;
-            checkBettingRound();
-        }
-        
-        function playerCall() {
-            const amountToCall = currentBet - playerBet;
-            showMessage(`You call ${amountToCall}`);
-            placeBet('PLAYER', amountToCall);
-            playerTurn = false;
-            checkBettingRound();
-        }
-        
-        function playerBetAction() {
-            const betAmount = parseInt(betAmountEl.textContent);
-            const totalBet = betAmount + (currentBet - playerBet);
-            showMessage(`You bet ${totalBet}`);
-            placeBet('PLAYER', totalBet);
-            currentBet = playerBet;
-            playerTurn = false;
-            setTimeout(aiAction, 1000);
-        }
-        
-        function playerFold() {
-            showMessage('You fold');
-            aiChips += pot;
-            aiChipsEl.textContent = aiChips;
-            handInProgress = false;
-            updateControls();
-        }
-        
-        function checkBettingRound() {
-            if (!playerTurn && playerBet === aiBet) {
-                // Betting round complete
-                setTimeout(() => {
-                    nextPhase();
-                }, 1000);
-            } else if (!playerTurn) {
-                // AI's turn
-                setTimeout(aiAction, 1000);
+                // Create jump dust effect
+                createParticles(player.x, player.y + player.height/2, 5, [200, 200, 200]);
+                
+                // Play jump sound (commented out)
+                // if (jumpSound) jumpSound.play();
             }
         }
         
-        // UI updates
-        function updateControls() {
-            if (!handInProgress) {
-                // No hand in progress - only new hand button enabled
-                checkBtn.disabled = true;
-                callBtn.disabled = true;
-                betBtn.disabled = true;
-                foldBtn.disabled = true;
-                betSlider.disabled = true;
-                newHandBtn.disabled = false;
-                return;
+        // Player hit by enemy
+        function playerHit() {
+            player.lives--;
+            player.invulnerable = true;
+            player.invulnerableTimer = 60; // 1 second of invulnerability
+            
+            if (player.lives <= 0) {
+                gameOver();
+            } else {
+                // Knockback
+                player.velocityY = -10;
+                player.velocityX = player.direction * -8;
             }
-            
-            // Hand in progress
-            newHandBtn.disabled = true;
-            
-            if (!playerTurn) {
-                // Not player's turn - disable all controls
-                checkBtn.disabled = true;
-                callBtn.disabled = true;
-                betBtn.disabled = true;
-                foldBtn.disabled = true;
-                betSlider.disabled = true;
-                return;
-            }
-            
-            // Update bet slider
-            const maxBet = playerChips;
-            betSlider.max = maxBet;
-            betSlider.value = Math.min(maxBet, currentBet * 2);
-            betAmountEl.textContent = betSlider.value;
-            
-            // Check if player can check
-            checkBtn.disabled = playerBet !== currentBet;
-            
-            // Call button enabled if there's a bet to call and player has chips
-            const amountToCall = currentBet - playerBet;
-            callBtn.disabled = amountToCall <= 0 || amountToCall > playerChips;
-            
-            // Bet button enabled if player has chips
-            betBtn.disabled = playerChips <= 0;
-            betSlider.disabled = playerChips <= 0;
-            
-            // Fold button only enabled if there's a bet to call
-            foldBtn.disabled = amountToCall <= 0;
         }
         
-        function showMessage(text) {
-            messageEl.textContent = text;
-            messageEl.classList.remove('hidden');
-            
-            setTimeout(() => {
-                messageEl.classList.add('hidden');
-            }, 2000);
+        // Player dies
+        function playerDie() {
+            player.lives = 0;
+            gameOver();
         }
         
-        // Event listeners
-        checkBtn.addEventListener('click', playerCheck);
-        callBtn.addEventListener('click', playerCall);
-        betBtn.addEventListener('click', playerBetAction);
-        foldBtn.addEventListener('click', playerFold);
-        newHandBtn.addEventListener('click', initGame);
+        // Game over
+        function gameOver() {
+            gameState = "GAME_OVER";
+            // Stop music (commented out)
+            // if (themeSong) themeSong.stop();
+            // Play game over sound (commented out)
+            // if (gameOverSound) gameOverSound.play();
+        }
         
-        betSlider.addEventListener('input', function() {
-            betAmountEl.textContent = this.value;
-        });
+        // Complete level
+        function completeLevel() {
+            gameState = "LEVEL_COMPLETE";
+            // Play victory sound (commented out)
+            // if (victorySound) victorySound.play();
+        }
         
-        // Initialize the game
-        updateControls();
+        // Check if level is complete
+        function checkLevelComplete() {
+            if (endFlag && dist(player.x, player.y, endFlag.x, endFlag.y) < 50) {
+                completeLevel();
+            }
+        }
+        
+        // Draw UI
+        function drawUI() {
+            // Score display
+            fill(0, 0, 0, 150);
+            rect(10, 10, 150, 40, 5);
+            fill(255);
+            textSize(20);
+            textAlign(LEFT, CENTER);
+            text(`Score: ${score}`, 20, 30);
+            
+            // Lives display
+            for (let i = 0; i < player.lives; i++) {
+                image(heartImage, width - 30 - i * 30, 30, 25, 25);
+            }
+        }
+        
+        // Draw start screen
+        function drawStartScreen() {
+            background(0, 0, 50);
+            image(bgImages[0], width/2, height/2, width, height);
+            
+            // Title
+            fill(255);
+            textSize(50);
+            textAlign(CENTER, CENTER);
+            text("ADVENTURE PLATFORMER", width/2, height/3);
+            
+            // Instructions
+            textSize(20);
+            text("Arrow keys or WASD to move, Spacebar to jump", width/2, height/2);
+            
+            // Start prompt
+            textSize(25);
+            fill(255, 255, 0);
+            text("Press ENTER to start", width/2, height * 2/3);
+            
+            // Animate start prompt
+            if (frameCount % 60 < 30) {
+                text("Press ENTER to start", width/2, height * 2/3);
+            }
+        }
+        
+        // Draw game over screen
+        function drawGameOverScreen() {
+            fill(0, 0, 0, 200);
+            rect(0, 0, width, height);
+            
+            fill(255, 50, 50);
+            textSize(50);
+            textAlign(CENTER, CENTER);
+            text("GAME OVER", width/2, height/3);
+            
+            fill(255);
+            textSize(25);
+            text(`Final Score: ${score}`, width/2, height/2);
+            
+            textSize(20);
+            fill(255, 255, 0);
+            if (frameCount % 60 < 30) {
+                text("Press R to restart", width/2, height * 2/3);
+            }
+        }
+        
+        // Draw victory screen
+        function drawVictoryScreen() {
+            fill(0, 0, 0, 200);
+            rect(0, 0, width, height);
+            
+            fill(50, 255, 50);
+            textSize(50);
+            textAlign(CENTER, CENTER);
+            text("VICTORY!", width/2, height/3);
+            
+            fill(255);
+            textSize(25);
+            text(`Final Score: ${score}`, width/2, height/2);
+            
+            textSize(20);
+            fill(255, 255, 0);
+            if (frameCount % 60 < 30) {
+                text("Press R to play again", width/2, height * 2/3);
+            }
+        }
+        
+        // Draw level complete screen
+        function drawLevelCompleteScreen() {
+            fill(0, 0, 0, 200);
+            rect(0, 0, width, height);
+            
+            fill(50, 200, 255);
+            textSize(40);
+            textAlign(CENTER, CENTER);
+            text(`LEVEL ${currentLevel + 1} COMPLETE!`, width/2, height/3);
+            
+            fill(255);
+            textSize(25);
+            text(`Score: ${score}`, width/2, height/2);
+            
+            textSize(20);
+            fill(255, 255, 0);
+            if (frameCount % 60 < 30) {
+                text("Press ENTER to continue", width/2, height * 2/3);
+            }
+        }
+        
+        // Key pressed event handler
+        function keyPressed() {
+            if (keyCode === 32) { // Space bar
+                if (gameState === "PLAYING") {
+                    playerJump();
+                }
+            }
+            
+            if (keyCode === ENTER) {
+                if (gameState === "START") {
+                    resetGame();
+                } else if (gameState === "LEVEL_COMPLETE") {
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                    gameState = "PLAYING";
+                }
+            }
+            
+            if (keyCode === 82) { // R key
+                if (gameState === "GAME_OVER" || gameState === "VICTORY") {
+                    currentLevel = 0;
+                    resetGame();
+                }
+            }
+        }
+        
+        // Helper function to check rectangle collision
+        function collideRectRect(x1, y1, w1, h1, x2, y2, w2, h2) {
+            return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
+        }
     </script>
 </body>
 </html>
