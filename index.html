@@ -1,1355 +1,893 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Pause, Play, RefreshCw, HelpCircle, X } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Poker</title>
+    <style>
+        :root {
+            --primary-color: #2d3436;
+            --secondary-color: #0984e3;
+            --table-color: #10ac84;
+            --text-color: #dfe6e9;
+            --card-color: #ffffff;
+            --button-color: #0984e3;
+            --button-hover: #74b9ff;
+            --chip-color: #fdcb6e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .game-container {
+            width: 90%;
+            max-width: 1000px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .table {
+            width: 100%;
+            height: 80%;
+            background-color: var(--table-color);
+            border-radius: 250px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 50px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .player-area, .ai-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 25px;
+            margin: 15px 0;
+            z-index: 1;
+        }
+        
+        .community-cards {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .card {
+            width: 80px;
+            height: 120px;
+            background-color: var(--card-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            position: relative;
+            color: #000;
+        }
+        
+        .card.red {
+            color: #e74c3c;
+        }
+        
+        .card-back {
+            background-color: #3498db;
+            background-image: linear-gradient(135deg, #3498db 25%, #2980b9 25%, #2980b9 50%, #3498db 50%, #3498db 75%, #2980b9 75%, #2980b9 100%);
+            background-size: 20px 20px;
+        }
+        
+        .suit {
+            position: absolute;
+            font-size: 14px;
+        }
+        
+        .suit.top {
+            top: 5px;
+            left: 5px;
+        }
+        
+        .suit.bottom {
+            bottom: 5px;
+            right: 5px;
+            transform: rotate(180deg);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .player-cards, .ai-cards {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .player-info, .ai-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chips {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .chip-icon {
+            width: 20px;
+            height: 20px;
+            background-color: var(--chip-color);
+            border-radius: 50%;
+            border: 2px solid #f39c12;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: var(--button-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--button-hover);
+        }
+        
+        button:disabled {
+            background-color: #7f8c8d;
+            cursor: not-allowed;
+        }
+        
+        .bet-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        input[type="range"] {
+            width: 150px;
+        }
+        
+        .bet-amount {
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .pot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .message {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.7);
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .player-bet, .ai-bet {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background-color: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
 
-// Chess piece symbols
-const PIECES = {
-  'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟',
-  'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-};
+        .win-message {
+            color: #f1c40f;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .header {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
 
-// Piece values for AI evaluation
-const PIECE_VALUES = {
-  'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 0,
-  'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 0
-};
+        .dealer-button {
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border-radius: 50%;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-// Check if a character is uppercase (white piece)
-const isWhite = (piece) => piece && piece === piece.toUpperCase();
-
-// Check if a character is lowercase (black piece)
-const isBlack = (piece) => piece && piece === piece.toLowerCase();
-
-// Convert algebraic notation to board coordinates
-const algebraicToCoords = (algebraic) => {
-  const file = algebraic.charCodeAt(0) - 'a'.charCodeAt(0);
-  const rank = 8 - parseInt(algebraic.charAt(1));
-  return [rank, file];
-};
-
-// Convert board coordinates to algebraic notation
-const coordsToAlgebraic = (row, col) => {
-  const file = String.fromCharCode('a'.charCodeAt(0) + col);
-  const rank = 8 - row;
-  return file + rank;
-};
-
-const Choker = () => {
-  // Game state
-  const [board, setBoard] = useState(null);
-  const [selectedCell, setSelectedCell] = useState(null);
-  const [possibleMoves, setPossibleMoves] = useState([]);
-  const [playerColor, setPlayerColor] = useState(null);
-  const [aiColor, setAiColor] = useState(null);
-  const [turn, setTurn] = useState('white');
-  const [moveCount, setMoveCount] = useState(0);
-  const [gamePhase, setGamePhase] = useState('setup'); // setup, playing, betting, gameOver
-  const [bettingRound, setBettingRound] = useState(0);
-  const [winner, setWinner] = useState(null);
-  const [playerChips, setPlayerChips] = useState(100);
-  const [aiChips, setAiChips] = useState(100);
-  const [currentBet, setCurrentBet] = useState(0);
-  const [potSize, setPotSize] = useState(0);
-  const [blindAmount] = useState(10);
-  const [lastBet, setLastBet] = useState(null);
-  const [playerLockedPieces, setPlayerLockedPieces] = useState([]);
-  const [aiLockedPieces, setAiLockedPieces] = useState([]);
-  const [knownLockedPieces, setKnownLockedPieces] = useState([]);
-  const [lockedPositions, setLockedPositions] = useState({});
-  const [unlockedPieces, setUnlockedPieces] = useState([]);
-  const [message, setMessage] = useState('');
-  const [showRules, setShowRules] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [lastMove, setLastMove] = useState(null);
-  const [gameHistory, setGameHistory] = useState([]);
-  const [showWinnerMessage, setShowWinnerMessage] = useState(false);
-  
-  const boardRef = useRef(null);
-  
-  // Initialize the game
-  useEffect(() => {
-    startNewGame();
-  }, []);
-  
-  const startNewGame = () => {
-    const coinFlip = Math.random() >= 0.5;
-    const playerIsWhite = coinFlip;
-    
-    setPlayerColor(playerIsWhite ? 'white' : 'black');
-    setAiColor(playerIsWhite ? 'black' : 'white');
-    setTurn('white');
-    setMoveCount(0);
-    setGamePhase('setup');
-    setBettingRound(0);
-    setWinner(null);
-    setPlayerChips(100);
-    setAiChips(100);
-    setCurrentBet(0);
-    setPotSize(0);
-    setLastBet(null);
-    setUnlockedPieces([]);
-    setShowWinnerMessage(false);
-    
-    // Initialize the board with pawns in normal positions
-    const initialBoard = Array(8).fill().map(() => Array(8).fill(null));
-    
-    // Place pawns
-    for (let col = 0; col < 8; col++) {
-      initialBoard[1][col] = 'P'; // White pawns
-      initialBoard[6][col] = 'p'; // Black pawns
-    }
-    
-    // Generate randomized back rows (excluding king)
-    const whitePieces = ['R', 'N', 'B', 'Q', 'B', 'N', 'R'];
-    const blackPieces = ['r', 'n', 'b', 'q', 'b', 'n', 'r'];
-    
-    // Shuffle pieces
-    shuffleArray(whitePieces);
-    shuffleArray(blackPieces);
-    
-    // Insert kings at random positions
-    const whiteKingPos = Math.floor(Math.random() * 8);
-    const blackKingPos = Math.floor(Math.random() * 8);
-    
-    // Place all pieces on the board
-    for (let col = 0; col < 8; col++) {
-      // White back row
-      if (col === whiteKingPos) {
-        initialBoard[7][col] = 'K';
-      } else {
-        initialBoard[7][col] = whitePieces.pop();
-      }
-      
-      // Black back row
-      if (col === blackKingPos) {
-        initialBoard[0][col] = 'k';
-      } else {
-        initialBoard[0][col] = blackPieces.pop();
-      }
-    }
-    
-    setBoard(initialBoard);
-    setGameHistory([{board: JSON.parse(JSON.stringify(initialBoard)), moveCount: 0}]);
-    
-    // Select locked pieces (excluding pawns and kings)
-    selectLockedPieces(initialBoard);
-    
-    // Transition to initial betting phase after setup
-    setTimeout(() => {
-      setGamePhase('betting');
-      setBettingRound(1);
-      setMessage(`${playerIsWhite ? 'Black' : 'White'} (${playerIsWhite ? 'AI' : 'You'}) bets first. Blind: ${blindAmount}`);
-      
-      // AI makes initial bet if it's black
-      if (!playerIsWhite) {
-        handleAiAction();
-      }
-    }, 1000);
-  };
-  
-  // Fisher-Yates shuffle algorithm
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  };
-  
-  // Randomly select locked pieces (excluding pawns and kings)
-  const selectLockedPieces = (board) => {
-    const playerPieces = [];
-    const aiPieces = [];
-    
-    // Collect all eligible pieces (non-pawns, non-kings)
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = board[row][col];
-        if (!piece) continue;
-        
-        const pieceType = piece.toLowerCase();
-        if (pieceType !== 'p' && pieceType !== 'k') {
-          const position = coordsToAlgebraic(row, col);
-          if ((playerColor === 'white' && isWhite(piece)) || 
-              (playerColor === 'black' && isBlack(piece))) {
-            playerPieces.push({piece, position, coords: [row, col]});
-          } else {
-            aiPieces.push({piece, position, coords: [row, col]});
-          }
+        .thinking {
+            font-style: italic;
+            color: #bdc3c7;
+            margin-top: 5px;
         }
-      }
-    }
-    
-    // Ensure we have enough pieces to lock
-    if (playerPieces.length < 5 || aiPieces.length < 5) {
-      console.error('Not enough pieces to lock');
-      return;
-    }
-    
-    // Shuffle and select 5 pieces for each player
-    shuffleArray(playerPieces);
-    shuffleArray(aiPieces);
-    
-    const playerLockedPieces = playerPieces.slice(0, 5);
-    const aiLockedPieces = aiPieces.slice(0, 5);
-    
-    // Select 2 known locked pieces for the player
-    const knownLockedPieces = playerLockedPieces.slice(0, 2);
-    
-    // Create lockedPositions object
-    const lockedPositions = {};
-    [...playerLockedPieces, ...aiLockedPieces].forEach(({position, coords}) => {
-      lockedPositions[position] = true;
-    });
-    
-    setPlayerLockedPieces(playerLockedPieces);
-    setAiLockedPieces(aiLockedPieces);
-    setKnownLockedPieces(knownLockedPieces);
-    setLockedPositions(lockedPositions);
-  };
-
-  // Unlock one piece for each player
-  const unlockPieces = () => {
-    if (playerLockedPieces.length > 0 && aiLockedPieces.length > 0) {
-      // Remove the first piece from each locked list
-      const playerPiece = playerLockedPieces[0];
-      const aiPiece = aiLockedPieces[0];
-      
-      // Create a copy of the locked positions and remove the unlocked pieces
-      const newLockedPositions = {...lockedPositions};
-      delete newLockedPositions[playerPiece.position];
-      delete newLockedPositions[aiPiece.position];
-      
-      // Update state
-      setPlayerLockedPieces(playerLockedPieces.slice(1));
-      setAiLockedPieces(aiLockedPieces.slice(1));
-      setLockedPositions(newLockedPositions);
-      setUnlockedPieces([...unlockedPieces, playerPiece, aiPiece]);
-      
-      setMessage(`Unlocked ${playerPiece.piece.toUpperCase()} for you and ${aiPiece.piece.toUpperCase()} for AI!`);
-      
-      // After unlocking, transition to betting phase
-      setGamePhase('betting');
-      setBettingRound(bettingRound + 1);
-      
-      // If AI is black (bets first), handle AI action
-      if (aiColor === 'black') {
-        setTimeout(() => {
-          handleAiAction();
-        }, 1000);
-      }
-    } else {
-      // If no more pieces to unlock, continue playing
-      setGamePhase('playing');
-    }
-  };
-  
-  // Handle player bet actions (check, call, raise, fold)
-  const handlePlayerBet = (action, raiseAmount = 0) => {
-    switch (action) {
-      case 'check':
-        if (currentBet > 0) {
-          setMessage("Can't check - there's already a bet. Call, raise, or fold.");
-          return;
-        }
-        setMessage("Player checks.");
-        setLastBet({player: 'player', action: 'check'});
-        break;
-        
-      case 'call':
-        if (currentBet === 0) {
-          setMessage("No bet to call.");
-          return;
-        }
-        if (playerChips < currentBet) {
-          handleFold('player');
-          return;
-        }
-        setPlayerChips(playerChips - currentBet);
-        setPotSize(potSize + currentBet);
-        setMessage(`Player calls ${currentBet}.`);
-        setLastBet({player: 'player', action: 'call', amount: currentBet});
-        break;
-        
-      case 'raise':
-        if (raiseAmount <= currentBet) {
-          setMessage("Raise must be greater than current bet.");
-          return;
-        }
-        if (playerChips < raiseAmount) {
-          setMessage("Not enough chips to raise that amount.");
-          return;
-        }
-        setPlayerChips(playerChips - raiseAmount);
-        setPotSize(potSize + raiseAmount);
-        setCurrentBet(raiseAmount);
-        setMessage(`Player raises to ${raiseAmount}.`);
-        setLastBet({player: 'player', action: 'raise', amount: raiseAmount});
-        break;
-        
-      case 'fold':
-        handleFold('player');
-        return;
-    }
-    
-    // After player's action, handle AI's response
-    setTimeout(() => {
-      handleAiAction();
-    }, 1000);
-  };
-  
-  // Handle AI betting logic
-  const handleAiAction = () => {
-    // If it's the first betting round and AI is black (bets first)
-    if (bettingRound === 1 && lastBet === null && aiColor === 'black') {
-      // AI places blind bet
-      setAiChips(aiChips - blindAmount);
-      setPotSize(potSize + blindAmount);
-      setCurrentBet(blindAmount);
-      setMessage(`AI places blind bet of ${blindAmount}.`);
-      setLastBet({player: 'ai', action: 'bet', amount: blindAmount});
-      return;
-    }
-    
-    // AI decision making based on its hand strength
-    const aiHandStrength = evaluateAiHand();
-    
-    // If player checked
-    if (lastBet && lastBet.player === 'player' && lastBet.action === 'check') {
-      // AI betting strategy based on hand strength
-      if (aiHandStrength > 0.7) {
-        // Strong hand - bet aggressively
-        const betAmount = Math.min(Math.floor(aiHandStrength * 30), aiChips);
-        setAiChips(aiChips - betAmount);
-        setPotSize(potSize + betAmount);
-        setCurrentBet(betAmount);
-        setMessage(`AI bets ${betAmount}.`);
-        setLastBet({player: 'ai', action: 'bet', amount: betAmount});
-      } else {
-        // Weak hand - check
-        setMessage("AI checks.");
-        setLastBet({player: 'ai', action: 'check'});
-        finishBettingRound();
-      }
-    }
-    // If player called
-    else if (lastBet && lastBet.player === 'player' && lastBet.action === 'call') {
-      finishBettingRound();
-    }
-    // If player raised
-    else if (lastBet && lastBet.player === 'player' && lastBet.action === 'raise') {
-      if (aiHandStrength > 0.6 || Math.random() < 0.3) { // Sometimes call with a weaker hand (bluff detection)
-        // Call the raise
-        if (aiChips < currentBet) {
-          handleFold('ai');
-          return;
-        }
-        setAiChips(aiChips - currentBet);
-        setPotSize(potSize + currentBet);
-        setMessage(`AI calls ${currentBet}.`);
-        setLastBet({player: 'ai', action: 'call', amount: currentBet});
-        finishBettingRound();
-      } else {
-        // Fold with weak hand
-        handleFold('ai');
-      }
-    }
-    // If no previous action (AI is first to act)
-    else {
-      if (aiHandStrength > 0.5 || Math.random() < 0.2) { // Sometimes bet with a weaker hand (bluffing)
-        // Bet based on hand strength
-        const betAmount = Math.min(Math.floor(aiHandStrength * 20) + blindAmount, aiChips);
-        setAiChips(aiChips - betAmount);
-        setPotSize(potSize + betAmount);
-        setCurrentBet(betAmount);
-        setMessage(`AI bets ${betAmount}.`);
-        setLastBet({player: 'ai', action: 'bet', amount: betAmount});
-      } else {
-        // Check with weak hand
-        setMessage("AI checks.");
-        setLastBet({player: 'ai', action: 'check'});
-        
-        // If both players check, finish the betting round
-        if (lastBet && lastBet.player === 'player' && lastBet.action === 'check') {
-          finishBettingRound();
-        }
-      }
-    }
-  };
-  
-  // Evaluate AI's hand strength (0-1) for betting decisions
-  const evaluateAiHand = () => {
-    // Simplistic evaluation based on piece values and position
-    let totalValue = 0;
-    let maxPossibleValue = 0;
-    
-    // Count AI's pieces and their values
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = board[row][col];
-        if (!piece) continue;
-        
-        // Evaluate relative piece strength and position
-        if ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece))) {
-          const pieceType = piece.toLowerCase();
-          const pieceValue = PIECE_VALUES[pieceType];
-          
-          // Add basic piece value
-          totalValue += pieceValue;
-          
-          // Add position value (pieces closer to center are better)
-          const centerDistance = Math.abs(3.5 - row) + Math.abs(3.5 - col);
-          totalValue += (7 - centerDistance) * 0.1;
-          
-          // Add bonus for developed pieces (not in starting position)
-          if (pieceType !== 'p' && !isLocked(row, col)) {
-            if (aiColor === 'white' && row < 7) totalValue += 0.5;
-            if (aiColor === 'black' && row > 0) totalValue += 0.5;
-          }
-        }
-        
-        // Count all possible piece values for normalization
-        maxPossibleValue += PIECE_VALUES[piece.toLowerCase()];
-      }
-    }
-    
-    // Normalize to 0-1 range and add randomness for less predictable play
-    const normalizedStrength = totalValue / Math.max(maxPossibleValue, 1);
-    return normalizedStrength * 0.8 + Math.random() * 0.2;
-  };
-  
-  // Handle fold action
-  const handleFold = (player) => {
-    const winner = player === 'player' ? 'ai' : 'player';
-    setMessage(`${player.charAt(0).toUpperCase() + player.slice(1)} folds. ${winner.charAt(0).toUpperCase() + winner.slice(1)} wins the pot of ${potSize}!`);
-    
-    if (winner === 'player') {
-      setPlayerChips(playerChips + potSize);
-    } else {
-      setAiChips(aiChips + potSize);
-    }
-    
-    setWinner(winner);
-    setGamePhase('gameOver');
-    setShowWinnerMessage(true);
-  };
-  
-  // Finish the betting round and transition to playing phase
-  const finishBettingRound = () => {
-    setLastBet(null);
-    setCurrentBet(0);
-    
-    // If this is the first betting round, reveal all locked pieces
-    if (bettingRound === 1) {
-      setKnownLockedPieces(playerLockedPieces);
-    }
-    
-    setGamePhase('playing');
-    setMessage(turn === playerColor ? "Your move." : "AI is thinking...");
-    
-    // If AI starts playing, make a move
-    if (turn === aiColor) {
-      setTimeout(makeAiMove, 1000);
-    }
-  };
-  
-  // Check if a position is locked
-  const isLocked = (row, col) => {
-    const position = coordsToAlgebraic(row, col);
-    return lockedPositions[position];
-  };
-  
-  // Get all valid moves for a piece
-  const getValidMoves = (row, col) => {
-    const piece = board[row][col];
-    if (!piece) return [];
-    
-    // If piece is locked, it can't move
-    if (isLocked(row, col)) return [];
-    
-    // Check if it's the player's turn and piece
-    const isPlayerPiece = (playerColor === 'white' && isWhite(piece)) || 
-                          (playerColor === 'black' && isBlack(piece));
-    if (turn !== playerColor || !isPlayerPiece) return [];
-    
-    const pieceType = piece.toLowerCase();
-    const validMoves = [];
-    
-    switch (pieceType) {
-      case 'p': // Pawn
-        getPawnMoves(row, col, piece, validMoves);
-        break;
-      case 'r': // Rook
-        getRookMoves(row, col, piece, validMoves);
-        break;
-      case 'n': // Knight
-        getKnightMoves(row, col, piece, validMoves);
-        break;
-      case 'b': // Bishop
-        getBishopMoves(row, col, piece, validMoves);
-        break;
-      case 'q': // Queen
-        getRookMoves(row, col, piece, validMoves);
-        getBishopMoves(row, col, piece, validMoves);
-        break;
-      case 'k': // King
-        getKingMoves(row, col, piece, validMoves);
-        break;
-    }
-    
-    // Filter out moves that would put the king in check
-    return validMoves.filter(([toRow, toCol]) => {
-      const newBoard = JSON.parse(JSON.stringify(board));
-      newBoard[toRow][toCol] = piece;
-      newBoard[row][col] = null;
-      
-      return !isKingInCheck(newBoard, isWhite(piece) ? 'white' : 'black');
-    });
-  };
-  
-  // Get valid moves for pawns
-  const getPawnMoves = (row, col, piece, validMoves) => {
-    const direction = isWhite(piece) ? -1 : 1;
-    const startRow = isWhite(piece) ? 6 : 1;
-    
-    // Move forward one square
-    if (row + direction >= 0 && row + direction < 8 && !board[row + direction][col]) {
-      validMoves.push([row + direction, col]);
-      
-      // Move forward two squares from starting position
-      if (row === startRow && !board[row + 2 * direction][col]) {
-        validMoves.push([row + 2 * direction, col]);
-      }
-    }
-    
-    // Capture diagonally
-    for (let dx of [-1, 1]) {
-      const newCol = col + dx;
-      if (newCol >= 0 && newCol < 8 && board[row + direction][newCol]) {
-        const target = board[row + direction][newCol];
-        if (isWhite(piece) !== isWhite(target)) {
-          validMoves.push([row + direction, newCol]);
-        }
-      }
-    }
-    
-    // TODO: Add en passant if needed
-  };
-  
-  // Get valid moves for rooks
-  const getRookMoves = (row, col, piece, validMoves) => {
-    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // Up, down, left, right
-    
-    for (let [dx, dy] of directions) {
-      let newRow = row + dx;
-      let newCol = col + dy;
-      
-      while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-        const target = board[newRow][newCol];
-        
-        if (!target) {
-          validMoves.push([newRow, newCol]);
-        } else {
-          if (isWhite(piece) !== isWhite(target)) {
-            validMoves.push([newRow, newCol]); // Capture
-          }
-          break; // Can't move past a piece
-        }
-        
-        newRow += dx;
-        newCol += dy;
-      }
-    }
-  };
-  
-  // Get valid moves for knights
-  const getKnightMoves = (row, col, piece, validMoves) => {
-    const moves = [
-      [-2, -1], [-2, 1], [-1, -2], [-1, 2],
-      [1, -2], [1, 2], [2, -1], [2, 1]
-    ];
-    
-    for (let [dx, dy] of moves) {
-      const newRow = row + dx;
-      const newCol = col + dy;
-      
-      if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-        const target = board[newRow][newCol];
-        
-        if (!target || isWhite(piece) !== isWhite(target)) {
-          validMoves.push([newRow, newCol]);
-        }
-      }
-    }
-  };
-  
-  // Get valid moves for bishops
-  const getBishopMoves = (row, col, piece, validMoves) => {
-    const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]; // Diagonals
-    
-    for (let [dx, dy] of directions) {
-      let newRow = row + dx;
-      let newCol = col + dy;
-      
-      while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-        const target = board[newRow][newCol];
-        
-        if (!target) {
-          validMoves.push([newRow, newCol]);
-        } else {
-          if (isWhite(piece) !== isWhite(target)) {
-            validMoves.push([newRow, newCol]); // Capture
-          }
-          break; // Can't move past a piece
-        }
-        
-        newRow += dx;
-        newCol += dy;
-      }
-    }
-  };
-  
-  // Get valid moves for kings
-  const getKingMoves = (row, col, piece, validMoves) => {
-    const moves = [
-      [-1, -1], [-1, 0], [-1, 1],
-      [0, -1], [0, 1],
-      [1, -1], [1, 0], [1, 1]
-    ];
-    
-    for (let [dx, dy] of moves) {
-      const newRow = row + dx;
-      const newCol = col + dy;
-      
-      if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-        const target = board[newRow][newCol];
-        
-        if (!target || isWhite(piece) !== isWhite(target)) {
-          validMoves.push([newRow, newCol]);
-        }
-      }
-    }
-    
-    // Handle castling
-    if (!hasPieceMoved(row, col)) {
-      // Kingside castling
-      if (canCastle(row, col, true)) {
-        validMoves.push([row, col + 2]);
-      }
-      
-      // Queenside castling
-      if (canCastle(row, col, false)) {
-        validMoves.push([row, col - 2]);
-      }
-    }
-  };
-  
-  // Check if a piece can castle
-  const canCastle = (row, col, isKingside) => {
-    const piece = board[row][col];
-    const rookCol = isKingside ? 7 : 0;
-    const rookRow = row;
-    
-    // Check if king or rook has moved
-    if (hasPieceMoved(row, col) || hasPieceMoved(rookRow, rookCol)) {
-      return false;
-    }
-    
-    // Check if rook exists and is not locked
-    const rook = board[rookRow][rookCol];
-    if (!rook || isLocked(rookRow, rookCol)) {
-      return false;
-    }
-    
-    // Check if the rook is the correct color
-    if (isWhite(piece) !== isWhite(rook)) {
-      return false;
-    }
-    
-    // Check if path is clear between king and rook
-    const direction = isKingside ? 1 : -1;
-    for (let c = col + direction; c !== rookCol; c += direction) {
-      if (board[row][c] !== null) {
-        return false;
-      }
-    }
-    
-    // Check if king passes through check
-    const color = isWhite(piece) ? 'white' : 'black';
-    const testBoard = JSON.parse(JSON.stringify(board));
-    
-    // Check intermediate square
-    testBoard[row][col] = null;
-    testBoard[row][col + direction] = piece;
-    if (isKingInCheck(testBoard, color)) {
-      return false;
-    }
-    
-    // Check final position
-    testBoard[row][col + direction] = null;
-    testBoard[row][col + 2 * direction] = piece;
-    if (isKingInCheck(testBoard, color)) {
-      return false;
-    }
-    
-    return true;
-  };
-  
-  // Check if a king is in check
-  const isKingInCheck = (checkBoard, color) => {
-    // Find the king
-    let kingRow = -1;
-    let kingCol = -1;
-    
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = checkBoard[row][col];
-        if ((color === 'white' && piece === 'K') || (color === 'black' && piece === 'k')) {
-          kingRow = row;
-          kingCol = col;
-          break;
-        }
-      }
-      if (kingRow !== -1) break;
-    }
-    
-    if (kingRow === -1) return false; // No king found (shouldn't happen)
-    
-    // Check if any opponent piece can attack the king
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = checkBoard[row][col];
-        if (!piece) continue;
-        
-        // If it's an opponent piece
-        if ((color === 'white' && isBlack(piece)) || (color === 'black' && isWhite(piece))) {
-          // Skip locked pieces
-          if (isLocked(row, col)) continue;
-          
-          const pieceType = piece.toLowerCase();
-          
-          switch (pieceType) {
-            case 'p': // Pawn
-              const direction = isWhite(piece) ? -1 : 1;
-              if (Math.abs(col - kingCol) === 1 && row + direction === kingRow) {
-                return true;
-              }
-              break;
-              
-            case 'r': // Rook
-              if (kingRow === row || kingCol === col) {
-                let blocked = false;
-                const dx = kingRow === row ? 0 : (kingRow > row ? 1 : -1);
-                const dy = kingCol === col ? 0 : (kingCol > col ? 1 : -1);
-                
-                let checkRow = row + dx;
-                let checkCol = col + dy;
-                
-                while (checkRow !== kingRow || checkCol !== kingCol) {
-                  if (checkBoard[checkRow][checkCol] !== null) {
-                    blocked = true;
-                    break;
-                  }
-                  checkRow += dx;
-                  checkCol += dy;
-                }
-                
-                if (!blocked) return true;
-              }
-              break;
-              
-            case 'n': // Knight
-              const knightMoves = [
-                [-2, -1], [-2, 1], [-1, -2], [-1, 2],
-                [1, -2], [1, 2], [2, -1], [2, 1]
-              ];
-              
-              for (let [dx, dy] of knightMoves) {
-                if (row + dx === kingRow && col + dy === kingCol) {
-                  return true;
-                }
-              }
-              break;
-              
-            case 'b': // Bishop
-              if (Math.abs(kingRow - row) === Math.abs(kingCol - col)) {
-                let blocked = false;
-                const dx = kingRow > row ? 1 : -1;
-                const dy = kingCol > col ? 1 : -1;
-                
-                let checkRow = row + dx;
-                let checkCol = col + dy;
-                
-                while (checkRow !== kingRow && checkCol !== kingCol) {
-                  if (checkBoard[checkRow][checkCol] !== null) {
-                    blocked = true;
-                    break;
-                  }
-                  checkRow += dx;
-                  checkCol += dy;
-                }
-                
-                if (!blocked) return true;
-              }
-              break;
-              
-            case 'q': // Queen (combines rook and bishop)
-              // Rook-like movement
-              if (kingRow === row || kingCol === col) {
-                let blocked = false;
-                const dx = kingRow === row ? 0 : (kingRow > row ? 1 : -1);
-                const dy = kingCol === col ? 0 : (kingCol > col ? 1 : -1);
-                
-                let checkRow = row + dx;
-                let checkCol = col + dy;
-                
-                while (checkRow !== kingRow || checkCol !== kingCol) {
-                  if (checkBoard[checkRow][checkCol] !== null) {
-                    blocked = true;
-                    break;
-                  }
-                  checkRow += dx;
-                  checkCol += dy;
-                }
-                
-                if (!blocked) return true;
-              }
-              
-              // Bishop-like movement
-              if (Math.abs(kingRow - row) === Math.abs(kingCol - col)) {
-                let blocked = false;
-                const dx = kingRow > row ? 1 : -1;
-                const dy = kingCol > col ? 1 : -1;
-                
-                let checkRow = row + dx;
-                let checkCol = col + dy;
-                
-                while (checkRow !== kingRow && checkCol !== kingCol) {
-                  if (checkBoard[checkRow][checkCol] !== null) {
-                    blocked = true;
-                    break;
-                  }
-                  checkRow += dx;
-                  checkCol += dy;
-                }
-                
-                if (!blocked) return true;
-              }
-              break;
-              
-            case 'k': // King
-              if (Math.abs(kingRow - row) <= 1 && Math.abs(kingCol - col) <= 1) {
-                return true;
-              }
-              break;
-          }
-        }
-      }
-    }
-    
-    return false;
-  };
-  
-  // Check if a piece has moved from its starting position
-  const hasPieceMoved = (row, col) => {
-    // Check game history
-    if (gameHistory.length <= 1) return false; // No moves yet
-    
-    const initialBoard = gameHistory[0].board;
-    return initialBoard[row][col] !== board[row][col];
-  };
-  
-  // Check if the game is in checkmate or stalemate
-  const isGameOver = () => {
-    const color = turn;
-    
-    // Check if any piece of the current player can make a valid move
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = board[row][col];
-        if (!piece) continue;
-        
-        if ((color === 'white' && isWhite(piece)) || (color === 'black' && isBlack(piece))) {
-          const moves = getValidMoves(row, col);
-          if (moves.length > 0) return false;
-        }
-      }
-    }
-    
-    // No legal moves available - check if the king is in check
-    return isKingInCheck(board, color) ? 'checkmate' : 'stalemate';
-  };
-  
-  // Handle cell click
-  const handleCellClick = (row, col) => {
-    if (gamePhase !== 'playing' || turn !== playerColor || isAnimating) return;
-    
-    // If a piece is already selected
-    if (selectedCell) {
-      const [selectedRow, selectedCol] = selectedCell;
-      const validMoves = getValidMoves(selectedRow, selectedCol);
-      
-      // Check if clicked cell is a valid move
-      const isValidMove = validMoves.some(([r, c]) => r === row && c === col);
-      
-      if (isValidMove) {
-        // Move the piece
-        makeMove(selectedRow, selectedCol, row, col);
-      } else {
-        // Check if clicked on another piece of the same color
-        const piece = board[row][col];
-        if (piece && ((playerColor === 'white' && isWhite(piece)) || 
-                     (playerColor === 'black' && isBlack(piece)))) {
-          setSelectedCell([row, col]);
-          setPossibleMoves(getValidMoves(row, col));
-        } else {
-          setSelectedCell(null);
-          setPossibleMoves([]);
-        }
-      }
-    } else {
-      // Select the piece if it's the player's
-      const piece = board[row][col];
-      if (piece && ((playerColor === 'white' && isWhite(piece)) || 
-                   (playerColor === 'black' && isBlack(piece)))) {
-        setSelectedCell([row, col]);
-        setPossibleMoves(getValidMoves(row, col));
-      }
-    }
-  };
-  
-  // Make a move
-  const makeMove = (fromRow, fromCol, toRow, toCol) => {
-    const piece = board[fromRow][fromCol];
-    if (!piece) return;
-    
-    // Create a new board with the move
-    const newBoard = JSON.parse(JSON.stringify(board));
-    
-    // Handle castling
-    if (piece.toLowerCase() === 'k' && Math.abs(toCol - fromCol) === 2) {
-      const isKingside = toCol > fromCol;
-      const rookCol = isKingside ? 7 : 0;
-      const newRookCol = isKingside ? toCol - 1 : toCol + 1;
-      
-      // Move the rook
-      newBoard[toRow][newRookCol] = newBoard[fromRow][rookCol];
-      newBoard[fromRow][rookCol] = null;
-    }
-    
-    // Move the piece
-    newBoard[toRow][toCol] = piece;
-    newBoard[fromRow][fromCol] = null;
-    
-    // Update the board and clear selection
-    setBoard(newBoard);
-    setSelectedCell(null);
-    setPossibleMoves([]);
-    setLastMove([fromRow, fromCol, toRow, toCol]);
-    setIsAnimating(true);
-    
-    // Add to game history
-    const updatedMoveCount = moveCount + 1;
-    setGameHistory([...gameHistory, {board: newBoard, moveCount: updatedMoveCount}]);
-    
-    // After a short delay for animation
-    setTimeout(() => {
-      setIsAnimating(false);
-      
-      // Increment move count
-      setMoveCount(updatedMoveCount);
-      
-      // Check for checkmate or stalemate
-      const gameOverState = isGameOver();
-      if (gameOverState) {
-        if (gameOverState === 'checkmate') {
-          const winningColor = turn === 'white' ? 'black' : 'white';
-          setWinner(winningColor === playerColor ? 'player' : 'ai');
-          setMessage(`Checkmate! ${winningColor.charAt(0).toUpperCase() + winningColor.slice(1)} wins!`);
-        } else {
-          setWinner('draw');
-          setMessage("Stalemate! The game is a draw.");
-        }
-        setGamePhase('gameOver');
-        setShowWinnerMessage(true);
-        return;
-      }
-      
-      // Switch turns
-      const newTurn = turn === 'white' ? 'black' : 'white';
-      setTurn(newTurn);
-      
-      // If a full set of moves has been completed (both players move)
-      const fullMoveCompleted = (updatedMoveCount % 2 === 0);
-      if (fullMoveCompleted && updatedMoveCount > 0 && updatedMoveCount % 6 === 0) {
-        // After every 3 sets (6 moves), unlock pieces and start a betting round
-        unlockPieces();
-      } else {
-        // If it's AI's turn, make a move
-        if (newTurn === aiColor) {
-          setMessage("AI is thinking...");
-          setTimeout(makeAiMove, 1000);
-        } else {
-          setMessage("Your move.");
-        }
-      }
-    }, 300);
-  };
-  
-  // AI move logic
-  const makeAiMove = () => {
-    // Collect all valid moves for AI pieces
-    const allMoves = [];
-    
-    for (let row = 0; row < 8; row++) {
-      for (let col = 0; col < 8; col++) {
-        const piece = board[row][col];
-        if (!piece) continue;
-        
-        // If piece is AI's and not locked
-        if ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece))) {
-          if (!isLocked(row, col)) {
-            const moves = getValidMoves(row, col);
-            moves.forEach(([toRow, toCol]) => {
-              allMoves.push({fromRow: row, fromCol: col, toRow, toCol, piece});
-            });
-          }
-        }
-      }
-    }
-    
-    if (allMoves.length === 0) {
-      // No valid moves - game is over
-      return;
-    }
-    
-    // Evaluate each move
-    const scoredMoves = allMoves.map(move => {
-      // Simulate the move
-      const simulatedBoard = JSON.parse(JSON.stringify(board));
-      simulatedBoard[move.toRow][move.toCol] = move.piece;
-      simulatedBoard[move.fromRow][move.fromCol] = null;
-      
-      // Score the move
-      let score = 0;
-      
-      // Capture value
-      const capturedPiece = board[move.toRow][move.toCol];
-      if (capturedPiece) {
-        score += PIECE_VALUES[capturedPiece.toLowerCase()] * 10;
-      }
-      
-      // Position value
-      const pieceType = move.piece.toLowerCase();
-      
-      // Center control for knights and bishops
-      if (pieceType === 'n' || pieceType === 'b') {
-        const centerDistance = Math.abs(3.5 - move.toRow) + Math.abs(3.5 - move.toCol);
-        score += (7 - centerDistance) * 0.5;
-      }
-      
-      // Pawn advancement
-      if (pieceType === 'p') {
-        score += (aiColor === 'white' ? 7 - move.toRow : move.toRow) * 0.3;
-      }
-      
-      // King safety in early/middle game
-      if (pieceType === 'k' && moveCount < 20) {
-        const edgeDistance = Math.min(move.toRow, 7 - move.toRow, move.toCol, 7 - move.toCol);
-        score += edgeDistance * 0.2;
-      }
-      
-      // Check if the move creates a check
-      if (isKingInCheck(simulatedBoard, playerColor === 'white' ? 'white' : 'black')) {
-        score += 5;
-      }
-      
-      // Random factor for unpredictability
-      score += Math.random() * 2;
-      
-      return {...move, score};
-    });
-    
-    // Sort by score and pick the best move
-    scoredMoves.sort((a, b) => b.score - a.score);
-    const bestMove = scoredMoves[0];
-    
-    // Make the selected move
-    makeMove(bestMove.fromRow, bestMove.fromCol, bestMove.toRow, bestMove.toCol);
-  };
-  
-  // Render functions
-  const renderBoard = () => {
-    return (
-      <div className="w-full max-w-2xl aspect-square grid grid-cols-8 border-2 border-gray-700 bg-amber-50">
-        {Array(8).fill().map((_, row) => (
-          Array(8).fill().map((_, col) => {
-            const isSelected = selectedCell && selectedCell[0] === row && selectedCell[1] === col;
-            const isPossibleMove = possibleMoves.some(([r, c]) => r === row && c === col);
-            const isLastMoveFrom = lastMove && lastMove[0] === row && lastMove[1] === col;
-            const isLastMoveTo = lastMove && lastMove[2] === row && lastMove[3] === col;
-            
-            return renderCell(row, col, isSelected, isPossibleMove, isLastMoveFrom, isLastMoveTo);
-          })
-        ))}
-      </div>
-    );
-  };
-  
-  const renderCell = (row, col, isSelected, isPossibleMove, isLastMoveFrom, isLastMoveTo) => {
-    const isLightSquare = (row + col) % 2 === 0;
-    const piece = board?.[row]?.[col];
-    const position = coordsToAlgebraic(row, col);
-    
-    // Determine if this piece is locked
-    const isLockedPiece = isLocked(row, col);
-    
-    // For opponent's pieces, we don't show what they are if locked
-    const showLockedSymbol = isLockedPiece && 
-      ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece)));
-    
-    // Determine if this is one of the player's known locked pieces
-    const isKnownLocked = knownLockedPieces.some(p => p.position === position);
-    
-    // Determine cell background color
-    let bgColor = isLightSquare ? "bg-amber-100" : "bg-amber-800";
-    if (isSelected) {
-      bgColor = "bg-blue-400";
-    } else if (isPossibleMove) {
-      bgColor = isLightSquare ? "bg-blue-200" : "bg-blue-600";
-    } else if (isLastMoveFrom || isLastMoveTo) {
-      bgColor = isLightSquare ? "bg-yellow-200" : "bg-yellow-600";
-    }
-    
-    return (
-      <div 
-        key={`${row}-${col}`}
-        className={`relative flex items-center justify-center ${bgColor} transition-colors duration-200`}
-        onClick={() => handleCellClick(row, col)}
-      >
-        {/* Display algebraic notation for debugging */}
-        <div className="absolute top-0 left-0 text-xs opacity-50">
-          {position}
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <div class="game-title">Minimalist Poker</div>
+            <button id="new-hand-btn">New Hand</button>
         </div>
         
-        {/* Chess piece */}
-        {piece && (
-          <div className={`text-4xl sm:text-5xl md:text-6xl transition-transform duration-300 
-                          ${isAnimating && isLastMoveTo ? 'scale-110' : 'scale-100'}
-                          ${isWhite(piece) ? 'text-white' : 'text-black'}
-                          ${isLockedPiece ? 'opacity-70' : 'opacity-100'}`}>
-            {showLockedSymbol ? '🔒' : PIECES[piece]}
-          </div>
-        )}
-        
-        {/* Show locked indicator for known locked pieces */}
-        {isKnownLocked && (
-          <div className="absolute bottom-0 right-0 text-xs text-red-500">
-            🔒
-          </div>
-        )}
-        
-        {/* Highlight for possible captures */}
-        {isPossibleMove && piece && (
-          <div className="absolute inset-0 border-2 border-red-500 pointer-events-none"></div>
-        )}
-      </div>
-    );
-  };
-  
-  const renderBettingControls = () => {
-    if (gamePhase !== 'betting' || (turn !== playerColor && bettingRound > 1)) return null;
-    
-    return (
-      <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow">
-        <h3 className="text-xl font-bold mb-2">Betting Round {bettingRound}</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <button 
-            className="bg-gray-200 hover:bg-gray-300 p-2 rounded disabled:opacity-50"
-            onClick={() => handlePlayerBet('check')}
-            disabled={currentBet > 0}
-          >
-            Check
-          </button>
-          <button 
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-            onClick={() => handlePlayerBet('call')}
-            disabled={currentBet === 0}
-          >
-            Call {currentBet}
-          </button>
-          <button 
-            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded"
-            onClick={() => {
-              const amount = Math.min(currentBet + 10, playerChips);
-              handlePlayerBet('raise', amount);
-            }}
-          >
-            Raise to {Math.min(currentBet + 10, playerChips)}
-          </button>
-          <button 
-            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
-            onClick={() => handlePlayerBet('fold')}
-          >
-            Fold
-          </button>
-        </div>
-      </div>
-    );
-  };
-  
-  const renderGameInfo = () => {
-    return (
-      <div className="bg-gray-100 p-4 rounded-lg shadow">
-        <div className="flex justify-between mb-2">
-          <span className="font-bold">You ({playerColor}): {playerChips} chips</span>
-          <span className="font-bold">AI ({aiColor}): {aiChips} chips</span>
-        </div>
-        <div className="flex justify-between mb-2">
-          <span>Current Bet: {currentBet}</span>
-          <span>Pot: {potSize}</span>
-        </div>
-        <div className="flex justify-between mb-2">
-          <span>Turn: {turn === playerColor ? 'You' : 'AI'}</span>
-          <span>Move: {Math.floor(moveCount/2)}.{moveCount % 2 === 0 ? 1 : 2}</span>
-        </div>
-        <div className="flex justify-between mb-2">
-          <span>Locked Pieces: {playerLockedPieces.length}</span>
-          <span>Game Phase: {gamePhase}</span>
-        </div>
-        <div className="bg-blue-100 p-2 rounded text-center">
-          {message}
-        </div>
-      </div>
-    );
-  };
-  
-  const renderWinnerModal = () => {
-    if (!showWinnerMessage) return null;
-    
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
-          <h2 className="text-2xl font-bold mb-4">Game Over</h2>
-          <p className="text-xl mb-4">
-            {winner === 'player' ? 'You win!' : 
-             winner === 'ai' ? 'AI wins!' : 
-             'The game is a draw!'}
-          </p>
-          <div className="flex justify-center">
-            <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              onClick={() => {
-                setShowWinnerMessage(false);
-                startNewGame();
-              }}
-            >
-              Play Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-  
-  const renderRulesModal = () => {
-    if (!showRules) return null;
-    
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg max-h-screen overflow-auto">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold">Choker Rules</h2>
-            <button 
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => setShowRules(false)}
-            >
-              <X size={24} />
-            </button>
-          </div>
-          
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-bold text-lg">1. Setup</h3>
-              <p>White makes the first chess move, but Black places the first bet. The back row pieces are randomly arranged for both players.</p>
+        <div class="table">
+            <div class="ai-area">
+                <div class="ai-cards">
+                    <div class="card card-back"></div>
+                    <div class="card card-back"></div>
+                </div>
+                <div class="ai-info">
+                    <div class="name">AI Player</div>
+                    <div class="chips">
+                        <div class="chip-icon"></div>
+                        <span id="ai-chips">1000</span>
+                    </div>
+                    <div id="ai-thinking" class="thinking hidden">Thinking...</div>
+                </div>
+                <div id="ai-bet" class="ai-bet hidden">
+                    <div class="chip-icon"></div>
+                    <span id="ai-bet-amount">0</span>
+                </div>
             </div>
             
-            <div>
-              <h3 className="font-bold text-lg">2. Locked Pieces</h3>
-              <p>5 non-pawn, non-king pieces are locked at the beginning. You know which 2 of your pieces are locked initially, and learn all 5 after the first betting round.</p>
+            <div class="community-cards" id="community">
+                <!-- Community cards will be added here by JavaScript -->
             </div>
             
-            <div>
-              <h3 className="font-bold text-lg">3. Betting</h3>
-              <p>Similar to poker, you can check, call, raise, or fold. If you fold or can't match a bet, you lose immediately.</p>
+            <div class="pot hidden" id="pot-display">
+                <div class="chip-icon"></div>
+                <span id="pot">0</span>
             </div>
             
-            <div>
-              <h3 className="font-bold text-lg">4. Game Progression</h3>
-              <p>After every 3 sets of moves (6 total moves), each player unlocks one piece, followed by another betting round.</p>
+            <div class="player-area">
+                <div id="player-bet" class="player-bet hidden">
+                    <div class="chip-icon"></div>
+                    <span id="player-bet-amount">0</span>
+                </div>
+                <div class="player-info">
+                    <div class="name">You</div>
+                    <div class="chips">
+                        <div class="chip-icon"></div>
+                        <span id="player-chips">1000</span>
+                    </div>
+                </div>
+                <div class="player-cards" id="player-cards">
+                    <!-- Player cards will be added here by JavaScript -->
+                </div>
             </div>
-            
-            <div>
-              <h3 className="font-bold text-lg">5. Winning</h3>
-              <p>Win by checkmating your opponent's King or making them fold during betting.</p>
-            </div>
-          </div>
-          
-          <div className="mt-6 flex justify-center">
-            <button 
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-              onClick={() => setShowRules(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-  
-  return (
-    <div className="flex flex-col items-center p-4 max-w-4xl mx-auto">
-      <header className="w-full flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">Choker</h1>
-        <div className="flex space-x-2">
-          <button 
-            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
-            onClick={() => setShowRules(true)}
-          >
-            <HelpCircle size={24} />
-          </button>
-          <button 
-            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full"
-            onClick={startNewGame}
-          >
-            <RefreshCw size={24} />
-          </button>
-        </div>
-      </header>
-      
-      {gamePhase === 'betting' && (
-        <div className="w-full p-4 mb-4 bg-yellow-100 rounded-lg text-center">
-          <h2 className="text-xl font-bold">Betting Round</h2>
-          <p>Make your decision: Check, Call, Raise, or Fold</p>
-        </div>
-      )}
-      
-      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="md:col-span-2">
-          <div ref={boardRef} className="w-full">
-            {board && renderBoard()}
-          </div>
         </div>
         
-        <div className="space-y-4">
-          {renderGameInfo()}
-          {renderBettingControls()}
+        <div class="controls">
+            <div class="action-buttons">
+                <button id="check-btn" disabled>Check</button>
+                <button id="call-btn" disabled>Call</button>
+                <button id="fold-btn" disabled>Fold</button>
+            </div>
+            <div class="bet-controls">
+                <button id="bet-btn" disabled>Bet</button>
+                <input type="range" id="bet-slider" min="1" max="1000" value="10">
+                <div class="bet-amount" id="bet-amount">10</div>
+            </div>
         </div>
-      </div>
-      
-      {renderWinnerModal()}
-      {renderRulesModal()}
+        
+        <div class="message hidden" id="message">
+            <!-- Game messages will appear here -->
+        </div>
     </div>
-  );
-};
 
-export default Choker;
+    <script>
+        // Card definitions
+        const SUITS = ['♠', '♥', '♣', '♦'];
+        const VALUES = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const RED_SUITS = ['♥', '♦'];
+        
+        // Game state
+        let deck = [];
+        let playerCards = [];
+        let aiCards = [];
+        let communityCards = [];
+        let playerChips = 1000;
+        let aiChips = 1000;
+        let pot = 0;
+        let currentBet = 0;
+        let playerBet = 0;
+        let aiBet = 0;
+        let gamePhase = 'INIT'; // INIT, PREFLOP, FLOP, TURN, RIVER, SHOWDOWN
+        let playerTurn = true;
+        let handInProgress = false;
+        let dealerPosition = 'PLAYER'; // Alternates between 'PLAYER' and 'AI'
+        
+        // DOM Elements
+        const playerCardsEl = document.getElementById('player-cards');
+        const communityCardsEl = document.getElementById('community');
+        const playerChipsEl = document.getElementById('player-chips');
+        const aiChipsEl = document.getElementById('ai-chips');
+        const potEl = document.getElementById('pot');
+        const potDisplayEl = document.getElementById('pot-display');
+        const messageEl = document.getElementById('message');
+        const checkBtn = document.getElementById('check-btn');
+        const callBtn = document.getElementById('call-btn');
+        const betBtn = document.getElementById('bet-btn');
+        const foldBtn = document.getElementById('fold-btn');
+        const betSlider = document.getElementById('bet-slider');
+        const betAmountEl = document.getElementById('bet-amount');
+        const newHandBtn = document.getElementById('new-hand-btn');
+        const playerBetEl = document.getElementById('player-bet');
+        const playerBetAmountEl = document.getElementById('player-bet-amount');
+        const aiBetEl = document.getElementById('ai-bet');
+        const aiBetAmountEl = document.getElementById('ai-bet-amount');
+        const aiThinkingEl = document.getElementById('ai-thinking');
+        
+        // Initialize game
+        function initGame() {
+            // Reset game elements
+            playerCardsEl.innerHTML = '';
+            communityCardsEl.innerHTML = '';
+            messageEl.classList.add('hidden');
+            potDisplayEl.classList.add('hidden');
+            playerBetEl.classList.add('hidden');
+            aiBetEl.classList.add('hidden');
+            
+            // Create a fresh deck and shuffle it
+            createDeck();
+            shuffleDeck();
+            
+            // Reset game state
+            playerCards = [];
+            aiCards = [];
+            communityCards = [];
+            pot = 0;
+            currentBet = 0;
+            playerBet = 0;
+            aiBet = 0;
+            potEl.textContent = pot;
+            playerChipsEl.textContent = playerChips;
+            aiChipsEl.textContent = aiChips;
+            
+            // Switch dealer position
+            dealerPosition = dealerPosition === 'PLAYER' ? 'AI' : 'PLAYER';
+            
+            // Check if we can start a new hand
+            if (playerChips <= 0 || aiChips <= 0) {
+                showMessage(playerChips <= 0 ? 'Game over! You ran out of chips.' : 'Game over! AI ran out of chips.');
+                return;
+            }
+            
+            handInProgress = true;
+            startNewHand();
+        }
+        
+        // Create and shuffle a deck
+        function createDeck() {
+            deck = [];
+            for (const suit of SUITS) {
+                for (const value of VALUES) {
+                    deck.push({ suit, value });
+                }
+            }
+        }
+        
+        function shuffleDeck() {
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+        
+        // Deal cards
+        function dealPlayerCards() {
+            playerCards = [deck.pop(), deck.pop()];
+            renderPlayerCards();
+        }
+        
+        function dealAICards() {
+            aiCards = [deck.pop(), deck.pop()];
+            // AI cards are face down until showdown
+        }
+        
+        function dealCommunityCards(count) {
+            for (let i = 0; i < count; i++) {
+                communityCards.push(deck.pop());
+            }
+            renderCommunityCards();
+        }
+        
+        // Render cards
+        function renderPlayerCards() {
+            playerCardsEl.innerHTML = '';
+            playerCards.forEach(card => {
+                const cardEl = createCardElement(card);
+                playerCardsEl.appendChild(cardEl);
+            });
+        }
+        
+        function renderCommunityCards() {
+            communityCardsEl.innerHTML = '';
+            communityCards.forEach(card => {
+                const cardEl = createCardElement(card);
+                communityCardsEl.appendChild(cardEl);
+            });
+        }
+        
+        function createCardElement(card) {
+            const cardEl = document.createElement('div');
+            cardEl.className = `card ${RED_SUITS.includes(card.suit) ? 'red' : ''}`;
+            
+            const valueEl = document.createElement('div');
+            valueEl.textContent = card.value;
+            cardEl.appendChild(valueEl);
+            
+            const suitTopEl = document.createElement('div');
+            suitTopEl.className = 'suit top';
+            suitTopEl.textContent = card.suit;
+            cardEl.appendChild(suitTopEl);
+            
+            const suitBottomEl = document.createElement('div');
+            suitBottomEl.className = 'suit bottom';
+            suitBottomEl.textContent = card.suit;
+            cardEl.appendChild(suitBottomEl);
+            
+            return cardEl;
+        }
+        
+        // Game flow
+        function startNewHand() {
+            gamePhase = 'PREFLOP';
+            
+            // Post blinds
+            const smallBlind = 5;
+            const bigBlind = 10;
+            
+            if (dealerPosition === 'PLAYER') {
+                // Player is dealer, AI posts small blind
+                placeBet('AI', smallBlind);
+                placeBet('PLAYER', bigBlind);
+                playerTurn = false; // AI acts first preflop
+            } else {
+                // AI is dealer, player posts small blind
+                placeBet('PLAYER', smallBlind);
+                placeBet('AI', bigBlind);
+                playerTurn = true; // Player acts first preflop
+            }
+            
+            currentBet = bigBlind;
+            
+            // Deal cards
+            dealPlayerCards();
+            dealAICards();
+            
+            // Update UI
+            updateControls();
+            potDisplayEl.classList.remove('hidden');
+            
+            if (!playerTurn) {
+                // AI's turn
+                setTimeout(aiAction, 1000);
+            }
+        }
+        
+        function placeBet(player, amount) {
+            // Cap bet at player's chip stack
+            let actualAmount;
+            if (player === 'PLAYER') {
+                actualAmount = Math.min(amount, playerChips);
+                playerChips -= actualAmount;
+                playerBet += actualAmount;
+                playerChipsEl.textContent = playerChips;
+                playerBetAmountEl.textContent = playerBet;
+                playerBetEl.classList.remove('hidden');
+            } else {
+                actualAmount = Math.min(amount, aiChips);
+                aiChips -= actualAmount;
+                aiBet += actualAmount;
+                aiChipsEl.textContent = aiChips;
+                aiBetAmountEl.textContent = aiBet;
+                aiBetEl.classList.remove('hidden');
+            }
+            
+            pot += actualAmount;
+            potEl.textContent = pot;
+            
+            return actualAmount;
+        }
+        
+        function nextPhase() {
+            // Reset bets for the next betting round
+            playerBet = 0;
+            aiBet = 0;
+            playerBetEl.classList.add('hidden');
+            aiBetEl.classList.add('hidden');
+            currentBet = 0;
+            
+            switch (gamePhase) {
+                case 'PREFLOP':
+                    gamePhase = 'FLOP';
+                    dealCommunityCards(3);
+                    break;
+                case 'FLOP':
+                    gamePhase = 'TURN';
+                    dealCommunityCards(1);
+                    break;
+                case 'TURN':
+                    gamePhase = 'RIVER';
+                    dealCommunityCards(1);
+                    break;
+                case 'RIVER':
+                    gamePhase = 'SHOWDOWN';
+                    showdown();
+                    return;
+            }
+            
+            // Determine who acts first (always the player in position)
+            playerTurn = dealerPosition === 'PLAYER';
+            
+            // Start the betting round
+            updateControls();
+            
+            if (!playerTurn) {
+                setTimeout(aiAction, 1000);
+            }
+        }
+        
+        function showdown() {
+            // Reveal AI cards
+            const aiCardsContainer = document.querySelector('.ai-cards');
+            aiCardsContainer.innerHTML = '';
+            aiCards.forEach(card => {
+                const cardEl = createCardElement(card);
+                aiCardsContainer.appendChild(cardEl);
+            });
+            
+            // Determine winner
+            const winner = determineWinner();
+            
+            if (winner === 'PLAYER') {
+                playerChips += pot;
+                playerChipsEl.textContent = playerChips;
+                showMessage('You win the pot!');
+            } else if (winner === 'AI') {
+                aiChips += pot;
+                aiChipsEl.textContent = aiChips;
+                showMessage('AI wins the pot!');
+            } else {
+                // Split pot
+                const halfPot = Math.floor(pot / 2);
+                playerChips += halfPot;
+                aiChips += pot - halfPot; // Account for odd chip
+                playerChipsEl.textContent = playerChips;
+                aiChipsEl.textContent = aiChips;
+                showMessage('Split pot!');
+            }
+            
+            handInProgress = false;
+            updateControls();
+        }
+        
+        // Determine hand winner - simple for demo (randomly)
+        function determineWinner() {
+            // For this demo, we'll do a simplistic random winner
+            // In a real game, we would evaluate poker hand strength
+            
+            // Create a simple representation of the hand strength (random for demo)
+            const playerStrength = Math.random();
+            const aiStrength = Math.random();
+            
+            if (playerStrength > aiStrength) {
+                return 'PLAYER';
+            } else if (aiStrength > playerStrength) {
+                return 'AI';
+            } else {
+                return 'TIE';
+            }
+        }
+        
+        // AI logic
+        function aiAction() {
+            // Show thinking indicator
+            aiThinkingEl.classList.remove('hidden');
+            
+            // Simulate AI "thinking"
+            setTimeout(() => {
+                aiThinkingEl.classList.add('hidden');
+                
+                // Simple AI logic - make decisions based on hand strength and game state
+                const handStrength = evaluateAIHand();
+                const amountToCall = currentBet - aiBet;
+                
+                if (amountToCall === 0) {
+                    // No bet to call - can check or bet
+                    if (handStrength < 0.3) {
+                        // Weak hand - check
+                        aiCheck();
+                    } else if (handStrength < 0.7) {
+                        // Medium hand - sometimes bet, sometimes check
+                        if (Math.random() > 0.5) {
+                            aiCheck();
+                        } else {
+                            const betAmount = Math.min(
+                                Math.max(20, Math.floor(pot * 0.5)),
+                                aiChips
+                            );
+                            aiPlaceBet(betAmount);
+                        }
+                    } else {
+                        // Strong hand - bet
+                        const betAmount = Math.min(
+                            Math.max(20, Math.floor(pot * 0.75)),
+                            aiChips
+                        );
+                        aiPlaceBet(betAmount);
+                    }
+                } else {
+                    // There's a bet to call
+                    if (handStrength < 0.2) {
+                        // Very weak hand - fold
+                        aiFold();
+                    } else if (handStrength < 0.6) {
+                        // Medium hand - call if affordable
+                        if (amountToCall > aiChips / 2) {
+                            aiFold();
+                        } else {
+                            aiCall();
+                        }
+                    } else {
+                        // Strong hand - call or raise
+                        if (Math.random() > 0.6 && aiChips > amountToCall * 3) {
+                            // Raise
+                            const raiseAmount = Math.min(
+                                amountToCall * 2 + Math.floor(Math.random() * 20),
+                                aiChips
+                            );
+                            aiPlaceBet(raiseAmount);
+                        } else {
+                            // Call
+                            aiCall();
+                        }
+                    }
+                }
+                
+                // Switch to player's turn
+                playerTurn = true;
+                updateControls();
+                
+            }, 1500); // Thinking delay
+        }
+        
+        function evaluateAIHand() {
+            // In a real implementation, this would analyze the cards
+            // For this demo, return a random strength between 0 and 1
+            // Higher values indicate stronger hands
+            
+            // Slight bias based on game phase - AI plays tighter early, looser later
+            let baseProbability;
+            switch (gamePhase) {
+                case 'PREFLOP':
+                    baseProbability = 0.3;
+                    break;
+                case 'FLOP':
+                    baseProbability = 0.4;
+                    break;
+                case 'TURN':
+                    baseProbability = 0.5;
+                    break;
+                case 'RIVER':
+                    baseProbability = 0.6;
+                    break;
+                default:
+                    baseProbability = 0.5;
+            }
+            
+            return Math.random() * baseProbability + (1 - baseProbability) * Math.random();
+        }
+        
+        function aiCheck() {
+            showMessage('AI checks');
+            checkBettingRound();
+        }
+        
+        function aiCall() {
+            const amountToCall = currentBet - aiBet;
+            showMessage(`AI calls ${amountToCall}`);
+            placeBet('AI', amountToCall);
+            checkBettingRound();
+        }
+        
+        function aiPlaceBet(amount) {
+            const totalBet = amount + (currentBet - aiBet);
+            showMessage(`AI bets ${totalBet}`);
+            placeBet('AI', totalBet);
+            currentBet = aiBet;
+        }
+        
+        function aiFold() {
+            showMessage('AI folds');
+            playerChips += pot;
+            playerChipsEl.textContent = playerChips;
+            handInProgress = false;
+            updateControls();
+        }
+        
+        // Player actions
+        function playerCheck() {
+            showMessage('You check');
+            playerTurn = false;
+            checkBettingRound();
+        }
+        
+        function playerCall() {
+            const amountToCall = currentBet - playerBet;
+            showMessage(`You call ${amountToCall}`);
+            placeBet('PLAYER', amountToCall);
+            playerTurn = false;
+            checkBettingRound();
+        }
+        
+        function playerBetAction() {
+            const betAmount = parseInt(betAmountEl.textContent);
+            const totalBet = betAmount + (currentBet - playerBet);
+            showMessage(`You bet ${totalBet}`);
+            placeBet('PLAYER', totalBet);
+            currentBet = playerBet;
+            playerTurn = false;
+            setTimeout(aiAction, 1000);
+        }
+        
+        function playerFold() {
+            showMessage('You fold');
+            aiChips += pot;
+            aiChipsEl.textContent = aiChips;
+            handInProgress = false;
+            updateControls();
+        }
+        
+        function checkBettingRound() {
+            if (!playerTurn && playerBet === aiBet) {
+                // Betting round complete
+                setTimeout(() => {
+                    nextPhase();
+                }, 1000);
+            } else if (!playerTurn) {
+                // AI's turn
+                setTimeout(aiAction, 1000);
+            }
+        }
+        
+        // UI updates
+        function updateControls() {
+            if (!handInProgress) {
+                // No hand in progress - only new hand button enabled
+                checkBtn.disabled = true;
+                callBtn.disabled = true;
+                betBtn.disabled = true;
+                foldBtn.disabled = true;
+                betSlider.disabled = true;
+                newHandBtn.disabled = false;
+                return;
+            }
+            
+            // Hand in progress
+            newHandBtn.disabled = true;
+            
+            if (!playerTurn) {
+                // Not player's turn - disable all controls
+                checkBtn.disabled = true;
+                callBtn.disabled = true;
+                betBtn.disabled = true;
+                foldBtn.disabled = true;
+                betSlider.disabled = true;
+                return;
+            }
+            
+            // Update bet slider
+            const maxBet = playerChips;
+            betSlider.max = maxBet;
+            betSlider.value = Math.min(maxBet, currentBet * 2);
+            betAmountEl.textContent = betSlider.value;
+            
+            // Check if player can check
+            checkBtn.disabled = playerBet !== currentBet;
+            
+            // Call button enabled if there's a bet to call and player has chips
+            const amountToCall = currentBet - playerBet;
+            callBtn.disabled = amountToCall <= 0 || amountToCall > playerChips;
+            
+            // Bet button enabled if player has chips
+            betBtn.disabled = playerChips <= 0;
+            betSlider.disabled = playerChips <= 0;
+            
+            // Fold button only enabled if there's a bet to call
+            foldBtn.disabled = amountToCall <= 0;
+        }
+        
+        function showMessage(text) {
+            messageEl.textContent = text;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 2000);
+        }
+        
+        // Event listeners
+        checkBtn.addEventListener('click', playerCheck);
+        callBtn.addEventListener('click', playerCall);
+        betBtn.addEventListener('click', playerBetAction);
+        foldBtn.addEventListener('click', playerFold);
+        newHandBtn.addEventListener('click', initGame);
+        
+        betSlider.addEventListener('input', function() {
+            betAmountEl.textContent = this.value;
+        });
+        
+        // Initialize the game
+        updateControls();
+    </script>
+</body>
+</html>
