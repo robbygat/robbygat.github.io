@@ -3,175 +3,213 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI-Powered GBA Emulator</title>
+  <title>AI GBA Emulator</title>
+  <!-- p5.js for additional UI animation if needed -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tensor-flow/0.1.0/tf.min.js"></script>
+  <!-- Three.js for 3D TV display -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Placeholder for gba.js emulator library -->
+  <!-- <script src="path/to/gba.js"></script> -->
+  <!-- Placeholder for AI library (e.g., TensorFlow.js) -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script> -->
   <style>
     :root {
-      --primary: #8A2BE2;
-      --secondary: #4B0082;
-      --accent: #9370DB;
-      --background: #121212;
-      --surface: #1E1E1E;
-      --text: #E0E0E0;
-      --border-radius: 8px;
+      --primary: #ff2970;
+      --background: #0a0a10;
+      --surface: #15151e;
+      --text: #f5f5f7;
+      --accent: #30d6ff;
     }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--background);
       color: var(--text);
+      overflow-x: hidden;
     }
-    
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    
     header {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 40px;
     }
-    
     h1 {
       font-size: 2.5rem;
-      background: linear-gradient(90deg, #FF6B6B, #556270);
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin-bottom: 0.5rem;
+      margin-bottom: 10px;
     }
-    
     .subtitle {
-      color: #9370DB;
-      font-size: 1.2rem;
+      font-size: 1rem;
+      opacity: 0.8;
     }
-    
-    .emulator-container {
+    .main-content {
       display: flex;
       flex-direction: column;
-      align-items: center;
       gap: 20px;
+      flex: 1;
     }
-    
     @media (min-width: 900px) {
-      .emulator-container {
+      .main-content {
         flex-direction: row;
-        align-items: flex-start;
       }
     }
-    
-    .emulator {
-      flex: 2;
-      background-color: var(--surface);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-    
-    .controls {
+    .tv-container {
       flex: 1;
-      background-color: var(--surface);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      position: relative;
+      min-height: 400px;
     }
-    
-    #gameCanvas {
+    #tv-canvas {
       width: 100%;
-      border-radius: var(--border-radius);
-      background-color: black;
-      image-rendering: pixelated;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
-    
-    .upload-section {
-      margin-bottom: 20px;
+    .controls-panel {
+      flex: 0 0 300px;
+      background-color: var(--surface);
+      border-radius: 12px;
       padding: 20px;
-      border: 2px dashed var(--accent);
-      border-radius: var(--border-radius);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .upload-section {
+      padding: 20px;
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
       text-align: center;
       transition: all 0.3s ease;
+      margin-bottom: 10px;
     }
-    
     .upload-section:hover {
       border-color: var(--primary);
-      background-color: rgba(138, 43, 226, 0.1);
+      background-color: rgba(255, 41, 112, 0.05);
     }
-    
     #romUpload {
       display: none;
     }
-    
     .upload-label {
       cursor: pointer;
       padding: 10px 20px;
       background-color: var(--primary);
       color: white;
-      border-radius: var(--border-radius);
+      border-radius: 8px;
       display: inline-block;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      font-size: 0.9rem;
     }
-    
     .upload-label:hover {
-      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 41, 112, 0.3);
     }
-    
-    .button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-    
-    .button:hover {
-      background-color: var(--secondary);
-    }
-    
-    .button:disabled {
-      background-color: #555;
-      cursor: not-allowed;
-    }
-    
-    .control-group {
-      margin-bottom: 20px;
-    }
-    
-    .control-group h3 {
-      border-bottom: 1px solid var(--accent);
-      padding-bottom: 5px;
+    .panel-section {
       margin-bottom: 15px;
     }
-    
-    .ai-status {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-radius: var(--border-radius);
+    .panel-title {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    
-    .ai-logs {
-      height: 200px;
-      overflow-y: auto;
-      background-color: #000;
-      color: #0F0;
-      font-family: monospace;
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .button {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: none;
       padding: 10px;
-      border-radius: var(--border-radius);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .button:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.12);
+    }
+    .button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .primary-button {
+      background-color: var(--primary);
+      color: white;
+    }
+    .primary-button:hover:not(:disabled) {
+      background-color: var(--primary);
+      opacity: 0.9;
+    }
+    .ai-button {
+      background-color: var(--accent);
+      color: black;
+    }
+    .ai-button:hover:not(:disabled) {
+      background-color: var(--accent);
+      opacity: 0.9;
+    }
+    .ai-status {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 10px;
       margin-top: 10px;
     }
-    
-    .game-info {
-      margin-top: 20px;
+    .ai-logs {
+      height: 150px;
+      overflow-y: auto;
+      background-color: #0a0a15;
+      color: #30d6ff;
+      font-family: 'SF Mono', monospace;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 0.8rem;
     }
-    
+    .ai-logs::-webkit-scrollbar {
+      width: 4px;
+    }
+    .ai-logs::-webkit-scrollbar-thumb {
+      background-color: var(--accent);
+      border-radius: 2px;
+    }
+    .ai-logs::-webkit-scrollbar-track {
+      background-color: #0a0a15;
+    }
+    .game-info {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .game-info p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
     .overlay {
       position: fixed;
       top: 0;
@@ -183,251 +221,143 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      backdrop-filter: blur(5px);
     }
-    
-    .tutorial-panel {
+    .popup-panel {
       background-color: var(--surface);
-      width: 80%;
-      max-width: 600px;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
-    
     .close-button {
-      float: right;
+      position: absolute;
+      top: 15px;
+      right: 15px;
       background: none;
       border: none;
       color: var(--text);
       font-size: 1.5rem;
       cursor: pointer;
-    }
-    
-    .gamepad-visual {
-      display: grid;
-      grid-template-areas:
-        ". up ."
-        "left center right"
-        ". down .";
-      width: 150px;
-      margin: 0 auto;
-      gap: 5px;
-    }
-    
-    .dpad-button {
-      width: 40px;
-      height: 40px;
-      background-color: #333;
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .dpad-button:active, .dpad-button.active {
-      background-color: var(--primary);
-    }
-    
-    .dpad-up { grid-area: up; }
-    .dpad-left { grid-area: left; }
-    .dpad-center { grid-area: center; visibility: hidden; }
-    .dpad-right { grid-area: right; }
-    .dpad-down { grid-area: down; }
-    
-    .action-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    
-    .action-button {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .action-button:active, .action-button.active {
-      background-color: var(--primary);
-    }
-    
-    .action-button.b-button { background-color: #E74C3C; }
-    .action-button.a-button { background-color: #2ECC71; }
-    
-    .action-button.b-button:active, .action-button.b-button.active { background-color: #C0392B; }
-    .action-button.a-button:active, .action-button.a-button.active { background-color: #27AE60; }
-    
-    .shoulder-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-    
-    .shoulder-button {
-      width: 80px;
+      width: 30px;
       height: 30px;
-      background-color: #333;
-      border-radius: 5px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .shoulder-button:active, .shoulder-button.active {
-      background-color: var(--primary);
-    }
-    
-    .center-buttons {
-      display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 15px;
+      border-radius: 50%;
+      transition: all 0.2s ease;
     }
-    
-    .center-button {
-      width: 60px;
-      height: 25px;
-      background-color: #333;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      font-size: 0.7rem;
-      transition: all 0.2s;
+    .close-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
-    
-    .center-button:active, .center-button.active {
-      background-color: var(--primary);
-    }
-    
-    .key-indicator {
-      display: inline-block;
-      background-color: #333;
+    #startButton, #aiPlayButton {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
       color: white;
+      font-weight: 600;
+      padding: 12px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    #startButton:hover:not(:disabled), #aiPlayButton:hover:not(:disabled) {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 41, 112, 0.3);
+    }
+    .keyboard-shortcuts {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 5px 15px;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+    .key {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
       padding: 2px 6px;
-      border-radius: 3px;
-      margin-left: 5px;
+      font-family: 'SF Mono', monospace;
       font-size: 0.8rem;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>AI-Powered GBA Emulator</h1>
-      <p class="subtitle">Upload your GBA ROM and play or let AI take control</p>
+      <h1>AI GBA Emulator</h1>
+      <p class="subtitle">Play Pokemon FireRed or watch the AI master it</p>
     </header>
     
-    <div class="emulator-container">
-      <div class="emulator">
-        <div class="upload-section">
-          <p>Drag & drop your GBA ROM or click to select</p>
-          <input type="file" id="romUpload" accept=".gba">
-          <label for="romUpload" class="upload-label">Select ROM File</label>
-        </div>
-        
-        <canvas id="gameCanvas" width="240" height="160"></canvas>
-        
-        <div class="game-info">
-          <h3>Game Info</h3>
-          <p id="gameTitle">No ROM loaded</p>
-          <p id="gameSize"></p>
-        </div>
+    <div class="main-content">
+      <div class="tv-container">
+        <canvas id="tv-canvas"></canvas>
       </div>
       
-      <div class="controls">
-        <div class="control-group">
-          <h3>Emulator Controls</h3>
-          <button id="startButton" class="button" disabled>Start Game</button>
-          <button id="pauseButton" class="button" disabled>Pause</button>
-          <button id="resetButton" class="button" disabled>Reset</button>
-          <button id="saveStateButton" class="button" disabled>Save State</button>
-          <button id="loadStateButton" class="button" disabled>Load State</button>
+      <div class="controls-panel">
+        <div class="upload-section">
+          <p>Drop ROM or click to select</p>
+          <input type="file" id="romUpload" accept=".gba">
+          <label for="romUpload" class="upload-label">Select ROM</label>
         </div>
         
-        <div class="control-group">
-          <h3>AI Controls</h3>
-          <button id="aiPlayButton" class="button" disabled>Let AI Play</button>
-          <button id="aiStopButton" class="button" disabled>Stop AI</button>
-          <button id="aiTrainButton" class="button" disabled>Train AI</button>
-          
+        <div class="panel-section">
+          <h3 class="panel-title">Game Controls</h3>
+          <button id="startButton" class="button primary-button" disabled>Play Game</button>
+          <div class="button-group">
+            <button id="pauseButton" class="button" disabled>Pause</button>
+            <button id="resetButton" class="button" disabled>Reset</button>
+            <button id="saveStateButton" class="button" disabled>Save</button>
+            <button id="loadStateButton" class="button" disabled>Load</button>
+          </div>
+        </div>
+        
+        <div class="panel-section">
+          <h3 class="panel-title">AI Trainer</h3>
+          <button id="aiPlayButton" class="button ai-button" disabled>Let AI Play</button>
+          <div class="button-group">
+            <button id="aiStopButton" class="button" disabled>Stop AI</button>
+            <button id="aiTrainButton" class="button" disabled>Train</button>
+          </div>
           <div class="ai-status">
-            <p>AI Status: <span id="aiStatusText">Inactive</span></p>
+            <p>AI Status: <span id="aiStatusText" class="badge">Inactive</span></p>
             <div class="ai-logs" id="aiLogs"></div>
           </div>
         </div>
         
-        <div class="control-group">
-          <h3>Controller</h3>
-          <div class="shoulder-buttons">
-            <div class="shoulder-button" id="lButton">L <span class="key-indicator">Q</span></div>
-            <div class="shoulder-button" id="rButton">R <span class="key-indicator">E</span></div>
-          </div>
-          
-          <div class="gamepad-visual">
-            <div class="dpad-button dpad-up" id="upButton">↑ <span class="key-indicator">W</span></div>
-            <div class="dpad-button dpad-left" id="leftButton">← <span class="key-indicator">A</span></div>
-            <div class="dpad-button dpad-center"></div>
-            <div class="dpad-button dpad-right" id="rightButton">→ <span class="key-indicator">D</span></div>
-            <div class="dpad-button dpad-down" id="downButton">↓ <span class="key-indicator">S</span></div>
-          </div>
-          
-          <div class="action-buttons">
-            <div class="action-button b-button" id="bButton">B <span class="key-indicator">K</span></div>
-            <div class="action-button a-button" id="aButton">A <span class="key-indicator">L</span></div>
-          </div>
-          
-          <div class="center-buttons">
-            <div class="center-button" id="selectButton">SELECT <span class="key-indicator">N</span></div>
-            <div class="center-button" id="startButtonSmall">START <span class="key-indicator">M</span></div>
-          </div>
+        <div class="game-info">
+          <h3 class="panel-title">Game Info</h3>
+          <p id="gameTitle">No ROM loaded</p>
+          <p id="gameSize"></p>
+          <p id="fps">FPS: --</p>
         </div>
       </div>
     </div>
   </div>
   
-  <div class="overlay" id="tutorialOverlay">
-    <div class="tutorial-panel">
-      <button class="close-button" id="closeTutorial">×</button>
-      <h2>Welcome to the AI-Powered GBA Emulator!</h2>
-      <p>This emulator allows you to play your favorite Game Boy Advance games in the browser and even watch an AI learn to play them.</p>
-      <h3>Quick Start:</h3>
-      <ol>
-        <li>Upload your GBA ROM file (.gba)</li>
-        <li>Click "Start Game" to begin playing</li>
-        <li>Use keyboard controls or the on-screen buttons</li>
-        <li>Try the "Let AI Play" button to watch the AI agent play</li>
-      </ol>
-      <h3>Keyboard Controls:</h3>
-      <p>D-Pad: W, A, S, D<br>
-      A Button: L<br>
-      B Button: K<br>
-      L Button: Q<br>
-      R Button: E<br>
-      Start: M<br>
-      Select: N</p>
-      <button class="button" id="startTutorial">Got it!</button>
+  <!-- Welcome Popup -->
+  <div class="overlay" id="welcomeOverlay">
+    <div class="popup-panel">
+      <button class="close-button" id="closeWelcome">×</button>
+      <h2>Welcome to AI GBA Emulator</h2>
+      <p>Upload your Pokemon FireRed ROM and choose to either play manually or let the AI take over.</p>
+      <h3 style="margin-top: 20px; margin-bottom: 10px;">Keyboard Controls:</h3>
+      <div class="keyboard-shortcuts">
+        <span>D-Pad:</span><span><span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span></span>
+        <span>A Button:</span><span><span class="key">L</span></span>
+        <span>B Button:</span><span><span class="key">K</span></span>
+        <span>Start:</span><span><span class="key">Enter</span></span>
+        <span>Select:</span><span><span class="key">Shift</span></span>
+      </div>
+      <button class="button primary-button" id="startTutorial" style="margin-top: 30px;">Got it!</button>
     </div>
   </div>
-
+  
   <script>
-    // Main application code
+    // Wait for DOM load
     document.addEventListener('DOMContentLoaded', function() {
-      // DOM elements
+      // DOM Elements
       const romUpload = document.getElementById('romUpload');
-      const uploadSection = document.querySelector('.upload-section');
-      const gameCanvas = document.getElementById('gameCanvas');
       const startButton = document.getElementById('startButton');
       const pauseButton = document.getElementById('pauseButton');
       const resetButton = document.getElementById('resetButton');
@@ -440,25 +370,12 @@
       const aiLogs = document.getElementById('aiLogs');
       const gameTitle = document.getElementById('gameTitle');
       const gameSize = document.getElementById('gameSize');
-      const tutorialOverlay = document.getElementById('tutorialOverlay');
-      const closeTutorial = document.getElementById('closeTutorial');
+      const fpsCounter = document.getElementById('fps');
+      const welcomeOverlay = document.getElementById('welcomeOverlay');
+      const closeWelcome = document.getElementById('closeWelcome');
       const startTutorial = document.getElementById('startTutorial');
-
-      // Game controller buttons
-      const controlButtons = {
-        up: document.getElementById('upButton'),
-        down: document.getElementById('downButton'),
-        left: document.getElementById('leftButton'),
-        right: document.getElementById('rightButton'),
-        a: document.getElementById('aButton'),
-        b: document.getElementById('bButton'),
-        l: document.getElementById('lButton'),
-        r: document.getElementById('rButton'),
-        select: document.getElementById('selectButton'),
-        start: document.getElementById('startButtonSmall')
-      };
-
-      // Global variables
+      
+      // Global variables for emulator and AI agent
       let gbaEmulator = null;
       let romData = null;
       let isGameRunning = false;
@@ -466,414 +383,420 @@
       let aiAgent = null;
       let gameLoop = null;
       let currentKeys = new Set();
-      let frameBuffer = null;
+      let lastFrameTime = 0;
       let frameCount = 0;
+      let fps = 0;
       
-      // Close tutorial
-      closeTutorial.addEventListener('click', () => {
-        tutorialOverlay.style.display = 'none';
-      });
+      // Three.js variables for TV screen
+      let scene, camera, renderer;
+      let tvScreen, tvModel;
+      let gameTexture;
       
-      startTutorial.addEventListener('click', () => {
-        tutorialOverlay.style.display = 'none';
-      });
-
-      // Initialize mock GBA emulator
-      // In a real implementation, this would use the actual gba.js library
-      class GBAEmulator {
-        constructor(romData) {
-          this.romData = romData;
-          this.running = false;
-          this.frameBuffer = new Uint8Array(240 * 160 * 4); // RGBA buffer
-          this.saveState = null;
-          
-          // Initialize with random pixels for demo
-          for (let i = 0; i < this.frameBuffer.length; i += 4) {
-            this.frameBuffer[i] = Math.floor(Math.random() * 255);     // R
-            this.frameBuffer[i + 1] = Math.floor(Math.random() * 255); // G
-            this.frameBuffer[i + 2] = Math.floor(Math.random() * 255); // B
-            this.frameBuffer[i + 3] = 255;                             // A
-          }
-          
-          // Extract ROM info (mock implementation)
-          this.romInfo = {
-            title: this.extractTitle(),
-            size: this.romData.byteLength
-          };
-        }
+      // Initialize 3D TV scene
+      function initTVScene() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a10);
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0.5, 2.5);
         
-        extractTitle() {
-          // In a real implementation, this would extract the title from the ROM header
-          // For demo purposes, we'll use the filename
-          if (this.romData.name) {
-            return this.romData.name.replace('.gba', '');
-          }
-          return "Unknown Game";
-        }
+        renderer = new THREE.WebGLRenderer({
+          canvas: document.getElementById('tv-canvas'),
+          antialias: true,
+          alpha: true
+        });
+        const container = document.querySelector('.tv-container');
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
         
-        start() {
-          this.running = true;
-          this.renderLoop();
-        }
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(0, 1, 1);
+        scene.add(directionalLight);
         
-        pause() {
-          this.running = false;
-        }
+        createTV();
+        window.addEventListener('resize', onWindowResize, false);
+        animate();
+      }
+      
+      // Create a simple TV model with a screen for the emulator
+      function createTV() {
+        const tvGeometry = new THREE.BoxGeometry(1.6, 1.2, 0.1);
+        const tvMaterial = new THREE.MeshPhongMaterial({ color: 0x111111, specular: 0x333333, shininess: 30 });
+        tvModel = new THREE.Mesh(tvGeometry, tvMaterial);
+        scene.add(tvModel);
         
-        reset() {
-          // Reset emulator state
-          this.running = false;
-          
-          // Reinitialize frame buffer with random pixels for demo
-          for (let i = 0; i < this.frameBuffer.length; i += 4) {
-            this.frameBuffer[i] = Math.floor(Math.random() * 255);     // R
-            this.frameBuffer[i + 1] = Math.floor(Math.random() * 255); // G
-            this.frameBuffer[i + 2] = Math.floor(Math.random() * 255); // B
-            this.frameBuffer[i + 3] = 255;                             // A
-          }
-        }
+        const screenGeometry = new THREE.PlaneGeometry(1.4, 0.9);
+        gameTexture = new THREE.CanvasTexture(createGameScreenCanvas());
+        gameTexture.minFilter = THREE.LinearFilter;
+        const screenMaterial = new THREE.MeshBasicMaterial({ 
+          map: gameTexture, 
+          emissive: 0xffffff, 
+          emissiveIntensity: 0.8 
+        });
+        tvScreen = new THREE.Mesh(screenGeometry, screenMaterial);
+        tvScreen.position.z = 0.052;
+        tvModel.add(tvScreen);
         
-        renderLoop() {
-          if (!this.running) return;
-          
-          // Update frame buffer
-          this.updateFrameBuffer();
-          
-          // Request next frame
-          requestAnimationFrame(() => this.renderLoop());
-        }
+        // TV stand
+        const standGeometry = new THREE.BoxGeometry(0.4, 0.3, 0.1);
+        const standMaterial = new THREE.MeshPhongMaterial({ color: 0x111111 });
+        const stand = new THREE.Mesh(standGeometry, standMaterial);
+        stand.position.y = -0.75;
+        tvModel.add(stand);
         
-        updateFrameBuffer() {
-          // In a real implementation, this would run one frame of the GBA emulation
-          // For demo purposes, we'll just modify a few pixels
-          for (let i = 0; i < 1000; i++) {
-            const idx = Math.floor(Math.random() * (this.frameBuffer.length / 4)) * 4;
-            this.frameBuffer[idx] = Math.floor(Math.random() * 255);     // R
-            this.frameBuffer[idx + 1] = Math.floor(Math.random() * 255); // G
-            this.frameBuffer[idx + 2] = Math.floor(Math.random() * 255); // B
-          }
-          
-          // Render to canvas
-          const ctx = gameCanvas.getContext('2d');
-          const imgData = new ImageData(new Uint8ClampedArray(this.frameBuffer), 240, 160);
+        // Ambient glow
+        const glowGeometry = new THREE.PlaneGeometry(1.8, 1.4);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+          map: new THREE.TextureLoader().load(createGlowTexture()),
+          transparent: true,
+          opacity: 0.3,
+          blending: THREE.AdditiveBlending
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        glow.position.z = -0.05;
+        tvModel.add(glow);
+      }
+      
+      // Create a default canvas for TV screen
+      function createGameScreenCanvas() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 240;
+        canvas.height = 160;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // TV static simulation
+        for (let i = 0; i < 2000; i++) {
+          ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.2})`;
+          ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+        }
+        return canvas;
+      }
+      
+      function createGlowTexture() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        gradient.addColorStop(0, 'rgba(48, 214, 255, 0.3)');
+        gradient.addColorStop(0.5, 'rgba(48, 214, 255, 0.1)');
+        gradient.addColorStop(1, 'rgba(48, 214, 255, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL();
+      }
+      
+      function updateGameScreen(buffer) {
+        if (!gameTexture) return;
+        const canvas = gameTexture.image;
+        const ctx = canvas.getContext('2d');
+        if (buffer) {
+          const imgData = new ImageData(new Uint8ClampedArray(buffer), 240, 160);
           ctx.putImageData(imgData, 0, 0);
+        } else {
+          // Display static if no buffer
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          for (let i = 0; i < 2000; i++) {
+            ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.2})`;
+            ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 2, 2);
+          }
         }
-        
-        saveCurrentState() {
-          // In a real implementation, this would serialize the emulator state
-          this.saveState = "Mock save state";
-          return true;
-        }
-        
-        loadSavedState() {
-          if (!this.saveState) return false;
-          // In a real implementation, this would deserialize and load the state
-          return true;
-        }
-        
-        setKeys(keys) {
-          // In a real implementation, this would set the keys to be pressed
-          // keys is a Set of 'up', 'down', 'left', 'right', 'a', 'b', 'l', 'r', 'start', 'select'
-          this.currentKeys = keys;
-        }
-        
-        getFrame() {
-          // In a real implementation, this would return the current frame data
-          return this.frameBuffer;
-        }
+        gameTexture.needsUpdate = true;
       }
       
-      // AI Agent implementation
-      class AIAgent {
-        constructor(emulator) {
-          this.emulator = emulator;
-          this.isActive = false;
-          this.model = null;
-          this.isTrained = false;
-          
-          // For demo purposes, we'll use a simple pattern of actions
-          this.actionPatterns = [
-            new Set(['right', 'b']),
-            new Set(['right']),
-            new Set(['right', 'a']),
-            new Set(['right']),
-            new Set(['right', 'b']),
-            new Set(['up']),
-            new Set(['up', 'a']),
-            new Set(['left']),
-            new Set(['left', 'b']),
-            new Set(['down']),
-            new Set(['down', 'a']),
-            new Set(['right'])
-          ];
-          this.currentPatternIndex = 0;
-          this.frameCounter = 0;
+      function animate(time) {
+        requestAnimationFrame(animate);
+        if (time - lastFrameTime > 500) {
+          fps = Math.round((frameCount / (time - lastFrameTime)) * 1000);
+          fpsCounter.textContent = `FPS: ${fps}`;
+          frameCount = 0;
+          lastFrameTime = time;
         }
-        
-        async train() {
-          aiStatusText.textContent = "Training...";
-          addAILog("Starting AI training...");
-          
-          // Simulate training progress
-          for (let i = 0; i < 5; i++) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            addAILog(`Training progress: ${(i+1)*20}%`);
-          }
-          
-          this.isTrained = true;
-          aiStatusText.textContent = "Trained";
-          addAILog("AI training complete! The agent has learned basic game patterns.");
-          return true;
+        frameCount++;
+        if (tvModel) {
+          tvModel.rotation.y = Math.sin(time * 0.0005) * 0.1;
+          tvModel.rotation.x = Math.sin(time * 0.0003) * 0.05;
         }
-        
-        start() {
-          if (!this.isTrained) {
-            addAILog("WARNING: Starting untrained AI. Performance may be random.");
-          }
-          
-          this.isActive = true;
-          aiStatusText.textContent = "Active";
-          addAILog("AI agent started");
-          
-          // Reset counters
-          this.currentPatternIndex = 0;
-          this.frameCounter = 0;
-        }
-        
-        stop() {
-          this.isActive = false;
-          aiStatusText.textContent = this.isTrained ? "Trained" : "Inactive";
-          addAILog("AI agent stopped");
-        }
-        
-        getNextAction() {
-          if (!this.isActive) return new Set();
-          
-          // Simple pattern-based AI for demo
-          // In a real implementation, this would use the model to predict actions
-          this.frameCounter++;
-          
-          // Change pattern every 60 frames (about 1 second)
-          if (this.frameCounter >= 60) {
-            this.frameCounter = 0;
-            this.currentPatternIndex = (this.currentPatternIndex + 1) % this.actionPatterns.length;
-            
-            // Log every few pattern changes
-            if (this.currentPatternIndex % 3 === 0) {
-              const actionNames = Array.from(this.actionPatterns[this.currentPatternIndex]).join('+');
-              addAILog(`AI decision: ${actionNames || 'wait'}`);
-            }
-          }
-          
-          return this.actionPatterns[this.currentPatternIndex];
-        }
+        renderer.render(scene, camera);
       }
       
-      // Helper function to add a log entry to the AI log
-      function addAILog(message) {
-        const logEntry = document.createElement('div');
-        logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        aiLogs.appendChild(logEntry);
-        aiLogs.scrollTop = aiLogs.scrollHeight;
+      function onWindowResize() {
+        const container = document.querySelector('.tv-container');
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
       }
       
-      // File upload handling
-      romUpload.addEventListener('change', handleFileSelect);
-      uploadSection.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadSection.style.borderColor = 'var(--primary)';
-        uploadSection.style.backgroundColor = 'rgba(138, 43, 226, 0.1)';
+      // Welcome overlay close
+      closeWelcome.addEventListener('click', () => welcomeOverlay.style.display = 'none');
+      startTutorial.addEventListener('click', () => welcomeOverlay.style.display = 'none');
+      
+      // Keyboard input for manual game control
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'w' || e.key === 'W') currentKeys.add('up');
+        if (e.key === 'a' || e.key === 'A') currentKeys.add('left');
+        if (e.key === 's' || e.key === 'S') currentKeys.add('down');
+        if (e.key === 'd' || e.key === 'D') currentKeys.add('right');
+        if (e.key === 'Enter') currentKeys.add('start');
+        if (e.key === 'Shift') currentKeys.add('select');
+        if (e.key === 'l' || e.key === 'L') currentKeys.add('A');
+        if (e.key === 'k' || e.key === 'K') currentKeys.add('B');
       });
       
-      uploadSection.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadSection.style.borderColor = 'var(--accent)';
-        uploadSection.style.backgroundColor = '';
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'w' || e.key === 'W') currentKeys.delete('up');
+        if (e.key === 'a' || e.key === 'A') currentKeys.delete('left');
+        if (e.key === 's' || e.key === 'S') currentKeys.delete('down');
+        if (e.key === 'd' || e.key === 'D') currentKeys.delete('right');
+        if (e.key === 'Enter') currentKeys.delete('start');
+        if (e.key === 'Shift') currentKeys.delete('select');
+        if (e.key === 'l' || e.key === 'L') currentKeys.delete('A');
+        if (e.key === 'k' || e.key === 'K') currentKeys.delete('B');
       });
       
-      uploadSection.addEventListener('drop', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadSection.style.borderColor = 'var(--accent)';
-        uploadSection.style.backgroundColor = '';
-        
-        if (e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0];
-          if (file.name.endsWith('.gba')) {
-            romUpload.files = e.dataTransfer.files;
-            handleFileSelect(e);
-          } else {
-            alert('Please upload a valid GBA ROM file (.gba)');
-          }
+      // ROM upload handling (simulate enabling buttons)
+      romUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            romData = evt.target.result;
+            // Instantiate the emulator (this is a mock; replace with actual gba.js integration)
+            gbaEmulator = new GBAEmulator(romData);
+            gameTitle.textContent = gbaEmulator.romInfo.title;
+            gameSize.textContent = `Size: ${gbaEmulator.romInfo.size} bytes`;
+            startButton.disabled = false;
+            aiPlayButton.disabled = false;
+            pauseButton.disabled = false;
+            resetButton.disabled = false;
+            saveStateButton.disabled = false;
+            loadStateButton.disabled = false;
+            aiStopButton.disabled = false;
+            aiTrainButton.disabled = false;
+          };
+          reader.readAsArrayBuffer(file);
         }
       });
       
-      function handleFileSelect(event) {
-        const file = event.target.files[0] || event.dataTransfer.files[0];
-        
-        if (!file) return;
-        if (!file.name.endsWith('.gba')) {
-          alert('Please upload a valid GBA ROM file (.gba)');
-          return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          romData = e.target.result;
-          
-          // Add the file name to the romData object for reference
-          romData.name = file.name;
-          
-          // Update UI to show file info
-          gameTitle.textContent = file.name;
-          gameSize.textContent = `Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
-          
-          // Enable start button
-          startButton.disabled = false;
-          resetButton.disabled = false;
-          
-          // Update upload section
-          uploadSection.style.borderColor = 'var(--primary)';
-          document.querySelector('.upload-section p').textContent = `ROM loaded: ${file.name}`;
-        };
-        
-        reader.readAsArrayBuffer(file);
-      }
-      
-      // Button event handlers
+      // Start game button
       startButton.addEventListener('click', () => {
-        if (!romData) {
-          alert('Please upload a ROM file first');
-          return;
+        if (gbaEmulator && !isGameRunning) {
+          isGameRunning = true;
+          gbaEmulator.start();
         }
-        
-        if (!gbaEmulator) {
-          gbaEmulator = new GBAEmulator(romData);
-          
-          // Initialize AI agent
-          aiAgent = new AIAgent(gbaEmulator);
-          
-          // Update UI with ROM info
-          gameTitle.textContent = gbaEmulator.romInfo.title;
-          gameSize.textContent = `Size: ${(gbaEmulator.romInfo.size / (1024 * 1024)).toFixed(2)} MB`;
-          
-          // Enable all buttons
-          pauseButton.disabled = false;
-          saveStateButton.disabled = false;
-          loadStateButton.disabled = false;
-          aiPlayButton.disabled = false;
-          aiTrainButton.disabled = false;
-        }
-        
-        // Start emulation
-        gbaEmulator.start();
-        isGameRunning = true;
-        
-        // Update button states
-        startButton.disabled = true;
-        pauseButton.disabled = false;
-        
-        // Start game loop
-        startGameLoop();
       });
       
+      // Pause/Reset/Save/Load button stubs
       pauseButton.addEventListener('click', () => {
-        if (!gbaEmulator || !isGameRunning) return;
-        
-        gbaEmulator.pause();
-        isGameRunning = false;
-        
-        // Update button states
-        startButton.disabled = false;
-        pauseButton.disabled = true;
-        
-        // Stop game loop
-        stopGameLoop();
+        if (gbaEmulator) {
+          gbaEmulator.running = !gbaEmulator.running;
+          pauseButton.textContent = gbaEmulator.running ? "Pause" : "Resume";
+          if (gbaEmulator.running) gbaEmulator.run();
+        }
       });
       
       resetButton.addEventListener('click', () => {
-        if (!gbaEmulator) return;
-        
-        // Stop AI if running
-        if (isAIPlaying && aiAgent) {
-          aiAgent.stop();
-          isAIPlaying = false;
-          aiPlayButton.disabled = false;
-          aiStopButton.disabled = true;
+        if (gbaEmulator) {
+          gbaEmulator.reset();
         }
-        
-        gbaEmulator.reset();
-        isGameRunning = false;
-        
-        // Update button states
-        startButton.disabled = false;
-        pauseButton.disabled = true;
-        
-        // Stop game loop
-        stopGameLoop();
       });
       
       saveStateButton.addEventListener('click', () => {
-        if (!gbaEmulator) return;
-        
-        if (gbaEmulator.saveCurrentState()) {
-          loadStateButton.disabled = false;
-          addAILog("Game state saved");
+        if (gbaEmulator) {
+          gbaEmulator.saveState = gbaEmulator.getState();
         }
       });
       
       loadStateButton.addEventListener('click', () => {
-        if (!gbaEmulator) return;
-        
-        if (gbaEmulator.loadSavedState()) {
-          addAILog("Game state loaded");
-          if (!isGameRunning) {
-            startButton.disabled = false;
-          }
+        if (gbaEmulator && gbaEmulator.saveState) {
+          gbaEmulator.loadState(gbaEmulator.saveState);
         }
       });
       
+      // AI Trainer button stubs
       aiPlayButton.addEventListener('click', () => {
-        if (!gbaEmulator || !aiAgent) return;
-        
-        // Start AI
-        aiAgent.start();
-        isAIPlaying = true;
-        
-        // Update button states
-        aiPlayButton.disabled = true;
-        aiStopButton.disabled = false;
-        
-        // If game is not running, start it
-        if (!isGameRunning) {
-          gbaEmulator.start();
-          isGameRunning = true;
-          startButton.disabled = true;
-          pauseButton.disabled = false;
-          startGameLoop();
+        if (!isAIPlaying && gbaEmulator) {
+          isAIPlaying = true;
+          aiStatusText.textContent = "Active";
+          aiStatusText.className = "badge badge-active";
+          aiAgent = new AIAgent();
+          aiAgent.start();
+          logAI("AI started playing");
         }
       });
       
       aiStopButton.addEventListener('click', () => {
-        if (!aiAgent) return;
-        
-        // Stop AI
-        aiAgent.stop();
-        isAIPlaying = false;
-        
-        // Update button states
-        aiPlayButton.disabled = false;
-        aiStopButton.disabled = true;
-        
-        // Clear all active buttons
-        currentKeys.clear();
-        updateButtonVisuals();
+        if (isAIPlaying && aiAgent) {
+          isAIPlaying = false;
+          aiStatusText.textContent = "Inactive";
+          aiStatusText.className = "badge";
+          aiAgent.stop();
+          logAI("AI stopped");
+        }
       });
       
-      aiTrainButton.addEventListener('click', async () => {
-        if (!aiAgent) return;
+      aiTrainButton.addEventListener('click', () => {
+        logAI("Training started (stub)...");
+        // Implement training routine here (e.g., using TensorFlow.js)
+        setTimeout(() => {
+          logAI("Training completed (stub)");
+        }, 2000);
+      });
+      
+      function logAI(message) {
+        const logEntry = document.createElement('p');
+        logEntry.textContent = message;
+        aiLogs.appendChild(logEntry);
+        aiLogs.scrollTop = aiLogs.scrollHeight;
+      }
+      
+      // Simple mock AI Agent that randomly selects moves every 300ms.
+      class AIAgent {
+        constructor() {
+          this.interval = null;
+        }
+        start() {
+          this.interval = setInterval(() => {
+            if (gbaEmulator && gbaEmulator.running) {
+              // This is a stub for making AI decisions.
+              // Replace this with your actual AI logic to control the game.
+              const possibleMoves = ['up', 'down', 'left', 'right', 'A', 'B', 'start', 'select'];
+              const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+              gbaEmulator.handleInput(move);
+              logAI("AI pressed: " + move);
+            }
+          }, 300);
+        }
+        stop() {
+          clearInterval(this.interval);
+        }
+      }
+      
+      // Mock GBA Emulator class (replace with actual gba.js integration)
+      class GBAEmulator {
+        constructor(romData) {
+          this.romData = romData;
+          this.running = false;
+          this.frameBuffer = new Uint8Array(240 * 160 * 4);
+          this.frameCount = 0;
+          // Preload a fake start screen for Pokemon FireRed
+          this.createPokemonStartScreen();
+          this.romInfo = {
+            title: "Pokemon FireRed",
+            size: romData.byteLength
+          };
+          // Set initial player position (for manual control)
+          this.playerX = 115;
+          this.playerY = 80;
+        }
         
-        // Disable buttons during training
-        aiTrainButton.disable
+        createPokemonStartScreen() {
+          const ctx = document.createElement('canvas').getContext('2d');
+          ctx.canvas.width = 240;
+          ctx.canvas.height = 160;
+          ctx.fillStyle = '#de5c4a';
+          ctx.fillRect(0, 0, 240, 160);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 24px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('POKEMON', 120, 50);
+          ctx.fillStyle = '#ffcc00';
+          ctx.fillText('FIRERED', 120, 80);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '14px Arial';
+          ctx.fillText('PRESS START', 120, 130);
+          const imgData = ctx.getImageData(0, 0, 240, 160).data;
+          this.frameBuffer.set(imgData);
+        }
+        
+        start() {
+          this.running = true;
+          this.run();
+        }
+        
+        run() {
+          if (!this.running) return;
+          this.frameCount++;
+          if (this.frameCount < 180) {
+            // Flash start screen for first 3 seconds
+            if (this.frameCount % 60 > 30) {
+              this.createPokemonStartScreen();
+            }
+          } else if (this.frameCount === 180) {
+            // Transition to game screen
+            this.createGameScreen();
+          } else {
+            // Update game screen based on input
+            this.updateGameScreen();
+          }
+          updateGameScreen(this.frameBuffer);
+          setTimeout(() => this.run(), 1000 / 60);
+        }
+        
+        createGameScreen() {
+          const ctx = document.createElement('canvas').getContext('2d');
+          ctx.canvas.width = 240;
+          ctx.canvas.height = 160;
+          ctx.fillStyle = '#7cbb5e';
+          ctx.fillRect(0, 0, 240, 160);
+          ctx.fillStyle = '#b5905e';
+          ctx.fillRect(90, 0, 60, 160);
+          ctx.fillRect(0, 70, 240, 30);
+          // Buildings and landmarks
+          ctx.fillStyle = '#de5c4a';
+          ctx.fillRect(30, 20, 40, 30);
+          ctx.fillStyle = '#de9b4a';
+          ctx.fillRect(170, 20, 40, 30);
+          ctx.fillStyle = '#5e94de';
+          ctx.fillRect(30, 110, 40, 30);
+          ctx.fillStyle = '#94de5e';
+          ctx.fillRect(170, 110, 40, 30);
+          // Player
+          ctx.fillStyle = '#ff0000';
+          ctx.fillRect(this.playerX, this.playerY, 10, 10);
+          const imgData = ctx.getImageData(0, 0, 240, 160).data;
+          this.frameBuffer.set(imgData);
+        }
+        
+        updateGameScreen() {
+          // Update player position for manual control
+          if (currentKeys.has('up') && this.playerY > 20) this.playerY -= 1;
+          if (currentKeys.has('down') && this.playerY < 130) this.playerY += 1;
+          if (currentKeys.has('left') && this.playerX > 20) this.playerX -= 1;
+          if (currentKeys.has('right') && this.playerX < 210) this.playerX += 1;
+          this.createGameScreen();
+        }
+        
+        // Stub for handling input commands (from AI or manual)
+        handleInput(command) {
+          // For this demo, just log the command.
+          // In a real emulator, you would trigger the corresponding button press.
+          console.log("Input received: " + command);
+          // You could even map these commands to key presses if desired.
+        }
+        
+        // Stub functions for saving/loading state
+        getState() {
+          return { frameCount: this.frameCount, playerX: this.playerX, playerY: this.playerY };
+        }
+        loadState(state) {
+          this.frameCount = state.frameCount;
+          this.playerX = state.playerX;
+          this.playerY = state.playerY;
+        }
+        
+        reset() {
+          this.frameCount = 0;
+          this.createPokemonStartScreen();
+        }
+      }
+      
+      // Initialize TV scene
+      initTVScene();
+    });
+  </script>
+</body>
+</html>
