@@ -3,1154 +3,1929 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GBA Emulator - 3D TV</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <title>Choker - Chess + Poker</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
   <style>
-    :root {
-      --bg-color: #111;
-      --text-color: #eee;
-      --accent: #ff3e3e;
-      --panel-bg: #222;
-    }
-    
-    * {
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #121212;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      min-height: 100vh;
+    #game-container {
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-    }
-    
-    .container {
-      width: 100%;
+      align-items: center;
       max-width: 1200px;
-      margin: 0 auto;
+      width: 100%;
       padding: 20px;
     }
     
-    header {
-      padding: 15px 0;
+    .info-panel {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    .player-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      width: 30%;
+    }
+    
+    .game-status {
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      width: 35%;
       text-align: center;
     }
     
-    h1 {
-      font-size: 24px;
-      margin-bottom: 5px;
-      background: linear-gradient(90deg, #ff3e3e, #ff9e3e);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    
-    #tv-container {
-      width: 100%;
-      height: 60vh;
-      position: relative;
-      overflow: hidden;
-      margin: 0 auto;
-    }
-    
-    #controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
+    .betting-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       margin-top: 20px;
-    }
-    
-    .panel {
-      background-color: var(--panel-bg);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .panel h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid #333;
-    }
-    
-    .btn {
-      background-color: #333;
-      color: var(--text-color);
-      border: none;
-      padding: 8px 12px;
-      margin: 5px 0;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.2s;
       width: 100%;
-      text-align: left;
     }
     
-    .btn:hover {
-      background-color: #444;
+    .betting-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
     }
     
-    .btn.primary {
-      background-color: var(--accent);
+    button {
+      background-color: #2c2c2c;
+      color: #f0f0f0;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s;
     }
     
-    .btn.primary:hover {
-      background-color: #ff5252;
+    button:hover {
+      background-color: #3c3c3c;
     }
     
-    .btn:disabled {
-      opacity: 0.5;
+    button:disabled {
+      background-color: #1e1e1e;
+      color: #5e5e5e;
       cursor: not-allowed;
     }
     
-    .upload-area {
-      border: 2px dashed #444;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      margin-bottom: 15px;
-      transition: all 0.2s;
-      cursor: pointer;
+    .action-button {
+      background-color: #2e7d32;
     }
     
-    .upload-area:hover {
-      border-color: var(--accent);
-      background-color: rgba(255, 62, 62, 0.05);
+    .action-button:hover {
+      background-color: #388e3c;
     }
     
-    #rom-input {
-      display: none;
+    .fold-button {
+      background-color: #c62828;
     }
     
-    .ai-log {
-      height: 150px;
-      overflow-y: auto;
+    .fold-button:hover {
+      background-color: #d32f2f;
+    }
+    
+    #bet-slider {
+      width: 100%;
+      margin: 10px 0;
+    }
+    
+    .locked-pieces {
+      display: flex;
+      gap: 10px;
       margin-top: 10px;
-      background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 4px;
-      padding: 8px;
-      font-family: monospace;
-      font-size: 12px;
-      color: #0f0;
+      justify-content: center;
     }
     
-    .ai-log p {
-      margin: 2px 0;
+    .piece-indicator {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #333;
+      font-size: 20px;
     }
     
-    .controls-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
-      margin-top: 10px;
+    .locked {
+      background-color: #c62828;
+    }
+    
+    .unlocked {
+      background-color: #2e7d32;
     }
     
     .modal {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.8);
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
-      opacity: 1;
-      transition: opacity 0.3s;
     }
     
     .modal-content {
-      background-color: var(--panel-bg);
-      border-radius: 8px;
-      padding: 20px;
+      background-color: #1e1e1e;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
       max-width: 500px;
-      width: 90%;
-      position: relative;
     }
     
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: var(--text-color);
-      font-size: 20px;
-      cursor: pointer;
+    .hidden {
+      display: none;
     }
     
-    .status-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      margin-left: 5px;
+    .highlight {
+      color: #ffab00;
     }
     
-    .status-active {
-      background-color: #00b894;
-    }
-    
-    .status-inactive {
-      background-color: #636e72;
-    }
-    
-    .status-training {
-      background-color: #fdcb6e;
-      color: #222;
-    }
-    
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s linear infinite;
-      margin-left: 10px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    #game-canvas {
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>GameBoy Advance Emulator</h1>
-      <p>Upload a ROM and play, or let the AI take control</p>
-    </header>
-    
-    <div id="tv-container"></div>
-    
-    <div id="controls">
-      <div class="panel">
-        <h2>Game</h2>
-        <div class="upload-area" id="upload-area">
-          <p>Drop your ROM file here or click to browse</p>
-          <p id="rom-name" style="display: none;"></p>
-          <input type="file" id="rom-input" accept=".gba">
+  <div id="game-container">
+    <h1>CHOKER</h1>
+    <div class="info-panel">
+      <div class="player-info" id="player-info">
+        <h3>You (<span id="player-color">White</span>)</h3>
+        <p>Chips: <span id="player-chips">100</span></p>
+        <div class="locked-pieces" id="player-locked-pieces">
+          <!-- Locked pieces indicators will be dynamically added here -->
         </div>
-        
-        <button id="start-btn" class="btn primary" disabled>Start Game</button>
-        <button id="pause-btn" class="btn" disabled>Pause</button>
-        <button id="reset-btn" class="btn" disabled>Reset</button>
-        <button id="save-btn" class="btn" disabled>Save State</button>
-        <button id="load-btn" class="btn" disabled>Load State</button>
       </div>
       
-      <div class="panel">
-        <h2>AI Player <span id="ai-status" class="status-badge status-inactive">Inactive</span></h2>
-        <button id="ai-play-btn" class="btn primary" disabled>Let AI Play</button>
-        <button id="ai-stop-btn" class="btn" disabled>Take Control</button>
-        <button id="ai-train-btn" class="btn" disabled>Train AI</button>
-        
-        <div class="ai-log" id="ai-log"></div>
+      <div class="game-status" id="game-status">
+        <h3>Game Status</h3>
+        <p id="status-text">Waiting to start...</p>
+        <p>Pot: <span id="pot-amount">0</span></p>
+        <p>Current Bet: <span id="current-bet">0</span></p>
       </div>
       
-      <div class="panel">
-        <h2>Controls</h2>
-        <p>Press keyboard or use buttons:</p>
-        <div class="controls-grid">
-          <button class="btn" data-key="up">↑ (W)</button>
-          <button class="btn" data-key="b">B (Z)</button>
-          <button class="btn" data-key="start">START (Enter)</button>
-          <button class="btn" data-key="left">← (A)</button>
-          <button class="btn" data-key="a">A (X)</button>
-          <button class="btn" data-key="select">SELECT (Space)</button>
-          <button class="btn" data-key="down">↓ (S)</button>
-          <button class="btn" data-key="r">R (E)</button>
-          <button class="btn" data-key="right">→ (D)</button>
+      <div class="player-info" id="ai-info">
+        <h3>AI (<span id="ai-color">Black</span>)</h3>
+        <p>Chips: <span id="ai-chips">100</span></p>
+        <div class="locked-pieces" id="ai-locked-pieces">
+          <!-- Locked pieces indicators will be dynamically added here -->
         </div>
       </div>
     </div>
+    
+    <div class="betting-controls" id="betting-controls">
+      <div>
+        <input type="range" id="bet-slider" min="10" max="100" value="10" step="5">
+        <p>Bet Amount: <span id="bet-amount">10</span></p>
+      </div>
+      <div class="betting-buttons">
+        <button id="check-call-button" class="action-button">Check/Call</button>
+        <button id="raise-button" class="action-button">Raise</button>
+        <button id="fold-button" class="fold-button">Fold</button>
+      </div>
+    </div>
+    
+    <div id="game-canvas"></div>
   </div>
   
-  <!-- Tutorial Modal -->
-  <div class="modal" id="tutorial-modal">
+  <div id="start-modal" class="modal">
     <div class="modal-content">
-      <button class="close-btn" id="close-tutorial">&times;</button>
-      <h2>Welcome to GBA Emulator</h2>
-      <p>This emulator allows you to play Game Boy Advance games and watch an AI learn to play them.</p>
-      <h3>Getting Started:</h3>
-      <ol>
-        <li>Upload a GBA ROM file (.gba)</li>
-        <li>Click "Start Game" to begin</li>
-        <li>Use keyboard controls or on-screen buttons</li>
-        <li>Try "Let AI Play" to watch the AI agent play</li>
-      </ol>
-      <p>The AI is specially designed to handle Pokemon games like Fire Red!</p>
-      <button class="btn primary" id="start-tutorial">Got it!</button>
+      <h2>Welcome to Choker</h2>
+      <p>A blend of chess and poker strategy</p>
+      <p>Blind amount: <span class="highlight">10 chips</span></p>
+      <p>Each player starts with <span class="highlight">100 chips</span></p>
+      <p>Let's flip a coin to decide who plays White</p>
+      <button id="flip-coin-button" class="action-button">Flip Coin</button>
+    </div>
+  </div>
+  
+  <div id="lock-reveal-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Locked Pieces Revealed</h2>
+      <div id="lock-reveal-content"></div>
+      <button id="continue-after-lock" class="action-button">Continue</button>
+    </div>
+  </div>
+  
+  <div id="piece-unlock-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Piece Unlocked!</h2>
+      <div id="unlock-content"></div>
+      <button id="continue-after-unlock" class="action-button">Continue</button>
+    </div>
+  </div>
+  
+  <div id="game-over-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="game-over-title">Game Over</h2>
+      <p id="game-over-message"></p>
+      <button id="new-game-button" class="action-button">New Game</button>
     </div>
   </div>
 
   <script>
-    // Main application code
-    document.addEventListener('DOMContentLoaded', function() {
-      // DOM Elements
-      const romInput = document.getElementById('rom-input');
-      const uploadArea = document.getElementById('upload-area');
-      const romName = document.getElementById('rom-name');
-      const startBtn = document.getElementById('start-btn');
-      const pauseBtn = document.getElementById('pause-btn');
-      const resetBtn = document.getElementById('reset-btn');
-      const saveBtn = document.getElementById('save-btn');
-      const loadBtn = document.getElementById('load-btn');
-      const aiPlayBtn = document.getElementById('ai-play-btn');
-      const aiStopBtn = document.getElementById('ai-stop-btn');
-      const aiTrainBtn = document.getElementById('ai-train-btn');
-      const aiStatus = document.getElementById('ai-status');
-      const aiLog = document.getElementById('ai-log');
-      const tutorialModal = document.getElementById('tutorial-modal');
-      const closeTutorial = document.getElementById('close-tutorial');
-      const startTutorial = document.getElementById('start-tutorial');
+    // Game constants
+    const BLIND_AMOUNT = 10;
+    const STARTING_CHIPS = 100;
+    const BOARD_SIZE = 8;
+    const PIECES_TO_LOCK = 5;
+    const KNOWN_LOCKED_PIECES = 2;
+    const MOVES_BEFORE_UNLOCK = 6; // 3 sets of moves
+    
+    // Game state
+    let gameState = {
+      isGameStarted: false,
+      isWhite: false, // Player's color
+      playerChips: STARTING_CHIPS,
+      aiChips: STARTING_CHIPS,
+      currentPot: 0,
+      currentBet: 0,
+      playerHasBet: false,
+      aiHasBet: false,
+      isBettingRound: false,
+      isPlayerTurn: false,
+      moveCount: 0,
+      board: createEmptyBoard(),
+      playerPieces: [],
+      aiPieces: [],
+      playerLockedPieces: [],
+      aiLockedPieces: [],
+      playerKnownLockedPieces: [],
+      aiKnownLockedPieces: [],
+      selectedPiece: null,
+      possibleMoves: [],
+      lastMove: null,
+      inCheck: false,
+      gameOver: false,
+      winner: null
+    };
+    
+    // Chess piece types
+    const PIECE_TYPES = {
+      PAWN: 'pawn',
+      ROOK: 'rook',
+      KNIGHT: 'knight',
+      BISHOP: 'bishop',
+      QUEEN: 'queen',
+      KING: 'king'
+    };
+    
+    // Piece values for AI evaluation
+    const PIECE_VALUES = {
+      [PIECE_TYPES.PAWN]: 1,
+      [PIECE_TYPES.KNIGHT]: 3,
+      [PIECE_TYPES.BISHOP]: 3,
+      [PIECE_TYPES.ROOK]: 5,
+      [PIECE_TYPES.QUEEN]: 9,
+      [PIECE_TYPES.KING]: 0 // King has no capture value, but is essential
+    };
+    
+    // Images for chess pieces
+    let pieceImages = {};
+    
+    // P5.js setup function
+    function setup() {
+      const canvas = createCanvas(480, 480);
+      canvas.parent('game-canvas');
       
-      // Global variables
-      let romData = null;
-      let emulator = null;
-      let isGameRunning = false;
-      let isAIPlaying = false;
-      let aiAgent = null;
-      let gameLoop = null;
-      let tvRenderer = null;
-      let currentKeys = new Set();
+      // Load piece images
+      loadPieceImages();
       
-      // 3D TV Setup
-      function initTV() {
-        const tvContainer = document.getElementById('tv-container');
-        
-        // Create a scene
-        const scene = new THREE.Scene();
-        
-        // Create a camera
-        const camera = new THREE.PerspectiveCamera(75, tvContainer.clientWidth / tvContainer.clientHeight, 0.1, 1000);
-        camera.position.z = 5;
-        
-        // Create a renderer
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(tvContainer.clientWidth, tvContainer.clientHeight);
-        renderer.setClearColor(0x000000, 1);
-        tvContainer.appendChild(renderer.domElement);
-        
-        // TV model
-        const tvWidth = 6;
-        const tvHeight = 3.6;
-        const tvDepth = 0.5;
-        
-        // TV body
-        const tvGeometry = new THREE.BoxGeometry(tvWidth, tvHeight, tvDepth);
-        const tvMaterial = new THREE.MeshPhongMaterial({ 
-          color: 0x222222, 
-          specular: 0x444444,
-          shininess: 30
-        });
-        const tv = new THREE.Mesh(tvGeometry, tvMaterial);
-        scene.add(tv);
-        
-        // TV screen
-        const screenWidth = tvWidth * 0.9;
-        const screenHeight = tvHeight * 0.9;
-        const screenGeometry = new THREE.PlaneGeometry(screenWidth, screenHeight);
-        
-        // Create dynamic texture for screen
-        const screenCanvas = document.createElement('canvas');
-        screenCanvas.width = 240;
-        screenCanvas.height = 160;
-        const screenContext = screenCanvas.getContext('2d');
-        screenContext.fillStyle = 'black';
-        screenContext.fillRect(0, 0, screenCanvas.width, screenCanvas.height);
-        
-        const screenTexture = new THREE.CanvasTexture(screenCanvas);
-        screenTexture.minFilter = THREE.NearestFilter;
-        screenTexture.magFilter = THREE.NearestFilter;
-        
-        const screenMaterial = new THREE.MeshBasicMaterial({ 
-          map: screenTexture,
-          side: THREE.FrontSide
-        });
-        
-        const screen = new THREE.Mesh(screenGeometry, screenMaterial);
-        screen.position.z = tvDepth / 2 + 0.01; // Slightly in front of the TV
-        scene.add(screen);
-        
-        // TV stand
-        const standGeometry = new THREE.BoxGeometry(tvWidth / 2, 0.3, tvDepth * 1.5);
-        const standMaterial = new THREE.MeshPhongMaterial({ color: 0x222222 });
-        const stand = new THREE.Mesh(standGeometry, standMaterial);
-        stand.position.y = -tvHeight / 2 - 0.15;
-        scene.add(stand);
-        
-        // Base stand
-        const baseGeometry = new THREE.BoxGeometry(tvWidth / 1.5, 0.1, tvDepth * 2);
-        const baseMaterial = new THREE.MeshPhongMaterial({ color: 0x111111 });
-        const base = new THREE.Mesh(baseGeometry, baseMaterial);
-        base.position.y = -tvHeight / 2 - 0.3;
-        scene.add(base);
-        
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040);
-        scene.add(ambientLight);
-        
-        // Add directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(1, 1, 5);
-        scene.add(directionalLight);
-        
-        // Set up animation loop
-        function animate() {
-          requestAnimationFrame(animate);
-          
-          // Gentle floating effect
-          tv.rotation.y = Math.sin(Date.now() * 0.0005) * 0.05;
-          tv.position.y = Math.sin(Date.now() * 0.001) * 0.05;
-          screen.rotation.y = tv.rotation.y;
-          screen.position.y = tv.position.y;
-          stand.rotation.y = tv.rotation.y;
-          stand.position.y = -tvHeight / 2 - 0.15 + tv.position.y;
-          base.rotation.y = tv.rotation.y;
-          
-          renderer.render(scene, camera);
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-          camera.aspect = tvContainer.clientWidth / tvContainer.clientHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(tvContainer.clientWidth, tvContainer.clientHeight);
-        });
-        
-        // Start animation
-        animate();
-        
-        // Return objects needed for updating the screen
-        return {
-          canvas: screenCanvas,
-          context: screenContext,
-          texture: screenTexture
-        };
-      }
+      // Setup event listeners
+      document.getElementById('flip-coin-button').addEventListener('click', flipCoin);
+      document.getElementById('check-call-button').addEventListener('click', checkOrCall);
+      document.getElementById('raise-button').addEventListener('click', raise);
+      document.getElementById('fold-button').addEventListener('click', fold);
+      document.getElementById('continue-after-lock').addEventListener('click', () => {
+        document.getElementById('lock-reveal-modal').classList.add('hidden');
+        startGame();
+      });
+      document.getElementById('continue-after-unlock').addEventListener('click', () => {
+        document.getElementById('piece-unlock-modal').classList.add('hidden');
+        continueAfterUnlock();
+      });
+      document.getElementById('new-game-button').addEventListener('click', resetGame);
       
-      // Initialize TV
-      tvRenderer = initTV();
+      // Setup bet slider
+      const betSlider = document.getElementById('bet-slider');
+      betSlider.addEventListener('input', () => {
+        document.getElementById('bet-amount').textContent = betSlider.value;
+      });
       
-      // Mock GBA Emulator for demonstration
-      class GBAEmulator {
-        constructor(romData) {
-          this.romData = romData;
-          this.running = false;
-          this.frameBuffer = new Uint8Array(240 * 160 * 4); // RGBA buffer
-          this.saveState = null;
-          this.currentKeys = new Set();
-          this.frameCount = 0;
-          
-          // For demo, fill with static initially
-          this.fillStatic();
-          
-          // Extract ROM info
-          this.romInfo = {
-            title: this.extractTitle(romData.name || "Unknown Game"),
-            size: romData.byteLength || 0
-          };
+      // Initially hide betting controls
+      toggleBettingControls(false);
+    }
+    
+    // Function to load chess piece images
+    function loadPieceImages() {
+      // For simplicity, we'll use Unicode chess symbols instead of images
+      pieceImages = {
+        'white_pawn': '♙',
+        'white_rook': '♖',
+        'white_knight': '♘',
+        'white_bishop': '♗',
+        'white_queen': '♕',
+        'white_king': '♔',
+        'black_pawn': '♟',
+        'black_rook': '♜',
+        'black_knight': '♞',
+        'black_bishop': '♝',
+        'black_queen': '♛',
+        'black_king': '♚'
+      };
+    }
+    
+    // P5.js draw function
+    function draw() {
+      background(50);
+      
+      if (gameState.isGameStarted) {
+        drawBoard();
+        drawPieces();
+        
+        if (gameState.selectedPiece) {
+          highlightSelectedPiece();
+          highlightPossibleMoves();
         }
         
-        extractTitle(filename) {
-          return filename.replace(/\.gba$/i, "");
-        }
-        
-        fillStatic() {
-          for (let i = 0; i < this.frameBuffer.length; i += 4) {
-            this.frameBuffer[i] = Math.floor(Math.random() * 100);     // R
-            this.frameBuffer[i + 1] = Math.floor(Math.random() * 100); // G
-            this.frameBuffer[i + 2] = Math.floor(Math.random() * 100); // B
-            this.frameBuffer[i + 3] = 255;                             // A
-          }
-        }
-        
-        // Initialize Pokemon FireRed specific screen
-        initPokemonScreen() {
-          // Clear frame buffer
-          for (let i = 0; i < this.frameBuffer.length; i += 4) {
-            this.frameBuffer[i] = 255;     // R
-            this.frameBuffer[i + 1] = 255; // G
-            this.frameBuffer[i + 2] = 255; // B
-            this.frameBuffer[i + 3] = 255; // A
-          }
-          
-          // Mock Pokemon FireRed title screen using basic colors
-          // Top portion - red
-          for (let y = 0; y < 60; y++) {
-            for (let x = 0; x < 240; x++) {
-              const idx = (y * 240 + x) * 4;
-              this.frameBuffer[idx] = 255;   // R
-              this.frameBuffer[idx + 1] = 50; // G
-              this.frameBuffer[idx + 2] = 50; // B
-            }
-          }
-          
-          // Middle portion - white
-          for (let y = 60; y < 100; y++) {
-            for (let x = 0; x < 240; x++) {
-              const idx = (y * 240 + x) * 4;
-              this.frameBuffer[idx] = 255;     // R
-              this.frameBuffer[idx + 1] = 255; // G
-              this.frameBuffer[idx + 2] = 255; // B
-            }
-          }
-          
-          // Bottom portion - darker red
-          for (let y = 100; y < 160; y++) {
-            for (let x = 0; x < 240; x++) {
-              const idx = (y * 240 + x) * 4;
-              this.frameBuffer[idx] = 200;   // R
-              this.frameBuffer[idx + 1] = 30; // G
-              this.frameBuffer[idx + 2] = 30; // B
-            }
-          }
-        }
-        
-        start() {
-          this.running = true;
-          
-          // Check if it's Pokemon FireRed
-          if (this.romInfo.title.toLowerCase().includes("fire") && 
-              this.romInfo.title.toLowerCase().includes("red")) {
-            this.initPokemonScreen();
-          }
-          
-          this.renderLoop();
-        }
-        
-        pause() {
-          this.running = false;
-        }
-        
-        reset() {
-          this.running = false;
-          this.fillStatic();
-        }
-        
-        renderLoop() {
-          if (!this.running) return;
-          
-          // Update frame
-          this.frameCount++;
-          this.updateFrame();
-          
-          // Request next frame
-          requestAnimationFrame(() => this.renderLoop());
-        }
-        
-        updateFrame() {
-          // In a real implementation, this would run a frame of GBA emulation
-          if (this.romInfo.title.toLowerCase().includes("fire") && 
-              this.romInfo.title.toLowerCase().includes("red")) {
-            // Simple animation for Pokemon title screen
-            if (this.frameCount % 60 === 0) {
-              // Periodic flash or update
-              for (let i = 0; i < 1000; i++) {
-                const x = Math.floor(Math.random() * 240);
-                const y = Math.floor(Math.random() * 160);
-                const idx = (y * 240 + x) * 4;
-                
-                // Create sparkling effect
-                this.frameBuffer[idx] = 255;
-                this.frameBuffer[idx + 1] = 255;
-                this.frameBuffer[idx + 2] = 220;
-              }
-            }
-          } else {
-            // Generic screen updates
-            for (let i = 0; i < 1000; i++) {
-              const idx = Math.floor(Math.random() * (this.frameBuffer.length / 4)) * 4;
-              this.frameBuffer[idx] = Math.floor(Math.random() * 255);
-              this.frameBuffer[idx + 1] = Math.floor(Math.random() * 255);
-              this.frameBuffer[idx + 2] = Math.floor(Math.random() * 255);
-            }
-          }
-          
-          // Update TV screen
-          const imgData = new ImageData(
-            new Uint8ClampedArray(this.frameBuffer),
-            240,
-            160
-          );
-          tvRenderer.context.putImageData(imgData, 0, 0);
-          tvRenderer.texture.needsUpdate = true;
-        }
-        
-        saveCurrentState() {
-          this.saveState = "Mock save state";
-          return true;
-        }
-        
-        loadSavedState() {
-          if (!this.saveState) return false;
-          return true;
-        }
-        
-        setKeys(keys) {
-          this.currentKeys = keys;
-        }
-        
-        getFrame() {
-          return this.frameBuffer;
+        if (gameState.lastMove) {
+          highlightLastMove();
         }
       }
+    }
+    
+    // Draw the chess board
+    function drawBoard() {
+      const cellSize = width / BOARD_SIZE;
       
-      // AI Agent for Pokemon FireRed
-      class PokemonAI {
-        constructor(emulator) {
-          this.emulator = emulator;
-          this.isActive = false;
-          this.isTrained = false;
-          this.frameCounter = 0;
-          this.gameState = "title"; // title, overworld, battle, menu
-          this.battleCounter = 0;
-          this.moveCounter = 0;
-          this.pathCount = 0;
-          
-          // Define action sequences for different game states
-          this.actionSequences = {
-            title: [
-              { keys: new Set(['start']), frames: 30, log: "Pressing START at title screen" }
-            ],
-            intro: [
-              { keys: new Set(['a']), frames: 20, log: "Advancing intro dialog" },
-              { keys: new Set([]), frames: 10 },
-              { keys: new Set(['a']), frames: 20 },
-              { keys: new Set([]), frames: 10 },
-              { keys: new Set(['a']), frames: 20, log: "Continuing intro sequence" }
-            ],
-            overworld: [
-              { keys: new Set(['right']), frames: 40 },
-              { keys: new Set(['up']), frames: 40, log: "Exploring the map" },
-              { keys: new Set(['right']), frames: 30 },
-              { keys: new Set(['down']), frames: 25 },
-              { keys: new Set(['left']), frames: 20 },
-              { keys: new Set(['a']), frames: 15, log: "Checking for items/NPCs" }
-            ],
-            battle: [
-              { keys: new Set(['a']), frames: 15, log: "Selecting FIGHT" },
-              { keys: new Set([]), frames: 10 },
-              { keys: new Set(['a']), frames: 15, log: "Using most effective move" },
-              { keys: new Set([]), frames: 60 },
-              { keys: new Set(['a']), frames: 15, log: "Continuing battle dialog" },
-              { keys: new Set([]), frames: 30 }
-            ],
-            pokecenter: [
-              { keys: new Set(['a']), frames: 20, log: "Talking to Nurse Joy" },
-              { keys: new Set([]), frames: 40 },
-              { keys: new Set(['a']), frames: 20, log: "Healing Pokemon" },
-              { keys: new Set([]), frames: 60 },
-              { keys: new Set(['a']), frames: 20 },
-              { keys: new Set(['b']), frames: 20, log: "Exiting Pokecenter" }
-            ]
-          };
-          
-          // Current position in sequence
-          this.sequenceIndex = 0;
-          this.currentMode = "title";
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          const isLight = (row + col) % 2 === 0;
+          fill(isLight ? color(240, 217, 181) : color(181, 136, 99));
+          rect(col * cellSize, row * cellSize, cellSize, cellSize);
         }
-        
-        async train() {
-          aiStatus.textContent = "Training";
-          aiStatus.className = "status-badge status-training";
-          
-          this.addLog("Initializing Pokemon FireRed AI training...");
-          
-          // Simulate AI training
-          await this.trainStage("Analyzing game patterns", 20);
-          await this.trainStage("Learning battle strategies", 30);
-          await this.trainStage("Optimizing route navigation", 25);
-          await this.trainStage("Building Pokemon type effectiveness matrix", 25);
-          
-          this.isTrained = true;
-          aiStatus.textContent = "Trained";
-          aiStatus.className = "status-badge status-inactive";
-          
-          this.addLog("AI training complete! Ready to play Pokemon FireRed");
-          return true;
-        }
-        
-        async trainStage(stageName, percent) {
-          this.addLog(`${stageName}...`);
-          
-          // Simulate processing time
-          await new Promise(resolve => setTimeout(resolve, 800));
-          
-          this.addLog(`${stageName}: Complete`);
-          return true;
-        }
-        
-        start() {
-          this.isActive = true;
-          this.frameCounter = 0;
-          this.sequenceIndex = 0;
-          this.currentMode = this.detectGameState();
-          
-          aiStatus.textContent = "Active";
-          aiStatus.className = "status-badge status-active";
-          
-          this.addLog("AI agent activated for Pokemon FireRed");
-          this.addLog(`Current game state: ${this.currentMode}`);
-        }
-        
-        stop() {
-          this.isActive = false;
-          aiStatus.textContent = this.isTrained ? "Trained" : "Inactive";
-          aiStatus.className = "status-badge status-inactive";
-          this.addLog("AI agent deactivated");
-        }
-        
-        detectGameState() {
-          // In a real implementation, this would analyze the screen
-          // For the demo, we'll cycle through states
-          this.stateCounter = (this.stateCounter || 0) + 1;
-          
-          if (this.stateCounter < 3) return "title";
-          if (this.stateCounter < 6) return "intro";
-          
-          // After intro, alternate between overworld and battles
-          if (this.stateCounter % 8 < 5) return "overworld";
-          if (this.stateCounter % 20 === 0) return "pokecenter";
-          return "battle";
-        }
-        
-        getNextAction() {
-          if (!this.isActive) return new Set();
-          
-          // Every 180 frames (3 seconds), reassess game state
-          if (this.frameCounter % 180 === 0) {
-            const newState = this.detectGameState();
-            if (newState !== this.currentMode) {
-              this.currentMode = newState;
-              this.sequenceIndex = 0;
-              this.addLog(`Game state changed to: ${this.currentMode}`);
-            }
-          }
-          
-          // Get current sequence for the mode
-          const sequence = this.actionSequences[this.currentMode];
-          if (!sequence) return new Set();
-          
-          const action = sequence[this.sequenceIndex];
-          
-          // Increment frame counter
-          this.frameCounter++;
-          
-          // Check if we need to move to next action
-          if (this.frameCounter % action.frames === 0) {
-            // Log message if there is one
-            if (action.log && this.sequenceIndex === 0) {
-              this.addLog(action.log);
+      }
+    }
+    
+    // Draw chess pieces on the board
+    function drawPieces() {
+      const cellSize = width / BOARD_SIZE;
+      
+      // Draw all pieces
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          const piece = gameState.board[row][col];
+          if (piece) {
+            const isLocked = (piece.isWhite === gameState.isWhite && gameState.playerLockedPieces.includes(piece)) || 
+                           (piece.isWhite !== gameState.isWhite && gameState.aiLockedPieces.includes(piece));
+            
+            const x = col * cellSize + cellSize / 2;
+            const y = row * cellSize + cellSize / 2;
+            
+            textAlign(CENTER, CENTER);
+            textSize(cellSize * 0.7);
+            
+            if (isLocked) {
+              // Draw locked piece with a red background
+              fill(190, 40, 40, 100);
+              ellipse(x, y, cellSize * 0.8);
             }
             
-            // Move to next action in sequence
-            this.sequenceIndex = (this.sequenceIndex + 1) % sequence.length;
-            
-            // If we're starting a new loop of the sequence and in overworld,
-            // occasionally change states to simulate finding a battle
-            if (this.sequenceIndex === 0 && this.currentMode === "overworld") {
-              this.pathCount++;
-              
-              // Every so often, find a battle
-              if (this.pathCount % 3 === 0) {
-                this.addLog("Wild Pokemon appeared!");
-                this.currentMode = "battle";
-              }
-              
-              // Occasionally visit PokeCenter
-              if (this.pathCount % 7 === 0) {
-                this.addLog("Heading to Pokemon Center to heal");
-                this.currentMode = "pokecenter";
-              }
-            }
-          }
-          
-          return action.keys;
-        }
-        
-        addLog(message) {
-          const entry = document.createElement('p');
-          entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-          aiLog.appendChild(entry);
-          aiLog.scrollTop = aiLog.scrollHeight;
-        }
-      }
-      
-      // Helper to add log entry
-      function addLog(message) {
-        const entry = document.createElement('p');
-        entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        aiLog.appendChild(entry);
-        aiLog.scrollTop = aiLog.scrollHeight;
-      }
-      
-      // Set up drag and drop for ROM uploads
-      uploadArea.addEventListener('click', () => {
-        romInput.click();
-      });
-      
-      romInput.addEventListener('change', handleFileSelect);
-      
-      uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.style.borderColor = 'var(--accent)';
-      });
-      
-      uploadArea.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.style.borderColor = '#444';
-      });
-      
-      uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        uploadArea.style.borderColor = '#444';
-        
-        if (e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0];
-          if (file.name.endsWith('.gba')) {
-            romInput.files = e.dataTransfer.files;
-            handleFileSelect(e);
-          } else {
-            alert('Please upload a valid GBA ROM file (.gba)');
+            fill(piece.isWhite ? 255 : 0);
+            text(getPieceSymbol(piece), x, y);
           }
         }
-      });
+      }
+    }
+    
+    // Get Unicode chess symbol for a piece
+    function getPieceSymbol(piece) {
+      const color = piece.isWhite ? 'white' : 'black';
+      return pieceImages[`${color}_${piece.type}`];
+    }
+    
+    // Highlight the selected piece
+    function highlightSelectedPiece() {
+      if (!gameState.selectedPiece) return;
       
-      // Handle file selection
-      function handleFileSelect(event) {
-        const file = event.target.files[0] || event.dataTransfer.files[0];
+      const cellSize = width / BOARD_SIZE;
+      const col = gameState.selectedPiece.col;
+      const row = gameState.selectedPiece.row;
+      
+      fill(100, 100, 255, 100);
+      rect(col * cellSize, row * cellSize, cellSize, cellSize);
+    }
+    
+    // Highlight possible moves for the selected piece
+    function highlightPossibleMoves() {
+      const cellSize = width / BOARD_SIZE;
+      
+      fill(100, 255, 100, 100);
+      for (const move of gameState.possibleMoves) {
+        ellipse(
+          move.col * cellSize + cellSize / 2,
+          move.row * cellSize + cellSize / 2,
+          cellSize / 2
+        );
+      }
+    }
+    
+    // Highlight the last move made
+    function highlightLastMove() {
+      if (!gameState.lastMove) return;
+      
+      const cellSize = width / BOARD_SIZE;
+      const { fromRow, fromCol, toRow, toCol } = gameState.lastMove;
+      
+      // Highlight source square
+      fill(255, 255, 0, 80);
+      rect(fromCol * cellSize, fromRow * cellSize, cellSize, cellSize);
+      
+      // Highlight destination square
+      fill(255, 255, 0, 80);
+      rect(toCol * cellSize, toRow * cellSize, cellSize, cellSize);
+    }
+    
+    // Handle mouse press events for piece selection and movement
+    function mousePressed() {
+      if (!gameState.isGameStarted || gameState.isBettingRound || !gameState.isPlayerTurn || gameState.gameOver) return;
+      
+      const cellSize = width / BOARD_SIZE;
+      const col = floor(mouseX / cellSize);
+      const row = floor(mouseY / cellSize);
+      
+      // Check if clicked within board bounds
+      if (col < 0 || col >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) return;
+      
+      // If a possible move location is clicked
+      if (gameState.selectedPiece && gameState.possibleMoves.some(move => move.row === row && move.col === col)) {
+        movePiece(gameState.selectedPiece, row, col);
+        gameState.selectedPiece = null;
+        gameState.possibleMoves = [];
         
-        if (!file) return;
-        if (!file.name.endsWith('.gba')) {
-          alert('Please upload a valid GBA ROM file (.gba)');
+        // Check if game over after player's move
+        if (isCheckmate(!gameState.isWhite)) {
+          endGame(gameState.isWhite ? 'player' : 'ai', 'checkmate');
           return;
         }
         
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          romData = e.target.result;
-          romData.name = file.name;
-          
-          // Update UI
-          romName.textContent = file.name;
-          romName.style.display = 'block';
-          uploadArea.querySelector('p').style.display = 'none';
-          
-          // Enable buttons
-          startBtn.disabled = false;
-          resetBtn.disabled = false;
-          
-          addLog(`ROM loaded: ${file.name}`);
-        };
-        
-        reader.readAsArrayBuffer(file);
+        // AI's turn
+        gameState.isPlayerTurn = false;
+        setTimeout(makeAIMove, 500);
+        return;
       }
       
-      // Set up game loop
-      function startGameLoop() {
-        if (gameLoop) return; // Already running
-        
-        gameLoop = setInterval(() => {
-          // If AI is playing, get its actions
-          if (isAIPlaying && aiAgent) {
-            currentKeys = aiAgent.getNextAction();
-            updateButtonUI(currentKeys);
-          }
-          
-          // Send keys to emulator
-          if (emulator) {
-            emulator.setKeys(currentKeys);
-          }
-        }, 16); // ~60fps
-      }
-      
-      function stopGameLoop() {
-        if (gameLoop) {
-          clearInterval(gameLoop);
-          gameLoop = null;
-        }
-      }
-      
-      // Update button UI to show pressed state
-      function updateButtonUI(keys) {
-        // Reset all buttons
-        document.querySelectorAll('.btn[data-key]').forEach(btn => {
-          btn.style.backgroundColor = '';
-        });
-        
-        // Highlight pressed buttons
-        keys.forEach(key => {
-          const btn = document.querySelector(`.btn[data-key="${key}"]`);
-          if (btn) {
-            btn.style.backgroundColor = 'var(--accent)';
-          }
-        });
-      }
-      
-      // Button event handlers
-      startBtn.addEventListener('click', () => {
-        if (!romData) {
-          alert('Please upload a ROM file first');
+      // If a piece is clicked
+      const piece = gameState.board[row][col];
+      if (piece && piece.isWhite === gameState.isWhite) {
+        // Check if piece is locked
+        if (gameState.playerLockedPieces.includes(piece)) {
+          updateStatus("That piece is locked and cannot move yet.");
           return;
         }
         
-        if (!emulator) {
-          emulator = new GBAEmulator(romData);
-          
-          // Initialize AI agent based on the game
-          if (romData.name.toLowerCase().includes('pokemon') || 
-              romData.name.toLowerCase().includes('fire') ||
-              romData.name.toLowerCase().includes('red')) {
-            aiAgent = new PokemonAI(emulator);
-            addLog("Pokemon game detected! Using specialized Pokemon AI agent");
-          } else {
-            aiAgent = new PokemonAI(emulator); // Use Pokemon AI for demo
-            addLog("Using generic AI agent");
-          }
-          
-          // Enable AI buttons
-          aiPlayBtn.disabled = false;
-          aiTrainBtn.disabled = false;
+        gameState.selectedPiece = piece;
+        gameState.possibleMoves = getValidMoves(piece);
+        
+        // If no valid moves, clear selection
+        if (gameState.possibleMoves.length === 0) {
+          updateStatus("No valid moves for this piece.");
+          gameState.selectedPiece = null;
         }
+      } else {
+        // Clear selection if clicking elsewhere
+        gameState.selectedPiece = null;
+        gameState.possibleMoves = [];
+      }
+    }
+    
+    // Create an empty chess board
+    function createEmptyBoard() {
+      const board = [];
+      for (let i = 0; i < BOARD_SIZE; i++) {
+        board.push(new Array(BOARD_SIZE).fill(null));
+      }
+      return board;
+    }
+    
+    // Flip a coin to determine player color
+    function flipCoin() {
+      const isHeads = Math.random() < 0.5;
+      gameState.isWhite = isHeads;
+      
+      document.getElementById('player-color').textContent = gameState.isWhite ? 'White' : 'Black';
+      document.getElementById('ai-color').textContent = gameState.isWhite ? 'Black' : 'White';
+      
+      // Setup the initial board configuration
+      setupBoard();
+      
+      // Show locked pieces to the player
+      revealInitialLockedPieces();
+    }
+    
+    // Set up the chess board with shuffled pieces
+    function setupBoard() {
+      // Clear the board
+      gameState.board = createEmptyBoard();
+      gameState.playerPieces = [];
+      gameState.aiPieces = [];
+      gameState.playerLockedPieces = [];
+      gameState.aiLockedPieces = [];
+      
+      // Create back rank pieces in shuffled order for both players
+      const backRankTypes = [
+        PIECE_TYPES.ROOK,
+        PIECE_TYPES.KNIGHT,
+        PIECE_TYPES.BISHOP,
+        PIECE_TYPES.QUEEN,
+        PIECE_TYPES.KING,
+        PIECE_TYPES.BISHOP,
+        PIECE_TYPES.KNIGHT,
+        PIECE_TYPES.ROOK
+      ];
+      
+      // Shuffle the back rank pieces, keeping King in the array
+      const playerBackRank = [...backRankTypes];
+      const kingIndex = playerBackRank.indexOf(PIECE_TYPES.KING);
+      const pieceToShuffle = playerBackRank.filter((_, i) => i !== kingIndex);
+      const shuffledPieces = _.shuffle(pieceToShuffle);
+      
+      // Reinsert the King
+      shuffledPieces.splice(kingIndex, 0, PIECE_TYPES.KING);
+      
+      // Create another shuffled arrangement for AI
+      const aiBackRank = [...backRankTypes];
+      const aiKingIndex = aiBackRank.indexOf(PIECE_TYPES.KING);
+      const aiPiecesToShuffle = aiBackRank.filter((_, i) => i !== aiKingIndex);
+      const aiShuffledPieces = _.shuffle(aiPiecesToShuffle);
+      
+      // Reinsert the King
+      aiShuffledPieces.splice(aiKingIndex, 0, PIECE_TYPES.KING);
+      
+      // Place pieces on the board
+      const playerRow = gameState.isWhite ? BOARD_SIZE - 1 : 0;
+      const aiRow = gameState.isWhite ? 0 : BOARD_SIZE - 1;
+      const playerPawnRow = gameState.isWhite ? BOARD_SIZE - 2 : 1;
+      const aiPawnRow = gameState.isWhite ? 1 : BOARD_SIZE - 2;
+      
+      // Place back rank pieces
+      for (let col = 0; col < BOARD_SIZE; col++) {
+        // Player back rank
+        const playerPiece = {
+          type: shuffledPieces[col],
+          isWhite: gameState.isWhite,
+          row: playerRow,
+          col: col,
+          hasMoved: false
+        };
+        gameState.board[playerRow][col] = playerPiece;
+        gameState.playerPieces.push(playerPiece);
         
-        // Start game
-        emulator.start();
-        isGameRunning = true;
+        // AI back rank
+        const aiPiece = {
+          type: aiShuffledPieces[col],
+          isWhite: !gameState.isWhite,
+          row: aiRow,
+          col: col,
+          hasMoved: false
+        };
+        gameState.board[aiRow][col] = aiPiece;
+        gameState.aiPieces.push(aiPiece);
         
-        // Update buttons
-        startBtn.disabled = true;
-        pauseBtn.disabled = false;
-        saveBtn.disabled = false;
-        loadBtn.disabled = false;
+        // Player pawns
+        const playerPawn = {
+          type: PIECE_TYPES.PAWN,
+          isWhite: gameState.isWhite,
+          row: playerPawnRow,
+          col: col,
+          hasMoved: false
+        };
+        gameState.board[playerPawnRow][col] = playerPawn;
+        gameState.playerPieces.push(playerPawn);
         
-        // Start game loop
-        startGameLoop();
-        
-        addLog("Game started");
+        // AI pawns
+        const aiPawn = {
+          type: PIECE_TYPES.PAWN,
+          isWhite: !gameState.isWhite,
+          row: aiPawnRow,
+          col: col,
+          hasMoved: false
+        };
+        gameState.board[aiPawnRow][col] = aiPawn;
+        gameState.aiPieces.push(aiPawn);
+      }
+      
+      // Randomly select pieces to lock (excluding the King)
+      const playerNonKingPieces = gameState.playerPieces.filter(p => p.type !== PIECE_TYPES.KING);
+      const aiNonKingPieces = gameState.aiPieces.filter(p => p.type !== PIECE_TYPES.KING);
+      
+      // Shuffle the pieces to randomly select which to lock
+      const shuffledPlayerPieces = _.shuffle(playerNonKingPieces);
+      const shuffledAIPieces = _.shuffle(aiNonKingPieces);
+      
+      // Lock the specified number of pieces
+      gameState.playerLockedPieces = shuffledPlayerPieces.slice(0, PIECES_TO_LOCK);
+      gameState.aiLockedPieces = shuffledAIPieces.slice(0, PIECES_TO_LOCK);
+      
+      // Known locked pieces (that player knows about before first betting round)
+      gameState.playerKnownLockedPieces = gameState.playerLockedPieces.slice(0, KNOWN_LOCKED_PIECES);
+      gameState.aiKnownLockedPieces = gameState.aiLockedPieces.slice(0, KNOWN_LOCKED_PIECES);
+    }
+    
+    // Reveal initial locked pieces to players
+    function revealInitialLockedPieces() {
+      const lockedContent = document.getElementById('lock-reveal-content');
+      lockedContent.innerHTML = '';
+      
+      const playerKnownPiecesElement = document.createElement('div');
+      playerKnownPiecesElement.innerHTML = '<p>Your initially locked pieces:</p>';
+      
+      const piecesList = document.createElement('ul');
+      gameState.playerKnownLockedPieces.forEach(piece => {
+        const pieceItem = document.createElement('li');
+        pieceItem.textContent = `${piece.type.charAt(0).toUpperCase() + piece.type.slice(1)} at ${getChessNotation(piece.row, piece.col)}`;
+        piecesList.appendChild(pieceItem);
       });
       
-      pauseBtn.addEventListener('click', () => {
-        if (!emulator || !isGameRunning) return;
-        
-        emulator.pause();
-        isGameRunning = false;
-        
-        // Update buttons
-        startBtn.disabled = false;
-        pauseBtn.disabled = true;
-        
-        // Stop game loop
-        stopGameLoop();
-        
-        addLog("Game paused");
-      });
+      playerKnownPiecesElement.appendChild(piecesList);
+      lockedContent.appendChild(playerKnownPiecesElement);
       
-      resetBtn.addEventListener('click', () => {
-        if (!emulator) return;
-        
-        // Stop AI if running
-        if (isAIPlaying && aiAgent) {
-          aiAgent.stop();
-          isAIPlaying = false;
-          aiPlayBtn.disabled = false;
-          aiStopBtn.disabled = true;
-        }
-        
-        emulator.reset();
-        isGameRunning = false;
-        
-        // Update buttons
-        startBtn.disabled = false;
-        pauseBtn.disabled = true;
-        
-        // Stop game loop
-        stopGameLoop();
-        
-        // Clear pressed keys
-        currentKeys.clear();
-        updateButtonUI(currentKeys);
-        
-        addLog("Game reset");
-      });
+      const additionalInfo = document.createElement('p');
+      additionalInfo.textContent = `After the first betting round, ${PIECES_TO_LOCK - KNOWN_LOCKED_PIECES} more of your pieces will be locked.`;
+      lockedContent.appendChild(additionalInfo);
       
-      saveBtn.addEventListener('click', () => {
-        if (!emulator) return;
-        
-        if (emulator.saveCurrentState()) {
-          loadBtn.disabled = false;
-          addLog("Game state saved");
-        }
-      });
+      document.getElementById('lock-reveal-modal').classList.remove('hidden');
       
-      loadBtn.addEventListener('click', () => {
-        if (!emulator) return;
-        
-        if (emulator.loadSavedState()) {
-          addLog("Game state loaded");
-          
-          if (!isGameRunning) {
-            startBtn.disabled = false;
-          }
-        }
-      });
+      // Update locked pieces indicators
+      updateLockedPiecesIndicators();
+    }
+    
+    // Start the game after initial setup
+    function startGame() {
+      gameState.isGameStarted = true;
+      gameState.isBettingRound = true;
       
-      aiPlayBtn.addEventListener('click', () => {
-        if (!emulator || !aiAgent) return;
-        
-        // Start AI
-        aiAgent.start();
-        isAIPlaying = true;
-        
-        // Update button states
-        aiPlayBtn.disabled = true;
-        aiStopBtn.disabled = false;
-        
-        // If game is not running, start it
-        if (!isGameRunning) {
-          emulator.start();
-          isGameRunning = true;
-          startBtn.disabled = true;
-          pauseBtn.disabled = false;
-          startGameLoop();
-        }
-      });
+      // Hide the start modal
+      document.getElementById('start-modal').classList.add('hidden');
       
-      aiStopBtn.addEventListener('click', () => {
-        if (!aiAgent) return;
-        
-        // Stop AI
-        aiAgent.stop();
-        isAIPlaying = false;
-        
-        // Update button states
-        aiPlayBtn.disabled = false;
-        aiStopBtn.disabled = true;
-        
-        // Clear all active buttons
-        currentKeys.clear();
-        updateButtonUI(currentKeys);
-      });
+      // Update status
+      if (gameState.isWhite) {
+        updateStatus("First betting round. Black (AI) bets first.");
+        // AI makes the first bet
+        setTimeout(makeAIBet, 1000);
+      } else {
+        updateStatus("First betting round. You bet first.");
+        toggleBettingControls(true);
+      }
+    }
+    
+    // Function to get valid moves for a piece
+    function getValidMoves(piece) {
+      if (!piece) return [];
       
-      aiTrainBtn.addEventListener('click', async () => {
-        if (!aiAgent) return;
-        
-        // Disable buttons during training
-        aiTrainBtn.disabled = true;
-        aiPlayBtn.disabled = true;
-        
-        // Show loading indicator
-        const loadingIndicator = document.createElement('span');
-        loadingIndicator.className = 'loading';
-        aiTrainBtn.appendChild(loadingIndicator);
-        
-        // Train the AI
-        await aiAgent.train();
-        
-        // Remove loading indicator
-        aiTrainBtn.removeChild(loadingIndicator);
-        
-        // Update buttons
-        aiTrainBtn.disabled = false;
-        aiPlayBtn.disabled = false;
-      });
+      const validMoves = [];
+      const { row, col, type, isWhite } = piece;
       
-      // Close tutorial modal
-      closeTutorial.addEventListener('click', () => {
-        tutorialModal.style.opacity = '0';
-        setTimeout(() => {
-          tutorialModal.style.display = 'none';
-        }, 300);
-      });
-      
-      startTutorial.addEventListener('click', () => {
-        tutorialModal.style.opacity = '0';
-        setTimeout(() => {
-          tutorialModal.style.display = 'none';
-        }, 300);
-      });
-      
-      // Keyboard controls
-      const keyMap = {
-        'w': 'up',
-        'a': 'left',
-        's': 'down',
-        'd': 'right',
-        'z': 'b',
-        'x': 'a',
-        'q': 'l',
-        'e': 'r',
-        ' ': 'select',
-        'Enter': 'start'
+      // Helper function to check if a move is valid
+      const isValidMove = (r, c) => {
+        // Check if the position is within the board
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
+        
+        // Check if the position is occupied by a friendly piece
+        const targetPiece = gameState.board[r][c];
+        if (targetPiece && targetPiece.isWhite === isWhite) return false;
+        
+        // Simulate the move to check if it would result in check
+        const originalPiece = gameState.board[r][c];
+        gameState.board[r][c] = piece;
+        gameState.board[row][col] = null;
+        
+        const wouldBeInCheck = isInCheck(isWhite);
+        
+        // Restore the board
+        gameState.board[row][col] = piece;
+        gameState.board[r][c] = originalPiece;
+        
+        return !wouldBeInCheck;
       };
       
-      document.addEventListener('keydown', (e) => {
-        if (!isGameRunning || isAIPlaying) return;
-        
-        const key = keyMap[e.key];
-        if (key) {
-          currentKeys.add(key);
-          updateButtonUI(currentKeys);
-          e.preventDefault();
+      // Helper function to add a move if valid
+      const addMoveIfValid = (r, c) => {
+        if (isValidMove(r, c)) {
+          validMoves.push({ row: r, col: c });
         }
+      };
+      
+      // Get moves based on piece type
+      switch (type) {
+        case PIECE_TYPES.PAWN:
+          const direction = isWhite ? -1 : 1;
+          const startingRow = isWhite ? 6 : 1;
+          
+          // Forward movement
+          if (!gameState.board[row + direction][col]) {
+            addMoveIfValid(row + direction, col);
+            
+            // Double move from starting position
+            if (row === startingRow && !gameState.board[row + 2 * direction][col]) {
+              addMoveIfValid(row + 2 * direction, col);
+            }
+          }
+          
+          // Diagonal captures
+          if (col > 0) {
+            const leftDiagonal = gameState.board[row + direction][col - 1];
+            if (leftDiagonal && leftDiagonal.isWhite !== isWhite) {
+              addMoveIfValid(row + direction, col - 1);
+            }
+          }
+          if (col < BOARD_SIZE - 1) {
+            const rightDiagonal = gameState.board[row + direction][col + 1];
+            if (rightDiagonal && rightDiagonal.isWhite !== isWhite) {
+              addMoveIfValid(row + direction, col + 1);
+            }
+          }
+          break;
+          
+        case PIECE_TYPES.ROOK:
+          // Horizontal and vertical moves
+          for (let r = row - 1; r >= 0; r--) {
+            if (!addRookMove(r, col)) break;
+          }
+          for (let r = row + 1; r < BOARD_SIZE; r++) {
+            if (!addRookMove(r, col)) break;
+          }
+          for (let c = col - 1; c >= 0; c--) {
+            if (!addRookMove(row, c)) break;
+          }
+          for (let c = col + 1; c < BOARD_SIZE; c++) {
+            if (!addRookMove(row, c)) break;
+          }
+          break;
+          
+        case PIECE_TYPES.KNIGHT:
+          // L-shaped moves
+          const knightMoves = [
+            {r: row - 2, c: col - 1}, {r: row - 2, c: col + 1},
+            {r: row - 1, c: col - 2}, {r: row - 1, c: col + 2},
+            {r: row + 1, c: col - 2}, {r: row + 1, c: col + 2},
+            {r: row + 2, c: col - 1}, {r: row + 2, c: col + 1}
+          ];
+          
+          knightMoves.forEach(move => {
+            addMoveIfValid(move.r, move.c);
+          });
+          break;
+          
+        case PIECE_TYPES.BISHOP:
+          // Diagonal moves
+          for (let i = 1; row - i >= 0 && col - i >= 0; i++) {
+            if (!addBishopMove(row - i, col - i)) break;
+          }
+          for (let i = 1; row - i >= 0 && col + i < BOARD_SIZE; i++) {
+            if (!addBishopMove(row - i, col + i)) break;
+          }
+          for (let i = 1; row + i < BOARD_SIZE && col - i >= 0; i++) {
+            if (!addBishopMove(row + i, col - i)) break;
+          }
+          for (let i = 1; row + i < BOARD_SIZE && col + i < BOARD_SIZE; i++) {
+            if (!addBishopMove(row + i, col + i)) break;
+          }
+          break;
+          
+        case PIECE_TYPES.QUEEN:
+          // Combination of rook and bishop moves
+          // Horizontal and vertical (rook-like)
+          for (let r = row - 1; r >= 0; r--) {
+            if (!addRookMove(r, col)) break;
+          }
+          for (let r = row + 1; r < BOARD_SIZE; r++) {
+            if (!addRookMove(r, col)) break;
+          }
+          for (let c = col - 1; c >= 0; c--) {
+            if (!addRookMove(row, c)) break;
+          }
+          for (let c = col + 1; c < BOARD_SIZE; c++) {
+            if (!addRookMove(row, c)) break;
+          }
+          
+          // Diagonal (bishop-like)
+          for (let i = 1; row - i >= 0 && col - i >= 0; i++) {
+            if (!addBishopMove(row - i, col - i)) break;
+          }
+          for (let i = 1; row - i >= 0 && col + i < BOARD_SIZE; i++) {
+            if (!addBishopMove(row - i, col + i)) break;
+          }
+          for (let i = 1; row + i < BOARD_SIZE && col - i >= 0; i++) {
+            if (!addBishopMove(row + i, col - i)) break;
+          }
+          for (let i = 1; row + i < BOARD_SIZE && col + i < BOARD_SIZE; i++) {
+            if (!addBishopMove(row + i, col + i)) break;
+          }
+          break;
+          
+        case PIECE_TYPES.KING:
+          // King can move one square in any direction
+          for (let r = row - 1; r <= row + 1; r++) {
+            for (let c = col - 1; c <= col + 1; c++) {
+              if (r === row && c === col) continue; // Skip current position
+              addMoveIfValid(r, c);
+            }
+          }
+          
+          // Castling
+          if (!piece.hasMoved && !isInCheck(isWhite)) {
+            // Kingside castling
+            const kingsideRook = findRook(row, col + 3, isWhite);
+            if (kingsideRook && !kingsideRook.hasMoved && 
+                !gameState.playerLockedPieces.includes(kingsideRook) && 
+                !gameState.aiLockedPieces.includes(kingsideRook)) {
+              const path = [];
+              for (let c = col + 1; c < col + 3; c++) {
+                path.push(gameState.board[row][c]);
+              }
+              
+              if (path.every(p => !p) && // Path must be clear
+                  path.every((_, i) => !isSquareAttacked(row, col + 1 + i, isWhite))) {
+                addMoveIfValid(row, col + 2);
+              }
+            }
+            
+            // Queenside castling
+            const queensideRook = findRook(row, col - 4, isWhite);
+            if (queensideRook && !queensideRook.hasMoved && 
+                !gameState.playerLockedPieces.includes(queensideRook) && 
+                !gameState.aiLockedPieces.includes(queensideRook)) {
+              const path = [];
+              for (let c = col - 1; c > col - 4; c--) {
+                path.push(gameState.board[row][c]);
+              }
+              
+              if (path.every(p => !p) && // Path must be clear
+                  path.every((_, i) => !isSquareAttacked(row, col - 1 - i, isWhite))) {
+                addMoveIfValid(row, col - 2);
+              }
+            }
+          }
+          break;
+      }
+      
+      // Helper functions for bishop and rook moves
+      function addRookMove(r, c) {
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
+        
+        const targetPiece = gameState.board[r][c];
+        
+        if (!targetPiece) {
+          // Empty square, can move here
+          addMoveIfValid(r, c);
+          return true;
+        } else if (targetPiece.isWhite !== isWhite) {
+          // Enemy piece, can capture but can't go further
+          addMoveIfValid(r, c);
+          return false;
+        } else {
+          // Friendly piece, can't move here or further
+          return false;
+        }
+      }
+      
+      function addBishopMove(r, c) {
+        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
+        
+        const targetPiece = gameState.board[r][c];
+        
+        if (!targetPiece) {
+          // Empty square, can move here
+          addMoveIfValid(r, c);
+          return true;
+        } else if (targetPiece.isWhite !== isWhite) {
+          // Enemy piece, can capture but can't go further
+          addMoveIfValid(r, c);
+          return false;
+        } else {
+          // Friendly piece, can't move here or further
+          return false;
+        }
+      }
+      
+      // Helper function to find rook for castling
+      function findRook(row, col, isWhite) {
+        if (col < 0 || col >= BOARD_SIZE) return null;
+        
+        const piece = gameState.board[row][col];
+        if (piece && piece.type === PIECE_TYPES.ROOK && piece.isWhite === isWhite) {
+          return piece;
+        }
+        return null;
+      }
+      
+      return validMoves;
+    }
+    
+    // Move a piece on the board
+    function movePiece(piece, newRow, newCol) {
+      // Store the move for highlighting
+      gameState.lastMove = {
+        fromRow: piece.row,
+        fromCol: piece.col,
+        toRow: newRow,
+        toCol: newCol
+      };
+      
+      // Check for castling
+      let isCastling = false;
+      if (piece.type === PIECE_TYPES.KING && Math.abs(piece.col - newCol) === 2) {
+        isCastling = true;
+        // Move the rook as well
+        const isKingside = newCol > piece.col;
+        const rookCol = isKingside ? 7 : 0;
+        const newRookCol = isKingside ? newCol - 1 : newCol + 1;
+        
+        const rook = gameState.board[piece.row][rookCol];
+        gameState.board[piece.row][rookCol] = null;
+        gameState.board[piece.row][newRookCol] = rook;
+        
+        // Update rook position
+        rook.col = newRookCol;
+        rook.hasMoved = true;
+      }
+      
+      // Check for capture
+      const capturedPiece = gameState.board[newRow][newCol];
+      if (capturedPiece) {
+        // Remove the captured piece from the appropriate array
+        if (capturedPiece.isWhite === gameState.isWhite) {
+          gameState.playerPieces = gameState.playerPieces.filter(p => p !== capturedPiece);
+          gameState.playerLockedPieces = gameState.playerLockedPieces.filter(p => p !== capturedPiece);
+        } else {
+          gameState.aiPieces = gameState.aiPieces.filter(p => p !== capturedPiece);
+          gameState.aiLockedPieces = gameState.aiLockedPieces.filter(p => p !== capturedPiece);
+        }
+      }
+      
+      // Update board state
+      gameState.board[piece.row][piece.col] = null;
+      gameState.board[newRow][newCol] = piece;
+      
+      // Update piece position
+      piece.row = newRow;
+      piece.col = newCol;
+      piece.hasMoved = true;
+      
+      // Check for pawn promotion
+      if (piece.type === PIECE_TYPES.PAWN && (newRow === 0 || newRow === BOARD_SIZE - 1)) {
+        // Automatically promote to queen
+        piece.type = PIECE_TYPES.QUEEN;
+      }
+      
+      // Increment move count and check for unlock
+      gameState.moveCount++;
+      
+      // Check if we need to unlock pieces
+      const needUnlock = gameState.moveCount > 0 && gameState.moveCount % MOVES_BEFORE_UNLOCK === 0;
+      
+      // Check for check
+      gameState.inCheck = isInCheck(!piece.isWhite);
+      
+      // Update status
+      let statusText = "";
+      if (isCastling) {
+        statusText = `${piece.isWhite ? 'White' : 'Black'} castled.`;
+      } else if (capturedPiece) {
+        statusText = `${piece.isWhite ? 'White' : 'Black'} captured ${capturedPiece.isWhite ? 'White' : 'Black'}'s ${capturedPiece.type}.`;
+      } else {
+        statusText = `${piece.isWhite ? 'White' : 'Black'} moved ${piece.type} to ${getChessNotation(newRow, newCol)}.`;
+      }
+      
+      if (gameState.inCheck) {
+        statusText += ` ${piece.isWhite ? 'Black' : 'White'} is in check.`;
+      }
+      
+      updateStatus(statusText);
+      
+      // Handle unlocking pieces or start betting round if needed
+      if (needUnlock) {
+        unlockPieces();
+      }
+    }
+    
+    // Check if a king is in check
+    function isInCheck(isWhiteKing) {
+      // Find the king
+      const king = findKing(isWhiteKing);
+      if (!king) return false;
+      
+      return isSquareAttacked(king.row, king.col, isWhiteKing);
+    }
+    
+    // Check if a square is under attack
+    function isSquareAttacked(row, col, isWhiteSquare) {
+      // Check attacks from all opponent pieces
+      const opponentPieces = isWhiteSquare ? 
+        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p)) : 
+        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p));
+      
+      for (const piece of opponentPieces) {
+        // Skip locked pieces
+        if ((piece.isWhite && gameState.playerLockedPieces.includes(piece)) ||
+            (!piece.isWhite && gameState.aiLockedPieces.includes(piece))) {
+          continue;
+        }
+        
+        // For each piece type, check if it can attack the target square
+        switch (piece.type) {
+          case PIECE_TYPES.PAWN:
+            // Pawns attack diagonally
+            const direction = piece.isWhite ? -1 : 1;
+            if ((piece.row + direction === row) && 
+                (piece.col + 1 === col || piece.col - 1 === col)) {
+              return true;
+            }
+            break;
+            
+          case PIECE_TYPES.KNIGHT:
+            // Knight's L-shaped moves
+            const knightMoves = [
+              {r: -2, c: -1}, {r: -2, c: 1},
+              {r: -1, c: -2}, {r: -1, c: 2},
+              {r: 1, c: -2}, {r: 1, c: 2},
+              {r: 2, c: -1}, {r: 2, c: 1}
+            ];
+            
+            if (knightMoves.some(move => 
+                piece.row + move.r === row && piece.col + move.c === col)) {
+              return true;
+            }
+            break;
+            
+          case PIECE_TYPES.BISHOP:
+            // Bishop moves diagonally
+            if (Math.abs(piece.row - row) === Math.abs(piece.col - col)) {
+              const rowDir = row > piece.row ? 1 : -1;
+              const colDir = col > piece.col ? 1 : -1;
+              let r = piece.row + rowDir;
+              let c = piece.col + colDir;
+              
+              while (r !== row && c !== col) {
+                if (gameState.board[r][c]) return false; // Path is blocked
+                r += rowDir;
+                c += colDir;
+              }
+              
+              return true;
+            }
+            break;
+            
+          case PIECE_TYPES.ROOK:
+            // Rook moves horizontally or vertically
+            if (piece.row === row || piece.col === col) {
+              if (piece.row === row) {
+                const start = Math.min(piece.col, col);
+                const end = Math.max(piece.col, col);
+                
+                let blocked = false;
+                for (let c = start + 1; c < end; c++) {
+                  if (gameState.board[row][c]) {
+                    blocked = true;
+                    break;
+                  }
+                }
+                
+                if (!blocked) return true;
+              } else {
+                const start = Math.min(piece.row, row);
+                const end = Math.max(piece.row, row);
+                
+                let blocked = false;
+                for (let r = start + 1; r < end; r++) {
+                  if (gameState.board[r][col]) {
+                    blocked = true;
+                    break;
+                  }
+                }
+                
+                if (!blocked) return true;
+              }
+            }
+            break;
+            
+          case PIECE_TYPES.QUEEN:
+            // Queen combines rook and bishop movements
+            // Check rook-like movement (horizontal/vertical)
+            if (piece.row === row || piece.col === col) {
+              if (piece.row === row) {
+                const start = Math.min(piece.col, col);
+                const end = Math.max(piece.col, col);
+                
+                let blocked = false;
+                for (let c = start + 1; c < end; c++) {
+                  if (gameState.board[row][c]) {
+                    blocked = true;
+                    break;
+                  }
+                }
+                
+                if (!blocked) return true;
+              } else {
+                const start = Math.min(piece.row, row);
+                const end = Math.max(piece.row, row);
+                
+                let blocked = false;
+                for (let r = start + 1; r < end; r++) {
+                  if (gameState.board[r][col]) {
+                    blocked = true;
+                    break;
+                  }
+                }
+                
+                if (!blocked) return true;
+              }
+            }
+            
+            // Check bishop-like movement (diagonal)
+            if (Math.abs(piece.row - row) === Math.abs(piece.col - col)) {
+              const rowDir = row > piece.row ? 1 : -1;
+              const colDir = col > piece.col ? 1 : -1;
+              let r = piece.row + rowDir;
+              let c = piece.col + colDir;
+              
+              let blocked = false;
+              while (r !== row && c !== col) {
+                if (gameState.board[r][c]) {
+                  blocked = true;
+                  break;
+                }
+                r += rowDir;
+                c += colDir;
+              }
+              
+              if (!blocked) return true;
+            }
+            break;
+            
+          case PIECE_TYPES.KING:
+            // King can attack adjacent squares
+            if (Math.abs(piece.row - row) <= 1 && Math.abs(piece.col - col) <= 1) {
+              return true;
+            }
+            break;
+        }
+      }
+      
+      return false;
+    }
+    
+    // Find a king on the board
+    function findKing(isWhiteKing) {
+      for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+          const piece = gameState.board[row][col];
+          if (piece && 
+              piece.type === PIECE_TYPES.KING && 
+              piece.isWhite === isWhiteKing) {
+            return piece;
+          }
+        }
+      }
+      return null;
+    }
+    
+    // Check if a player is in checkmate
+    function isCheckmate(isWhiteKing) {
+      // If not in check, can't be checkmate
+      if (!isInCheck(isWhiteKing)) return false;
+      
+      // Get all pieces for the player in check
+      const pieces = isWhiteKing ? 
+        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p)) : 
+        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
+      
+      // Check if any piece has a valid move that gets out of check
+      for (const piece of pieces) {
+        const moves = getValidMoves(piece);
+        if (moves.length > 0) return false; // Player has at least one valid move
+      }
+      
+      // No valid moves, so it's checkmate
+      return true;
+    }
+    
+    // Make an AI move
+    function makeAIMove() {
+      if (gameState.gameOver) return;
+      
+      // Find the best move
+      const bestMove = findBestMove();
+      
+      if (bestMove) {
+        // Execute the move
+        movePiece(bestMove.piece, bestMove.row, bestMove.col);
+        
+        // Check if game over after AI's move
+        if (isCheckmate(gameState.isWhite)) {
+          endGame(!gameState.isWhite ? 'player' : 'ai', 'checkmate');
+          return;
+        }
+        
+        // Player's turn
+        gameState.isPlayerTurn = true;
+      } else {
+        // No valid moves, AI loses
+        endGame('player', 'no_valid_moves');
+      }
+    }
+    
+    // Find the best move for the AI
+    function findBestMove() {
+      const aiIsWhite = !gameState.isWhite;
+      let bestScore = -Infinity;
+      let bestMove = null;
+      
+      // Check all AI pieces that are not locked
+      const aiPieces = gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
+      
+      for (const piece of aiPieces) {
+        const validMoves = getValidMoves(piece);
+        
+        for (const move of validMoves) {
+          // Simulate the move
+          const capturedPiece = gameState.board[move.row][move.col];
+          gameState.board[piece.row][piece.col] = null;
+          gameState.board[move.row][move.col] = piece;
+          
+          // Save original position
+          const originalRow = piece.row;
+          const originalCol = piece.col;
+          
+          // Update piece position
+          piece.row = move.row;
+          piece.col = move.col;
+          
+          // Evaluate the position
+          const score = evaluatePosition(aiIsWhite, 2);
+          
+          // Restore the board
+          piece.row = originalRow;
+          piece.col = originalCol;
+          gameState.board[originalRow][originalCol] = piece;
+          gameState.board[move.row][move.col] = capturedPiece;
+          
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = { piece, row: move.row, col: move.col };
+          }
+        }
+      }
+      
+      return bestMove;
+    }
+    
+    // Evaluate the board position from a player's perspective
+    function evaluatePosition(isWhite, depth) {
+      // Check for checkmate
+      if (isCheckmate(isWhite)) {
+        return -1000; // Being checkmated is very bad
+      }
+      if (isCheckmate(!isWhite)) {
+        return 1000; // Checkmating opponent is very good
+      }
+      
+      // Base case for recursion
+      if (depth === 0) {
+        // Count material value
+        let score = 0;
+        
+        for (let row = 0; row < BOARD_SIZE; row++) {
+          for (let col = 0; col < BOARD_SIZE; col++) {
+            const piece = gameState.board[row][col];
+            if (piece) {
+              const pieceValue = PIECE_VALUES[piece.type];
+              
+              // Add bonuses for certain positions
+              let positionalBonus = 0;
+              
+              // Pawns are better in the center and advanced
+              if (piece.type === PIECE_TYPES.PAWN) {
+                // Center control bonus
+                if (col >= 2 && col <= 5) {
+                  positionalBonus += 0.1;
+                }
+                
+                // Advancement bonus
+                const advancementRow = piece.isWhite ? 7 - piece.row : piece.row;
+                positionalBonus += advancementRow * 0.1;
+              }
+              
+              // Knights and bishops are better in the center
+              if (piece.type === PIECE_TYPES.KNIGHT || piece.type === PIECE_TYPES.BISHOP) {
+                if (row >= 2 && row <= 5 && col >= 2 && col <= 5) {
+                  positionalBonus += 0.3;
+                }
+              }
+              
+              // Rooks are better on open files
+              if (piece.type === PIECE_TYPES.ROOK) {
+                let openFile = true;
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                  if (r !== row && gameState.board[r][col] && 
+                      gameState.board[r][col].type === PIECE_TYPES.PAWN) {
+                    openFile = false;
+                    break;
+                  }
+                }
+                if (openFile) positionalBonus += 0.5;
+              }
+              
+              // King safety (prefer corners in endgame)
+              if (piece.type === PIECE_TYPES.KING) {
+                // Determine if we're in endgame (fewer than 10 pieces on board)
+                let pieceCount = 0;
+                for (let r = 0; r < BOARD_SIZE; r++) {
+                  for (let c = 0; c < BOARD_SIZE; c++) {
+                    if (gameState.board[r][c]) pieceCount++;
+                  }
+                }
+                
+                const isEndgame = pieceCount < 10;
+                
+                if (isEndgame) {
+                  // In endgame, king should be active in the center
+                  if (row >= 2 && row <= 5 && col >= 2 && col <= 5) {
+                    positionalBonus += 0.5;
+                  }
+                } else {
+                  // In middlegame, king should be safe in the corner
+                  if ((row === 0 || row === 7) && (col === 0 || col === 7)) {
+                    positionalBonus += 0.5;
+                  }
+                }
+              }
+              
+              const totalValue = pieceValue + positionalBonus;
+              
+              if (piece.isWhite === isWhite) {
+                score += totalValue;
+              } else {
+                score -= totalValue;
+              }
+            }
+          }
+        }
+        
+        // Add bonus for having more unlocked pieces
+        const playerLockedCount = isWhite ? 
+          gameState.playerLockedPieces.length : gameState.aiLockedPieces.length;
+        const opponentLockedCount = isWhite ? 
+          gameState.aiLockedPieces.length : gameState.playerLockedPieces.length;
+        
+        score += (opponentLockedCount - playerLockedCount) * 0.5;
+        
+        // Check status adds a small bonus
+        if (isInCheck(!isWhite)) {
+          score += 0.5;
+        }
+        if (isInCheck(isWhite)) {
+          score -= 0.5;
+        }
+        
+        return score;
+      }
+      
+      // Recursive minimax evaluation
+      const pieces = isWhite ? 
+        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p)) : 
+        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
+      
+      let bestScore = -Infinity;
+      
+      for (const piece of pieces) {
+        const validMoves = getValidMoves(piece);
+        
+        for (const move of validMoves) {
+          // Simulate the move
+          const capturedPiece = gameState.board[move.row][move.col];
+          gameState.board[piece.row][piece.col] = null;
+          gameState.board[move.row][move.col] = piece;
+          
+          // Save original position
+          const originalRow = piece.row;
+          const originalCol = piece.col;
+          
+          // Update piece position
+          piece.row = move.row;
+          piece.col = move.col;
+          
+          // Evaluate the position from opponent's perspective
+          const score = -evaluatePosition(!isWhite, depth - 1);
+          
+          // Restore the board
+          piece.row = originalRow;
+          piece.col = originalCol;
+          gameState.board[originalRow][originalCol] = piece;
+          gameState.board[move.row][move.col] = capturedPiece;
+          
+          bestScore = Math.max(bestScore, score);
+        }
+      }
+      
+      return bestScore === -Infinity ? 0 : bestScore;
+    }
+    
+    // Make an AI bet during betting rounds
+    function makeAIBet() {
+      if (!gameState.isBettingRound) return;
+      
+      // Evaluate the strength of AI's position
+      const aiIsWhite = !gameState.isWhite;
+      const positionScore = evaluatePosition(aiIsWhite, 2);
+      
+      let betAmount = BLIND_AMOUNT; // Default to blind amount
+      
+      // Adjust bet based on position strength
+      if (positionScore >= 5) {
+        // Very strong position, bet higher
+        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.3)));
+      } else if (positionScore >= 2) {
+        // Strong position, bet moderately
+        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.2)));
+      } else if (positionScore >= 0) {
+        // Neutral position, conservative bet
+        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.1)));
+      } else if (positionScore >= -2) {
+        // Weak position, minimum bet
+        betAmount = Math.min(gameState.aiChips, gameState.currentBet || BLIND_AMOUNT);
+      } else {
+        // Very weak position, consider folding
+        if (gameState.currentBet > BLIND_AMOUNT * 2 && gameState.currentBet > gameState.aiChips * 0.25) {
+          // Fold if the current bet is high
+          fold('ai');
+          return;
+        } else {
+          betAmount = Math.min(gameState.aiChips, gameState.currentBet || BLIND_AMOUNT);
+        }
+      }
+      
+      // Ensure bet is at least the current bet or blind
+      betAmount = Math.max(betAmount, gameState.currentBet || BLIND_AMOUNT);
+      
+      // Make the bet
+      if (gameState.currentBet === 0) {
+        // Check
+        updateStatus("AI checks.");
+      } else if (betAmount > gameState.currentBet) {
+        // Raise
+        updateStatus(`AI raises to ${betAmount} chips.`);
+      } else {
+        // Call
+        updateStatus(`AI calls ${betAmount} chips.`);
+      }
+      
+      // Update game state
+      gameState.aiChips -= betAmount;
+      gameState.currentPot += betAmount;
+      gameState.currentBet = betAmount;
+      gameState.aiHasBet = true;
+      
+      // Update UI
+      document.getElementById('ai-chips').textContent = gameState.aiChips;
+      document.getElementById('pot-amount').textContent = gameState.currentPot;
+      document.getElementById('current-bet').textContent = gameState.currentBet;
+      
+      // If player has already bet, betting round is over
+      if (gameState.playerHasBet) {
+        endBettingRound();
+      } else {
+        // Player needs to respond
+        gameState.isPlayerTurn = true;
+        toggleBettingControls(true);
+      }
+    }
+    
+    // Handle player check/call button
+    function checkOrCall() {
+      if (!gameState.isBettingRound || gameState.gameOver) return;
+      
+      let betAmount = 0;
+      
+      if (gameState.currentBet === 0) {
+        // Check
+        updateStatus("You check.");
+        betAmount = 0;
+      } else {
+        // Call
+        betAmount = gameState.currentBet;
+        
+        if (betAmount > gameState.playerChips) {
+          // All-in
+          betAmount = gameState.playerChips;
+          updateStatus(`You call all-in with ${betAmount} chips.`);
+        } else {
+          updateStatus(`You call ${betAmount} chips.`);
+        }
+      }
+      
+      // Update game state
+      gameState.playerChips -= betAmount;
+      gameState.currentPot += betAmount;
+      gameState.playerHasBet = true;
+      
+      // Update UI
+      document.getElementById('player-chips').textContent = gameState.playerChips;
+      document.getElementById('pot-amount').textContent = gameState.currentPot;
+      
+      // If AI has already bet, betting round is over
+      if (gameState.aiHasBet) {
+        endBettingRound();
+      } else {
+        // AI needs to respond
+        gameState.isPlayerTurn = false;
+        toggleBettingControls(false);
+        setTimeout(makeAIBet, 1000);
+      }
+    }
+    
+    // Handle player raise button
+    function raise() {
+      if (!gameState.isBettingRound || gameState.gameOver) return;
+      
+      // Get bet amount from slider
+      const betAmount = parseInt(document.getElementById('bet-slider').value);
+      
+      if (betAmount <= gameState.currentBet) {
+        updateStatus("Raise amount must be greater than the current bet.");
+        return;
+      }
+      
+      if (betAmount > gameState.playerChips) {
+        updateStatus("You don't have enough chips for that bet.");
+        return;
+      }
+      
+      // Update status
+      updateStatus(`You raise to ${betAmount} chips.`);
+      
+      // Update game state
+      gameState.playerChips -= betAmount;
+      gameState.currentPot += betAmount;
+      gameState.currentBet = betAmount;
+      gameState.playerHasBet = true;
+      
+      // Update UI
+      document.getElementById('player-chips').textContent = gameState.playerChips;
+      document.getElementById('pot-amount').textContent = gameState.currentPot;
+      document.getElementById('current-bet').textContent = gameState.currentBet;
+      
+      // If AI has already bet, it needs to respond to the raise
+      if (gameState.aiHasBet) {
+        gameState.aiHasBet = false;
+        toggleBettingControls(false);
+        setTimeout(makeAIBet, 1000);
+      } else {
+        // AI needs to make an initial bet
+        gameState.isPlayerTurn = false;
+        toggleBettingControls(false);
+        setTimeout(makeAIBet, 1000);
+      }
+    }
+    
+    // Handle player fold button
+    function fold(who = 'player') {
+      if (!gameState.isBettingRound || gameState.gameOver) return;
+      
+      if (who === 'player') {
+        updateStatus("You fold.");
+        endGame('ai', 'fold');
+      } else {
+        updateStatus("AI folds.");
+        endGame('player', 'fold');
+      }
+    }
+    
+    // End the betting round and continue the game
+    function endBettingRound() {
+      gameState.isBettingRound = false;
+      gameState.playerHasBet = false;
+      gameState.aiHasBet = false;
+      gameState.currentBet = 0;
+      
+      // Update UI
+      document.getElementById('current-bet').textContent = 0;
+      toggleBettingControls(false);
+      
+      // If this is the first betting round, reveal additional locked pieces
+      if (!gameState.isGameStarted) {
+        revealAdditionalLockedPieces();
+      } else if (gameState.moveCount === 0) {
+        // Start the game
+        gameState.isPlayerTurn = gameState.isWhite;
+        updateStatus(gameState.isPlayerTurn ? "Your turn to move." : "AI's turn to move.");
+        
+        if (!gameState.isPlayerTurn) {
+          setTimeout(makeAIMove, 1000);
+        }
+      } else {
+        // Continue the game
+        gameState.isPlayerTurn = gameState.isWhite;
+        updateStatus(gameState.isPlayerTurn ? "Your turn to move." : "AI's turn to move.");
+        
+        if (!gameState.isPlayerTurn) {
+          setTimeout(makeAIMove, 1000);
+        }
+      }
+    }
+    
+    // Reveal additional locked pieces after first betting round
+    function revealAdditionalLockedPieces() {
+      const lockRevealContent = document.getElementById('lock-reveal-content');
+      lockRevealContent.innerHTML = '';
+      
+      const playerAllLockedElement = document.createElement('div');
+      playerAllLockedElement.innerHTML = '<p>All your locked pieces:</p>';
+      
+      const piecesList = document.createElement('ul');
+      gameState.playerLockedPieces.forEach(piece => {
+        const pieceItem = document.createElement('li');
+        pieceItem.textContent = `${piece.type.charAt(0).toUpperCase() + piece.type.slice(1)} at ${getChessNotation(piece.row, piece.col)}`;
+        piecesList.appendChild(pieceItem);
       });
       
-      document.addEventListener('keyup', (e) => {
-        if (!isGameRunning || isAIPlaying) return;
-        
-        const key = keyMap[e.key];
-        if (key) {
-          currentKeys.delete(key);
-          updateButtonUI(currentKeys);
-          e.preventDefault();
-        }
-      });
+      playerAllLockedElement.appendChild(piecesList);
+      lockRevealContent.appendChild(playerAllLockedElement);
       
-      // Controller buttons
-      document.querySelectorAll('.btn[data-key]').forEach(btn => {
-        const key = btn.dataset.key;
+      const additionalInfo = document.createElement('p');
+      additionalInfo.textContent = "These pieces will unlock progressively after every 6 moves.";
+      lockRevealContent.appendChild(additionalInfo);
+      
+      document.getElementById('lock-reveal-modal').classList.remove('hidden');
+      
+      // Update locked pieces indicators
+      updateLockedPiecesIndicators();
+      
+      // Mark the game as started
+      gameState.isGameStarted = true;
+    }
+    
+    // Unlock a piece for each player
+    function unlockPieces() {
+      // Check if there are locked pieces to unlock
+      if (gameState.playerLockedPieces.length > 0 && gameState.aiLockedPieces.length > 0) {
+        // Get first piece from each array
+        const playerPieceToUnlock = gameState.playerLockedPieces[0];
+        const aiPieceToUnlock = gameState.aiLockedPieces[0];
         
-        btn.addEventListener('mousedown', () => {
-          if (!isGameRunning || isAIPlaying) return;
-          currentKeys.add(key);
-          updateButtonUI(currentKeys);
-        });
+        // Remove from locked arrays
+        gameState.playerLockedPieces.shift();
+        gameState.aiLockedPieces.shift();
         
-        btn.addEventListener('mouseup', () => {
-          if (!isGameRunning || isAIPlaying) return;
-          currentKeys.delete(key);
-          updateButtonUI(currentKeys);
-        });
+        // Update the UI to show unlocked pieces
+        updateLockedPiecesIndicators();
         
-        btn.addEventListener('touchstart', (e) => {
-          if (!isGameRunning || isAIPlaying) return;
-          e.preventDefault();
-          currentKeys.add(key);
-          updateButtonUI(currentKeys);
-        });
+        // Show the unlock modal
+        const unlockContent = document.getElementById('unlock-content');
+        unlockContent.innerHTML = '';
         
-        btn.addEventListener('touchend', (e) => {
-          if (!isGameRunning || isAIPlaying) return;
-          e.preventDefault();
-          currentKeys.delete(key);
-          updateButtonUI(currentKeys);
-        });
-      });
-    });
+        const playerUnlockElement = document.createElement('p');
+        playerUnlockElement.textContent = `Your ${playerPieceToUnlock.type} at ${getChessNotation(playerPieceToUnlock.row, playerPieceToUnlock.col)} is now unlocked!`;
+        unlockContent.appendChild(playerUnlockElement);
+        
+        const aiUnlockElement = document.createElement('p');
+        aiUnlockElement.textContent = `AI's ${aiPieceToUnlock.type} is now unlocked.`;
+        unlockContent.appendChild(aiUnlockElement);
+        
+        document.getElementById('piece-unlock-modal').classList.remove('hidden');
+      }
+      
+      // Start a new betting round
+      gameState.isBettingRound = true;
+      
+      // Black bets first
+      if (gameState.isWhite) {
+        // Player is White, AI (Black) bets first
+        updateStatus("Betting round: AI (Black) bets first.");
+        gameState.isPlayerTurn = false;
+        toggleBettingControls(false);
+        setTimeout(makeAIBet, 1000);
+      } else {
+        // Player is Black, player bets first
+        updateStatus("Betting round: You (Black) bet first.");
+        gameState.isPlayerTurn = true;
+        toggleBettingControls(true);
+      }
+    }
+    
+    // Continue after unlock modal
+    function continueAfterUnlock() {
+      if (gameState.isBettingRound) {
+        if (gameState.isPlayerTurn) {
+          toggleBettingControls(true);
+        } else {
+          setTimeout(makeAIBet, 500);
+        }
+      }
+    }
+    
+    // Update locked pieces indicators in the UI
+    function updateLockedPiecesIndicators() {
+      // Clear existing indicators
+      const playerLockedPiecesContainer = document.getElementById('player-locked-pieces');
+      const aiLockedPiecesContainer = document.getElementById('ai-locked-pieces');
+      playerLockedPiecesContainer.innerHTML = '';
+      aiLockedPiecesContainer.innerHTML = '';
+      
+      // Add player's locked pieces indicators
+      for (let i = 0; i < PIECES_TO_LOCK; i++) {
+        const indicator = document.createElement('div');
+        indicator.classList.add('piece-indicator');
+        
+        if (i < gameState.playerLockedPieces.length) {
+          indicator.classList.add('locked');
+          indicator.textContent = '🔒';
+        } else {
+          indicator.classList.add('unlocked');
+          indicator.textContent = '✓';
+        }
+        
+        playerLockedPiecesContainer.appendChild(indicator);
+      }
+      
+      // Add AI's locked pieces indicators
+      for (let i = 0; i < PIECES_TO_LOCK; i++) {
+        const indicator = document.createElement('div');
+        indicator.classList.add('piece-indicator');
+        
+        if (i < gameState.aiLockedPieces.length) {
+          indicator.classList.add('locked');
+          indicator.textContent = '🔒';
+        } else {
+          indicator.classList.add('unlocked');
+          indicator.textContent = '✓';
+        }
+        
+        aiLockedPiecesContainer.appendChild(indicator);
+      }
+    }
+    
+    // Get chess notation (e.g., "e4") for a board position
+    function getChessNotation(row, col) {
+      const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+      const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+      
+      return files[col] + ranks[row];
+    }
+    
+    // Toggle betting controls visibility
+    function toggleBettingControls(show) {
+      const bettingControls = document.getElementById('betting-controls');
+      
+      if (show) {
+        bettingControls.style.display = 'flex';
+        
+        // Update bet slider values
+        const betSlider = document.getElementById('bet-slider');
+        betSlider.min = Math.max(BLIND_AMOUNT, gameState.currentBet);
+        betSlider.max = gameState.playerChips;
+        betSlider.value = Math.max(BLIND_AMOUNT, gameState.currentBet);
+        document.getElementById('bet-amount').textContent = betSlider.value;
+        
+        // Disable raise button if player doesn't have enough chips
+        document.getElementById('raise-button').disabled = gameState.playerChips <= gameState.currentBet;
+        
+        // Set check/call button text
+        const checkCallButton = document.getElementById('check-call-button');
+        if (gameState.currentBet === 0) {
+          checkCallButton.textContent = 'Check';
+        } else {
+          checkCallButton.textContent = 'Call';
+        }
+      } else {
+        bettingControls.style.display = 'none';
+      }
+    }
+    
+    // Update the game status message
+    function updateStatus(message) {
+      document.getElementById('status-text').textContent = message;
+    }
+    
+    // End the game
+    function endGame(winner, reason) {
+      gameState.gameOver = true;
+      gameState.winner = winner;
+      
+      // Update game state UI
+      if (winner === 'player') {
+        // Player wins, add pot to player chips
+        gameState.playerChips += gameState.currentPot;
+        document.getElementById('player-chips').textContent = gameState.playerChips;
+      } else {
+        // AI wins, add pot to AI chips
+        gameState.aiChips += gameState.currentPot;
+        document.getElementById('ai-chips').textContent = gameState.aiChips;
+      }
+      
+      // Update game status
+      const gameOverTitle = document.getElementById('game-over-title');
+      const gameOverMessage = document.getElementById('game-over-message');
+      
+      gameOverTitle.textContent = winner === 'player' ? "You Win!" : "AI Wins!";
+      
+      switch (reason) {
+        case 'checkmate':
+          gameOverMessage.textContent = winner === 'player' ? 
+            "You checkmated the AI!" : 
+            "The AI checkmated you!";
+          break;
+        case 'fold':
+          gameOverMessage.textContent = winner === 'player' ? 
+            "The AI folded!" : 
+            "You folded!";
+          break;
+        case 'no_valid_moves':
+          gameOverMessage.textContent = winner === 'player' ? 
+            "The AI has no valid moves!" : 
+            "You have no valid moves!";
+          break;
+      }
+      
+      // Show game over modal
+      document.getElementById('game-over-modal').classList.remove('hidden');
+    }
+    
+    // Reset the game for a new match
+    function resetGame() {
+      // Reset game state
+      gameState = {
+        isGameStarted: false,
+        isWhite: false,
+        playerChips: STARTING_CHIPS,
+        aiChips: STARTING_CHIPS,
+        currentPot: 0,
+        currentBet: 0,
+        playerHasBet: false,
+        aiHasBet: false,
+        isBettingRound: false,
+        isPlayerTurn: false,
+        moveCount: 0,
+        board: createEmptyBoard(),
+        playerPieces: [],
+        aiPieces: [],
+        playerLockedPieces: [],
+        aiLockedPieces: [],
+        playerKnownLockedPieces: [],
+        aiKnownLockedPieces: [],
+        selectedPiece: null,
+        possibleMoves: [],
+        lastMove: null,
+        inCheck: false,
+        gameOver: false,
+        winner: null
+      };
+      
+      // Reset UI
+      document.getElementById('player-chips').textContent = STARTING_CHIPS;
+      document.getElementById('ai-chips').textContent = STARTING_CHIPS;
+      document.getElementById('pot-amount').textContent = 0;
+      document.getElementById('current-bet').textContent = 0;
+      document.getElementById('player-locked-pieces').innerHTML = '';
+      document.getElementById('ai-locked-pieces').innerHTML = '';
+      
+      // Hide game over modal
+      document.getElementById('game-over-modal').classList.add('hidden');
+      
+      // Show start modal
+      document.getElementById('start-modal').classList.remove('hidden');
+      
+      // Hide betting controls
+      toggleBettingControls(false);
+      
+      // Update status
+      updateStatus("Waiting to start...");
+    }
   </script>
 </body>
 </html>
