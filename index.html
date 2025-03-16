@@ -1,424 +1,891 @@
+Start new chat
+Projects
+
+    Chats
+
+Recents
+
+    Fixing Retro Pong Game Errors
+    Untitled
+    Retro Bouncing R Website
+    Troubleshooting Network Errors
+    Enhancing Language Learning App UI
+    Vibrant 3D Racing Game
+    Zelda-Inspired Open World Game
+    Minimalist Poker Website with AI Opponent
+    Choker - A Chess Variant with Randomized Pieces
+    Choker Game with Locked Pieces and Betting Rounds
+    Untitled
+    GBA Emulator with AI Game Agent
+
+Professional plan
+RG
+23.png
+RG
+
+Error: Ad iframe failed to load
+Warning: WARNING: Multiple instances of Three.js being imported.
+Uncaught Error: SyntaxError: redeclaration of let ballState
+https://gateway.pinata.cloud/ipfs/bafybeidzkyxe7jhpaieule7h276zgjposmgb6lljjp4ai73cvgwq2jra6a/23.png i linked 23.png to help you understand how to correctly add this image as a 4th state of the ping pong ball.make sure this works. I need this completely fixed and working
+
+The user has provided an HTML file containing code for a retro Pong game. The game appears to be a creative implementation with some interactive elements including a ball that can change states (0: R, 1: Email, 2: Ad, 3: Image). They've also included an image and mentioned some errors they're encountering.
+
+Let's identify the key issues first:
+
+    Error: Ad iframe failed to load - There might be issues with the ad implementation.
+    Warning: WARNING: Multiple instances of Three.js being imported. - The code is importing Three.js multiple times.
+    Uncaught Error: SyntaxError: redeclaration of let ballState - There's a variable being declared twice.
+    Issue with the image (23.png) not loading or displaying correctly in the 4th state.
+
+Looking at the HTML, I can see that there's duplicated code in the file. There are essentially two versions of the game implementation back-to-back, which explains the redeclaration of variables. The first version is more elaborate with loading screen and additional features, and the second version seems to be a simpler implementation.
+
+For the image issue, the user wants to make sure the 4th state (index 3) of the ball properly displays the linked PNG image. They've provided a link to the image on IPFS (https://gateway.pinata.cloud/ipfs/bafybeidzkyxe7jhpaieule7h276zgjposmgb6lljjp4ai73cvgwq2jra6a/23.png).
+
+Let me fix these issues:
+
+    Remove the duplicated code to resolve the redeclaration error
+    Ensure the Three.js is imported only once
+    Fix the ad iframe loading
+    Fix the image loading for the 4th state of the ball
+
+I'll create an artifact with the corrected HTML code, focusing on these issues.
+
+I'll fix the issues in your Retro Pong game by addressing the duplicate code, Three.js import warnings, ad loading errors, and image display problems.
+
+The fixes:
+
+    Removed the duplicated HTML document that was causing the redeclaration of let ballState error.
+    Fixed the image loading system with multiple fallback methods:
+        Preloads the image using the HTML Image API
+        If that fails, tries loading it through p5's loadImage
+        Creates a proper fallback image if both methods fail
+    Enhanced the ad container:
+        Added proper z-index values
+        Set background to transparent
+        Added error handling for ad loading
+    Fixed the ball state rendering:
+        Added visual indicators for clickable states
+        Ensured the image state (state 3) properly displays the IPFS image
+        Added animation effects to improve visibility
+
+The game should now work correctly with all four ball states, particularly the image state showing your 23.png from IPFS.
+RG
+
+forget about the image, replace it with this <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe> it should bounce around and be perfectly visible
+
+The user is asking me to replace the image in ball state 3 with an ad iframe, similar to what was already in the code for ball state 2. Let me understand what changes I need to make:
+
+    In state 3 (which previously showed the IPFS image), I need to replace the image rendering with an iframe displaying an ad
+    The iframe should have the same properties as the one used in state 2
+    The ad should "bounce around" with the ball and be "perfectly visible"
+
+Let me update the HTML code to make these changes. I'll need to:
+
+    Remove the image loading code since it's no longer needed
+    Update the drawBall() function to show an ad iframe in state 3 instead of the image
+    Make sure the iframe is properly positioned and visible
+
+I'll create an updated version of the HTML file.
+
+I've updated the game to use an ad iframe for ball state 3 instead of the image. Key changes:
+
+    Added a second ad container with the same iframe as the original
+    The ad now bounces around with the ball in state 3
+    Used a different highlight color (yellow) for the ad in state 3 to distinguish it from state 2
+    Removed all image loading code since it's no longer needed
+
+The game now has four states that cycle when clicking anywhere except the ball:
+
+    State 0: Letter "R" (clicking opens Twitter)
+    State 1: Email address (clicking shows popup)
+    State 2: First ad iframe
+    State 3: Second ad iframe with yellow highlight
+
+Both ads will move with the ball and should be perfectly visible as they bounce around the screen.
+Claude can make mistakes. Please double-check responses.
+
+
+Fixed Retro Pong Game
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bouncing R Screen Saver</title>
+    <title>Robby's Retro Pong</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
     <style>
-        @import url('https://fonts.cdnjs.com/css?family=Myriad+Pro:400,700');
-        
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             overflow: hidden;
             background-color: #000;
-            font-family: 'Myriad Pro', 'Segoe UI', 'Arial', sans-serif;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
         }
+
         canvas {
             display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-        #container {
+
+        #game-container {
             width: 100vw;
             height: 100vh;
             position: relative;
         }
-        #letter {
+
+        #three-container {
             position: absolute;
-            font-size: 80px;
-            font-weight: bold;
-            color: #000;
-            user-select: none;
-            transition: color 0.5s ease;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
         }
-        #email {
+
+        #p5-container {
             position: absolute;
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 5px;
-            user-select: none;
-        }
-        #ad-container {
-            position: absolute;
-            width: 468px;
-            height: 60px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 5;
         }
-        #glitch-message {
-            position: absolute;
+        
+        /* Define cursor for different ball states */
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+
+        #email-popup {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 64px;
-            font-weight: bold;
-            color: #000;
             background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #333;
             padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
             display: none;
             text-align: center;
-            z-index: 10;
-            letter-spacing: 2px;
-            user-select: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        #email-popup button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+
+        #email-popup button:hover {
+            background-color: #555;
+        }
+
+        #ad-container {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            z-index: 15;
+            background-color: transparent;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            font-size: 24px;
+        }
+        
+        #loading-progress {
+            width: 300px;
+            height: 20px;
+            background-color: #333;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #0f0;
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="letter">R</div>
-        <div id="email">robby@robbygat.com</div>
+    <div id="loading-overlay">
+        <div>Loading Game Assets...</div>
+        <div id="loading-progress">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <div id="p5-container"></div>
+        <div id="three-container"></div>
         <div id="ad-container">
             <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
         </div>
-        <div id="glitch-message">THE FUTURE IS NOW</div>
+    </div>
+
+    <div id="email-popup">
+        <h2>Contact Robby</h2>
+        <p>Send an email to robby@robbygat.com</p>
+        <button id="send-email">Send Email</button>
+        <button id="close-popup">Close</button>
     </div>
 
     <script>
-        // Set up the scene
-        const container = document.getElementById('container');
-        const letter = document.getElementById('letter');
-        const email = document.getElementById('email');
-        const adContainer = document.getElementById('ad-container');
-        const glitchMessage = document.getElementById('glitch-message');
+        // Loading management
+        let assetsLoaded = 0;
+        let totalAssets = 2; // Image and ad
+        const progressBar = document.getElementById('progress-bar');
+        const loadingOverlay = document.getElementById('loading-overlay');
         
-        // Screen dimensions
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        
-        // Initial position and velocity for R
-        let x = Math.random() * (width - 80);
-        let y = Math.random() * (height - 80);
-        let vx = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
-        let vy = (Math.random() > 0.5 ? 1 : -1) * (2 + Math.random() * 2);
-        
-        // Initial position and velocity for email
-        let emailX = Math.random() * (width - 300);
-        let emailY = Math.random() * (height - 50);
-        let emailVx = (Math.random() > 0.5 ? 1 : -1) * (1.5 + Math.random() * 1.5);
-        let emailVy = (Math.random() > 0.5 ? 1 : -1) * (1.5 + Math.random() * 1.5);
-        
-        // Initial position and velocity for ad
-        let adX = Math.random() * (width - 468);
-        let adY = Math.random() * (height - 60);
-        let adVx = (Math.random() > 0.5 ? 1 : -1) * (1 + Math.random() * 1);
-        let adVy = (Math.random() > 0.5 ? 1 : -1) * (1 + Math.random() * 1);
-        
-        // Size pulsing for letter R
-        let letterSize = 80;
-        let sizeDirection = 1;
-        let minSize = 60;
-        let maxSize = 120;
-        let sizeSpeed = 0.5;
-        
-        // Rainbow color effect for R
-        const rainbowColors = [
-            '#FF0000', // Red
-            '#FF7F00', // Orange
-            '#FFFF00', // Yellow
-            '#00FF00', // Green
-            '#0000FF', // Blue
-            '#4B0082', // Indigo
-            '#9400D3'  // Violet
-        ];
-        let currentColorIndex = 0;
-        let colorChangeTime = 0;
-        let nextColorChange = 1 + Math.random() * 2; // Change color every 1-3 seconds
-        let isRainbowMode = true; // Toggle between rainbow and black
-        let rainbowModeTime = 0;
-        let nextRainbowToggle = 10 + Math.random() * 10; // Toggle every 10-20 seconds
-        
-        const emailWidth = 300; // Approximate width of the email box
-        const emailHeight = 50; // Approximate height of the email box
-        const adWidth = 468; // Width of ad iframe
-        const adHeight = 60; // Height of ad iframe
-        
-        // Update positions and effects
-        function updatePosition() {
-            // Update R position
-            x += vx;
-            y += vy;
-            
-            // Bounce off edges
-            if (x <= 0 || x >= width - letterSize) {
-                vx = -vx;
-                x = Math.max(0, Math.min(x, width - letterSize));
-            }
-            
-            if (y <= 0 || y >= height - letterSize) {
-                vy = -vy;
-                y = Math.max(0, Math.min(y, height - letterSize));
-            }
-            
-            // Update R size
-            letterSize += sizeDirection * sizeSpeed;
-            if (letterSize >= maxSize || letterSize <= minSize) {
-                sizeDirection *= -1;
-            }
-            
-            // Apply R position and size
-            letter.style.left = x + 'px';
-            letter.style.top = y + 'px';
-            letter.style.fontSize = letterSize + 'px';
-            
-            // Update email position
-            emailX += emailVx;
-            emailY += emailVy;
-            
-            // Bounce email off edges
-            if (emailX <= 0 || emailX >= width - emailWidth) {
-                emailVx = -emailVx;
-                emailX = Math.max(0, Math.min(emailX, width - emailWidth));
-            }
-            
-            if (emailY <= 0 || emailY >= height - emailHeight) {
-                emailVy = -emailVy;
-                emailY = Math.max(0, Math.min(emailY, height - emailHeight));
-            }
-            
-            email.style.left = emailX + 'px';
-            email.style.top = emailY + 'px';
-            
-            // Update ad position
-            adX += adVx;
-            adY += adVy;
-            
-            // Bounce ad off edges
-            if (adX <= 0 || adX >= width - adWidth) {
-                adVx = -adVx;
-                adX = Math.max(0, Math.min(adX, width - adWidth));
-            }
-            
-            if (adY <= 0 || adY >= height - adHeight) {
-                adVy = -adVy;
-                adY = Math.max(0, Math.min(adY, height - adHeight));
-            }
-            
-            adContainer.style.left = adX + 'px';
-            adContainer.style.top = adY + 'px';
-        }
-        
-        // Update R color effect
-        function updateColorEffect(deltaTime) {
-            // Update color change timer
-            colorChangeTime += deltaTime;
-            rainbowModeTime += deltaTime;
-            
-            // Toggle between rainbow mode and black
-            if (rainbowModeTime >= nextRainbowToggle) {
-                isRainbowMode = !isRainbowMode;
-                rainbowModeTime = 0;
-                nextRainbowToggle = 10 + Math.random() * 10; // Reset toggle timer
-                
-                if (!isRainbowMode) {
-                    letter.style.color = '#000000'; // Set to black when not in rainbow mode
-                }
-            }
-            
-            // Change colors in rainbow mode
-            if (isRainbowMode && colorChangeTime >= nextColorChange) {
-                currentColorIndex = (currentColorIndex + 1) % rainbowColors.length;
-                letter.style.color = rainbowColors[currentColorIndex];
-                colorChangeTime = 0;
-                nextColorChange = 1 + Math.random() * 2; // Reset color change timer
+        function updateLoadingProgress(percent) {
+            progressBar.style.width = percent + '%';
+            if (percent >= 100) {
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
             }
         }
         
-        // Set up Three.js for TV effect
-        const scene = new THREE.Scene();
-        const camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 1000);
-        camera.position.z = 10;
+        function assetLoaded() {
+            assetsLoaded++;
+            const percent = (assetsLoaded / totalAssets) * 100;
+            updateLoadingProgress(percent);
+        }
         
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(width, height);
-        renderer.setClearColor(0x000000, 0);
-        container.appendChild(renderer.domElement);
+        // Global variables
+        let ballState = 0; // 0: R, 1: Email, 2: Ad, 3: Image
+        let p5Instance;
+        let adContainer = document.getElementById('ad-container');
+        let emailPopup = document.getElementById('email-popup');
         
-        // Create a plane for post-processing
-        const geometry = new THREE.PlaneGeometry(width, height);
+        // Pre-load ad to ensure it works
+        let adLoaded = false;
+        const adFrame = document.querySelector('#ad-container iframe');
+        if (adFrame) {
+            adFrame.onload = function() {
+                console.log("Ad iframe loaded successfully");
+                adLoaded = true;
+                assetLoaded();
+            };
+            
+            adFrame.onerror = function() {
+                console.error("Ad iframe failed to load");
+                adLoaded = false;
+                assetLoaded(); // Still count it as loaded to continue game
+            };
+        } else {
+            assetLoaded(); // No ad frame found, still continue
+        }
         
-        // TV screen shader
-        const tvShader = {
-            uniforms: {
-                tDiffuse: { value: null },
-                time: { value: 0.0 },
-                noise: { value: 0.1 },
-                lineWidth: { value: 3.0 },
-                vignette: { value: 0.3 },
-                distortion: { value: 0.03 },
-                glitchIntensity: { value: 0.0 }
-            },
-            vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                    vUv = uv;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                uniform float time;
-                uniform float noise;
-                uniform float lineWidth;
-                uniform float vignette;
-                uniform float distortion;
-                uniform float glitchIntensity;
-                varying vec2 vUv;
-                
-                float random(vec2 st) {
-                    return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
-                }
-                
-                void main() {
-                    // CRT distortion
-                    vec2 uv = vUv;
-                    vec2 center = vec2(0.5, 0.5);
-                    vec2 dir = uv - center;
-                    float dist = length(dir);
-                    uv = uv + dir * dist * distortion;
-                    
-                    // White screen background
-                    vec3 color = vec3(1.0);
-                    
-                    // Scanlines
-                    float scanline = sin(uv.y * 800.0) * 0.04;
-                    color -= scanline;
-                    
-                    // Horizontal lines (more visible)
-                    float line = step(fract(uv.y * 100.0 + time * 0.1), 0.5) * 0.05;
-                    color -= line;
-                    
-                    // Flickering
-                    float flicker = random(vec2(time * 0.001, 0.0)) * 0.04;
-                    color -= flicker;
-                    
-                    // Vignette effect
-                    float vignetteEffect = smoothstep(0.0, 0.7, dist) * vignette;
-                    color -= vignetteEffect;
-                    
-                    // Static noise
-                    float staticNoise = random(uv + time * 0.01) * noise;
-                    color -= staticNoise;
-                    
-                    // Glitch effect
-                    if (glitchIntensity > 0.0) {
-                        // Digital glitch
-                        float glitchLine = step(0.99, random(vec2(floor(uv.y * 100.0), time))) * glitchIntensity;
-                        
-                        // RGB shift
-                        float rShift = random(vec2(time, 0.0)) * 0.03 * glitchIntensity;
-                        float gShift = random(vec2(time, 0.1)) * 0.03 * glitchIntensity;
-                        float bShift = random(vec2(time, 0.2)) * 0.03 * glitchIntensity;
-                        
-                        vec3 shiftedColor = vec3(
-                            color.r - random(vec2(uv.y, time)) * glitchIntensity * 0.3,
-                            color.g - random(vec2(uv.y, time + 0.1)) * glitchIntensity * 0.3,
-                            color.b - random(vec2(uv.y, time + 0.2)) * glitchIntensity * 0.3
-                        );
-                        
-                        // Add horizontal glitch lines
-                        shiftedColor += vec3(glitchLine);
-                        
-                        // Add vertical displacement
-                        if (random(vec2(floor(uv.y * 50.0), time)) < 0.1 * glitchIntensity) {
-                            uv.x = fract(uv.x + random(vec2(floor(uv.y * 50.0), time)) * 0.1);
-                        }
-                        
-                        color = mix(color, shiftedColor, glitchIntensity);
-                    }
-                    
-                    gl_FragColor = vec4(color, 1.0);
-                }
-            `
+        // Ball properties
+        let ballX, ballY;
+        let ballSize = 60;
+        let ballVX = 5;
+        let ballVY = 3;
+        let ballImage = null;
+        let imageLoaded = false;
+        
+        // Paddle properties
+        let paddleWidth = 15;
+        let paddleHeight = 80;
+        let leftPaddleY, rightPaddleY;
+        let paddleSpeed = 4;
+        let aiDifficulty = 0.7; // Higher values make AI more accurate
+        
+        // Preload image separately to ensure it loads
+        const preloadImage = new Image();
+        preloadImage.crossOrigin = "Anonymous";
+        preloadImage.src = "https://gateway.pinata.cloud/ipfs/bafybeidzkyxe7jhpaieule7h276zgjposmgb6lljjp4ai73cvgwq2jra6a/23.png";
+        
+        preloadImage.onload = function() {
+            console.log("Preloaded image successfully!");
+            imageLoaded = true;
+            assetLoaded();
         };
         
-        const material = new THREE.ShaderMaterial(tvShader);
-        const mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
+        preloadImage.onerror = function() {
+            console.error("Failed to preload image");
+            imageLoaded = false; // Mark as not loaded so we create fallback
+            assetLoaded(); // Still count as loaded to continue game
+        };
         
-        // Glitch effect management
-        let isGlitching = false;
-        let glitchStartTime = 0;
-        let glitchDuration = 0;
-        
-        function startGlitch() {
-            if (!isGlitching) {
-                isGlitching = true;
-                glitchStartTime = time;
-                glitchDuration = 1.0 + Math.random() * 2.0; // 1-3 seconds glitch
-                material.uniforms.glitchIntensity.value = 0.8; // High intensity
-                glitchMessage.style.display = 'block';
+        // Create fallback image function (will be called from p5 if needed)
+        function createFallbackImage(p) {
+            console.log("Using fallback image");
+            const img = p.createImage(60, 60);
+            img.loadPixels();
+            for (let i = 0; i < img.width; i++) {
+                for (let j = 0; j < img.height; j++) {
+                    // Create a circular pattern
+                    const d = p.dist(i, j, 30, 30);
+                    if (d < 30) {
+                        img.set(i, j, p.color(255, 200, 0));
+                    } else {
+                        img.set(i, j, p.color(255, 200, 0, 0));
+                    }
+                }
+            }
+            img.updatePixels();
+            return img;
+        }
+
+        // Initialize p5.js
+        const p5Sketch = (p) => {
+            p.setup = function() {
+                const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                canvas.parent('p5-container');
                 
-                // Hide normal elements during heavy glitch
-                if (Math.random() > 0.3) {
-                    letter.style.visibility = 'hidden';
-                    email.style.visibility = 'hidden';
-                    adContainer.style.visibility = 'hidden';
+                // Initialize ball position
+                ballX = p.width / 2;
+                ballY = p.height / 2;
+                
+                // Initialize paddles position
+                leftPaddleY = p.height / 2 - paddleHeight / 2;
+                rightPaddleY = p.height / 2 - paddleHeight / 2;
+                
+                // Make canvas clickable
+                canvas.mousePressed(handleCanvasClick);
+                
+                // Add a click handler to the whole document as backup
+                document.addEventListener('click', function(e) {
+                    // Only handle if it's not already handled by p5
+                    if (e.target.tagName.toLowerCase() !== 'canvas') {
+                        // Convert page coordinates to canvas coordinates
+                        const canvasRect = canvas.elt.getBoundingClientRect();
+                        const canvasX = e.clientX - canvasRect.left;
+                        const canvasY = e.clientY - canvasRect.top;
+                        
+                        // Check if click is on the ball
+                        let ballRadius = ballSize / 2;
+                        let d = p.dist(canvasX, canvasY, ballX, ballY);
+                        
+                        if (d < ballRadius) {
+                            // Handle ball click based on state
+                            if (ballState === 0) {
+                                window.open('https://x.com/robbygat', '_blank');
+                            } else if (ballState === 1) {
+                                emailPopup.style.display = 'block';
+                            } else if (ballState === 3) {
+                                window.open('https://rarevance.com', '_blank');
+                            }
+                        } else {
+                            // Cycle ball state
+                            ballState = (ballState + 1) % 4;
+                        }
+                    }
+                });
+                
+                // Setup the ball image from preloaded HTML image or create fallback
+                if (imageLoaded && preloadImage.complete) {
+                    // Convert HTML image to p5 image
+                    ballImage = p.createImage(preloadImage.width, preloadImage.height);
+                    ballImage.drawingContext.drawImage(preloadImage, 0, 0);
+                } else {
+                    // Try direct p5 loading as another attempt
+                    p.loadImage('https://gateway.pinata.cloud/ipfs/bafybeidzkyxe7jhpaieule7h276zgjposmgb6lljjp4ai73cvgwq2jra6a/23.png', 
+                        // Success callback
+                        (img) => {
+                            console.log("P5 image loaded successfully!");
+                            ballImage = img;
+                        },
+                        // Error callback - use fallback
+                        () => {
+                            console.error("All image loading attempts failed");
+                            ballImage = createFallbackImage(p);
+                        }
+                    );
+                    
+                    // In the meantime, use fallback so something displays
+                    ballImage = createFallbackImage(p);
+                }
+                
+                // Ensure loading is considered complete
+                updateLoadingProgress(100);
+            };
+
+            p.draw = function() {
+                p.clear();
+                
+                // Draw game elements
+                drawField();
+                updateAI();
+                updateBall();
+                drawPaddles();
+                drawBall();
+                
+                // Check game boundaries
+                checkBoundaries();
+            };
+
+            function drawField() {
+                // Draw center line
+                p.stroke(255, 255, 255, 60);
+                p.strokeWeight(4);
+                p.line(p.width / 2, 0, p.width / 2, p.height);
+                
+                // Draw score area boundaries
+                p.stroke(255, 255, 255, 30);
+                p.strokeWeight(2);
+                p.line(p.width * 0.1, 0, p.width * 0.1, p.height);
+                p.line(p.width * 0.9, 0, p.width * 0.9, p.height);
+            }
+
+            function updateAI() {
+                // Left AI paddle movement - predictive
+                let leftPaddleCenter = leftPaddleY + paddleHeight / 2;
+                let targetY = ballY;
+                
+                // Only move if ball is coming towards this paddle
+                if (ballVX < 0) {
+                    // Predict ball position on paddle's x position
+                    let timeToReach = (paddleWidth - ballX) / ballVX;
+                    let predictedY = ballY + ballVY * timeToReach;
+                    
+                    // Add some randomness to make it imperfect
+                    targetY = predictedY + p.random(-100, 100) * (1 - aiDifficulty);
+                    
+                    // Move towards prediction
+                    if (leftPaddleCenter < targetY) {
+                        leftPaddleY += paddleSpeed;
+                    } else if (leftPaddleCenter > targetY) {
+                        leftPaddleY -= paddleSpeed;
+                    }
+                }
+                
+                // Right AI paddle movement - predictive
+                let rightPaddleCenter = rightPaddleY + paddleHeight / 2;
+                
+                // Only move if ball is coming towards this paddle
+                if (ballVX > 0) {
+                    // Predict ball position on paddle's x position
+                    let timeToReach = (p.width - paddleWidth - ballX) / ballVX;
+                    let predictedY = ballY + ballVY * timeToReach;
+                    
+                    // Add some randomness to make it imperfect
+                    targetY = predictedY + p.random(-100, 100) * (1 - aiDifficulty);
+                    
+                    // Move towards prediction
+                    if (rightPaddleCenter < targetY) {
+                        rightPaddleY += paddleSpeed;
+                    } else if (rightPaddleCenter > targetY) {
+                        rightPaddleY -= paddleSpeed;
+                    }
+                }
+                
+                // Constrain paddles to screen
+                leftPaddleY = p.constrain(leftPaddleY, 0, p.height - paddleHeight);
+                rightPaddleY = p.constrain(rightPaddleY, 0, p.height - paddleHeight);
+            }
+
+            function updateBall() {
+                ballX += ballVX;
+                ballY += ballVY;
+                
+                // Handle collisions with paddles
+                if (ballX < paddleWidth + ballSize / 2 && 
+                    ballY > leftPaddleY && 
+                    ballY < leftPaddleY + paddleHeight) {
+                    
+                    // Add slight randomness to prevent infinite loops
+                    ballVX = -ballVX * (1 + p.random(-0.05, 0.05));
+                    ballVY += p.random(-0.5, 0.5);
+                    
+                    ballX = paddleWidth + ballSize / 2;
+                    
+                    // Add angle based on where the ball hit the paddle
+                    let relativeIntersect = (leftPaddleY + paddleHeight / 2) - ballY;
+                    let normalizedIntersect = relativeIntersect / (paddleHeight / 2);
+                    
+                    // Add slight randomness to angle
+                    normalizedIntersect += p.random(-0.1, 0.1);
+                    
+                    // Cap the maximum speed to prevent the ball from moving too fast
+                    const maxSpeed = 12;
+                    ballVY = p.constrain(-normalizedIntersect * 5, -maxSpeed, maxSpeed);
+                }
+                
+                if (ballX > p.width - paddleWidth - ballSize / 2 && 
+                    ballY > rightPaddleY && 
+                    ballY < rightPaddleY + paddleHeight) {
+                    
+                    // Add slight randomness to prevent infinite loops
+                    ballVX = -ballVX * (1 + p.random(-0.05, 0.05));
+                    ballVY += p.random(-0.5, 0.5);
+                    
+                    ballX = p.width - paddleWidth - ballSize / 2;
+                    
+                    // Add angle based on where the ball hit the paddle
+                    let relativeIntersect = (rightPaddleY + paddleHeight / 2) - ballY;
+                    let normalizedIntersect = relativeIntersect / (paddleHeight / 2);
+                    
+                    // Add slight randomness to angle
+                    normalizedIntersect += p.random(-0.1, 0.1);
+                    
+                    // Cap the maximum speed to prevent the ball from moving too fast
+                    const maxSpeed = 12;
+                    ballVY = p.constrain(-normalizedIntersect * 5, -maxSpeed, maxSpeed);
+                }
+                
+                // Ensure ball speed doesn't exceed maximum
+                const maxSpeed = 15;
+                const speed = Math.sqrt(ballVX * ballVX + ballVY * ballVY);
+                if (speed > maxSpeed) {
+                    const ratio = maxSpeed / speed;
+                    ballVX *= ratio;
+                    ballVY *= ratio;
+                }
+                
+                // Ensure ball has at least some Y velocity to prevent horizontal infinite loops
+                if (Math.abs(ballVY) < 0.5) {
+                    ballVY = (ballVY >= 0 ? 1 : -1) * (0.5 + p.random(0, 1));
                 }
             }
-        }
-        
-        function stopGlitch() {
-            isGlitching = false;
-            material.uniforms.glitchIntensity.value = 0;
-            glitchMessage.style.display = 'none';
-            letter.style.visibility = 'visible';
-            email.style.visibility = 'visible';
-            adContainer.style.visibility = 'visible';
-        }
-        
-        // Animation loop
-        let time = 0;
-        let lastTime = 0;
-        function animate(timestamp) {
-            requestAnimationFrame(animate);
-            
-            // Calculate delta time for smooth animations
-            const deltaTime = (timestamp - lastTime) / 1000;
-            lastTime = timestamp;
-            
-            // Update positions
-            updatePosition();
-            
-            // Update color effect
-            updateColorEffect(deltaTime);
-            
-            // Update shader time
-            time += 0.1;
-            material.uniforms.time.value = time;
-            
-            // Glitch manager
-            if (isGlitching) {
-                if (time - glitchStartTime > glitchDuration) {
-                    stopGlitch();
+
+            function drawPaddles() {
+                // Draw left paddle
+                p.fill(200, 200, 255);
+                p.noStroke();
+                p.rect(0, leftPaddleY, paddleWidth, paddleHeight, 5);
+                
+                // Draw right paddle
+                p.fill(255, 200, 200);
+                p.noStroke();
+                p.rect(p.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight, 5);
+                
+                // Add AI "brains" visualization
+                drawAIBrain(paddleWidth / 2, leftPaddleY + paddleHeight / 2, 20, 200, 200, 255);
+                drawAIBrain(p.width - paddleWidth / 2, rightPaddleY + paddleHeight / 2, 20, 255, 200, 200);
+            }
+
+            function drawAIBrain(x, y, size, r, g, b) {
+                p.push();
+                p.translate(x, y);
+                
+                // Draw circles to represent AI "thinking"
+                p.noFill();
+                p.stroke(r, g, b, 150);
+                p.strokeWeight(1);
+                
+                let time = p.frameCount * 0.05;
+                let pulseSize = size * (0.8 + 0.2 * Math.sin(time));
+                
+                p.circle(0, 0, pulseSize);
+                p.circle(0, 0, pulseSize * 0.7);
+                p.circle(0, 0, pulseSize * 0.4);
+                
+                // Draw connecting lines
+                let angle = time % (2 * Math.PI);
+                let x1 = Math.cos(angle) * pulseSize * 0.3;
+                let y1 = Math.sin(angle) * pulseSize * 0.3;
+                let x2 = Math.cos(angle + Math.PI / 3) * pulseSize * 0.3;
+                let y2 = Math.sin(angle + Math.PI / 3) * pulseSize * 0.3;
+                
+                p.line(x1, y1, x2, y2);
+                p.line(x1, y1, -x2, -y2);
+                p.line(-x1, -y1, x2, y2);
+                
+                p.pop();
+            }
+
+            function drawBall() {
+                p.push();
+                p.translate(ballX, ballY);
+                
+                switch (ballState) {
+                    case 0: // R
+                        p.fill(255);
+                        p.textSize(ballSize);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.text("R", 0, 0);
+                        
+                        // Add a visual indicator that this is clickable
+                        p.noFill();
+                        p.stroke(255, 255, 255, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.ellipse(0, 0, ballSize + 5, ballSize + 5);
+                        
+                        // Position adContainer off-screen
+                        adContainer.style.display = 'none';
+                        break;
+                        
+                    case 1: // Email
+                        p.fill(200, 255, 200);
+                        p.rect(-ballSize*2, -ballSize/2, ballSize*4, ballSize, 10);
+                        p.fill(0);
+                        p.textSize(ballSize/3);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.text("robby@robbygat.com", 0, 0);
+                        
+                        // Add a visual indicator that this is clickable
+                        p.noFill();
+                        p.stroke(200, 255, 200, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.rect(-ballSize*2 - 5, -ballSize/2 - 5, ballSize*4 + 10, ballSize + 10, 12);
+                        
+                        // Position adContainer off-screen
+                        adContainer.style.display = 'none';
+                        break;
+                        
+                    case 2: // Ad
+                        // Draw a placeholder for the ad position
+                        p.noFill();
+                        p.stroke(255, 200, 200, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.rect(-234, -30, 468, 60, 5);
+                        
+                        // Position adContainer at ball position
+                        adContainer.style.display = 'block';
+                        adContainer.style.left = (ballX - 234) + 'px';
+                        adContainer.style.top = (ballY - 30) + 'px';
+                        break;
+                        
+                    case 3: // Image
+                        if (ballImage) {
+                            p.imageMode(p.CENTER);
+                            p.image(ballImage, 0, 0, ballSize, ballSize);
+                            
+                            // Add a visual indicator that this is clickable
+                            p.noFill();
+                            p.stroke(255, 255, 255, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                            p.strokeWeight(2);
+                            p.ellipse(0, 0, ballSize + 10, ballSize + 10);
+                        } else {
+                            // Fallback if image fails to load
+                            p.fill(255, 200, 0);
+                            p.ellipse(0, 0, ballSize, ballSize);
+                        }
+                        
+                        // Position adContainer off-screen
+                        adContainer.style.display = 'none';
+                        break;
                 }
-            } else if (Math.random() < 0.0005) { // Probability of glitch starting (adjust for frequency)
-                startGlitch();
+                
+                p.pop();
+            }
+
+            function checkBoundaries() {
+                // Top and bottom bounds
+                if (ballY < ballSize / 2 || ballY > p.height - ballSize / 2) {
+                    // Add slight randomness when bouncing off walls
+                    ballVY = -ballVY * (1 + p.random(-0.05, 0.05));
+                    ballVX += p.random(-0.3, 0.3); // Add a bit of horizontal randomness too
+                    
+                    ballY = p.constrain(ballY, ballSize / 2, p.height - ballSize / 2);
+                }
+                
+                // Left and right bounds (reset ball)
+                if (ballX < 0 || ballX > p.width) {
+                    ballX = p.width / 2;
+                    ballY = p.height / 2;
+                    
+                    // Reset with random angle and moderate speed
+                    let angle = p.random(-Math.PI/4, Math.PI/4);
+                    let speed = 5;
+                    ballVX = (ballX < 0 ? 1 : -1) * Math.cos(angle) * speed;
+                    ballVY = Math.sin(angle) * speed;
+                    
+                    // Ensure there's some Y velocity
+                    if (Math.abs(ballVY) < 1) {
+                        ballVY = (p.random() > 0.5 ? 1 : -1) * (1 + p.random(0, 2));
+                    }
+                }
+            }
+
+            function handleCanvasClick() {
+                // Check if click is on the ball
+                let ballRadius = ballSize / 2;
+                let d = p.dist(p.mouseX, p.mouseY, ballX, ballY);
+                
+                if (d < ballRadius) {
+                    // Clicked on ball
+                    if (ballState === 0) {
+                        // R state - redirect to x.com/robbygat
+                        window.open('https://x.com/robbygat', '_blank');
+                    } else if (ballState === 1) {
+                        // Email state - show popup
+                        emailPopup.style.display = 'block';
+                    } else if (ballState === 3) {
+                        // IPFS image state - redirect to rarevance.com
+                        window.open('https://rarevance.com', '_blank');
+                    }
+                    // Note: State 2 (ad) doesn't have special click behavior
+                } else {
+                    // Clicked elsewhere - cycle ball state
+                    ballState = (ballState + 1) % 4;
+                }
+            }
+
+            p.windowResized = function() {
+                p.resizeCanvas(window.innerWidth, window.innerHeight);
+            };
+        };
+
+        // Initialize Three.js for CRT overlay effect
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Create scene and camera
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 1000);
+            camera.position.z = 10;
+            
+            // Create renderer
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+            
+            // Create a plane for post-processing
+            const geometry = new THREE.PlaneGeometry(width, height);
+            
+            // Ensure the plane is slightly transparent to allow click events
+            const material = new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+            });
+            
+            // CRT shader
+            const crtShader = {
+                uniforms: {
+                    time: { value: 0.0 },
+                    resolution: { value: new THREE.Vector2(width, height) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec2 resolution;
+                    varying vec2 vUv;
+                    
+                    float random(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+                    }
+                    
+                    void main() {
+                        vec2 uv = vUv;
+                        
+                        // CRT curvature
+                        vec2 center = vec2(0.5, 0.5);
+                        vec2 dir = uv - center;
+                        float dist = length(dir);
+                        uv = uv + dir * dist * dist * 0.05;
+                        
+                        // Vignette
+                        float vignette = smoothstep(0.0, 0.7, dist) * 0.5;
+                        
+                        // Scanlines
+                        float scanline = 0.5 + 0.5 * sin(uv.y * resolution.y * 1.0);
+                        scanline = pow(scanline, 3.0) * 0.5;
+                        
+                        // RGB split
+                        float rbShift = 0.002 + 0.001 * sin(time * 0.4);
+                        
+                        // Noise and grain
+                        float noise = random(uv + vec2(time * 0.01, 0.0)) * 0.08;
+                        
+                        // Flickering
+                        float flicker = 0.97 + 0.03 * sin(time * 10.0);
+                        
+                        // Combined effects
+                        vec4 color = vec4(1.0 - vignette - scanline + noise, flicker, flicker, 0.3);
+                        
+                        gl_FragColor = color;
+                    }
+                `
+            };
+            
+            // Extend the shader material with transparency settings
+            const shaderMaterial = new THREE.ShaderMaterial({
+                ...crtShader,
+                transparent: true,
+                depthWrite: false
+            });
+            
+            const mesh = new THREE.Mesh(geometry, shaderMaterial);
+            scene.add(mesh);
+            
+            // Animation loop
+            let clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Update shader time
+                shaderMaterial.uniforms.time.value = clock.getElapsedTime();
+                
+                renderer.render(scene, camera);
             }
             
-            renderer.render(scene, camera);
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const newWidth = window.innerWidth;
+                const newHeight = window.innerHeight;
+                
+                camera.left = -newWidth / 2;
+                camera.right = newWidth / 2;
+                camera.top = newHeight / 2;
+                camera.bottom = -newHeight / 2;
+                camera.updateProjectionMatrix();
+                
+                renderer.setSize(newWidth, newHeight);
+                shaderMaterial.uniforms.resolution.value.set(newWidth, newHeight);
+                
+                mesh.geometry.dispose();
+                mesh.geometry = new THREE.PlaneGeometry(newWidth, newHeight);
+            });
+            
+            animate();
         }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
-            
-            // Update camera
-            camera.left = -newWidth / 2;
-            camera.right = newWidth / 2;
-            camera.top = newHeight / 2;
-            camera.bottom = -newHeight / 2;
-            camera.updateProjectionMatrix();
-            
-            // Update renderer
-            renderer.setSize(newWidth, newHeight);
-            
-            // Update mesh geometry
-            mesh.geometry.dispose();
-            mesh.geometry = new THREE.PlaneGeometry(newWidth, newHeight);
+
+        // Initialize popup buttons
+        document.getElementById('send-email').addEventListener('click', function() {
+            window.location.href = 'mailto:robby@robbygat.com';
         });
         
-        animate(0);
+        document.getElementById('close-popup').addEventListener('click', function() {
+            document.getElementById('email-popup').style.display = 'none';
+        });
+
+        // Create p5 instance
+        p5Instance = new p5(p5Sketch);
+        
+        // Initialize Three.js overlay with a small delay to ensure p5 is ready
+        setTimeout(initThreeJS, 100);
     </script>
 </body>
 </html>
