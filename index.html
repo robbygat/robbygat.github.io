@@ -1,947 +1,1355 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GBA Web Emulator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #2a2a2a;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        h1 {
-            color: #8bc34a;
-            margin-bottom: 20px;
-        }
-        .emulator-container {
-            position: relative;
-            width: 480px;
-            height: 320px;
-            background-color: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-        }
-        canvas {
-            width: 100%;
-            height: 100%;
-            image-rendering: pixelated;
-        }
-        .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 480px;
-        }
-        .file-input {
-            margin-bottom: 15px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-        }
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4caf50;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .d-pad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-            gap: 5px;
-            width: 150px;
-            margin-bottom: 20px;
-        }
-        .d-pad button {
-            background-color: #3f51b5;
-        }
-        .d-pad button:hover {
-            background-color: #303f9f;
-        }
-        .d-pad .empty {
-            background-color: transparent;
-        }
-        .status {
-            background-color: #333;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 14px;
-            width: 100%;
-            max-width: 480px;
-        }
-        .key-guide {
-            background-color: #333;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 14px;
-            width: 100%;
-            max-width: 480px;
-        }
-        .key-guide h3 {
-            margin-top: 0;
-            color: #8bc34a;
-        }
-        .key-guide ul {
-            padding-left: 20px;
-        }
-        #fps-counter {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        #debug-log {
-            width: 100%;
-            max-width: 480px;
-            height: 100px;
-            overflow-y: auto;
-            background-color: #1a1a1a;
-            color: #4caf50;
-            font-family: monospace;
-            font-size: 12px;
-            padding: 5px;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <h1>GBA Web Emulator</h1>
+import React, { useState, useEffect, useRef } from 'react';
+import { Pause, Play, RefreshCw, HelpCircle, X } from 'lucide-react';
+
+// Chess piece symbols
+const PIECES = {
+  'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟',
+  'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+};
+
+// Piece values for AI evaluation
+const PIECE_VALUES = {
+  'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 0,
+  'P': 1, 'N': 3, 'B': 3, 'R': 5, 'Q': 9, 'K': 0
+};
+
+// Check if a character is uppercase (white piece)
+const isWhite = (piece) => piece && piece === piece.toUpperCase();
+
+// Check if a character is lowercase (black piece)
+const isBlack = (piece) => piece && piece === piece.toLowerCase();
+
+// Convert algebraic notation to board coordinates
+const algebraicToCoords = (algebraic) => {
+  const file = algebraic.charCodeAt(0) - 'a'.charCodeAt(0);
+  const rank = 8 - parseInt(algebraic.charAt(1));
+  return [rank, file];
+};
+
+// Convert board coordinates to algebraic notation
+const coordsToAlgebraic = (row, col) => {
+  const file = String.fromCharCode('a'.charCodeAt(0) + col);
+  const rank = 8 - row;
+  return file + rank;
+};
+
+const Choker = () => {
+  // Game state
+  const [board, setBoard] = useState(null);
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [possibleMoves, setPossibleMoves] = useState([]);
+  const [playerColor, setPlayerColor] = useState(null);
+  const [aiColor, setAiColor] = useState(null);
+  const [turn, setTurn] = useState('white');
+  const [moveCount, setMoveCount] = useState(0);
+  const [gamePhase, setGamePhase] = useState('setup'); // setup, playing, betting, gameOver
+  const [bettingRound, setBettingRound] = useState(0);
+  const [winner, setWinner] = useState(null);
+  const [playerChips, setPlayerChips] = useState(100);
+  const [aiChips, setAiChips] = useState(100);
+  const [currentBet, setCurrentBet] = useState(0);
+  const [potSize, setPotSize] = useState(0);
+  const [blindAmount] = useState(10);
+  const [lastBet, setLastBet] = useState(null);
+  const [playerLockedPieces, setPlayerLockedPieces] = useState([]);
+  const [aiLockedPieces, setAiLockedPieces] = useState([]);
+  const [knownLockedPieces, setKnownLockedPieces] = useState([]);
+  const [lockedPositions, setLockedPositions] = useState({});
+  const [unlockedPieces, setUnlockedPieces] = useState([]);
+  const [message, setMessage] = useState('');
+  const [showRules, setShowRules] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [lastMove, setLastMove] = useState(null);
+  const [gameHistory, setGameHistory] = useState([]);
+  const [showWinnerMessage, setShowWinnerMessage] = useState(false);
+  
+  const boardRef = useRef(null);
+  
+  // Initialize the game
+  useEffect(() => {
+    startNewGame();
+  }, []);
+  
+  const startNewGame = () => {
+    const coinFlip = Math.random() >= 0.5;
+    const playerIsWhite = coinFlip;
     
-    <div class="emulator-container">
-        <canvas id="gba-screen"></canvas>
-        <div id="fps-counter">0 FPS</div>
-    </div>
+    setPlayerColor(playerIsWhite ? 'white' : 'black');
+    setAiColor(playerIsWhite ? 'black' : 'white');
+    setTurn('white');
+    setMoveCount(0);
+    setGamePhase('setup');
+    setBettingRound(0);
+    setWinner(null);
+    setPlayerChips(100);
+    setAiChips(100);
+    setCurrentBet(0);
+    setPotSize(0);
+    setLastBet(null);
+    setUnlockedPieces([]);
+    setShowWinnerMessage(false);
     
-    <div class="controls">
-        <div class="file-input">
-            <input type="file" id="rom-input" accept=".gba">
-            <button id="load-rom">Load ROM</button>
-            <button id="toggle-play">Play/Pause</button>
+    // Initialize the board with pawns in normal positions
+    const initialBoard = Array(8).fill().map(() => Array(8).fill(null));
+    
+    // Place pawns
+    for (let col = 0; col < 8; col++) {
+      initialBoard[1][col] = 'P'; // White pawns
+      initialBoard[6][col] = 'p'; // Black pawns
+    }
+    
+    // Generate randomized back rows (excluding king)
+    const whitePieces = ['R', 'N', 'B', 'Q', 'B', 'N', 'R'];
+    const blackPieces = ['r', 'n', 'b', 'q', 'b', 'n', 'r'];
+    
+    // Shuffle pieces
+    shuffleArray(whitePieces);
+    shuffleArray(blackPieces);
+    
+    // Insert kings at random positions
+    const whiteKingPos = Math.floor(Math.random() * 8);
+    const blackKingPos = Math.floor(Math.random() * 8);
+    
+    // Place all pieces on the board
+    for (let col = 0; col < 8; col++) {
+      // White back row
+      if (col === whiteKingPos) {
+        initialBoard[7][col] = 'K';
+      } else {
+        initialBoard[7][col] = whitePieces.pop();
+      }
+      
+      // Black back row
+      if (col === blackKingPos) {
+        initialBoard[0][col] = 'k';
+      } else {
+        initialBoard[0][col] = blackPieces.pop();
+      }
+    }
+    
+    setBoard(initialBoard);
+    setGameHistory([{board: JSON.parse(JSON.stringify(initialBoard)), moveCount: 0}]);
+    
+    // Select locked pieces (excluding pawns and kings)
+    selectLockedPieces(initialBoard);
+    
+    // Transition to initial betting phase after setup
+    setTimeout(() => {
+      setGamePhase('betting');
+      setBettingRound(1);
+      setMessage(`${playerIsWhite ? 'Black' : 'White'} (${playerIsWhite ? 'AI' : 'You'}) bets first. Blind: ${blindAmount}`);
+      
+      // AI makes initial bet if it's black
+      if (!playerIsWhite) {
+        handleAiAction();
+      }
+    }, 1000);
+  };
+  
+  // Fisher-Yates shuffle algorithm
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  };
+  
+  // Randomly select locked pieces (excluding pawns and kings)
+  const selectLockedPieces = (board) => {
+    const playerPieces = [];
+    const aiPieces = [];
+    
+    // Collect all eligible pieces (non-pawns, non-kings)
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col];
+        if (!piece) continue;
+        
+        const pieceType = piece.toLowerCase();
+        if (pieceType !== 'p' && pieceType !== 'k') {
+          const position = coordsToAlgebraic(row, col);
+          if ((playerColor === 'white' && isWhite(piece)) || 
+              (playerColor === 'black' && isBlack(piece))) {
+            playerPieces.push({piece, position, coords: [row, col]});
+          } else {
+            aiPieces.push({piece, position, coords: [row, col]});
+          }
+        }
+      }
+    }
+    
+    // Ensure we have enough pieces to lock
+    if (playerPieces.length < 5 || aiPieces.length < 5) {
+      console.error('Not enough pieces to lock');
+      return;
+    }
+    
+    // Shuffle and select 5 pieces for each player
+    shuffleArray(playerPieces);
+    shuffleArray(aiPieces);
+    
+    const playerLockedPieces = playerPieces.slice(0, 5);
+    const aiLockedPieces = aiPieces.slice(0, 5);
+    
+    // Select 2 known locked pieces for the player
+    const knownLockedPieces = playerLockedPieces.slice(0, 2);
+    
+    // Create lockedPositions object
+    const lockedPositions = {};
+    [...playerLockedPieces, ...aiLockedPieces].forEach(({position, coords}) => {
+      lockedPositions[position] = true;
+    });
+    
+    setPlayerLockedPieces(playerLockedPieces);
+    setAiLockedPieces(aiLockedPieces);
+    setKnownLockedPieces(knownLockedPieces);
+    setLockedPositions(lockedPositions);
+  };
+
+  // Unlock one piece for each player
+  const unlockPieces = () => {
+    if (playerLockedPieces.length > 0 && aiLockedPieces.length > 0) {
+      // Remove the first piece from each locked list
+      const playerPiece = playerLockedPieces[0];
+      const aiPiece = aiLockedPieces[0];
+      
+      // Create a copy of the locked positions and remove the unlocked pieces
+      const newLockedPositions = {...lockedPositions};
+      delete newLockedPositions[playerPiece.position];
+      delete newLockedPositions[aiPiece.position];
+      
+      // Update state
+      setPlayerLockedPieces(playerLockedPieces.slice(1));
+      setAiLockedPieces(aiLockedPieces.slice(1));
+      setLockedPositions(newLockedPositions);
+      setUnlockedPieces([...unlockedPieces, playerPiece, aiPiece]);
+      
+      setMessage(`Unlocked ${playerPiece.piece.toUpperCase()} for you and ${aiPiece.piece.toUpperCase()} for AI!`);
+      
+      // After unlocking, transition to betting phase
+      setGamePhase('betting');
+      setBettingRound(bettingRound + 1);
+      
+      // If AI is black (bets first), handle AI action
+      if (aiColor === 'black') {
+        setTimeout(() => {
+          handleAiAction();
+        }, 1000);
+      }
+    } else {
+      // If no more pieces to unlock, continue playing
+      setGamePhase('playing');
+    }
+  };
+  
+  // Handle player bet actions (check, call, raise, fold)
+  const handlePlayerBet = (action, raiseAmount = 0) => {
+    switch (action) {
+      case 'check':
+        if (currentBet > 0) {
+          setMessage("Can't check - there's already a bet. Call, raise, or fold.");
+          return;
+        }
+        setMessage("Player checks.");
+        setLastBet({player: 'player', action: 'check'});
+        break;
+        
+      case 'call':
+        if (currentBet === 0) {
+          setMessage("No bet to call.");
+          return;
+        }
+        if (playerChips < currentBet) {
+          handleFold('player');
+          return;
+        }
+        setPlayerChips(playerChips - currentBet);
+        setPotSize(potSize + currentBet);
+        setMessage(`Player calls ${currentBet}.`);
+        setLastBet({player: 'player', action: 'call', amount: currentBet});
+        break;
+        
+      case 'raise':
+        if (raiseAmount <= currentBet) {
+          setMessage("Raise must be greater than current bet.");
+          return;
+        }
+        if (playerChips < raiseAmount) {
+          setMessage("Not enough chips to raise that amount.");
+          return;
+        }
+        setPlayerChips(playerChips - raiseAmount);
+        setPotSize(potSize + raiseAmount);
+        setCurrentBet(raiseAmount);
+        setMessage(`Player raises to ${raiseAmount}.`);
+        setLastBet({player: 'player', action: 'raise', amount: raiseAmount});
+        break;
+        
+      case 'fold':
+        handleFold('player');
+        return;
+    }
+    
+    // After player's action, handle AI's response
+    setTimeout(() => {
+      handleAiAction();
+    }, 1000);
+  };
+  
+  // Handle AI betting logic
+  const handleAiAction = () => {
+    // If it's the first betting round and AI is black (bets first)
+    if (bettingRound === 1 && lastBet === null && aiColor === 'black') {
+      // AI places blind bet
+      setAiChips(aiChips - blindAmount);
+      setPotSize(potSize + blindAmount);
+      setCurrentBet(blindAmount);
+      setMessage(`AI places blind bet of ${blindAmount}.`);
+      setLastBet({player: 'ai', action: 'bet', amount: blindAmount});
+      return;
+    }
+    
+    // AI decision making based on its hand strength
+    const aiHandStrength = evaluateAiHand();
+    
+    // If player checked
+    if (lastBet && lastBet.player === 'player' && lastBet.action === 'check') {
+      // AI betting strategy based on hand strength
+      if (aiHandStrength > 0.7) {
+        // Strong hand - bet aggressively
+        const betAmount = Math.min(Math.floor(aiHandStrength * 30), aiChips);
+        setAiChips(aiChips - betAmount);
+        setPotSize(potSize + betAmount);
+        setCurrentBet(betAmount);
+        setMessage(`AI bets ${betAmount}.`);
+        setLastBet({player: 'ai', action: 'bet', amount: betAmount});
+      } else {
+        // Weak hand - check
+        setMessage("AI checks.");
+        setLastBet({player: 'ai', action: 'check'});
+        finishBettingRound();
+      }
+    }
+    // If player called
+    else if (lastBet && lastBet.player === 'player' && lastBet.action === 'call') {
+      finishBettingRound();
+    }
+    // If player raised
+    else if (lastBet && lastBet.player === 'player' && lastBet.action === 'raise') {
+      if (aiHandStrength > 0.6 || Math.random() < 0.3) { // Sometimes call with a weaker hand (bluff detection)
+        // Call the raise
+        if (aiChips < currentBet) {
+          handleFold('ai');
+          return;
+        }
+        setAiChips(aiChips - currentBet);
+        setPotSize(potSize + currentBet);
+        setMessage(`AI calls ${currentBet}.`);
+        setLastBet({player: 'ai', action: 'call', amount: currentBet});
+        finishBettingRound();
+      } else {
+        // Fold with weak hand
+        handleFold('ai');
+      }
+    }
+    // If no previous action (AI is first to act)
+    else {
+      if (aiHandStrength > 0.5 || Math.random() < 0.2) { // Sometimes bet with a weaker hand (bluffing)
+        // Bet based on hand strength
+        const betAmount = Math.min(Math.floor(aiHandStrength * 20) + blindAmount, aiChips);
+        setAiChips(aiChips - betAmount);
+        setPotSize(potSize + betAmount);
+        setCurrentBet(betAmount);
+        setMessage(`AI bets ${betAmount}.`);
+        setLastBet({player: 'ai', action: 'bet', amount: betAmount});
+      } else {
+        // Check with weak hand
+        setMessage("AI checks.");
+        setLastBet({player: 'ai', action: 'check'});
+        
+        // If both players check, finish the betting round
+        if (lastBet && lastBet.player === 'player' && lastBet.action === 'check') {
+          finishBettingRound();
+        }
+      }
+    }
+  };
+  
+  // Evaluate AI's hand strength (0-1) for betting decisions
+  const evaluateAiHand = () => {
+    // Simplistic evaluation based on piece values and position
+    let totalValue = 0;
+    let maxPossibleValue = 0;
+    
+    // Count AI's pieces and their values
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col];
+        if (!piece) continue;
+        
+        // Evaluate relative piece strength and position
+        if ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece))) {
+          const pieceType = piece.toLowerCase();
+          const pieceValue = PIECE_VALUES[pieceType];
+          
+          // Add basic piece value
+          totalValue += pieceValue;
+          
+          // Add position value (pieces closer to center are better)
+          const centerDistance = Math.abs(3.5 - row) + Math.abs(3.5 - col);
+          totalValue += (7 - centerDistance) * 0.1;
+          
+          // Add bonus for developed pieces (not in starting position)
+          if (pieceType !== 'p' && !isLocked(row, col)) {
+            if (aiColor === 'white' && row < 7) totalValue += 0.5;
+            if (aiColor === 'black' && row > 0) totalValue += 0.5;
+          }
+        }
+        
+        // Count all possible piece values for normalization
+        maxPossibleValue += PIECE_VALUES[piece.toLowerCase()];
+      }
+    }
+    
+    // Normalize to 0-1 range and add randomness for less predictable play
+    const normalizedStrength = totalValue / Math.max(maxPossibleValue, 1);
+    return normalizedStrength * 0.8 + Math.random() * 0.2;
+  };
+  
+  // Handle fold action
+  const handleFold = (player) => {
+    const winner = player === 'player' ? 'ai' : 'player';
+    setMessage(`${player.charAt(0).toUpperCase() + player.slice(1)} folds. ${winner.charAt(0).toUpperCase() + winner.slice(1)} wins the pot of ${potSize}!`);
+    
+    if (winner === 'player') {
+      setPlayerChips(playerChips + potSize);
+    } else {
+      setAiChips(aiChips + potSize);
+    }
+    
+    setWinner(winner);
+    setGamePhase('gameOver');
+    setShowWinnerMessage(true);
+  };
+  
+  // Finish the betting round and transition to playing phase
+  const finishBettingRound = () => {
+    setLastBet(null);
+    setCurrentBet(0);
+    
+    // If this is the first betting round, reveal all locked pieces
+    if (bettingRound === 1) {
+      setKnownLockedPieces(playerLockedPieces);
+    }
+    
+    setGamePhase('playing');
+    setMessage(turn === playerColor ? "Your move." : "AI is thinking...");
+    
+    // If AI starts playing, make a move
+    if (turn === aiColor) {
+      setTimeout(makeAiMove, 1000);
+    }
+  };
+  
+  // Check if a position is locked
+  const isLocked = (row, col) => {
+    const position = coordsToAlgebraic(row, col);
+    return lockedPositions[position];
+  };
+  
+  // Get all valid moves for a piece
+  const getValidMoves = (row, col) => {
+    const piece = board[row][col];
+    if (!piece) return [];
+    
+    // If piece is locked, it can't move
+    if (isLocked(row, col)) return [];
+    
+    // Check if it's the player's turn and piece
+    const isPlayerPiece = (playerColor === 'white' && isWhite(piece)) || 
+                          (playerColor === 'black' && isBlack(piece));
+    if (turn !== playerColor || !isPlayerPiece) return [];
+    
+    const pieceType = piece.toLowerCase();
+    const validMoves = [];
+    
+    switch (pieceType) {
+      case 'p': // Pawn
+        getPawnMoves(row, col, piece, validMoves);
+        break;
+      case 'r': // Rook
+        getRookMoves(row, col, piece, validMoves);
+        break;
+      case 'n': // Knight
+        getKnightMoves(row, col, piece, validMoves);
+        break;
+      case 'b': // Bishop
+        getBishopMoves(row, col, piece, validMoves);
+        break;
+      case 'q': // Queen
+        getRookMoves(row, col, piece, validMoves);
+        getBishopMoves(row, col, piece, validMoves);
+        break;
+      case 'k': // King
+        getKingMoves(row, col, piece, validMoves);
+        break;
+    }
+    
+    // Filter out moves that would put the king in check
+    return validMoves.filter(([toRow, toCol]) => {
+      const newBoard = JSON.parse(JSON.stringify(board));
+      newBoard[toRow][toCol] = piece;
+      newBoard[row][col] = null;
+      
+      return !isKingInCheck(newBoard, isWhite(piece) ? 'white' : 'black');
+    });
+  };
+  
+  // Get valid moves for pawns
+  const getPawnMoves = (row, col, piece, validMoves) => {
+    const direction = isWhite(piece) ? -1 : 1;
+    const startRow = isWhite(piece) ? 6 : 1;
+    
+    // Move forward one square
+    if (row + direction >= 0 && row + direction < 8 && !board[row + direction][col]) {
+      validMoves.push([row + direction, col]);
+      
+      // Move forward two squares from starting position
+      if (row === startRow && !board[row + 2 * direction][col]) {
+        validMoves.push([row + 2 * direction, col]);
+      }
+    }
+    
+    // Capture diagonally
+    for (let dx of [-1, 1]) {
+      const newCol = col + dx;
+      if (newCol >= 0 && newCol < 8 && board[row + direction][newCol]) {
+        const target = board[row + direction][newCol];
+        if (isWhite(piece) !== isWhite(target)) {
+          validMoves.push([row + direction, newCol]);
+        }
+      }
+    }
+    
+    // TODO: Add en passant if needed
+  };
+  
+  // Get valid moves for rooks
+  const getRookMoves = (row, col, piece, validMoves) => {
+    const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // Up, down, left, right
+    
+    for (let [dx, dy] of directions) {
+      let newRow = row + dx;
+      let newCol = col + dy;
+      
+      while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+        const target = board[newRow][newCol];
+        
+        if (!target) {
+          validMoves.push([newRow, newCol]);
+        } else {
+          if (isWhite(piece) !== isWhite(target)) {
+            validMoves.push([newRow, newCol]); // Capture
+          }
+          break; // Can't move past a piece
+        }
+        
+        newRow += dx;
+        newCol += dy;
+      }
+    }
+  };
+  
+  // Get valid moves for knights
+  const getKnightMoves = (row, col, piece, validMoves) => {
+    const moves = [
+      [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+      [1, -2], [1, 2], [2, -1], [2, 1]
+    ];
+    
+    for (let [dx, dy] of moves) {
+      const newRow = row + dx;
+      const newCol = col + dy;
+      
+      if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+        const target = board[newRow][newCol];
+        
+        if (!target || isWhite(piece) !== isWhite(target)) {
+          validMoves.push([newRow, newCol]);
+        }
+      }
+    }
+  };
+  
+  // Get valid moves for bishops
+  const getBishopMoves = (row, col, piece, validMoves) => {
+    const directions = [[-1, -1], [-1, 1], [1, -1], [1, 1]]; // Diagonals
+    
+    for (let [dx, dy] of directions) {
+      let newRow = row + dx;
+      let newCol = col + dy;
+      
+      while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+        const target = board[newRow][newCol];
+        
+        if (!target) {
+          validMoves.push([newRow, newCol]);
+        } else {
+          if (isWhite(piece) !== isWhite(target)) {
+            validMoves.push([newRow, newCol]); // Capture
+          }
+          break; // Can't move past a piece
+        }
+        
+        newRow += dx;
+        newCol += dy;
+      }
+    }
+  };
+  
+  // Get valid moves for kings
+  const getKingMoves = (row, col, piece, validMoves) => {
+    const moves = [
+      [-1, -1], [-1, 0], [-1, 1],
+      [0, -1], [0, 1],
+      [1, -1], [1, 0], [1, 1]
+    ];
+    
+    for (let [dx, dy] of moves) {
+      const newRow = row + dx;
+      const newCol = col + dy;
+      
+      if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+        const target = board[newRow][newCol];
+        
+        if (!target || isWhite(piece) !== isWhite(target)) {
+          validMoves.push([newRow, newCol]);
+        }
+      }
+    }
+    
+    // Handle castling
+    if (!hasPieceMoved(row, col)) {
+      // Kingside castling
+      if (canCastle(row, col, true)) {
+        validMoves.push([row, col + 2]);
+      }
+      
+      // Queenside castling
+      if (canCastle(row, col, false)) {
+        validMoves.push([row, col - 2]);
+      }
+    }
+  };
+  
+  // Check if a piece can castle
+  const canCastle = (row, col, isKingside) => {
+    const piece = board[row][col];
+    const rookCol = isKingside ? 7 : 0;
+    const rookRow = row;
+    
+    // Check if king or rook has moved
+    if (hasPieceMoved(row, col) || hasPieceMoved(rookRow, rookCol)) {
+      return false;
+    }
+    
+    // Check if rook exists and is not locked
+    const rook = board[rookRow][rookCol];
+    if (!rook || isLocked(rookRow, rookCol)) {
+      return false;
+    }
+    
+    // Check if the rook is the correct color
+    if (isWhite(piece) !== isWhite(rook)) {
+      return false;
+    }
+    
+    // Check if path is clear between king and rook
+    const direction = isKingside ? 1 : -1;
+    for (let c = col + direction; c !== rookCol; c += direction) {
+      if (board[row][c] !== null) {
+        return false;
+      }
+    }
+    
+    // Check if king passes through check
+    const color = isWhite(piece) ? 'white' : 'black';
+    const testBoard = JSON.parse(JSON.stringify(board));
+    
+    // Check intermediate square
+    testBoard[row][col] = null;
+    testBoard[row][col + direction] = piece;
+    if (isKingInCheck(testBoard, color)) {
+      return false;
+    }
+    
+    // Check final position
+    testBoard[row][col + direction] = null;
+    testBoard[row][col + 2 * direction] = piece;
+    if (isKingInCheck(testBoard, color)) {
+      return false;
+    }
+    
+    return true;
+  };
+  
+  // Check if a king is in check
+  const isKingInCheck = (checkBoard, color) => {
+    // Find the king
+    let kingRow = -1;
+    let kingCol = -1;
+    
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = checkBoard[row][col];
+        if ((color === 'white' && piece === 'K') || (color === 'black' && piece === 'k')) {
+          kingRow = row;
+          kingCol = col;
+          break;
+        }
+      }
+      if (kingRow !== -1) break;
+    }
+    
+    if (kingRow === -1) return false; // No king found (shouldn't happen)
+    
+    // Check if any opponent piece can attack the king
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = checkBoard[row][col];
+        if (!piece) continue;
+        
+        // If it's an opponent piece
+        if ((color === 'white' && isBlack(piece)) || (color === 'black' && isWhite(piece))) {
+          // Skip locked pieces
+          if (isLocked(row, col)) continue;
+          
+          const pieceType = piece.toLowerCase();
+          
+          switch (pieceType) {
+            case 'p': // Pawn
+              const direction = isWhite(piece) ? -1 : 1;
+              if (Math.abs(col - kingCol) === 1 && row + direction === kingRow) {
+                return true;
+              }
+              break;
+              
+            case 'r': // Rook
+              if (kingRow === row || kingCol === col) {
+                let blocked = false;
+                const dx = kingRow === row ? 0 : (kingRow > row ? 1 : -1);
+                const dy = kingCol === col ? 0 : (kingCol > col ? 1 : -1);
+                
+                let checkRow = row + dx;
+                let checkCol = col + dy;
+                
+                while (checkRow !== kingRow || checkCol !== kingCol) {
+                  if (checkBoard[checkRow][checkCol] !== null) {
+                    blocked = true;
+                    break;
+                  }
+                  checkRow += dx;
+                  checkCol += dy;
+                }
+                
+                if (!blocked) return true;
+              }
+              break;
+              
+            case 'n': // Knight
+              const knightMoves = [
+                [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+                [1, -2], [1, 2], [2, -1], [2, 1]
+              ];
+              
+              for (let [dx, dy] of knightMoves) {
+                if (row + dx === kingRow && col + dy === kingCol) {
+                  return true;
+                }
+              }
+              break;
+              
+            case 'b': // Bishop
+              if (Math.abs(kingRow - row) === Math.abs(kingCol - col)) {
+                let blocked = false;
+                const dx = kingRow > row ? 1 : -1;
+                const dy = kingCol > col ? 1 : -1;
+                
+                let checkRow = row + dx;
+                let checkCol = col + dy;
+                
+                while (checkRow !== kingRow && checkCol !== kingCol) {
+                  if (checkBoard[checkRow][checkCol] !== null) {
+                    blocked = true;
+                    break;
+                  }
+                  checkRow += dx;
+                  checkCol += dy;
+                }
+                
+                if (!blocked) return true;
+              }
+              break;
+              
+            case 'q': // Queen (combines rook and bishop)
+              // Rook-like movement
+              if (kingRow === row || kingCol === col) {
+                let blocked = false;
+                const dx = kingRow === row ? 0 : (kingRow > row ? 1 : -1);
+                const dy = kingCol === col ? 0 : (kingCol > col ? 1 : -1);
+                
+                let checkRow = row + dx;
+                let checkCol = col + dy;
+                
+                while (checkRow !== kingRow || checkCol !== kingCol) {
+                  if (checkBoard[checkRow][checkCol] !== null) {
+                    blocked = true;
+                    break;
+                  }
+                  checkRow += dx;
+                  checkCol += dy;
+                }
+                
+                if (!blocked) return true;
+              }
+              
+              // Bishop-like movement
+              if (Math.abs(kingRow - row) === Math.abs(kingCol - col)) {
+                let blocked = false;
+                const dx = kingRow > row ? 1 : -1;
+                const dy = kingCol > col ? 1 : -1;
+                
+                let checkRow = row + dx;
+                let checkCol = col + dy;
+                
+                while (checkRow !== kingRow && checkCol !== kingCol) {
+                  if (checkBoard[checkRow][checkCol] !== null) {
+                    blocked = true;
+                    break;
+                  }
+                  checkRow += dx;
+                  checkCol += dy;
+                }
+                
+                if (!blocked) return true;
+              }
+              break;
+              
+            case 'k': // King
+              if (Math.abs(kingRow - row) <= 1 && Math.abs(kingCol - col) <= 1) {
+                return true;
+              }
+              break;
+          }
+        }
+      }
+    }
+    
+    return false;
+  };
+  
+  // Check if a piece has moved from its starting position
+  const hasPieceMoved = (row, col) => {
+    // Check game history
+    if (gameHistory.length <= 1) return false; // No moves yet
+    
+    const initialBoard = gameHistory[0].board;
+    return initialBoard[row][col] !== board[row][col];
+  };
+  
+  // Check if the game is in checkmate or stalemate
+  const isGameOver = () => {
+    const color = turn;
+    
+    // Check if any piece of the current player can make a valid move
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col];
+        if (!piece) continue;
+        
+        if ((color === 'white' && isWhite(piece)) || (color === 'black' && isBlack(piece))) {
+          const moves = getValidMoves(row, col);
+          if (moves.length > 0) return false;
+        }
+      }
+    }
+    
+    // No legal moves available - check if the king is in check
+    return isKingInCheck(board, color) ? 'checkmate' : 'stalemate';
+  };
+  
+  // Handle cell click
+  const handleCellClick = (row, col) => {
+    if (gamePhase !== 'playing' || turn !== playerColor || isAnimating) return;
+    
+    // If a piece is already selected
+    if (selectedCell) {
+      const [selectedRow, selectedCol] = selectedCell;
+      const validMoves = getValidMoves(selectedRow, selectedCol);
+      
+      // Check if clicked cell is a valid move
+      const isValidMove = validMoves.some(([r, c]) => r === row && c === col);
+      
+      if (isValidMove) {
+        // Move the piece
+        makeMove(selectedRow, selectedCol, row, col);
+      } else {
+        // Check if clicked on another piece of the same color
+        const piece = board[row][col];
+        if (piece && ((playerColor === 'white' && isWhite(piece)) || 
+                     (playerColor === 'black' && isBlack(piece)))) {
+          setSelectedCell([row, col]);
+          setPossibleMoves(getValidMoves(row, col));
+        } else {
+          setSelectedCell(null);
+          setPossibleMoves([]);
+        }
+      }
+    } else {
+      // Select the piece if it's the player's
+      const piece = board[row][col];
+      if (piece && ((playerColor === 'white' && isWhite(piece)) || 
+                   (playerColor === 'black' && isBlack(piece)))) {
+        setSelectedCell([row, col]);
+        setPossibleMoves(getValidMoves(row, col));
+      }
+    }
+  };
+  
+  // Make a move
+  const makeMove = (fromRow, fromCol, toRow, toCol) => {
+    const piece = board[fromRow][fromCol];
+    if (!piece) return;
+    
+    // Create a new board with the move
+    const newBoard = JSON.parse(JSON.stringify(board));
+    
+    // Handle castling
+    if (piece.toLowerCase() === 'k' && Math.abs(toCol - fromCol) === 2) {
+      const isKingside = toCol > fromCol;
+      const rookCol = isKingside ? 7 : 0;
+      const newRookCol = isKingside ? toCol - 1 : toCol + 1;
+      
+      // Move the rook
+      newBoard[toRow][newRookCol] = newBoard[fromRow][rookCol];
+      newBoard[fromRow][rookCol] = null;
+    }
+    
+    // Move the piece
+    newBoard[toRow][toCol] = piece;
+    newBoard[fromRow][fromCol] = null;
+    
+    // Update the board and clear selection
+    setBoard(newBoard);
+    setSelectedCell(null);
+    setPossibleMoves([]);
+    setLastMove([fromRow, fromCol, toRow, toCol]);
+    setIsAnimating(true);
+    
+    // Add to game history
+    const updatedMoveCount = moveCount + 1;
+    setGameHistory([...gameHistory, {board: newBoard, moveCount: updatedMoveCount}]);
+    
+    // After a short delay for animation
+    setTimeout(() => {
+      setIsAnimating(false);
+      
+      // Increment move count
+      setMoveCount(updatedMoveCount);
+      
+      // Check for checkmate or stalemate
+      const gameOverState = isGameOver();
+      if (gameOverState) {
+        if (gameOverState === 'checkmate') {
+          const winningColor = turn === 'white' ? 'black' : 'white';
+          setWinner(winningColor === playerColor ? 'player' : 'ai');
+          setMessage(`Checkmate! ${winningColor.charAt(0).toUpperCase() + winningColor.slice(1)} wins!`);
+        } else {
+          setWinner('draw');
+          setMessage("Stalemate! The game is a draw.");
+        }
+        setGamePhase('gameOver');
+        setShowWinnerMessage(true);
+        return;
+      }
+      
+      // Switch turns
+      const newTurn = turn === 'white' ? 'black' : 'white';
+      setTurn(newTurn);
+      
+      // If a full set of moves has been completed (both players move)
+      const fullMoveCompleted = (updatedMoveCount % 2 === 0);
+      if (fullMoveCompleted && updatedMoveCount > 0 && updatedMoveCount % 6 === 0) {
+        // After every 3 sets (6 moves), unlock pieces and start a betting round
+        unlockPieces();
+      } else {
+        // If it's AI's turn, make a move
+        if (newTurn === aiColor) {
+          setMessage("AI is thinking...");
+          setTimeout(makeAiMove, 1000);
+        } else {
+          setMessage("Your move.");
+        }
+      }
+    }, 300);
+  };
+  
+  // AI move logic
+  const makeAiMove = () => {
+    // Collect all valid moves for AI pieces
+    const allMoves = [];
+    
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = board[row][col];
+        if (!piece) continue;
+        
+        // If piece is AI's and not locked
+        if ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece))) {
+          if (!isLocked(row, col)) {
+            const moves = getValidMoves(row, col);
+            moves.forEach(([toRow, toCol]) => {
+              allMoves.push({fromRow: row, fromCol: col, toRow, toCol, piece});
+            });
+          }
+        }
+      }
+    }
+    
+    if (allMoves.length === 0) {
+      // No valid moves - game is over
+      return;
+    }
+    
+    // Evaluate each move
+    const scoredMoves = allMoves.map(move => {
+      // Simulate the move
+      const simulatedBoard = JSON.parse(JSON.stringify(board));
+      simulatedBoard[move.toRow][move.toCol] = move.piece;
+      simulatedBoard[move.fromRow][move.fromCol] = null;
+      
+      // Score the move
+      let score = 0;
+      
+      // Capture value
+      const capturedPiece = board[move.toRow][move.toCol];
+      if (capturedPiece) {
+        score += PIECE_VALUES[capturedPiece.toLowerCase()] * 10;
+      }
+      
+      // Position value
+      const pieceType = move.piece.toLowerCase();
+      
+      // Center control for knights and bishops
+      if (pieceType === 'n' || pieceType === 'b') {
+        const centerDistance = Math.abs(3.5 - move.toRow) + Math.abs(3.5 - move.toCol);
+        score += (7 - centerDistance) * 0.5;
+      }
+      
+      // Pawn advancement
+      if (pieceType === 'p') {
+        score += (aiColor === 'white' ? 7 - move.toRow : move.toRow) * 0.3;
+      }
+      
+      // King safety in early/middle game
+      if (pieceType === 'k' && moveCount < 20) {
+        const edgeDistance = Math.min(move.toRow, 7 - move.toRow, move.toCol, 7 - move.toCol);
+        score += edgeDistance * 0.2;
+      }
+      
+      // Check if the move creates a check
+      if (isKingInCheck(simulatedBoard, playerColor === 'white' ? 'white' : 'black')) {
+        score += 5;
+      }
+      
+      // Random factor for unpredictability
+      score += Math.random() * 2;
+      
+      return {...move, score};
+    });
+    
+    // Sort by score and pick the best move
+    scoredMoves.sort((a, b) => b.score - a.score);
+    const bestMove = scoredMoves[0];
+    
+    // Make the selected move
+    makeMove(bestMove.fromRow, bestMove.fromCol, bestMove.toRow, bestMove.toCol);
+  };
+  
+  // Render functions
+  const renderBoard = () => {
+    return (
+      <div className="w-full max-w-2xl aspect-square grid grid-cols-8 border-2 border-gray-700 bg-amber-50">
+        {Array(8).fill().map((_, row) => (
+          Array(8).fill().map((_, col) => {
+            const isSelected = selectedCell && selectedCell[0] === row && selectedCell[1] === col;
+            const isPossibleMove = possibleMoves.some(([r, c]) => r === row && c === col);
+            const isLastMoveFrom = lastMove && lastMove[0] === row && lastMove[1] === col;
+            const isLastMoveTo = lastMove && lastMove[2] === row && lastMove[3] === col;
+            
+            return renderCell(row, col, isSelected, isPossibleMove, isLastMoveFrom, isLastMoveTo);
+          })
+        ))}
+      </div>
+    );
+  };
+  
+  const renderCell = (row, col, isSelected, isPossibleMove, isLastMoveFrom, isLastMoveTo) => {
+    const isLightSquare = (row + col) % 2 === 0;
+    const piece = board?.[row]?.[col];
+    const position = coordsToAlgebraic(row, col);
+    
+    // Determine if this piece is locked
+    const isLockedPiece = isLocked(row, col);
+    
+    // For opponent's pieces, we don't show what they are if locked
+    const showLockedSymbol = isLockedPiece && 
+      ((aiColor === 'white' && isWhite(piece)) || (aiColor === 'black' && isBlack(piece)));
+    
+    // Determine if this is one of the player's known locked pieces
+    const isKnownLocked = knownLockedPieces.some(p => p.position === position);
+    
+    // Determine cell background color
+    let bgColor = isLightSquare ? "bg-amber-100" : "bg-amber-800";
+    if (isSelected) {
+      bgColor = "bg-blue-400";
+    } else if (isPossibleMove) {
+      bgColor = isLightSquare ? "bg-blue-200" : "bg-blue-600";
+    } else if (isLastMoveFrom || isLastMoveTo) {
+      bgColor = isLightSquare ? "bg-yellow-200" : "bg-yellow-600";
+    }
+    
+    return (
+      <div 
+        key={`${row}-${col}`}
+        className={`relative flex items-center justify-center ${bgColor} transition-colors duration-200`}
+        onClick={() => handleCellClick(row, col)}
+      >
+        {/* Display algebraic notation for debugging */}
+        <div className="absolute top-0 left-0 text-xs opacity-50">
+          {position}
         </div>
         
-        <div class="buttons">
-            <button id="btn-a">A</button>
-            <button id="btn-b">B</button>
-            <button id="btn-select">SELECT</button>
-            <button id="btn-start">START</button>
-            <button id="btn-l">L</button>
-            <button id="btn-r">R</button>
+        {/* Chess piece */}
+        {piece && (
+          <div className={`text-4xl sm:text-5xl md:text-6xl transition-transform duration-300 
+                          ${isAnimating && isLastMoveTo ? 'scale-110' : 'scale-100'}
+                          ${isWhite(piece) ? 'text-white' : 'text-black'}
+                          ${isLockedPiece ? 'opacity-70' : 'opacity-100'}`}>
+            {showLockedSymbol ? '🔒' : PIECES[piece]}
+          </div>
+        )}
+        
+        {/* Show locked indicator for known locked pieces */}
+        {isKnownLocked && (
+          <div className="absolute bottom-0 right-0 text-xs text-red-500">
+            🔒
+          </div>
+        )}
+        
+        {/* Highlight for possible captures */}
+        {isPossibleMove && piece && (
+          <div className="absolute inset-0 border-2 border-red-500 pointer-events-none"></div>
+        )}
+      </div>
+    );
+  };
+  
+  const renderBettingControls = () => {
+    if (gamePhase !== 'betting' || (turn !== playerColor && bettingRound > 1)) return null;
+    
+    return (
+      <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow">
+        <h3 className="text-xl font-bold mb-2">Betting Round {bettingRound}</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button 
+            className="bg-gray-200 hover:bg-gray-300 p-2 rounded disabled:opacity-50"
+            onClick={() => handlePlayerBet('check')}
+            disabled={currentBet > 0}
+          >
+            Check
+          </button>
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+            onClick={() => handlePlayerBet('call')}
+            disabled={currentBet === 0}
+          >
+            Call {currentBet}
+          </button>
+          <button 
+            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded"
+            onClick={() => {
+              const amount = Math.min(currentBet + 10, playerChips);
+              handlePlayerBet('raise', amount);
+            }}
+          >
+            Raise to {Math.min(currentBet + 10, playerChips)}
+          </button>
+          <button 
+            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+            onClick={() => handlePlayerBet('fold')}
+          >
+            Fold
+          </button>
+        </div>
+      </div>
+    );
+  };
+  
+  const renderGameInfo = () => {
+    return (
+      <div className="bg-gray-100 p-4 rounded-lg shadow">
+        <div className="flex justify-between mb-2">
+          <span className="font-bold">You ({playerColor}): {playerChips} chips</span>
+          <span className="font-bold">AI ({aiColor}): {aiChips} chips</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span>Current Bet: {currentBet}</span>
+          <span>Pot: {potSize}</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span>Turn: {turn === playerColor ? 'You' : 'AI'}</span>
+          <span>Move: {Math.floor(moveCount/2)}.{moveCount % 2 === 0 ? 1 : 2}</span>
+        </div>
+        <div className="flex justify-between mb-2">
+          <span>Locked Pieces: {playerLockedPieces.length}</span>
+          <span>Game Phase: {gamePhase}</span>
+        </div>
+        <div className="bg-blue-100 p-2 rounded text-center">
+          {message}
+        </div>
+      </div>
+    );
+  };
+  
+  const renderWinnerModal = () => {
+    if (!showWinnerMessage) return null;
+    
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
+          <h2 className="text-2xl font-bold mb-4">Game Over</h2>
+          <p className="text-xl mb-4">
+            {winner === 'player' ? 'You win!' : 
+             winner === 'ai' ? 'AI wins!' : 
+             'The game is a draw!'}
+          </p>
+          <div className="flex justify-center">
+            <button 
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              onClick={() => {
+                setShowWinnerMessage(false);
+                startNewGame();
+              }}
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  const renderRulesModal = () => {
+    if (!showRules) return null;
+    
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg max-h-screen overflow-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">Choker Rules</h2>
+            <button 
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setShowRules(false)}
+            >
+              <X size={24} />
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-bold text-lg">1. Setup</h3>
+              <p>White makes the first chess move, but Black places the first bet. The back row pieces are randomly arranged for both players.</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-lg">2. Locked Pieces</h3>
+              <p>5 non-pawn, non-king pieces are locked at the beginning. You know which 2 of your pieces are locked initially, and learn all 5 after the first betting round.</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-lg">3. Betting</h3>
+              <p>Similar to poker, you can check, call, raise, or fold. If you fold or can't match a bet, you lose immediately.</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-lg">4. Game Progression</h3>
+              <p>After every 3 sets of moves (6 total moves), each player unlocks one piece, followed by another betting round.</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-lg">5. Winning</h3>
+              <p>Win by checkmating your opponent's King or making them fold during betting.</p>
+            </div>
+          </div>
+          
+          <div className="mt-6 flex justify-center">
+            <button 
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              onClick={() => setShowRules(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  return (
+    <div className="flex flex-col items-center p-4 max-w-4xl mx-auto">
+      <header className="w-full flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Choker</h1>
+        <div className="flex space-x-2">
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
+            onClick={() => setShowRules(true)}
+          >
+            <HelpCircle size={24} />
+          </button>
+          <button 
+            className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full"
+            onClick={startNewGame}
+          >
+            <RefreshCw size={24} />
+          </button>
+        </div>
+      </header>
+      
+      {gamePhase === 'betting' && (
+        <div className="w-full p-4 mb-4 bg-yellow-100 rounded-lg text-center">
+          <h2 className="text-xl font-bold">Betting Round</h2>
+          <p>Make your decision: Check, Call, Raise, or Fold</p>
+        </div>
+      )}
+      
+      <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-2">
+          <div ref={boardRef} className="w-full">
+            {board && renderBoard()}
+          </div>
         </div>
         
-        <div class="d-pad">
-            <div class="empty"></div>
-            <button id="btn-up">UP</button>
-            <div class="empty"></div>
-            <button id="btn-left">LEFT</button>
-            <div class="empty"></div>
-            <button id="btn-right">RIGHT</button>
-            <div class="empty"></div>
-            <button id="btn-down">DOWN</button>
-            <div class="empty"></div>
+        <div className="space-y-4">
+          {renderGameInfo()}
+          {renderBettingControls()}
         </div>
+      </div>
+      
+      {renderWinnerModal()}
+      {renderRulesModal()}
     </div>
-    
-    <div class="status" id="status">Status: No ROM loaded</div>
-    
-    <div class="key-guide">
-        <h3>Keyboard Controls</h3>
-        <ul>
-            <li>Arrow Keys: D-Pad</li>
-            <li>Z: A Button</li>
-            <li>X: B Button</li>
-            <li>A: L Button</li>
-            <li>S: R Button</li>
-            <li>Enter: Start</li>
-            <li>Shift: Select</li>
-            <li>Space: Pause/Resume</li>
-        </ul>
-    </div>
-    
-    <div id="debug-log"></div>
+  );
+};
 
-    <script>
-        // ======= GBA Constants =======
-        const GBA = {
-            SCREEN_WIDTH: 240,
-            SCREEN_HEIGHT: 160,
-            CYCLES_PER_SECOND: 16777216, // CPU speed: ~16.78 MHz
-            CYCLES_PER_FRAME: 280896,    // Cycles per frame at 60 FPS
-            
-            // Memory regions
-            BIOS_START: 0x00000000,
-            EWRAM_START: 0x02000000,
-            IWRAM_START: 0x03000000,
-            IO_START: 0x04000000,
-            PALETTE_START: 0x05000000,
-            VRAM_START: 0x06000000,
-            OAM_START: 0x07000000,
-            ROM_START: 0x08000000,
-            
-            // Memory sizes
-            BIOS_SIZE: 16 * 1024,         // 16 KB
-            EWRAM_SIZE: 256 * 1024,       // 256 KB
-            IWRAM_SIZE: 32 * 1024,        // 32 KB
-            PALETTE_SIZE: 1 * 1024,       // 1 KB
-            VRAM_SIZE: 96 * 1024,         // 96 KB
-            OAM_SIZE: 1 * 1024,           // 1 KB
-            ROM_SIZE_MAX: 32 * 1024 * 1024, // 32 MB max
-            
-            // Hardware registers
-            REG_DISPCNT: 0x04000000,      // Display Control
-            REG_VCOUNT: 0x04000006,       // Vertical Counter
-            REG_BG0CNT: 0x04000008,       // BG0 Control
-            REG_BG1CNT: 0x0400000A,       // BG1 Control
-            REG_BG2CNT: 0x0400000C,       // BG2 Control
-            REG_BG3CNT: 0x0400000E,       // BG3 Control
-            REG_KEYINPUT: 0x04000130,     // Key Input
-            
-            // Display Control flags
-            DISPCNT_BG0_ENABLE: 0x0100,
-            DISPCNT_BG1_ENABLE: 0x0200,
-            DISPCNT_BG2_ENABLE: 0x0400,
-            DISPCNT_BG3_ENABLE: 0x0800,
-            DISPCNT_OBJ_ENABLE: 0x1000,
-            
-            // Key Input values (0 = pressed, 1 = released)
-            KEY_A: 0x0001,
-            KEY_B: 0x0002,
-            KEY_SELECT: 0x0004,
-            KEY_START: 0x0008,
-            KEY_RIGHT: 0x0010,
-            KEY_LEFT: 0x0020,
-            KEY_UP: 0x0040,
-            KEY_DOWN: 0x0080,
-            KEY_R: 0x0100,
-            KEY_L: 0x0200
-        };
-
-        // ======= Emulator Class =======
-        class GBAEmulator {
-            constructor() {
-                // Canvas setup
-                this.canvas = document.getElementById('gba-screen');
-                this.canvas.width = GBA.SCREEN_WIDTH;
-                this.canvas.height = GBA.SCREEN_HEIGHT;
-                this.ctx = this.canvas.getContext('2d');
-                this.imageData = this.ctx.createImageData(GBA.SCREEN_WIDTH, GBA.SCREEN_HEIGHT);
-                
-                // Emulator state
-                this.running = false;
-                this.frameCount = 0;
-                this.targetFps = 60;
-                this.lastFrameTime = 0;
-                this.fpsCounter = document.getElementById('fps-counter');
-                this.statusElement = document.getElementById('status');
-                this.debugLog = document.getElementById('debug-log');
-                this.frameTimeAvg = 0;
-                this.frameTimeCount = 0;
-                
-                // Initialize memory
-                this.memory = {
-                    bios: new Uint8Array(GBA.BIOS_SIZE),
-                    ewram: new Uint8Array(GBA.EWRAM_SIZE),
-                    iwram: new Uint8Array(GBA.IWRAM_SIZE),
-                    io: new Uint16Array(1024), // IO registers
-                    palette: new Uint16Array(512), // 512 colors (256 BG, 256 OBJ)
-                    vram: new Uint8Array(GBA.VRAM_SIZE),
-                    oam: new Uint16Array(512), // Object Attribute Memory
-                    rom: new Uint8Array(GBA.ROM_SIZE_MAX)
-                };
-                
-                // CPU state
-                this.cpu = {
-                    r: new Uint32Array(16), // r0-r15 (r15 is PC)
-                    cpsr: 0, // Current Program Status Register
-                    spsr: 0, // Saved Program Status Register
-                    mode: 0, // CPU mode
-                    inThumb: false, // Thumb mode
-                    halted: false, // CPU halted
-                    cycles: 0, // Cycle counter
-                    irqDisabled: true // IRQ disabled
-                };
-                
-                // Input state - these are inverted (0 = pressed, 1 = released)
-                this.input = 0xFFFF;
-                
-                // ROM info
-                this.romTitle = "";
-                this.romSize = 0;
-                this.romLoaded = false;
-                this.romGameCode = "";
-                
-                // Initialize with empty BIOS
-                this.initializeBIOS();
-                
-                // Set up input handlers
-                this.setupInputHandlers();
-                
-                // Register the ROM loader
-                document.getElementById('load-rom').addEventListener('click', () => this.loadROM());
-                document.getElementById('toggle-play').addEventListener('click', () => this.toggleEmulation());
-                
-                // Log initialization
-                this.log("GBA Emulator initialized");
-            }
-            
-            // ======= Initialization Methods =======
-            
-            // Initialize BIOS (simple implementation)
-            initializeBIOS() {
-                // In a real emulator, we would include the actual BIOS, but for this demo
-                // we'll just use a simple stub that jumps to the ROM entry point
-                
-                // The real GBA BIOS is copyrighted by Nintendo, so we use a minimal implementation
-                
-                // SWI handler (at 0x08)
-                this.memory.bios[0x08] = 0x12; // bx r14 (return from SWI)
-                this.memory.bios[0x09] = 0xFF;
-                this.memory.bios[0x0A] = 0x2F;
-                this.memory.bios[0x0B] = 0xE1;
-                
-                // IRQ handler (at 0x18)
-                this.memory.bios[0x18] = 0x12; // bx r14 (return from IRQ)
-                this.memory.bios[0x19] = 0xFF;
-                this.memory.bios[0x1A] = 0x2F;
-                this.memory.bios[0x1B] = 0xE1;
-                
-                // Reset code (at 0x00)
-                this.memory.bios[0x00] = 0x00; // mov r0, #0
-                this.memory.bios[0x01] = 0x00;
-                this.memory.bios[0x02] = 0xA0;
-                this.memory.bios[0x03] = 0xE3;
-                
-                this.memory.bios[0x04] = 0x00; // b 0x08000000 (ROM entry point)
-                this.memory.bios[0x05] = 0x00;
-                this.memory.bios[0x06] = 0x00;
-                this.memory.bios[0x07] = 0xEA;
-            }
-            
-            // ======= ROM Loading =======
-            
-            // Load a ROM file
-            loadROM() {
-                const fileInput = document.getElementById('rom-input');
-                const file = fileInput.files[0];
-                
-                if (!file) {
-                    this.updateStatus("Error: No file selected");
-                    return;
-                }
-                
-                if (file.size > GBA.ROM_SIZE_MAX) {
-                    this.updateStatus(`Error: ROM too large (${file.size} bytes, max is ${GBA.ROM_SIZE_MAX} bytes)`);
-                    return;
-                }
-                
-                this.updateStatus("Loading ROM...");
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const romData = new Uint8Array(e.target.result);
-                    
-                    // Copy ROM data to memory
-                    this.memory.rom.set(romData);
-                    this.romSize = romData.length;
-                    
-                    // Extract ROM header information
-                    this.parseROMHeader(romData);
-                    
-                    // Reset emulator
-                    this.reset();
-                    
-                    // Start emulation
-                    this.romLoaded = true;
-                    this.startEmulation();
-                    
-                    this.updateStatus(`ROM loaded: ${this.romTitle} (${this.romGameCode}) - ${this.romSize} bytes`);
-                    this.log(`ROM loaded: ${this.romTitle} (${this.romGameCode})`);
-                };
-                
-                reader.onerror = () => {
-                    this.updateStatus("Error: Failed to read ROM file");
-                };
-                
-                reader.readAsArrayBuffer(file);
-            }
-            
-            // Parse ROM header
-            parseROMHeader(rom) {
-                // Game title: 12 bytes at offset 0xA0
-                let title = "";
-                for (let i = 0; i < 12; i++) {
-                    const char = rom[0xA0 + i];
-                    if (char === 0) break;
-                    title += String.fromCharCode(char);
-                }
-                this.romTitle = title.trim();
-                
-                // Game code: 4 bytes at offset 0xAC
-                let gameCode = "";
-                for (let i = 0; i < 4; i++) {
-                    gameCode += String.fromCharCode(rom[0xAC + i]);
-                }
-                this.romGameCode = gameCode;
-                
-                // Log ROM info
-                this.log(`ROM Title: ${this.romTitle}`);
-                this.log(`Game Code: ${this.romGameCode}`);
-                this.log(`ROM Size: ${this.romSize} bytes`);
-            }
-            
-            // ======= Emulation Control =======
-            
-            // Reset emulator state
-            reset() {
-                // Reset memory
-                this.memory.ewram.fill(0);
-                this.memory.iwram.fill(0);
-                this.memory.io.fill(0);
-                this.memory.palette.fill(0);
-                this.memory.vram.fill(0);
-                this.memory.oam.fill(0);
-                
-                // Reset CPU
-                this.cpu.r.fill(0);
-                this.cpu.r[13] = 0x03007F00; // SP_irq
-                this.cpu.r[15] = 0x08000000; // PC starts at ROM
-                this.cpu.cpsr = 0x1F; // System mode
-                this.cpu.spsr = 0;
-                this.cpu.mode = 0x1F; // System mode
-                this.cpu.inThumb = false; // ARM mode
-                this.cpu.halted = false;
-                this.cpu.cycles = 0;
-                this.cpu.irqDisabled = true;
-                
-                // Reset timers
-                this.frameCount = 0;
-                this.lastFrameTime = 0;
-            }
-            
-            // Start emulation
-            startEmulation() {
-                if (!this.running && this.romLoaded) {
-                    this.running = true;
-                    this.lastFrameTime = performance.now();
-                    this.frameTimeAvg = 0;
-                    this.frameTimeCount = 0;
-                    requestAnimationFrame((timestamp) => this.emulationLoop(timestamp));
-                    this.log("Emulation started");
-                    this.updateStatus(`Running: ${this.romTitle}`);
-                }
-            }
-            
-            // Stop emulation
-            stopEmulation() {
-                this.running = false;
-                this.log("Emulation paused");
-                this.updateStatus(`Paused: ${this.romTitle}`);
-            }
-            
-            // Toggle emulation
-            toggleEmulation() {
-                if (this.running) {
-                    this.stopEmulation();
-                } else {
-                    this.startEmulation();
-                }
-            }
-            
-            // ======= Main Emulation Loop =======
-            
-            // Main emulation loop
-            emulationLoop(timestamp) {
-                if (!this.running) return;
-                
-                // Calculate time since last frame
-                const deltaTime = timestamp - this.lastFrameTime;
-                this.lastFrameTime = timestamp;
-                
-                // Calculate FPS
-                if (this.frameTimeCount < 30) {
-                    this.frameTimeAvg += deltaTime;
-                    this.frameTimeCount++;
-                } else {
-                    const fps = Math.round(1000 / (this.frameTimeAvg / 30));
-                    this.fpsCounter.textContent = `${fps} FPS`;
-                    this.frameTimeAvg = deltaTime;
-                    this.frameTimeCount = 1;
-                }
-                
-                // Run CPU for one frame's worth of cycles
-                this.runFrame();
-                
-                // Render screen
-                this.renderScreen();
-                
-                // Update frame counter
-                this.frameCount++;
-                
-                // Continue the loop
-                requestAnimationFrame((timestamp) => this.emulationLoop(timestamp));
-            }
-            
-            // Run one frame of emulation
-            runFrame() {
-                const cyclesToRun = GBA.CYCLES_PER_FRAME;
-                
-                // Process input
-                this.updateInputRegister();
-                
-                // Execute instructions
-                this.executeInstructions(cyclesToRun);
-            }
-            
-            // Execute a number of cycles
-            executeInstructions(cycles) {
-                let cyclesExecuted = 0;
-                
-                while (cyclesExecuted < cycles && !this.cpu.halted) {
-                    // In a real emulator, we would fetch, decode, and execute
-                    // actual ARM/Thumb instructions. For this simplified version,
-                    // we'll increment PC and simulate some memory access
-                    
-                    // Increment PC by 4 (ARM) or 2 (Thumb)
-                    this.cpu.r[15] += this.cpu.inThumb ? 2 : 4;
-                    
-                    // Keep PC in valid memory range
-                    if (this.cpu.r[15] >= GBA.ROM_START + this.romSize) {
-                        this.cpu.r[15] = GBA.ROM_START; // Loop back to start of ROM
-                    }
-                    
-                    // Simulate instruction execution
-                    cyclesExecuted += this.cpu.inThumb ? 1 : 2;
-                    
-                    // Occasionally switch between ARM and Thumb for demonstration
-                    if (Math.random() < 0.001) {
-                        this.cpu.inThumb = !this.cpu.inThumb;
-                    }
-                }
-                
-                this.cpu.cycles += cyclesExecuted;
-                
-                // Handle VBLANK (occurs at end of frame)
-                this.memory.io[GBA.REG_VCOUNT - GBA.IO_START] = 160; // VCOUNT 160 = VBLANK
-            }
-            
-            // ======= Memory Access =======
-            
-            // Read a 32-bit word from memory
-            readWord(address) {
-                const region = address >>> 24;
-                const offset = address & 0xFFFFFF;
-                
-                switch (region) {
-                    case 0x00: // BIOS
-                        if (offset < GBA.BIOS_SIZE) {
-                            return (this.memory.bios[offset] | 
-                                    (this.memory.bios[offset + 1] << 8) | 
-                                    (this.memory.bios[offset + 2] << 16) | 
-                                    (this.memory.bios[offset + 3] << 24)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x02: // EWRAM
-                        if (offset < GBA.EWRAM_SIZE) {
-                            return (this.memory.ewram[offset] | 
-                                    (this.memory.ewram[offset + 1] << 8) | 
-                                    (this.memory.ewram[offset + 2] << 16) | 
-                                    (this.memory.ewram[offset + 3] << 24)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x03: // IWRAM
-                        if (offset < GBA.IWRAM_SIZE) {
-                            return (this.memory.iwram[offset] | 
-                                    (this.memory.iwram[offset + 1] << 8) | 
-                                    (this.memory.iwram[offset + 2] << 16) | 
-                                    (this.memory.iwram[offset + 3] << 24)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x04: // IO
-                        if (offset < 0x400) {
-                            const ioOffset = offset >>> 1;
-                            return (this.memory.io[ioOffset] | (this.memory.io[ioOffset + 1] << 16)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x05: // Palette
-                        if (offset < GBA.PALETTE_SIZE) {
-                            const paletteOffset = offset >>> 1;
-                            return (this.memory.palette[paletteOffset] | (this.memory.palette[paletteOffset + 1] << 16)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x06: // VRAM
-                        if (offset < GBA.VRAM_SIZE) {
-                            return (this.memory.vram[offset] | 
-                                    (this.memory.vram[offset + 1] << 8) | 
-                                    (this.memory.vram[offset + 2] << 16) | 
-                                    (this.memory.vram[offset + 3] << 24)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x07: // OAM
-                        if (offset < GBA.OAM_SIZE) {
-                            const oamOffset = offset >>> 1;
-                            return (this.memory.oam[oamOffset] | (this.memory.oam[oamOffset + 1] << 16)) >>> 0;
-                        }
-                        break;
-                        
-                    case 0x08: case 0x09: case 0x0A: case 0x0B:
-                    case 0x0C: case 0x0D: // ROM
-                        const romOffset = address - GBA.ROM_START;
-                        if (romOffset < this.romSize) {
-                            return (this.memory.rom[romOffset] | 
-                                    (this.memory.rom[romOffset + 1] << 8) | 
-                                    (this.memory.rom[romOffset + 2] << 16) | 
-                                    (this.memory.rom[romOffset + 3] << 24)) >>> 0;
-                        }
-                        break;
-                }
-                
-                // Default for unmapped memory
-                return 0xFFFFFFFF;
-            }
-            
-            // Write a 32-bit word to memory
-            writeWord(address, value) {
-                const region = address >>> 24;
-                const offset = address & 0xFFFFFF;
-                
-                switch (region) {
-                    case 0x02: // EWRAM
-                        if (offset < GBA.EWRAM_SIZE) {
-                            this.memory.ewram[offset] = value & 0xFF;
-                            this.memory.ewram[offset + 1] = (value >>> 8) & 0xFF;
-                            this.memory.ewram[offset + 2] = (value >>> 16) & 0xFF;
-                            this.memory.ewram[offset + 3] = (value >>> 24) & 0xFF;
-                        }
-                        break;
-                        
-                    case 0x03: // IWRAM
-                        if (offset < GBA.IWRAM_SIZE) {
-                            this.memory.iwram[offset] = value & 0xFF;
-                            this.memory.iwram[offset + 1] = (value >>> 8) & 0xFF;
-                            this.memory.iwram[offset + 2] = (value >>> 16) & 0xFF;
-                            this.memory.iwram[offset + 3] = (value >>> 24) & 0xFF;
-                        }
-                        break;
-                        
-                    case 0x04: // IO
-                        if (offset < 0x400) {
-                            const ioOffset = offset >>> 1;
-                            this.memory.io[ioOffset] = value & 0xFFFF;
-                            this.memory.io[ioOffset + 1] = (value >>> 16) & 0xFFFF;
-                            this.handleIOWrite(address, value);
-                        }
-                        break;
-                        
-                    case 0x05: // Palette
-                        if (offset < GBA.PALETTE_SIZE) {
-                            const paletteOffset = offset >>> 1;
-                            this.memory.palette[paletteOffset] = value & 0xFFFF;
-                            this.memory.palette[paletteOffset + 1] = (value >>> 16) & 0xFFFF;
-                        }
-                        break;
-                        
-                    case 0x06: // VRAM
-                        if (offset < GBA.VRAM_SIZE) {
-                            this.memory.vram[offset] = value & 0xFF;
-                            this.memory.vram[offset + 1] = (value >>> 8) & 0xFF;
-                            this.memory.vram[offset + 2] = (value >>> 16) & 0xFF;
-                            this.memory.vram[offset + 3] = (value >>> 24) & 0xFF;
-                        }
-                        break;
-                        
-                    case 0x07: // OAM
-                        if (offset < GBA.OAM_SIZE) {
-                            const oamOffset = offset >>> 1;
-                            this.memory.oam[oamOffset] = value & 0xFFFF;
-                            this.memory.oam[oamOffset + 1] = (value >>> 16) & 0xFFFF;
-                        }
-                        break;
-                }
-            }
-            
-            // Handle writes to IO registers
-            handleIOWrite(address, value) {
-                // In a real emulator, we would need to handle all the different IO registers
-                
-                // Handle display control register
-                if (address === GBA.REG_DISPCNT) {
-                    this.log(`Set DISPCNT to 0x${value.toString(16).padStart(8, '0')}`);
-                }
-            }
-            
-            // ======= Input Handling =======
-            
-            // Update the key input register
-            updateInputRegister() {
-                // Write inverted input state to the key input register
-                this.memory.io[(GBA.REG_KEYINPUT - GBA.IO_START) >>> 1] = this.input;
-            }
-            
-            // Set up input handlers for keyboard and buttons
-            setupInputHandlers() {
-                // Keyboard controls
-                document.addEventListener('keydown', (e) => {
-                    this.handleKeyInput(e.key, true);
-                    e.preventDefault();
-                });
-                
-                document.addEventListener('keyup', (e) => {
-                    this.handleKeyInput(e.key, false);
-                    e.preventDefault();
-                });
-                
-                // On-screen button controls
-                const buttons = {
-                    'btn-a': GBA.KEY_A,
-                    'btn-b': GBA.KEY_B,
-                    'btn-select': GBA.KEY_SELECT,
-                    'btn-start': GBA.KEY_START,
-                    'btn-up': GBA.KEY_UP,
-                    'btn-down': GBA.KEY_DOWN,
-                    'btn-left': GBA.KEY_LEFT,
-                    'btn-right': GBA.KEY_RIGHT,
-                    'btn-l': GBA.KEY_L,
-                    'btn-r': GBA.KEY_R
-                };
-                
-                Object.entries(buttons).forEach(([btnId, keyFlag]) => {
-                    const btn = document.getElementById(btnId);
-                    
-                    btn.addEventListener('mousedown', () => {
-                        this.input &= ~keyFlag; // Set bit to 0 (pressed)
-                    });
-                    
-                    btn.addEventListener('mouseup', () => {
-                        this.input |= keyFlag; // Set bit to 1 (released)
-                    });
-                    
-                    btn.addEventListener('touchstart', (e) => {
-                        this.input &= ~keyFlag;
-                        e.preventDefault();
-                    });
-                    
-                    btn.addEventListener('touchend', (e) => {
-                        this.input |= keyFlag;
-                        e.preventDefault();
-                    });
-                });
-            }
-            
-            // Handle keyboard input
-            handleKeyInput(key, isPressed) {
-                let keyFlag = 0;
-                
-                switch (key.toLowerCase()) {
-                    case 'z': keyFlag = GBA.KEY_A; break;
-                    case 'x': keyFlag = GBA.KEY_B; break;
-                    case 'shift': keyFlag = GBA.KEY_SELECT; break;
-                    case 'enter': keyFlag = GBA.KEY_START; break;
-                    case 'arrowup': keyFlag = GBA.KEY_UP; break;
-                    case 'arrowdown': keyFlag = GBA.KEY_DOWN; break;
-                    case 'arrowleft': keyFlag = GBA.KEY_LEFT; break;
-                    case 'arrowright': keyFlag = GBA.KEY_RIGHT; break;
-                    case 'a': keyFlag = GBA.KEY_L; break;
-                    case 's': keyFlag = GBA.KEY_R; break;
-                    case ' ':
-                        // Toggle emulation on spacebar press
-                        if (isPressed) {
-                            this.toggleEmulation();
-                        }
-                        return;
-                }
-                
-                if (keyFlag !== 0) {
-                    if (isPressed) {
-                        this.input &= ~keyFlag; // Set bit to 0 (pressed)
-                    } else {
-                        this.input |= keyFlag; // Set bit to 1 (released)
-                    }
-                }
-            }
-            
-            // ======= Graphics Rendering =======
-            
-            // Render the screen
-            renderScreen() {
-                const data = this.imageData.data;
-                
-                // In a real emulator, we would render based on VRAM content and display mode
-                // For this simplified version, we'll just visualize memory in a way that shows
-                // something interesting on the screen
-                
-                // Display mode flags
-                const dispCnt = this.memory.io[(GBA.REG_DISPCNT - GBA.IO_START) >>> 1];
-                const bg0Enabled = (dispCnt & GBA.DISPCNT_BG0_ENABLE) !== 0;
-                const bg1Enabled = (dispCnt & GBA.DISPCNT_BG1_ENABLE) !== 0;
-                const bg2Enabled = (dispCnt & GBA.DISPCNT_BG2_ENABLE) !== 0;
-                const bg3Enabled = (dispCnt & GBA.DISPCNT_BG3_ENABLE) !== 0;
-                const objEnabled = (dispCnt & GBA.DISPCNT_OBJ_ENABLE) !== 0;
-                
-                // Render visualization of memory
-                for (let y = 0; y < GBA.SCREEN_HEIGHT; y++) {
-                    for (let x = 0; x < GBA.SCREEN_WIDTH; x++) {
-                        const pixelIndex = (y * GBA.SCREEN_WIDTH + x) * 4;
-                        
-                        // Create a visual representation based on memory contents
-                        // This doesn't actually render real GBA graphics but simulates
-                        // what memory visualization might look like
-                        
-                        // Sample different memory regions based on position
-                        const vramOffset = ((y * 4) % GBA.VRAM_SIZE) + (x % 240);
-                        const paletteOffset = ((x + y) % 512);
-                        const ewramOffset = ((x * y) % GBA.EWRAM_SIZE);
-                        
-                        // Sample memory contents
-                        const vramValue = this.memory.vram[vramOffset];
-                        const paletteValue = this.memory.palette[paletteOffset % 512];
-                        const ewramValue = this.memory.ewram[ewramOffset];
-                        
-                        // Use these to create a visual pattern
-                        if (bg0Enabled && x < GBA.SCREEN_WIDTH / 2 && y < GBA.SCREEN_HEIGHT / 2) {
-                            // Top-left: VRAM visualization
-                            data[pixelIndex] = vramValue;
-                            data[pixelIndex + 1] = vramValue;
-                            data[pixelIndex + 2] = 255;
-                            data[pixelIndex + 3] = 255;
-                        } else if (bg1Enabled && x >= GBA.SCREEN_WIDTH / 2 && y < GBA.SCREEN_HEIGHT / 2) {
-                            // Top-right: Palette visualization
-                            const r = paletteValue & 0x1F;
-                            const g = (paletteValue >> 5) & 0x1F;
-                            const b = (paletteValue >> 10) & 0x1F;
-                            data[pixelIndex] = r << 3;
-                            data[pixelIndex + 1] = g << 3;
-                            data[pixelIndex + 2] = b << 3;
-                            data[pixelIndex + 3] = 255;
-                        } else if (bg2Enabled && x < GBA.SCREEN_WIDTH / 2 && y >= GBA.SCREEN_HEIGHT / 2) {
-                            // Bottom-left: ROM visualization
-                            const romPos = (y * GBA.SCREEN_WIDTH + x) % this.romSize;
-                            const romValue = this.memory.rom[romPos];
-                            data[pixelIndex] = 0;
-                            data[pixelIndex + 1] = romValue;
-                            data[pixelIndex + 2] = 0;
-                            data[pixelIndex + 3] = 255;
-                        } else if (bg3Enabled && x >= GBA.SCREEN_WIDTH / 2 && y >= GBA.SCREEN_HEIGHT / 2) {
-                            // Bottom-right: EWRAM visualization
-                            data[pixelIndex] = 255;
-                            data[pixelIndex + 1] = 0;
-                            data[pixelIndex + 2] = ewramValue;
-                            data[pixelIndex + 3] = 255;
-                        } else {
-                            // Default: black
-                            data[pixelIndex] = 0;
-                            data[pixelIndex + 1] = 0;
-                            data[pixelIndex + 2] = 0;
-                            data[pixelIndex + 3] = 255;
-                        }
-                        
-                        // If sprites are enabled, add some "sprites"
-                        if (objEnabled) {
-                            // Create some "sprite" animations that move with the frame counter
-                            const spriteSize = 16;
-                            const spriteX = (this.frameCount * 2) % (GBA.SCREEN_WIDTH - spriteSize);
-                            const spriteY = 50;
-                            
-                            // Draw a simple sprite
-                            if (x >= spriteX && x < spriteX + spriteSize && 
-                                y >= spriteY && y < spriteY + spriteSize) {
-                                
-                                const relX = x - spriteX;
-                                const relY = y - spriteY;
-                                
-                                // Create a pattern for the sprite
-                                if ((relX + relY) % 2 === 0) {
-                                    data[pixelIndex] = 255;
-                                    data[pixelIndex + 1] = 0;
-                                    data[pixelIndex + 2] = 0;
-                                    data[pixelIndex + 3] = 255;
-                                }
-                            }
-                            
-                            // Add another sprite that moves in a circle
-                            const angle = this.frameCount * 0.05;
-                            const circleX = Math.floor(GBA.SCREEN_WIDTH / 2 + Math.cos(angle) * 60);
-                            const circleY = Math.floor(GBA.SCREEN_HEIGHT / 2 + Math.sin(angle) * 40);
-                            
-                            if (Math.abs(x - circleX) < 8 && Math.abs(y - circleY) < 8) {
-                                data[pixelIndex] = 255;
-                                data[pixelIndex + 1] = 255;
-                                data[pixelIndex + 2] = 0;
-                                data[pixelIndex + 3] = 255;
-                            }
-                        }
-                    }
-                }
-                
-                // Put the image data onto the canvas
-                this.ctx.putImageData(this.imageData, 0, 0);
-                
-                // Add some debug info as overlay
-                this.ctx.fillStyle = 'rgba(0,0,0,0.5)';
-                this.ctx.fillRect(0, 0, 160, 15);
-                this.ctx.fillStyle = '#FFFFFF';
-                this.ctx.font = '10px monospace';
-                this.ctx.fillText(`PC: 0x${this.cpu.r[15].toString(16).padStart(8, '0')}`, 5, 10);
-            }
-            
-            // ======= Utility Methods =======
-            
-            // Update status display
-            updateStatus(message) {
-                this.statusElement.textContent = `Status: ${message}`;
-            }
-            
-            // Add a log message
-            log(message) {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString();
-                const logElement = document.createElement('div');
-                logElement.textContent = `[${timeStr}] ${message}`;
-                this.debugLog.appendChild(logElement);
-                this.debugLog.scrollTop = this.debugLog.scrollHeight;
-                
-                // Keep log size reasonable
-                while (this.debugLog.childNodes.length > 100) {
-                    this.debugLog.removeChild(this.debugLog.firstChild);
-                }
-            }
-        }
-
-        // Create and initialize the emulator when the page loads
-        window.addEventListener('load', () => {
-            window.gbaEmulator = new GBAEmulator();
-        });
+export default Choker;
