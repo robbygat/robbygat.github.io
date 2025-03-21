@@ -1,1931 +1,736 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Choker - Chess + Poker</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background-color: #121212;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    #game-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 1200px;
-      width: 100%;
-      padding: 20px;
-    }
-    
-    .info-panel {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-    
-    .player-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      border-radius: 8px;
-      background-color: #1e1e1e;
-      width: 30%;
-    }
-    
-    .game-status {
-      padding: 15px;
-      border-radius: 8px;
-      background-color: #1e1e1e;
-      width: 35%;
-      text-align: center;
-    }
-    
-    .betting-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-      width: 100%;
-    }
-    
-    .betting-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    
-    button {
-      background-color: #2c2c2c;
-      color: #f0f0f0;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.2s;
-    }
-    
-    button:hover {
-      background-color: #3c3c3c;
-    }
-    
-    button:disabled {
-      background-color: #1e1e1e;
-      color: #5e5e5e;
-      cursor: not-allowed;
-    }
-    
-    .action-button {
-      background-color: #2e7d32;
-    }
-    
-    .action-button:hover {
-      background-color: #388e3c;
-    }
-    
-    .fold-button {
-      background-color: #c62828;
-    }
-    
-    .fold-button:hover {
-      background-color: #d32f2f;
-    }
-    
-    #bet-slider {
-      width: 100%;
-      margin: 10px 0;
-    }
-    
-    .locked-pieces {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-      justify-content: center;
-    }
-    
-    .piece-indicator {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #333;
-      font-size: 20px;
-    }
-    
-    .locked {
-      background-color: #c62828;
-    }
-    
-    .unlocked {
-      background-color: #2e7d32;
-    }
-    
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    
-    .modal-content {
-      background-color: #1e1e1e;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 500px;
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    .highlight {
-      color: #ffab00;
-    }
-    
-    #game-canvas {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robby's Retro Pong</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        #p5-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+        
+        /* Define cursor for different ball states */
+        .cursor-pointer {
+            cursor: pointer !important;
+        }
+
+        #email-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #333;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        #email-popup button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+
+        #email-popup button:hover {
+            background-color: #555;
+        }
+
+        #ad-container {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            z-index: 15;
+            background-color: transparent;
+        }
+        
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            font-size: 24px;
+        }
+        
+        #loading-progress {
+            width: 300px;
+            height: 20px;
+            background-color: #333;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #0f0;
+            transition: width 0.3s;
+        }
+    </style>
 </head>
 <body>
-  <div id="game-container">
-    <h1>CHOKER</h1>
-    <div class="info-panel">
-      <div class="player-info" id="player-info">
-        <h3>You (<span id="player-color">White</span>)</h3>
-        <p>Chips: <span id="player-chips">100</span></p>
-        <div class="locked-pieces" id="player-locked-pieces">
-          <!-- Locked pieces indicators will be dynamically added here -->
+    <div id="loading-overlay">
+        <div>Loading Game Assets...</div>
+        <div id="loading-progress">
+            <div id="progress-bar"></div>
         </div>
-      </div>
-      
-      <div class="game-status" id="game-status">
-        <h3>Game Status</h3>
-        <p id="status-text">Waiting to start...</p>
-        <p>Pot: <span id="pot-amount">0</span></p>
-        <p>Current Bet: <span id="current-bet">0</span></p>
-      </div>
-      
-      <div class="player-info" id="ai-info">
-        <h3>AI (<span id="ai-color">Black</span>)</h3>
-        <p>Chips: <span id="ai-chips">100</span></p>
-        <div class="locked-pieces" id="ai-locked-pieces">
-          <!-- Locked pieces indicators will be dynamically added here -->
-        </div>
-      </div>
     </div>
-    
-    <div class="betting-controls" id="betting-controls">
-      <div>
-        <input type="range" id="bet-slider" min="10" max="100" value="10" step="5">
-        <p>Bet Amount: <span id="bet-amount">10</span></p>
-      </div>
-      <div class="betting-buttons">
-        <button id="check-call-button" class="action-button">Check/Call</button>
-        <button id="raise-button" class="action-button">Raise</button>
-        <button id="fold-button" class="fold-button">Fold</button>
-      </div>
-    </div>
-    
-    <div id="game-canvas"></div>
-  </div>
-  
-  <div id="start-modal" class="modal">
-    <div class="modal-content">
-      <h2>Welcome to Choker</h2>
-      <p>A blend of chess and poker strategy</p>
-      <p>Blind amount: <span class="highlight">10 chips</span></p>
-      <p>Each player starts with <span class="highlight">100 chips</span></p>
-      <p>Let's flip a coin to decide who plays White</p>
-      <button id="flip-coin-button" class="action-button">Flip Coin</button>
-    </div>
-  </div>
-  
-  <div id="lock-reveal-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Locked Pieces Revealed</h2>
-      <div id="lock-reveal-content"></div>
-      <button id="continue-after-lock" class="action-button">Continue</button>
-    </div>
-  </div>
-  
-  <div id="piece-unlock-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>Piece Unlocked!</h2>
-      <div id="unlock-content"></div>
-      <button id="continue-after-unlock" class="action-button">Continue</button>
-    </div>
-  </div>
-  
-  <div id="game-over-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2 id="game-over-title">Game Over</h2>
-      <p id="game-over-message"></p>
-      <button id="new-game-button" class="action-button">New Game</button>
-    </div>
-  </div>
 
-  <script>
-    // Game constants
-    const BLIND_AMOUNT = 10;
-    const STARTING_CHIPS = 100;
-    const BOARD_SIZE = 8;
-    const PIECES_TO_LOCK = 5;
-    const KNOWN_LOCKED_PIECES = 2;
-    const MOVES_BEFORE_UNLOCK = 6; // 3 sets of moves
-    
-    // Game state
-    let gameState = {
-      isGameStarted: false,
-      isWhite: false, // Player's color
-      playerChips: STARTING_CHIPS,
-      aiChips: STARTING_CHIPS,
-      currentPot: 0,
-      currentBet: 0,
-      playerHasBet: false,
-      aiHasBet: false,
-      isBettingRound: false,
-      isPlayerTurn: false,
-      moveCount: 0,
-      board: createEmptyBoard(),
-      playerPieces: [],
-      aiPieces: [],
-      playerLockedPieces: [],
-      aiLockedPieces: [],
-      playerKnownLockedPieces: [],
-      aiKnownLockedPieces: [],
-      selectedPiece: null,
-      possibleMoves: [],
-      lastMove: null,
-      inCheck: false,
-      gameOver: false,
-      winner: null
-    };
-    
-    // Chess piece types
-    const PIECE_TYPES = {
-      PAWN: 'pawn',
-      ROOK: 'rook',
-      KNIGHT: 'knight',
-      BISHOP: 'bishop',
-      QUEEN: 'queen',
-      KING: 'king'
-    };
-    
-    // Piece values for AI evaluation
-    const PIECE_VALUES = {
-      [PIECE_TYPES.PAWN]: 1,
-      [PIECE_TYPES.KNIGHT]: 3,
-      [PIECE_TYPES.BISHOP]: 3,
-      [PIECE_TYPES.ROOK]: 5,
-      [PIECE_TYPES.QUEEN]: 9,
-      [PIECE_TYPES.KING]: 0 // King has no capture value, but is essential
-    };
-    
-    // Images for chess pieces
-    let pieceImages = {};
-    
-    // P5.js setup function
-    function setup() {
-      const canvas = createCanvas(480, 480);
-      canvas.parent('game-canvas');
-      
-      // Load piece images
-      loadPieceImages();
-      
-      // Setup event listeners
-      document.getElementById('flip-coin-button').addEventListener('click', flipCoin);
-      document.getElementById('check-call-button').addEventListener('click', checkOrCall);
-      document.getElementById('raise-button').addEventListener('click', raise);
-      document.getElementById('fold-button').addEventListener('click', fold);
-      document.getElementById('continue-after-lock').addEventListener('click', () => {
-        document.getElementById('lock-reveal-modal').classList.add('hidden');
-        startGame();
-      });
-      document.getElementById('continue-after-unlock').addEventListener('click', () => {
-        document.getElementById('piece-unlock-modal').classList.add('hidden');
-        continueAfterUnlock();
-      });
-      document.getElementById('new-game-button').addEventListener('click', resetGame);
-      
-      // Setup bet slider
-      const betSlider = document.getElementById('bet-slider');
-      betSlider.addEventListener('input', () => {
-        document.getElementById('bet-amount').textContent = betSlider.value;
-      });
-      
-      // Initially hide betting controls
-      toggleBettingControls(false);
-    }
-    
-    // Function to load chess piece images
-    function loadPieceImages() {
-      // For simplicity, we'll use Unicode chess symbols instead of images
-      pieceImages = {
-        'white_pawn': '♙',
-        'white_rook': '♖',
-        'white_knight': '♘',
-        'white_bishop': '♗',
-        'white_queen': '♕',
-        'white_king': '♔',
-        'black_pawn': '♟',
-        'black_rook': '♜',
-        'black_knight': '♞',
-        'black_bishop': '♝',
-        'black_queen': '♛',
-        'black_king': '♚'
-      };
-    }
-    
-    // P5.js draw function
-    function draw() {
-      background(50);
-      
-      if (gameState.isGameStarted) {
-        drawBoard();
-        drawPieces();
+    <div id="game-container">
+        <div id="p5-container"></div>
+        <div id="three-container"></div>
+        <div id="ad-container">
+            <iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+        </div>
+    </div>
+
+    <div id="email-popup">
+        <h2>Contact Robby</h2>
+        <p>Send an email to robby@robbygat.com</p>
+        <button id="send-email">Send Email</button>
+        <button id="close-popup">Close</button>
+    </div>
+
+    <script>
+        // Loading management
+        let assetsLoaded = 0;
+        let totalAssets = 2; // Image and ad
+        const progressBar = document.getElementById('progress-bar');
+        const loadingOverlay = document.getElementById('loading-overlay');
         
-        if (gameState.selectedPiece) {
-          highlightSelectedPiece();
-          highlightPossibleMoves();
+        function updateLoadingProgress(percent) {
+            progressBar.style.width = percent + '%';
+            if (percent >= 100) {
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }
         }
         
-        if (gameState.lastMove) {
-          highlightLastMove();
+        function assetLoaded() {
+            assetsLoaded++;
+            const percent = (assetsLoaded / totalAssets) * 100;
+            updateLoadingProgress(percent);
         }
-      }
-    }
-    
-    // Draw the chess board
-    function drawBoard() {
-      const cellSize = width / BOARD_SIZE;
-      
-      for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-          const isLight = (row + col) % 2 === 0;
-          fill(isLight ? color(240, 217, 181) : color(181, 136, 99));
-          rect(col * cellSize, row * cellSize, cellSize, cellSize);
-        }
-      }
-    }
-    
-    // Draw chess pieces on the board
-    function drawPieces() {
-      const cellSize = width / BOARD_SIZE;
-      
-      // Draw all pieces
-      for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-          const piece = gameState.board[row][col];
-          if (piece) {
-            const isLocked = (piece.isWhite === gameState.isWhite && gameState.playerLockedPieces.includes(piece)) || 
-                           (piece.isWhite !== gameState.isWhite && gameState.aiLockedPieces.includes(piece));
+        
+        // Global variables
+        let ballState = 0; // 0: R, 1: Email, 2: Ad, 3: Image
+        let p5Instance;
+        let adContainer = document.getElementById('ad-container');
+        let emailPopup = document.getElementById('email-popup');
+        
+        // Pre-load ad to ensure it works
+        let adLoaded = false;
+        const adFrame = document.querySelector('#ad-container iframe');
+        if (adFrame) {
+            adFrame.onload = function() {
+                console.log("Ad iframe loaded successfully");
+                adLoaded = true;
+                assetLoaded();
+            };
             
-            const x = col * cellSize + cellSize / 2;
-            const y = row * cellSize + cellSize / 2;
-            
-            textAlign(CENTER, CENTER);
-            textSize(cellSize * 0.7);
-            
-            if (isLocked) {
-              // Draw locked piece with a red background
-              fill(190, 40, 40, 100);
-              ellipse(x, y, cellSize * 0.8);
-            }
-            
-            fill(piece.isWhite ? 255 : 0);
-            text(getPieceSymbol(piece), x, y);
-          }
-        }
-      }
-    }
-    
-    // Get Unicode chess symbol for a piece
-    function getPieceSymbol(piece) {
-      const color = piece.isWhite ? 'white' : 'black';
-      return pieceImages[`${color}_${piece.type}`];
-    }
-    
-    // Highlight the selected piece
-    function highlightSelectedPiece() {
-      if (!gameState.selectedPiece) return;
-      
-      const cellSize = width / BOARD_SIZE;
-      const col = gameState.selectedPiece.col;
-      const row = gameState.selectedPiece.row;
-      
-      fill(100, 100, 255, 100);
-      rect(col * cellSize, row * cellSize, cellSize, cellSize);
-    }
-    
-    // Highlight possible moves for the selected piece
-    function highlightPossibleMoves() {
-      const cellSize = width / BOARD_SIZE;
-      
-      fill(100, 255, 100, 100);
-      for (const move of gameState.possibleMoves) {
-        ellipse(
-          move.col * cellSize + cellSize / 2,
-          move.row * cellSize + cellSize / 2,
-          cellSize / 2
-        );
-      }
-    }
-    
-    // Highlight the last move made
-    function highlightLastMove() {
-      if (!gameState.lastMove) return;
-      
-      const cellSize = width / BOARD_SIZE;
-      const { fromRow, fromCol, toRow, toCol } = gameState.lastMove;
-      
-      // Highlight source square
-      fill(255, 255, 0, 80);
-      rect(fromCol * cellSize, fromRow * cellSize, cellSize, cellSize);
-      
-      // Highlight destination square
-      fill(255, 255, 0, 80);
-      rect(toCol * cellSize, toRow * cellSize, cellSize, cellSize);
-    }
-    
-    // Handle mouse press events for piece selection and movement
-    function mousePressed() {
-      if (!gameState.isGameStarted || gameState.isBettingRound || !gameState.isPlayerTurn || gameState.gameOver) return;
-      
-      const cellSize = width / BOARD_SIZE;
-      const col = floor(mouseX / cellSize);
-      const row = floor(mouseY / cellSize);
-      
-      // Check if clicked within board bounds
-      if (col < 0 || col >= BOARD_SIZE || row < 0 || row >= BOARD_SIZE) return;
-      
-      // If a possible move location is clicked
-      if (gameState.selectedPiece && gameState.possibleMoves.some(move => move.row === row && move.col === col)) {
-        movePiece(gameState.selectedPiece, row, col);
-        gameState.selectedPiece = null;
-        gameState.possibleMoves = [];
-        
-        // Check if game over after player's move
-        if (isCheckmate(!gameState.isWhite)) {
-          endGame(gameState.isWhite ? 'player' : 'ai', 'checkmate');
-          return;
-        }
-        
-        // AI's turn
-        gameState.isPlayerTurn = false;
-        setTimeout(makeAIMove, 500);
-        return;
-      }
-      
-      // If a piece is clicked
-      const piece = gameState.board[row][col];
-      if (piece && piece.isWhite === gameState.isWhite) {
-        // Check if piece is locked
-        if (gameState.playerLockedPieces.includes(piece)) {
-          updateStatus("That piece is locked and cannot move yet.");
-          return;
-        }
-        
-        gameState.selectedPiece = piece;
-        gameState.possibleMoves = getValidMoves(piece);
-        
-        // If no valid moves, clear selection
-        if (gameState.possibleMoves.length === 0) {
-          updateStatus("No valid moves for this piece.");
-          gameState.selectedPiece = null;
-        }
-      } else {
-        // Clear selection if clicking elsewhere
-        gameState.selectedPiece = null;
-        gameState.possibleMoves = [];
-      }
-    }
-    
-    // Create an empty chess board
-    function createEmptyBoard() {
-      const board = [];
-      for (let i = 0; i < BOARD_SIZE; i++) {
-        board.push(new Array(BOARD_SIZE).fill(null));
-      }
-      return board;
-    }
-    
-    // Flip a coin to determine player color
-    function flipCoin() {
-      const isHeads = Math.random() < 0.5;
-      gameState.isWhite = isHeads;
-      
-      document.getElementById('player-color').textContent = gameState.isWhite ? 'White' : 'Black';
-      document.getElementById('ai-color').textContent = gameState.isWhite ? 'Black' : 'White';
-      
-      // Setup the initial board configuration
-      setupBoard();
-      
-      // Show locked pieces to the player
-      revealInitialLockedPieces();
-    }
-    
-    // Set up the chess board with shuffled pieces
-    function setupBoard() {
-      // Clear the board
-      gameState.board = createEmptyBoard();
-      gameState.playerPieces = [];
-      gameState.aiPieces = [];
-      gameState.playerLockedPieces = [];
-      gameState.aiLockedPieces = [];
-      
-      // Create back rank pieces in shuffled order for both players
-      const backRankTypes = [
-        PIECE_TYPES.ROOK,
-        PIECE_TYPES.KNIGHT,
-        PIECE_TYPES.BISHOP,
-        PIECE_TYPES.QUEEN,
-        PIECE_TYPES.KING,
-        PIECE_TYPES.BISHOP,
-        PIECE_TYPES.KNIGHT,
-        PIECE_TYPES.ROOK
-      ];
-      
-      // Shuffle the back rank pieces, keeping King in the array
-      const playerBackRank = [...backRankTypes];
-      const kingIndex = playerBackRank.indexOf(PIECE_TYPES.KING);
-      const pieceToShuffle = playerBackRank.filter((_, i) => i !== kingIndex);
-      const shuffledPieces = _.shuffle(pieceToShuffle);
-      
-      // Reinsert the King
-      shuffledPieces.splice(kingIndex, 0, PIECE_TYPES.KING);
-      
-      // Create another shuffled arrangement for AI
-      const aiBackRank = [...backRankTypes];
-      const aiKingIndex = aiBackRank.indexOf(PIECE_TYPES.KING);
-      const aiPiecesToShuffle = aiBackRank.filter((_, i) => i !== aiKingIndex);
-      const aiShuffledPieces = _.shuffle(aiPiecesToShuffle);
-      
-      // Reinsert the King
-      aiShuffledPieces.splice(aiKingIndex, 0, PIECE_TYPES.KING);
-      
-      // Place pieces on the board
-      const playerRow = gameState.isWhite ? BOARD_SIZE - 1 : 0;
-      const aiRow = gameState.isWhite ? 0 : BOARD_SIZE - 1;
-      const playerPawnRow = gameState.isWhite ? BOARD_SIZE - 2 : 1;
-      const aiPawnRow = gameState.isWhite ? 1 : BOARD_SIZE - 2;
-      
-      // Place back rank pieces
-      for (let col = 0; col < BOARD_SIZE; col++) {
-        // Player back rank
-        const playerPiece = {
-          type: shuffledPieces[col],
-          isWhite: gameState.isWhite,
-          row: playerRow,
-          col: col,
-          hasMoved: false
-        };
-        gameState.board[playerRow][col] = playerPiece;
-        gameState.playerPieces.push(playerPiece);
-        
-        // AI back rank
-        const aiPiece = {
-          type: aiShuffledPieces[col],
-          isWhite: !gameState.isWhite,
-          row: aiRow,
-          col: col,
-          hasMoved: false
-        };
-        gameState.board[aiRow][col] = aiPiece;
-        gameState.aiPieces.push(aiPiece);
-        
-        // Player pawns
-        const playerPawn = {
-          type: PIECE_TYPES.PAWN,
-          isWhite: gameState.isWhite,
-          row: playerPawnRow,
-          col: col,
-          hasMoved: false
-        };
-        gameState.board[playerPawnRow][col] = playerPawn;
-        gameState.playerPieces.push(playerPawn);
-        
-        // AI pawns
-        const aiPawn = {
-          type: PIECE_TYPES.PAWN,
-          isWhite: !gameState.isWhite,
-          row: aiPawnRow,
-          col: col,
-          hasMoved: false
-        };
-        gameState.board[aiPawnRow][col] = aiPawn;
-        gameState.aiPieces.push(aiPawn);
-      }
-      
-      // Randomly select pieces to lock (excluding the King)
-      const playerNonKingPieces = gameState.playerPieces.filter(p => p.type !== PIECE_TYPES.KING);
-      const aiNonKingPieces = gameState.aiPieces.filter(p => p.type !== PIECE_TYPES.KING);
-      
-      // Shuffle the pieces to randomly select which to lock
-      const shuffledPlayerPieces = _.shuffle(playerNonKingPieces);
-      const shuffledAIPieces = _.shuffle(aiNonKingPieces);
-      
-      // Lock the specified number of pieces
-      gameState.playerLockedPieces = shuffledPlayerPieces.slice(0, PIECES_TO_LOCK);
-      gameState.aiLockedPieces = shuffledAIPieces.slice(0, PIECES_TO_LOCK);
-      
-      // Known locked pieces (that player knows about before first betting round)
-      gameState.playerKnownLockedPieces = gameState.playerLockedPieces.slice(0, KNOWN_LOCKED_PIECES);
-      gameState.aiKnownLockedPieces = gameState.aiLockedPieces.slice(0, KNOWN_LOCKED_PIECES);
-    }
-    
-    // Reveal initial locked pieces to players
-    function revealInitialLockedPieces() {
-      const lockedContent = document.getElementById('lock-reveal-content');
-      lockedContent.innerHTML = '';
-      
-      const playerKnownPiecesElement = document.createElement('div');
-      playerKnownPiecesElement.innerHTML = '<p>Your initially locked pieces:</p>';
-      
-      const piecesList = document.createElement('ul');
-      gameState.playerKnownLockedPieces.forEach(piece => {
-        const pieceItem = document.createElement('li');
-        pieceItem.textContent = `${piece.type.charAt(0).toUpperCase() + piece.type.slice(1)} at ${getChessNotation(piece.row, piece.col)}`;
-        piecesList.appendChild(pieceItem);
-      });
-      
-      playerKnownPiecesElement.appendChild(piecesList);
-      lockedContent.appendChild(playerKnownPiecesElement);
-      
-      const additionalInfo = document.createElement('p');
-      additionalInfo.textContent = `After the first betting round, ${PIECES_TO_LOCK - KNOWN_LOCKED_PIECES} more of your pieces will be locked.`;
-      lockedContent.appendChild(additionalInfo);
-      
-      document.getElementById('lock-reveal-modal').classList.remove('hidden');
-      
-      // Update locked pieces indicators
-      updateLockedPiecesIndicators();
-    }
-    
-    // Start the game after initial setup
-    function startGame() {
-      gameState.isGameStarted = true;
-      gameState.isBettingRound = true;
-      
-      // Hide the start modal
-      document.getElementById('start-modal').classList.add('hidden');
-      
-      // Update status
-      if (gameState.isWhite) {
-        updateStatus("First betting round. Black (AI) bets first.");
-        // AI makes the first bet
-        setTimeout(makeAIBet, 1000);
-      } else {
-        updateStatus("First betting round. You bet first.");
-        toggleBettingControls(true);
-      }
-    }
-    
-    // Function to get valid moves for a piece
-    function getValidMoves(piece) {
-      if (!piece) return [];
-      
-      const validMoves = [];
-      const { row, col, type, isWhite } = piece;
-      
-      // Helper function to check if a move is valid
-      const isValidMove = (r, c) => {
-        // Check if the position is within the board
-        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
-        
-        // Check if the position is occupied by a friendly piece
-        const targetPiece = gameState.board[r][c];
-        if (targetPiece && targetPiece.isWhite === isWhite) return false;
-        
-        // Simulate the move to check if it would result in check
-        const originalPiece = gameState.board[r][c];
-        gameState.board[r][c] = piece;
-        gameState.board[row][col] = null;
-        
-        const wouldBeInCheck = isInCheck(isWhite);
-        
-        // Restore the board
-        gameState.board[row][col] = piece;
-        gameState.board[r][c] = originalPiece;
-        
-        return !wouldBeInCheck;
-      };
-      
-      // Helper function to add a move if valid
-      const addMoveIfValid = (r, c) => {
-        if (isValidMove(r, c)) {
-          validMoves.push({ row: r, col: c });
-        }
-      };
-      
-      // Get moves based on piece type
-      switch (type) {
-        case PIECE_TYPES.PAWN:
-          const direction = isWhite ? -1 : 1;
-          const startingRow = isWhite ? 6 : 1;
-          
-          // Forward movement
-          if (!gameState.board[row + direction][col]) {
-            addMoveIfValid(row + direction, col);
-            
-            // Double move from starting position
-            if (row === startingRow && !gameState.board[row + 2 * direction][col]) {
-              addMoveIfValid(row + 2 * direction, col);
-            }
-          }
-          
-          // Diagonal captures
-          if (col > 0) {
-            const leftDiagonal = gameState.board[row + direction][col - 1];
-            if (leftDiagonal && leftDiagonal.isWhite !== isWhite) {
-              addMoveIfValid(row + direction, col - 1);
-            }
-          }
-          if (col < BOARD_SIZE - 1) {
-            const rightDiagonal = gameState.board[row + direction][col + 1];
-            if (rightDiagonal && rightDiagonal.isWhite !== isWhite) {
-              addMoveIfValid(row + direction, col + 1);
-            }
-          }
-          break;
-          
-        case PIECE_TYPES.ROOK:
-          // Horizontal and vertical moves
-          for (let r = row - 1; r >= 0; r--) {
-            if (!addRookMove(r, col)) break;
-          }
-          for (let r = row + 1; r < BOARD_SIZE; r++) {
-            if (!addRookMove(r, col)) break;
-          }
-          for (let c = col - 1; c >= 0; c--) {
-            if (!addRookMove(row, c)) break;
-          }
-          for (let c = col + 1; c < BOARD_SIZE; c++) {
-            if (!addRookMove(row, c)) break;
-          }
-          break;
-          
-        case PIECE_TYPES.KNIGHT:
-          // L-shaped moves
-          const knightMoves = [
-            {r: row - 2, c: col - 1}, {r: row - 2, c: col + 1},
-            {r: row - 1, c: col - 2}, {r: row - 1, c: col + 2},
-            {r: row + 1, c: col - 2}, {r: row + 1, c: col + 2},
-            {r: row + 2, c: col - 1}, {r: row + 2, c: col + 1}
-          ];
-          
-          knightMoves.forEach(move => {
-            addMoveIfValid(move.r, move.c);
-          });
-          break;
-          
-        case PIECE_TYPES.BISHOP:
-          // Diagonal moves
-          for (let i = 1; row - i >= 0 && col - i >= 0; i++) {
-            if (!addBishopMove(row - i, col - i)) break;
-          }
-          for (let i = 1; row - i >= 0 && col + i < BOARD_SIZE; i++) {
-            if (!addBishopMove(row - i, col + i)) break;
-          }
-          for (let i = 1; row + i < BOARD_SIZE && col - i >= 0; i++) {
-            if (!addBishopMove(row + i, col - i)) break;
-          }
-          for (let i = 1; row + i < BOARD_SIZE && col + i < BOARD_SIZE; i++) {
-            if (!addBishopMove(row + i, col + i)) break;
-          }
-          break;
-          
-        case PIECE_TYPES.QUEEN:
-          // Combination of rook and bishop moves
-          // Horizontal and vertical (rook-like)
-          for (let r = row - 1; r >= 0; r--) {
-            if (!addRookMove(r, col)) break;
-          }
-          for (let r = row + 1; r < BOARD_SIZE; r++) {
-            if (!addRookMove(r, col)) break;
-          }
-          for (let c = col - 1; c >= 0; c--) {
-            if (!addRookMove(row, c)) break;
-          }
-          for (let c = col + 1; c < BOARD_SIZE; c++) {
-            if (!addRookMove(row, c)) break;
-          }
-          
-          // Diagonal (bishop-like)
-          for (let i = 1; row - i >= 0 && col - i >= 0; i++) {
-            if (!addBishopMove(row - i, col - i)) break;
-          }
-          for (let i = 1; row - i >= 0 && col + i < BOARD_SIZE; i++) {
-            if (!addBishopMove(row - i, col + i)) break;
-          }
-          for (let i = 1; row + i < BOARD_SIZE && col - i >= 0; i++) {
-            if (!addBishopMove(row + i, col - i)) break;
-          }
-          for (let i = 1; row + i < BOARD_SIZE && col + i < BOARD_SIZE; i++) {
-            if (!addBishopMove(row + i, col + i)) break;
-          }
-          break;
-          
-        case PIECE_TYPES.KING:
-          // King can move one square in any direction
-          for (let r = row - 1; r <= row + 1; r++) {
-            for (let c = col - 1; c <= col + 1; c++) {
-              if (r === row && c === col) continue; // Skip current position
-              addMoveIfValid(r, c);
-            }
-          }
-          
-          // Castling
-          if (!piece.hasMoved && !isInCheck(isWhite)) {
-            // Kingside castling
-            const kingsideRook = findRook(row, col + 3, isWhite);
-            if (kingsideRook && !kingsideRook.hasMoved && 
-                !gameState.playerLockedPieces.includes(kingsideRook) && 
-                !gameState.aiLockedPieces.includes(kingsideRook)) {
-              const path = [];
-              for (let c = col + 1; c < col + 3; c++) {
-                path.push(gameState.board[row][c]);
-              }
-              
-              if (path.every(p => !p) && // Path must be clear
-                  path.every((_, i) => !isSquareAttacked(row, col + 1 + i, isWhite))) {
-                addMoveIfValid(row, col + 2);
-              }
-            }
-            
-            // Queenside castling
-            const queensideRook = findRook(row, col - 4, isWhite);
-            if (queensideRook && !queensideRook.hasMoved && 
-                !gameState.playerLockedPieces.includes(queensideRook) && 
-                !gameState.aiLockedPieces.includes(queensideRook)) {
-              const path = [];
-              for (let c = col - 1; c > col - 4; c--) {
-                path.push(gameState.board[row][c]);
-              }
-              
-              if (path.every(p => !p) && // Path must be clear
-                  path.every((_, i) => !isSquareAttacked(row, col - 1 - i, isWhite))) {
-                addMoveIfValid(row, col - 2);
-              }
-            }
-          }
-          break;
-      }
-      
-      // Helper functions for bishop and rook moves
-      function addRookMove(r, c) {
-        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
-        
-        const targetPiece = gameState.board[r][c];
-        
-        if (!targetPiece) {
-          // Empty square, can move here
-          addMoveIfValid(r, c);
-          return true;
-        } else if (targetPiece.isWhite !== isWhite) {
-          // Enemy piece, can capture but can't go further
-          addMoveIfValid(r, c);
-          return false;
+            adFrame.onerror = function() {
+                console.error("Ad iframe failed to load");
+                adLoaded = false;
+                assetLoaded(); // Still count it as loaded to continue game
+            };
         } else {
-          // Friendly piece, can't move here or further
-          return false;
-        }
-      }
-      
-      function addBishopMove(r, c) {
-        if (r < 0 || r >= BOARD_SIZE || c < 0 || c >= BOARD_SIZE) return false;
-        
-        const targetPiece = gameState.board[r][c];
-        
-        if (!targetPiece) {
-          // Empty square, can move here
-          addMoveIfValid(r, c);
-          return true;
-        } else if (targetPiece.isWhite !== isWhite) {
-          // Enemy piece, can capture but can't go further
-          addMoveIfValid(r, c);
-          return false;
-        } else {
-          // Friendly piece, can't move here or further
-          return false;
-        }
-      }
-      
-      // Helper function to find rook for castling
-      function findRook(row, col, isWhite) {
-        if (col < 0 || col >= BOARD_SIZE) return null;
-        
-        const piece = gameState.board[row][col];
-        if (piece && piece.type === PIECE_TYPES.ROOK && piece.isWhite === isWhite) {
-          return piece;
-        }
-        return null;
-      }
-      
-      return validMoves;
-    }
-    
-    // Move a piece on the board
-    function movePiece(piece, newRow, newCol) {
-      // Store the move for highlighting
-      gameState.lastMove = {
-        fromRow: piece.row,
-        fromCol: piece.col,
-        toRow: newRow,
-        toCol: newCol
-      };
-      
-      // Check for castling
-      let isCastling = false;
-      if (piece.type === PIECE_TYPES.KING && Math.abs(piece.col - newCol) === 2) {
-        isCastling = true;
-        // Move the rook as well
-        const isKingside = newCol > piece.col;
-        const rookCol = isKingside ? 7 : 0;
-        const newRookCol = isKingside ? newCol - 1 : newCol + 1;
-        
-        const rook = gameState.board[piece.row][rookCol];
-        gameState.board[piece.row][rookCol] = null;
-        gameState.board[piece.row][newRookCol] = rook;
-        
-        // Update rook position
-        rook.col = newRookCol;
-        rook.hasMoved = true;
-      }
-      
-      // Check for capture
-      const capturedPiece = gameState.board[newRow][newCol];
-      if (capturedPiece) {
-        // Remove the captured piece from the appropriate array
-        if (capturedPiece.isWhite === gameState.isWhite) {
-          gameState.playerPieces = gameState.playerPieces.filter(p => p !== capturedPiece);
-          gameState.playerLockedPieces = gameState.playerLockedPieces.filter(p => p !== capturedPiece);
-        } else {
-          gameState.aiPieces = gameState.aiPieces.filter(p => p !== capturedPiece);
-          gameState.aiLockedPieces = gameState.aiLockedPieces.filter(p => p !== capturedPiece);
-        }
-      }
-      
-      // Update board state
-      gameState.board[piece.row][piece.col] = null;
-      gameState.board[newRow][newCol] = piece;
-      
-      // Update piece position
-      piece.row = newRow;
-      piece.col = newCol;
-      piece.hasMoved = true;
-      
-      // Check for pawn promotion
-      if (piece.type === PIECE_TYPES.PAWN && (newRow === 0 || newRow === BOARD_SIZE - 1)) {
-        // Automatically promote to queen
-        piece.type = PIECE_TYPES.QUEEN;
-      }
-      
-      // Increment move count and check for unlock
-      gameState.moveCount++;
-      
-      // Check if we need to unlock pieces
-      const needUnlock = gameState.moveCount > 0 && gameState.moveCount % MOVES_BEFORE_UNLOCK === 0;
-      
-      // Check for check
-      gameState.inCheck = isInCheck(!piece.isWhite);
-      
-      // Update status
-      let statusText = "";
-      if (isCastling) {
-        statusText = `${piece.isWhite ? 'White' : 'Black'} castled.`;
-      } else if (capturedPiece) {
-        statusText = `${piece.isWhite ? 'White' : 'Black'} captured ${capturedPiece.isWhite ? 'White' : 'Black'}'s ${capturedPiece.type}.`;
-      } else {
-        statusText = `${piece.isWhite ? 'White' : 'Black'} moved ${piece.type} to ${getChessNotation(newRow, newCol)}.`;
-      }
-      
-      if (gameState.inCheck) {
-        statusText += ` ${piece.isWhite ? 'Black' : 'White'} is in check.`;
-      }
-      
-      updateStatus(statusText);
-      
-      // Handle unlocking pieces or start betting round if needed
-      if (needUnlock) {
-        unlockPieces();
-      }
-    }
-    
-    // Check if a king is in check
-    function isInCheck(isWhiteKing) {
-      // Find the king
-      const king = findKing(isWhiteKing);
-      if (!king) return false;
-      
-      return isSquareAttacked(king.row, king.col, isWhiteKing);
-    }
-    
-    // Check if a square is under attack
-    function isSquareAttacked(row, col, isWhiteSquare) {
-      // Check attacks from all opponent pieces
-      const opponentPieces = isWhiteSquare ? 
-        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p)) : 
-        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p));
-      
-      for (const piece of opponentPieces) {
-        // Skip locked pieces
-        if ((piece.isWhite && gameState.playerLockedPieces.includes(piece)) ||
-            (!piece.isWhite && gameState.aiLockedPieces.includes(piece))) {
-          continue;
+            assetLoaded(); // No ad frame found, still continue
         }
         
-        // For each piece type, check if it can attack the target square
-        switch (piece.type) {
-          case PIECE_TYPES.PAWN:
-            // Pawns attack diagonally
-            const direction = piece.isWhite ? -1 : 1;
-            if ((piece.row + direction === row) && 
-                (piece.col + 1 === col || piece.col - 1 === col)) {
-              return true;
+        // Ball properties
+        let ballX, ballY;
+        let ballSize = 60;
+        let ballVX = 5;
+        let ballVY = 3;
+        
+        // Paddle properties
+        let paddleWidth = 15;
+        let paddleHeight = 80;
+        let leftPaddleY, rightPaddleY;
+        let paddleSpeed = 4;
+        let aiDifficulty = 0.7; // Higher values make AI more accurate
+        
+        // We no longer need to preload any image
+        // Just mark asset as loaded to continue game initialization
+        assetLoaded();
+        
+        // Create second ad container for state 3
+        const adContainer2 = document.createElement('div');
+        adContainer2.id = 'ad-container-2';
+        adContainer2.style.position = 'absolute';
+        adContainer2.style.display = 'none';
+        adContainer2.style.pointerEvents = 'none';
+        adContainer2.style.zIndex = '15';
+        adContainer2.style.backgroundColor = 'transparent';
+        adContainer2.innerHTML = `<iframe data-aa='2382909' src='//ad.a-ads.com/2382909?size=468x60' style='width:468px; height:60px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>`;
+        document.getElementById('game-container').appendChild(adContainer2);
+
+        // Initialize p5.js
+        const p5Sketch = (p) => {
+            p.setup = function() {
+                const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                canvas.parent('p5-container');
+                
+                // Initialize ball position
+                ballX = p.width / 2;
+                ballY = p.height / 2;
+                
+                // Initialize paddles position
+                leftPaddleY = p.height / 2 - paddleHeight / 2;
+                rightPaddleY = p.height / 2 - paddleHeight / 2;
+                
+                // Make canvas clickable
+                canvas.mousePressed(handleCanvasClick);
+                
+                // Add a click handler to the whole document as backup
+                document.addEventListener('click', function(e) {
+                    // Only handle if it's not already handled by p5
+                    if (e.target.tagName.toLowerCase() !== 'canvas') {
+                        // Convert page coordinates to canvas coordinates
+                        const canvasRect = canvas.elt.getBoundingClientRect();
+                        const canvasX = e.clientX - canvasRect.left;
+                        const canvasY = e.clientY - canvasRect.top;
+                        
+                        // Check if click is on the ball
+                        let ballRadius = ballSize / 2;
+                        let d = p.dist(canvasX, canvasY, ballX, ballY);
+                        
+                        if (d < ballRadius) {
+                            // Handle ball click based on state
+                            if (ballState === 0) {
+                                window.open('https://x.com/robbygat', '_blank');
+                            } else if (ballState === 1) {
+                                emailPopup.style.display = 'block';
+                            } else if (ballState === 3) {
+                                // Do nothing on second ad click
+                            }
+                        } else {
+                            // Cycle ball state
+                            ballState = (ballState + 1) % 4;
+                        }
+                    }
+                });
+                
+                // No need to initialize image anymore as we're using ads instead
+                
+                // Ensure loading is considered complete
+                updateLoadingProgress(100);
+            };
+
+            p.draw = function() {
+                p.clear();
+                
+                // Draw game elements
+                drawField();
+                updateAI();
+                updateBall();
+                drawPaddles();
+                drawBall();
+                
+                // Check game boundaries
+                checkBoundaries();
+            };
+
+            function drawField() {
+                // Draw center line
+                p.stroke(255, 255, 255, 60);
+                p.strokeWeight(4);
+                p.line(p.width / 2, 0, p.width / 2, p.height);
+                
+                // Draw score area boundaries
+                p.stroke(255, 255, 255, 30);
+                p.strokeWeight(2);
+                p.line(p.width * 0.1, 0, p.width * 0.1, p.height);
+                p.line(p.width * 0.9, 0, p.width * 0.9, p.height);
             }
-            break;
-            
-          case PIECE_TYPES.KNIGHT:
-            // Knight's L-shaped moves
-            const knightMoves = [
-              {r: -2, c: -1}, {r: -2, c: 1},
-              {r: -1, c: -2}, {r: -1, c: 2},
-              {r: 1, c: -2}, {r: 1, c: 2},
-              {r: 2, c: -1}, {r: 2, c: 1}
-            ];
-            
-            if (knightMoves.some(move => 
-                piece.row + move.r === row && piece.col + move.c === col)) {
-              return true;
+
+            function updateAI() {
+                // Left AI paddle movement - predictive
+                let leftPaddleCenter = leftPaddleY + paddleHeight / 2;
+                let targetY = ballY;
+                
+                // Only move if ball is coming towards this paddle
+                if (ballVX < 0) {
+                    // Predict ball position on paddle's x position
+                    let timeToReach = (paddleWidth - ballX) / ballVX;
+                    let predictedY = ballY + ballVY * timeToReach;
+                    
+                    // Add some randomness to make it imperfect
+                    targetY = predictedY + p.random(-100, 100) * (1 - aiDifficulty);
+                    
+                    // Move towards prediction
+                    if (leftPaddleCenter < targetY) {
+                        leftPaddleY += paddleSpeed;
+                    } else if (leftPaddleCenter > targetY) {
+                        leftPaddleY -= paddleSpeed;
+                    }
+                }
+                
+                // Right AI paddle movement - predictive
+                let rightPaddleCenter = rightPaddleY + paddleHeight / 2;
+                
+                // Only move if ball is coming towards this paddle
+                if (ballVX > 0) {
+                    // Predict ball position on paddle's x position
+                    let timeToReach = (p.width - paddleWidth - ballX) / ballVX;
+                    let predictedY = ballY + ballVY * timeToReach;
+                    
+                    // Add some randomness to make it imperfect
+                    targetY = predictedY + p.random(-100, 100) * (1 - aiDifficulty);
+                    
+                    // Move towards prediction
+                    if (rightPaddleCenter < targetY) {
+                        rightPaddleY += paddleSpeed;
+                    } else if (rightPaddleCenter > targetY) {
+                        rightPaddleY -= paddleSpeed;
+                    }
+                }
+                
+                // Constrain paddles to screen
+                leftPaddleY = p.constrain(leftPaddleY, 0, p.height - paddleHeight);
+                rightPaddleY = p.constrain(rightPaddleY, 0, p.height - paddleHeight);
             }
-            break;
-            
-          case PIECE_TYPES.BISHOP:
-            // Bishop moves diagonally
-            if (Math.abs(piece.row - row) === Math.abs(piece.col - col)) {
-              const rowDir = row > piece.row ? 1 : -1;
-              const colDir = col > piece.col ? 1 : -1;
-              let r = piece.row + rowDir;
-              let c = piece.col + colDir;
-              
-              while (r !== row && c !== col) {
-                if (gameState.board[r][c]) return false; // Path is blocked
-                r += rowDir;
-                c += colDir;
-              }
-              
-              return true;
+
+            function updateBall() {
+                ballX += ballVX;
+                ballY += ballVY;
+                
+                // Handle collisions with paddles
+                if (ballX < paddleWidth + ballSize / 2 && 
+                    ballY > leftPaddleY && 
+                    ballY < leftPaddleY + paddleHeight) {
+                    
+                    // Add slight randomness to prevent infinite loops
+                    ballVX = -ballVX * (1 + p.random(-0.05, 0.05));
+                    ballVY += p.random(-0.5, 0.5);
+                    
+                    ballX = paddleWidth + ballSize / 2;
+                    
+                    // Add angle based on where the ball hit the paddle
+                    let relativeIntersect = (leftPaddleY + paddleHeight / 2) - ballY;
+                    let normalizedIntersect = relativeIntersect / (paddleHeight / 2);
+                    
+                    // Add slight randomness to angle
+                    normalizedIntersect += p.random(-0.1, 0.1);
+                    
+                    // Cap the maximum speed to prevent the ball from moving too fast
+                    const maxSpeed = 12;
+                    ballVY = p.constrain(-normalizedIntersect * 5, -maxSpeed, maxSpeed);
+                }
+                
+                if (ballX > p.width - paddleWidth - ballSize / 2 && 
+                    ballY > rightPaddleY && 
+                    ballY < rightPaddleY + paddleHeight) {
+                    
+                    // Add slight randomness to prevent infinite loops
+                    ballVX = -ballVX * (1 + p.random(-0.05, 0.05));
+                    ballVY += p.random(-0.5, 0.5);
+                    
+                    ballX = p.width - paddleWidth - ballSize / 2;
+                    
+                    // Add angle based on where the ball hit the paddle
+                    let relativeIntersect = (rightPaddleY + paddleHeight / 2) - ballY;
+                    let normalizedIntersect = relativeIntersect / (paddleHeight / 2);
+                    
+                    // Add slight randomness to angle
+                    normalizedIntersect += p.random(-0.1, 0.1);
+                    
+                    // Cap the maximum speed to prevent the ball from moving too fast
+                    const maxSpeed = 12;
+                    ballVY = p.constrain(-normalizedIntersect * 5, -maxSpeed, maxSpeed);
+                }
+                
+                // Ensure ball speed doesn't exceed maximum
+                const maxSpeed = 15;
+                const speed = Math.sqrt(ballVX * ballVX + ballVY * ballVY);
+                if (speed > maxSpeed) {
+                    const ratio = maxSpeed / speed;
+                    ballVX *= ratio;
+                    ballVY *= ratio;
+                }
+                
+                // Ensure ball has at least some Y velocity to prevent horizontal infinite loops
+                if (Math.abs(ballVY) < 0.5) {
+                    ballVY = (ballVY >= 0 ? 1 : -1) * (0.5 + p.random(0, 1));
+                }
             }
-            break;
-            
-          case PIECE_TYPES.ROOK:
-            // Rook moves horizontally or vertically
-            if (piece.row === row || piece.col === col) {
-              if (piece.row === row) {
-                const start = Math.min(piece.col, col);
-                const end = Math.max(piece.col, col);
+
+            function drawPaddles() {
+                // Draw left paddle
+                p.fill(200, 200, 255);
+                p.noStroke();
+                p.rect(0, leftPaddleY, paddleWidth, paddleHeight, 5);
                 
-                let blocked = false;
-                for (let c = start + 1; c < end; c++) {
-                  if (gameState.board[row][c]) {
-                    blocked = true;
-                    break;
-                  }
-                }
+                // Draw right paddle
+                p.fill(255, 200, 200);
+                p.noStroke();
+                p.rect(p.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight, 5);
                 
-                if (!blocked) return true;
-              } else {
-                const start = Math.min(piece.row, row);
-                const end = Math.max(piece.row, row);
-                
-                let blocked = false;
-                for (let r = start + 1; r < end; r++) {
-                  if (gameState.board[r][col]) {
-                    blocked = true;
-                    break;
-                  }
-                }
-                
-                if (!blocked) return true;
-              }
+                // Add AI "brains" visualization
+                drawAIBrain(paddleWidth / 2, leftPaddleY + paddleHeight / 2, 20, 200, 200, 255);
+                drawAIBrain(p.width - paddleWidth / 2, rightPaddleY + paddleHeight / 2, 20, 255, 200, 200);
             }
-            break;
-            
-          case PIECE_TYPES.QUEEN:
-            // Queen combines rook and bishop movements
-            // Check rook-like movement (horizontal/vertical)
-            if (piece.row === row || piece.col === col) {
-              if (piece.row === row) {
-                const start = Math.min(piece.col, col);
-                const end = Math.max(piece.col, col);
+
+            function drawAIBrain(x, y, size, r, g, b) {
+                p.push();
+                p.translate(x, y);
                 
-                let blocked = false;
-                for (let c = start + 1; c < end; c++) {
-                  if (gameState.board[row][c]) {
-                    blocked = true;
-                    break;
-                  }
-                }
+                // Draw circles to represent AI "thinking"
+                p.noFill();
+                p.stroke(r, g, b, 150);
+                p.strokeWeight(1);
                 
-                if (!blocked) return true;
-              } else {
-                const start = Math.min(piece.row, row);
-                const end = Math.max(piece.row, row);
+                let time = p.frameCount * 0.05;
+                let pulseSize = size * (0.8 + 0.2 * Math.sin(time));
                 
-                let blocked = false;
-                for (let r = start + 1; r < end; r++) {
-                  if (gameState.board[r][col]) {
-                    blocked = true;
-                    break;
-                  }
-                }
+                p.circle(0, 0, pulseSize);
+                p.circle(0, 0, pulseSize * 0.7);
+                p.circle(0, 0, pulseSize * 0.4);
                 
-                if (!blocked) return true;
-              }
+                // Draw connecting lines
+                let angle = time % (2 * Math.PI);
+                let x1 = Math.cos(angle) * pulseSize * 0.3;
+                let y1 = Math.sin(angle) * pulseSize * 0.3;
+                let x2 = Math.cos(angle + Math.PI / 3) * pulseSize * 0.3;
+                let y2 = Math.sin(angle + Math.PI / 3) * pulseSize * 0.3;
+                
+                p.line(x1, y1, x2, y2);
+                p.line(x1, y1, -x2, -y2);
+                p.line(-x1, -y1, x2, y2);
+                
+                p.pop();
             }
-            
-            // Check bishop-like movement (diagonal)
-            if (Math.abs(piece.row - row) === Math.abs(piece.col - col)) {
-              const rowDir = row > piece.row ? 1 : -1;
-              const colDir = col > piece.col ? 1 : -1;
-              let r = piece.row + rowDir;
-              let c = piece.col + colDir;
-              
-              let blocked = false;
-              while (r !== row && c !== col) {
-                if (gameState.board[r][c]) {
-                  blocked = true;
-                  break;
+
+            function drawBall() {
+                p.push();
+                p.translate(ballX, ballY);
+                
+                switch (ballState) {
+                    case 0: // R
+                        p.fill(255);
+                        p.textSize(ballSize);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.text("R", 0, 0);
+                        
+                        // Add a visual indicator that this is clickable
+                        p.noFill();
+                        p.stroke(255, 255, 255, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.ellipse(0, 0, ballSize + 5, ballSize + 5);
+                        
+                        // Position both ad containers off-screen
+                        adContainer.style.display = 'none';
+                        document.getElementById('ad-container-2').style.display = 'none';
+                        break;
+                        
+                    case 1: // Email
+                        p.fill(200, 255, 200);
+                        p.rect(-ballSize*2, -ballSize/2, ballSize*4, ballSize, 10);
+                        p.fill(0);
+                        p.textSize(ballSize/3);
+                        p.textAlign(p.CENTER, p.CENTER);
+                        p.text("robby@robbygat.com", 0, 0);
+                        
+                        // Add a visual indicator that this is clickable
+                        p.noFill();
+                        p.stroke(200, 255, 200, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.rect(-ballSize*2 - 5, -ballSize/2 - 5, ballSize*4 + 10, ballSize + 10, 12);
+                        
+                        // Position both ad containers off-screen
+                        adContainer.style.display = 'none';
+                        document.getElementById('ad-container-2').style.display = 'none';
+                        break;
+                        
+                    case 2: // Ad
+                        // Draw a placeholder for the ad position
+                        p.noFill();
+                        p.stroke(255, 200, 200, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.rect(-234, -30, 468, 60, 5);
+                        
+                        // Position adContainer at ball position
+                        adContainer.style.display = 'block';
+                        adContainer.style.left = (ballX - 234) + 'px';
+                        adContainer.style.top = (ballY - 30) + 'px';
+                        break;
+                        
+                    case 3: // Second ad
+                        // Draw a placeholder for the ad position
+                        p.noFill();
+                        p.stroke(255, 255, 0, 128 + 127 * Math.sin(p.frameCount * 0.1));
+                        p.strokeWeight(2);
+                        p.rect(-234, -30, 468, 60, 5);
+                        
+                        // Position second ad container at ball position
+                        const adContainer2 = document.getElementById('ad-container-2');
+                        adContainer2.style.display = 'block';
+                        adContainer2.style.left = (ballX - 234) + 'px';
+                        adContainer2.style.top = (ballY - 30) + 'px';
+                        
+                        // Hide the first ad container
+                        adContainer.style.display = 'none';
+                        break;
                 }
-                r += rowDir;
-                c += colDir;
-              }
-              
-              if (!blocked) return true;
+                
+                p.pop();
             }
-            break;
-            
-          case PIECE_TYPES.KING:
-            // King can attack adjacent squares
-            if (Math.abs(piece.row - row) <= 1 && Math.abs(piece.col - col) <= 1) {
-              return true;
+
+            function checkBoundaries() {
+                // Top and bottom bounds
+                if (ballY < ballSize / 2 || ballY > p.height - ballSize / 2) {
+                    // Add slight randomness when bouncing off walls
+                    ballVY = -ballVY * (1 + p.random(-0.05, 0.05));
+                    ballVX += p.random(-0.3, 0.3); // Add a bit of horizontal randomness too
+                    
+                    ballY = p.constrain(ballY, ballSize / 2, p.height - ballSize / 2);
+                }
+                
+                // Left and right bounds (reset ball)
+                if (ballX < 0 || ballX > p.width) {
+                    ballX = p.width / 2;
+                    ballY = p.height / 2;
+                    
+                    // Reset with random angle and moderate speed
+                    let angle = p.random(-Math.PI/4, Math.PI/4);
+                    let speed = 5;
+                    ballVX = (ballX < 0 ? 1 : -1) * Math.cos(angle) * speed;
+                    ballVY = Math.sin(angle) * speed;
+                    
+                    // Ensure there's some Y velocity
+                    if (Math.abs(ballVY) < 1) {
+                        ballVY = (p.random() > 0.5 ? 1 : -1) * (1 + p.random(0, 2));
+                    }
+                }
             }
-            break;
-        }
-      }
-      
-      return false;
-    }
-    
-    // Find a king on the board
-    function findKing(isWhiteKing) {
-      for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-          const piece = gameState.board[row][col];
-          if (piece && 
-              piece.type === PIECE_TYPES.KING && 
-              piece.isWhite === isWhiteKing) {
-            return piece;
-          }
-        }
-      }
-      return null;
-    }
-    
-    // Check if a player is in checkmate
-    function isCheckmate(isWhiteKing) {
-      // If not in check, can't be checkmate
-      if (!isInCheck(isWhiteKing)) return false;
-      
-      // Get all pieces for the player in check
-      const pieces = isWhiteKing ? 
-        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p)) : 
-        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
-      
-      // Check if any piece has a valid move that gets out of check
-      for (const piece of pieces) {
-        const moves = getValidMoves(piece);
-        if (moves.length > 0) return false; // Player has at least one valid move
-      }
-      
-      // No valid moves, so it's checkmate
-      return true;
-    }
-    
-    // Make an AI move
-    function makeAIMove() {
-      if (gameState.gameOver) return;
-      
-      // Find the best move
-      const bestMove = findBestMove();
-      
-      if (bestMove) {
-        // Execute the move
-        movePiece(bestMove.piece, bestMove.row, bestMove.col);
-        
-        // Check if game over after AI's move
-        if (isCheckmate(gameState.isWhite)) {
-          endGame(!gameState.isWhite ? 'player' : 'ai', 'checkmate');
-          return;
-        }
-        
-        // Player's turn
-        gameState.isPlayerTurn = true;
-      } else {
-        // No valid moves, AI loses
-        endGame('player', 'no_valid_moves');
-      }
-    }
-    
-    // Find the best move for the AI
-    function findBestMove() {
-      const aiIsWhite = !gameState.isWhite;
-      let bestScore = -Infinity;
-      let bestMove = null;
-      
-      // Check all AI pieces that are not locked
-      const aiPieces = gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
-      
-      for (const piece of aiPieces) {
-        const validMoves = getValidMoves(piece);
-        
-        for (const move of validMoves) {
-          // Simulate the move
-          const capturedPiece = gameState.board[move.row][move.col];
-          gameState.board[piece.row][piece.col] = null;
-          gameState.board[move.row][move.col] = piece;
-          
-          // Save original position
-          const originalRow = piece.row;
-          const originalCol = piece.col;
-          
-          // Update piece position
-          piece.row = move.row;
-          piece.col = move.col;
-          
-          // Evaluate the position
-          const score = evaluatePosition(aiIsWhite, 2);
-          
-          // Restore the board
-          piece.row = originalRow;
-          piece.col = originalCol;
-          gameState.board[originalRow][originalCol] = piece;
-          gameState.board[move.row][move.col] = capturedPiece;
-          
-          if (score > bestScore) {
-            bestScore = score;
-            bestMove = { piece, row: move.row, col: move.col };
-          }
-        }
-      }
-      
-      return bestMove;
-    }
-    
-    // Evaluate the board position from a player's perspective
-    function evaluatePosition(isWhite, depth) {
-      // Check for checkmate
-      if (isCheckmate(isWhite)) {
-        return -1000; // Being checkmated is very bad
-      }
-      if (isCheckmate(!isWhite)) {
-        return 1000; // Checkmating opponent is very good
-      }
-      
-      // Base case for recursion
-      if (depth === 0) {
-        // Count material value
-        let score = 0;
-        
-        for (let row = 0; row < BOARD_SIZE; row++) {
-          for (let col = 0; col < BOARD_SIZE; col++) {
-            const piece = gameState.board[row][col];
-            if (piece) {
-              const pieceValue = PIECE_VALUES[piece.type];
-              
-              // Add bonuses for certain positions
-              let positionalBonus = 0;
-              
-              // Pawns are better in the center and advanced
-              if (piece.type === PIECE_TYPES.PAWN) {
-                // Center control bonus
-                if (col >= 2 && col <= 5) {
-                  positionalBonus += 0.1;
-                }
+
+            function handleCanvasClick() {
+                // Check if click is on the ball
+                let ballRadius = ballSize / 2;
+                let d = p.dist(p.mouseX, p.mouseY, ballX, ballY);
                 
-                // Advancement bonus
-                const advancementRow = piece.isWhite ? 7 - piece.row : piece.row;
-                positionalBonus += advancementRow * 0.1;
-              }
-              
-              // Knights and bishops are better in the center
-              if (piece.type === PIECE_TYPES.KNIGHT || piece.type === PIECE_TYPES.BISHOP) {
-                if (row >= 2 && row <= 5 && col >= 2 && col <= 5) {
-                  positionalBonus += 0.3;
-                }
-              }
-              
-              // Rooks are better on open files
-              if (piece.type === PIECE_TYPES.ROOK) {
-                let openFile = true;
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                  if (r !== row && gameState.board[r][col] && 
-                      gameState.board[r][col].type === PIECE_TYPES.PAWN) {
-                    openFile = false;
-                    break;
-                  }
-                }
-                if (openFile) positionalBonus += 0.5;
-              }
-              
-              // King safety (prefer corners in endgame)
-              if (piece.type === PIECE_TYPES.KING) {
-                // Determine if we're in endgame (fewer than 10 pieces on board)
-                let pieceCount = 0;
-                for (let r = 0; r < BOARD_SIZE; r++) {
-                  for (let c = 0; c < BOARD_SIZE; c++) {
-                    if (gameState.board[r][c]) pieceCount++;
-                  }
-                }
-                
-                const isEndgame = pieceCount < 10;
-                
-                if (isEndgame) {
-                  // In endgame, king should be active in the center
-                  if (row >= 2 && row <= 5 && col >= 2 && col <= 5) {
-                    positionalBonus += 0.5;
-                  }
+                if (d < ballRadius) {
+                    // Clicked on ball
+                    if (ballState === 0) {
+                        // R state - redirect to x.com/robbygat
+                        window.open('https://x.com/robbygat', '_blank');
+                    } else if (ballState === 1) {
+                        // Email state - show popup
+                        emailPopup.style.display = 'block';
+                    } else if (ballState === 3) {
+                        // IPFS image state - redirect to rarevance.com
+                        window.open('https://rarevance.com', '_blank');
+                    }
+                    // Note: State 2 (ad) doesn't have special click behavior
                 } else {
-                  // In middlegame, king should be safe in the corner
-                  if ((row === 0 || row === 7) && (col === 0 || col === 7)) {
-                    positionalBonus += 0.5;
-                  }
+                    // Clicked elsewhere - cycle ball state
+                    ballState = (ballState + 1) % 4;
                 }
-              }
-              
-              const totalValue = pieceValue + positionalBonus;
-              
-              if (piece.isWhite === isWhite) {
-                score += totalValue;
-              } else {
-                score -= totalValue;
-              }
             }
-          }
+
+            p.windowResized = function() {
+                p.resizeCanvas(window.innerWidth, window.innerHeight);
+            };
+        };
+
+        // Initialize Three.js for CRT overlay effect
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Create scene and camera
+            const scene = new THREE.Scene();
+            const camera = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 1, 1000);
+            camera.position.z = 10;
+            
+            // Create renderer
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(width, height);
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+            
+            // Create a plane for post-processing
+            const geometry = new THREE.PlaneGeometry(width, height);
+            
+            // Ensure the plane is slightly transparent to allow click events
+            const material = new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+            });
+            
+            // CRT shader
+            const crtShader = {
+                uniforms: {
+                    time: { value: 0.0 },
+                    resolution: { value: new THREE.Vector2(width, height) }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform float time;
+                    uniform vec2 resolution;
+                    varying vec2 vUv;
+                    
+                    float random(vec2 st) {
+                        return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+                    }
+                    
+                    void main() {
+                        vec2 uv = vUv;
+                        
+                        // CRT curvature
+                        vec2 center = vec2(0.5, 0.5);
+                        vec2 dir = uv - center;
+                        float dist = length(dir);
+                        uv = uv + dir * dist * dist * 0.05;
+                        
+                        // Vignette
+                        float vignette = smoothstep(0.0, 0.7, dist) * 0.5;
+                        
+                        // Scanlines
+                        float scanline = 0.5 + 0.5 * sin(uv.y * resolution.y * 1.0);
+                        scanline = pow(scanline, 3.0) * 0.5;
+                        
+                        // RGB split
+                        float rbShift = 0.002 + 0.001 * sin(time * 0.4);
+                        
+                        // Noise and grain
+                        float noise = random(uv + vec2(time * 0.01, 0.0)) * 0.08;
+                        
+                        // Flickering
+                        float flicker = 0.97 + 0.03 * sin(time * 10.0);
+                        
+                        // Combined effects
+                        vec4 color = vec4(1.0 - vignette - scanline + noise, flicker, flicker, 0.3);
+                        
+                        gl_FragColor = color;
+                    }
+                `
+            };
+            
+            // Extend the shader material with transparency settings
+            const shaderMaterial = new THREE.ShaderMaterial({
+                ...crtShader,
+                transparent: true,
+                depthWrite: false
+            });
+            
+            const mesh = new THREE.Mesh(geometry, shaderMaterial);
+            scene.add(mesh);
+            
+            // Animation loop
+            let clock = new THREE.Clock();
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Update shader time
+                shaderMaterial.uniforms.time.value = clock.getElapsedTime();
+                
+                renderer.render(scene, camera);
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                const newWidth = window.innerWidth;
+                const newHeight = window.innerHeight;
+                
+                camera.left = -newWidth / 2;
+                camera.right = newWidth / 2;
+                camera.top = newHeight / 2;
+                camera.bottom = -newHeight / 2;
+                camera.updateProjectionMatrix();
+                
+                renderer.setSize(newWidth, newHeight);
+                shaderMaterial.uniforms.resolution.value.set(newWidth, newHeight);
+                
+                mesh.geometry.dispose();
+                mesh.geometry = new THREE.PlaneGeometry(newWidth, newHeight);
+            });
+            
+            animate();
         }
+
+        // Initialize popup buttons
+        document.getElementById('send-email').addEventListener('click', function() {
+            window.location.href = 'mailto:robby@robbygat.com';
+        });
         
-        // Add bonus for having more unlocked pieces
-        const playerLockedCount = isWhite ? 
-          gameState.playerLockedPieces.length : gameState.aiLockedPieces.length;
-        const opponentLockedCount = isWhite ? 
-          gameState.aiLockedPieces.length : gameState.playerLockedPieces.length;
+        document.getElementById('close-popup').addEventListener('click', function() {
+            document.getElementById('email-popup').style.display = 'none';
+        });
+
+        // Create p5 instance
+        p5Instance = new p5(p5Sketch);
         
-        score += (opponentLockedCount - playerLockedCount) * 0.5;
-        
-        // Check status adds a small bonus
-        if (isInCheck(!isWhite)) {
-          score += 0.5;
-        }
-        if (isInCheck(isWhite)) {
-          score -= 0.5;
-        }
-        
-        return score;
-      }
-      
-      // Recursive minimax evaluation
-      const pieces = isWhite ? 
-        gameState.playerPieces.filter(p => !gameState.playerLockedPieces.includes(p)) : 
-        gameState.aiPieces.filter(p => !gameState.aiLockedPieces.includes(p));
-      
-      let bestScore = -Infinity;
-      
-      for (const piece of pieces) {
-        const validMoves = getValidMoves(piece);
-        
-        for (const move of validMoves) {
-          // Simulate the move
-          const capturedPiece = gameState.board[move.row][move.col];
-          gameState.board[piece.row][piece.col] = null;
-          gameState.board[move.row][move.col] = piece;
-          
-          // Save original position
-          const originalRow = piece.row;
-          const originalCol = piece.col;
-          
-          // Update piece position
-          piece.row = move.row;
-          piece.col = move.col;
-          
-          // Evaluate the position from opponent's perspective
-          const score = -evaluatePosition(!isWhite, depth - 1);
-          
-          // Restore the board
-          piece.row = originalRow;
-          piece.col = originalCol;
-          gameState.board[originalRow][originalCol] = piece;
-          gameState.board[move.row][move.col] = capturedPiece;
-          
-          bestScore = Math.max(bestScore, score);
-        }
-      }
-      
-      return bestScore === -Infinity ? 0 : bestScore;
-    }
-    
-    // Make an AI bet during betting rounds
-    function makeAIBet() {
-      if (!gameState.isBettingRound) return;
-      
-      // Evaluate the strength of AI's position
-      const aiIsWhite = !gameState.isWhite;
-      const positionScore = evaluatePosition(aiIsWhite, 2);
-      
-      let betAmount = BLIND_AMOUNT; // Default to blind amount
-      
-      // Adjust bet based on position strength
-      if (positionScore >= 5) {
-        // Very strong position, bet higher
-        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.3)));
-      } else if (positionScore >= 2) {
-        // Strong position, bet moderately
-        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.2)));
-      } else if (positionScore >= 0) {
-        // Neutral position, conservative bet
-        betAmount = Math.min(gameState.aiChips, Math.max(gameState.currentBet, Math.floor(gameState.aiChips * 0.1)));
-      } else if (positionScore >= -2) {
-        // Weak position, minimum bet
-        betAmount = Math.min(gameState.aiChips, gameState.currentBet || BLIND_AMOUNT);
-      } else {
-        // Very weak position, consider folding
-        if (gameState.currentBet > BLIND_AMOUNT * 2 && gameState.currentBet > gameState.aiChips * 0.25) {
-          // Fold if the current bet is high
-          fold('ai');
-          return;
-        } else {
-          betAmount = Math.min(gameState.aiChips, gameState.currentBet || BLIND_AMOUNT);
-        }
-      }
-      
-      // Ensure bet is at least the current bet or blind
-      betAmount = Math.max(betAmount, gameState.currentBet || BLIND_AMOUNT);
-      
-      // Make the bet
-      if (gameState.currentBet === 0) {
-        // Check
-        updateStatus("AI checks.");
-      } else if (betAmount > gameState.currentBet) {
-        // Raise
-        updateStatus(`AI raises to ${betAmount} chips.`);
-      } else {
-        // Call
-        updateStatus(`AI calls ${betAmount} chips.`);
-      }
-      
-      // Update game state
-      gameState.aiChips -= betAmount;
-      gameState.currentPot += betAmount;
-      gameState.currentBet = betAmount;
-      gameState.aiHasBet = true;
-      
-      // Update UI
-      document.getElementById('ai-chips').textContent = gameState.aiChips;
-      document.getElementById('pot-amount').textContent = gameState.currentPot;
-      document.getElementById('current-bet').textContent = gameState.currentBet;
-      
-      // If player has already bet, betting round is over
-      if (gameState.playerHasBet) {
-        endBettingRound();
-      } else {
-        // Player needs to respond
-        gameState.isPlayerTurn = true;
-        toggleBettingControls(true);
-      }
-    }
-    
-    // Handle player check/call button
-    function checkOrCall() {
-      if (!gameState.isBettingRound || gameState.gameOver) return;
-      
-      let betAmount = 0;
-      
-      if (gameState.currentBet === 0) {
-        // Check
-        updateStatus("You check.");
-        betAmount = 0;
-      } else {
-        // Call
-        betAmount = gameState.currentBet;
-        
-        if (betAmount > gameState.playerChips) {
-          // All-in
-          betAmount = gameState.playerChips;
-          updateStatus(`You call all-in with ${betAmount} chips.`);
-        } else {
-          updateStatus(`You call ${betAmount} chips.`);
-        }
-      }
-      
-      // Update game state
-      gameState.playerChips -= betAmount;
-      gameState.currentPot += betAmount;
-      gameState.playerHasBet = true;
-      
-      // Update UI
-      document.getElementById('player-chips').textContent = gameState.playerChips;
-      document.getElementById('pot-amount').textContent = gameState.currentPot;
-      
-      // If AI has already bet, betting round is over
-      if (gameState.aiHasBet) {
-        endBettingRound();
-      } else {
-        // AI needs to respond
-        gameState.isPlayerTurn = false;
-        toggleBettingControls(false);
-        setTimeout(makeAIBet, 1000);
-      }
-    }
-    
-    // Handle player raise button
-    function raise() {
-      if (!gameState.isBettingRound || gameState.gameOver) return;
-      
-      // Get bet amount from slider
-      const betAmount = parseInt(document.getElementById('bet-slider').value);
-      
-      if (betAmount <= gameState.currentBet) {
-        updateStatus("Raise amount must be greater than the current bet.");
-        return;
-      }
-      
-      if (betAmount > gameState.playerChips) {
-        updateStatus("You don't have enough chips for that bet.");
-        return;
-      }
-      
-      // Update status
-      updateStatus(`You raise to ${betAmount} chips.`);
-      
-      // Update game state
-      gameState.playerChips -= betAmount;
-      gameState.currentPot += betAmount;
-      gameState.currentBet = betAmount;
-      gameState.playerHasBet = true;
-      
-      // Update UI
-      document.getElementById('player-chips').textContent = gameState.playerChips;
-      document.getElementById('pot-amount').textContent = gameState.currentPot;
-      document.getElementById('current-bet').textContent = gameState.currentBet;
-      
-      // If AI has already bet, it needs to respond to the raise
-      if (gameState.aiHasBet) {
-        gameState.aiHasBet = false;
-        toggleBettingControls(false);
-        setTimeout(makeAIBet, 1000);
-      } else {
-        // AI needs to make an initial bet
-        gameState.isPlayerTurn = false;
-        toggleBettingControls(false);
-        setTimeout(makeAIBet, 1000);
-      }
-    }
-    
-    // Handle player fold button
-    function fold(who = 'player') {
-      if (!gameState.isBettingRound || gameState.gameOver) return;
-      
-      if (who === 'player') {
-        updateStatus("You fold.");
-        endGame('ai', 'fold');
-      } else {
-        updateStatus("AI folds.");
-        endGame('player', 'fold');
-      }
-    }
-    
-    // End the betting round and continue the game
-    function endBettingRound() {
-      gameState.isBettingRound = false;
-      gameState.playerHasBet = false;
-      gameState.aiHasBet = false;
-      gameState.currentBet = 0;
-      
-      // Update UI
-      document.getElementById('current-bet').textContent = 0;
-      toggleBettingControls(false);
-      
-      // If this is the first betting round, reveal additional locked pieces
-      if (!gameState.isGameStarted) {
-        revealAdditionalLockedPieces();
-      } else if (gameState.moveCount === 0) {
-        // Start the game
-        gameState.isPlayerTurn = gameState.isWhite;
-        updateStatus(gameState.isPlayerTurn ? "Your turn to move." : "AI's turn to move.");
-        
-        if (!gameState.isPlayerTurn) {
-          setTimeout(makeAIMove, 1000);
-        }
-      } else {
-        // Continue the game
-        gameState.isPlayerTurn = gameState.isWhite;
-        updateStatus(gameState.isPlayerTurn ? "Your turn to move." : "AI's turn to move.");
-        
-        if (!gameState.isPlayerTurn) {
-          setTimeout(makeAIMove, 1000);
-        }
-      }
-    }
-    
-    // Reveal additional locked pieces after first betting round
-    function revealAdditionalLockedPieces() {
-      const lockRevealContent = document.getElementById('lock-reveal-content');
-      lockRevealContent.innerHTML = '';
-      
-      const playerAllLockedElement = document.createElement('div');
-      playerAllLockedElement.innerHTML = '<p>All your locked pieces:</p>';
-      
-      const piecesList = document.createElement('ul');
-      gameState.playerLockedPieces.forEach(piece => {
-        const pieceItem = document.createElement('li');
-        pieceItem.textContent = `${piece.type.charAt(0).toUpperCase() + piece.type.slice(1)} at ${getChessNotation(piece.row, piece.col)}`;
-        piecesList.appendChild(pieceItem);
-      });
-      
-      playerAllLockedElement.appendChild(piecesList);
-      lockRevealContent.appendChild(playerAllLockedElement);
-      
-      const additionalInfo = document.createElement('p');
-      additionalInfo.textContent = "These pieces will unlock progressively after every 6 moves.";
-      lockRevealContent.appendChild(additionalInfo);
-      
-      document.getElementById('lock-reveal-modal').classList.remove('hidden');
-      
-      // Update locked pieces indicators
-      updateLockedPiecesIndicators();
-      
-      // Mark the game as started
-      gameState.isGameStarted = true;
-    }
-    
-    // Unlock a piece for each player
-    function unlockPieces() {
-      // Check if there are locked pieces to unlock
-      if (gameState.playerLockedPieces.length > 0 && gameState.aiLockedPieces.length > 0) {
-        // Get first piece from each array
-        const playerPieceToUnlock = gameState.playerLockedPieces[0];
-        const aiPieceToUnlock = gameState.aiLockedPieces[0];
-        
-        // Remove from locked arrays
-        gameState.playerLockedPieces.shift();
-        gameState.aiLockedPieces.shift();
-        
-        // Update the UI to show unlocked pieces
-        updateLockedPiecesIndicators();
-        
-        // Show the unlock modal
-        const unlockContent = document.getElementById('unlock-content');
-        unlockContent.innerHTML = '';
-        
-        const playerUnlockElement = document.createElement('p');
-        playerUnlockElement.textContent = `Your ${playerPieceToUnlock.type} at ${getChessNotation(playerPieceToUnlock.row, playerPieceToUnlock.col)} is now unlocked!`;
-        unlockContent.appendChild(playerUnlockElement);
-        
-        const aiUnlockElement = document.createElement('p');
-        aiUnlockElement.textContent = `AI's ${aiPieceToUnlock.type} is now unlocked.`;
-        unlockContent.appendChild(aiUnlockElement);
-        
-        document.getElementById('piece-unlock-modal').classList.remove('hidden');
-      }
-      
-      // Start a new betting round
-      gameState.isBettingRound = true;
-      
-      // Black bets first
-      if (gameState.isWhite) {
-        // Player is White, AI (Black) bets first
-        updateStatus("Betting round: AI (Black) bets first.");
-        gameState.isPlayerTurn = false;
-        toggleBettingControls(false);
-        setTimeout(makeAIBet, 1000);
-      } else {
-        // Player is Black, player bets first
-        updateStatus("Betting round: You (Black) bet first.");
-        gameState.isPlayerTurn = true;
-        toggleBettingControls(true);
-      }
-    }
-    
-    // Continue after unlock modal
-    function continueAfterUnlock() {
-      if (gameState.isBettingRound) {
-        if (gameState.isPlayerTurn) {
-          toggleBettingControls(true);
-        } else {
-          setTimeout(makeAIBet, 500);
-        }
-      }
-    }
-    
-    // Update locked pieces indicators in the UI
-    function updateLockedPiecesIndicators() {
-      // Clear existing indicators
-      const playerLockedPiecesContainer = document.getElementById('player-locked-pieces');
-      const aiLockedPiecesContainer = document.getElementById('ai-locked-pieces');
-      playerLockedPiecesContainer.innerHTML = '';
-      aiLockedPiecesContainer.innerHTML = '';
-      
-      // Add player's locked pieces indicators
-      for (let i = 0; i < PIECES_TO_LOCK; i++) {
-        const indicator = document.createElement('div');
-        indicator.classList.add('piece-indicator');
-        
-        if (i < gameState.playerLockedPieces.length) {
-          indicator.classList.add('locked');
-          indicator.textContent = '🔒';
-        } else {
-          indicator.classList.add('unlocked');
-          indicator.textContent = '✓';
-        }
-        
-        playerLockedPiecesContainer.appendChild(indicator);
-      }
-      
-      // Add AI's locked pieces indicators
-      for (let i = 0; i < PIECES_TO_LOCK; i++) {
-        const indicator = document.createElement('div');
-        indicator.classList.add('piece-indicator');
-        
-        if (i < gameState.aiLockedPieces.length) {
-          indicator.classList.add('locked');
-          indicator.textContent = '🔒';
-        } else {
-          indicator.classList.add('unlocked');
-          indicator.textContent = '✓';
-        }
-        
-        aiLockedPiecesContainer.appendChild(indicator);
-      }
-    }
-    
-    // Get chess notation (e.g., "e4") for a board position
-    function getChessNotation(row, col) {
-      const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
-      
-      return files[col] + ranks[row];
-    }
-    
-    // Toggle betting controls visibility
-    function toggleBettingControls(show) {
-      const bettingControls = document.getElementById('betting-controls');
-      
-      if (show) {
-        bettingControls.style.display = 'flex';
-        
-        // Update bet slider values
-        const betSlider = document.getElementById('bet-slider');
-        betSlider.min = Math.max(BLIND_AMOUNT, gameState.currentBet);
-        betSlider.max = gameState.playerChips;
-        betSlider.value = Math.max(BLIND_AMOUNT, gameState.currentBet);
-        document.getElementById('bet-amount').textContent = betSlider.value;
-        
-        // Disable raise button if player doesn't have enough chips
-        document.getElementById('raise-button').disabled = gameState.playerChips <= gameState.currentBet;
-        
-        // Set check/call button text
-        const checkCallButton = document.getElementById('check-call-button');
-        if (gameState.currentBet === 0) {
-          checkCallButton.textContent = 'Check';
-        } else {
-          checkCallButton.textContent = 'Call';
-        }
-      } else {
-        bettingControls.style.display = 'none';
-      }
-    }
-    
-    // Update the game status message
-    function updateStatus(message) {
-      document.getElementById('status-text').textContent = message;
-    }
-    
-    // End the game
-    function endGame(winner, reason) {
-      gameState.gameOver = true;
-      gameState.winner = winner;
-      
-      // Update game state UI
-      if (winner === 'player') {
-        // Player wins, add pot to player chips
-        gameState.playerChips += gameState.currentPot;
-        document.getElementById('player-chips').textContent = gameState.playerChips;
-      } else {
-        // AI wins, add pot to AI chips
-        gameState.aiChips += gameState.currentPot;
-        document.getElementById('ai-chips').textContent = gameState.aiChips;
-      }
-      
-      // Update game status
-      const gameOverTitle = document.getElementById('game-over-title');
-      const gameOverMessage = document.getElementById('game-over-message');
-      
-      gameOverTitle.textContent = winner === 'player' ? "You Win!" : "AI Wins!";
-      
-      switch (reason) {
-        case 'checkmate':
-          gameOverMessage.textContent = winner === 'player' ? 
-            "You checkmated the AI!" : 
-            "The AI checkmated you!";
-          break;
-        case 'fold':
-          gameOverMessage.textContent = winner === 'player' ? 
-            "The AI folded!" : 
-            "You folded!";
-          break;
-        case 'no_valid_moves':
-          gameOverMessage.textContent = winner === 'player' ? 
-            "The AI has no valid moves!" : 
-            "You have no valid moves!";
-          break;
-      }
-      
-      // Show game over modal
-      document.getElementById('game-over-modal').classList.remove('hidden');
-    }
-    
-    // Reset the game for a new match
-    function resetGame() {
-      // Reset game state
-      gameState = {
-        isGameStarted: false,
-        isWhite: false,
-        playerChips: STARTING_CHIPS,
-        aiChips: STARTING_CHIPS,
-        currentPot: 0,
-        currentBet: 0,
-        playerHasBet: false,
-        aiHasBet: false,
-        isBettingRound: false,
-        isPlayerTurn: false,
-        moveCount: 0,
-        board: createEmptyBoard(),
-        playerPieces: [],
-        aiPieces: [],
-        playerLockedPieces: [],
-        aiLockedPieces: [],
-        playerKnownLockedPieces: [],
-        aiKnownLockedPieces: [],
-        selectedPiece: null,
-        possibleMoves: [],
-        lastMove: null,
-        inCheck: false,
-        gameOver: false,
-        winner: null
-      };
-      
-      // Reset UI
-      document.getElementById('player-chips').textContent = STARTING_CHIPS;
-      document.getElementById('ai-chips').textContent = STARTING_CHIPS;
-      document.getElementById('pot-amount').textContent = 0;
-      document.getElementById('current-bet').textContent = 0;
-      document.getElementById('player-locked-pieces').innerHTML = '';
-      document.getElementById('ai-locked-pieces').innerHTML = '';
-      
-      // Hide game over modal
-      document.getElementById('game-over-modal').classList.add('hidden');
-      
-      // Show start modal
-      document.getElementById('start-modal').classList.remove('hidden');
-      
-      // Hide betting controls
-      toggleBettingControls(false);
-      
-      // Update status
-      updateStatus("Waiting to start...");
-    }
-  </script>
+        // Initialize Three.js overlay with a small delay to ensure p5 is ready
+        setTimeout(initThreeJS, 100);
+    </script>
 </body>
 </html>
