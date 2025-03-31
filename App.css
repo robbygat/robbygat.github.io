@@ -1,0 +1,543 @@
+/* Add some basic styling for our PDF reader components */
+
+.App {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.App-header {
+  margin-bottom: 30px;
+}
+
+.App-header h1 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.App-header p {
+  color: #7f8c8d;
+  font-size: 1.2rem;
+}
+
+/* PDF Uploader Styles */
+.pdf-uploader {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upload-area {
+  border: 2px dashed #3498db;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-area.dragging {
+  background-color: rgba(52, 152, 219, 0.1);
+  border-color: #2980b9;
+}
+
+.upload-content h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.upload-button {
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #2980b9;
+}
+
+.file-name {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* PDF Viewer Styles */
+.pdf-viewer {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.pdf-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pdf-controls button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pdf-controls button:hover {
+  background-color: #2980b9;
+}
+
+.pdf-controls button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.pdf-document {
+  margin: 0 auto;
+  max-width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.extracted-text {
+  text-align: left;
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.extracted-text h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.text-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+/* Add styling for translation components */
+
+/* Existing styles remain unchanged */
+
+/* Translation UI Styles */
+.translation-ui {
+  margin-top: 30px;
+}
+
+.language-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.language-selector select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.language-selector button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.language-selector button:hover {
+  background-color: #2980b9;
+}
+
+.language-selector button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.text-content-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.original-text, .translated-text {
+  text-align: left;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  height: 400px;
+  overflow-y: auto;
+}
+
+.original-text h3, .translated-text h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.text-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.translation-popup {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  max-width: 300px;
+  z-index: 1000;
+}
+
+.popup-content {
+  font-size: 14px;
+}
+
+.popup-content p {
+  margin: 5px 0;
+}
+
+.close-popup {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+/* Make the layout responsive */
+@media (max-width: 768px) {
+  .text-content-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .original-text, .translated-text {
+    height: 300px;
+  }
+}
+
+
+/* Text-to-Speech Player Styles */
+.text-to-speech-player {
+  margin-top: 30px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.tts-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.tts-controls button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 80px;
+}
+
+.tts-controls button:hover {
+  background-color: #2980b9;
+}
+
+.tts-controls button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.play-button {
+  background-color: #27ae60 !important;
+}
+
+.play-button:hover {
+  background-color: #219653 !important;
+}
+
+.pause-button {
+  background-color: #f39c12 !important;
+}
+
+.pause-button:hover {
+  background-color: #d35400 !important;
+}
+
+.stop-button {
+  background-color: #e74c3c !important;
+}
+
+.stop-button:hover {
+  background-color: #c0392b !important;
+}
+
+.speed-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.speed-controls select {
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.tts-error {
+  color: #e74c3c;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fadbd8;
+  border-radius: 4px;
+}
+
+.tts-text-container {
+  max-height: 300px;
+  overflow-y: auto;
+  text-align: left;
+  line-height: 1.6;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.sentence {
+  display: inline;
+  transition: background-color 0.3s ease;
+}
+
+.sentence.highlighted {
+  background-color: #fffacd;
+  border-radius: 3px;
+}
+
+/* Make the layout responsive */
+@media (max-width: 768px) {
+  .tts-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .tts-controls button {
+    width: 100%;
+  }
+  
+  .speed-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* Explanation Popup Styles */
+.explanation-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 500px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  overflow: hidden;
+}
+
+.explanation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #3498db;
+  color: white;
+}
+
+.explanation-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.explanation-content {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.word-info {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.word-label {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #7f8c8d;
+}
+
+.word-value {
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.loading-explanation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  color: #7f8c8d;
+}
+
+.explanation-text {
+  line-height: 1.6;
+}
+
+.explanation-text p {
+  margin-bottom: 10px;
+}
+
+.explanation-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.explain-button {
+  background-color: #9b59b6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+}
+
+.explain-button:hover {
+  background-color: #8e44ad;
+}
+
+.App-footer {
+  margin-top: 30px;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.section-message {
+  padding: 30px;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.about-section {
+  text-align: left;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.about-section h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.about-section h3 {
+  color: #3498db;
+  margin: 20px 0 10px;
+}
+
+.about-section ul {
+  padding-left: 20px;
+}
+
+.about-section li {
+  margin-bottom: 8px;
+}
+
+/* Transitions for smoother UI */
+.App main > * {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Improve accessibility */
+.nav-item:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+/* Add loading animation */
+.loading-indicator {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* Improve button states */
+button:active {
+  transform: scale(0.98);
+}

@@ -1,0 +1,294 @@
+/* Add responsive design improvements */
+
+/* Base styles for mobile-first approach */
+.App {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+/* Header styles */
+.App-header {
+  margin-bottom: 25px;
+}
+
+.App-header h1 {
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-size: 1.8rem;
+}
+
+.App-header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Navigation bar */
+.app-nav {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nav-item {
+  padding: 8px 15px;
+  margin: 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background-color: #e9ecef;
+}
+
+.nav-item.active {
+  background-color: #3498db;
+  color: white;
+}
+
+/* PDF Uploader responsive styles */
+.pdf-uploader {
+  width: 100%;
+  max-width: 100%;
+}
+
+.upload-area {
+  padding: 30px 15px;
+}
+
+/* PDF Viewer responsive styles */
+.pdf-controls {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pdf-controls button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.pdf-document {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Translation UI responsive styles */
+.language-selector {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.text-content-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+.original-text, .translated-text {
+  height: 250px;
+}
+
+/* TTS Player responsive styles */
+.tts-controls {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tts-controls button {
+  flex: 1;
+  min-width: 70px;
+  font-size: 0.9rem;
+}
+
+/* Explanation popup responsive styles */
+.explanation-popup {
+  width: 95%;
+  max-width: 450px;
+}
+
+/* Loading indicator */
+.loading-spinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(0,0,0,0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s ease-in-out infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Media queries for responsive design */
+@media (min-width: 768px) {
+  .App-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .App-header p {
+    font-size: 1.2rem;
+  }
+  
+  .text-content-container {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .original-text, .translated-text {
+    height: 350px;
+  }
+  
+  .tts-controls {
+    flex-wrap: nowrap;
+  }
+}
+
+@media (min-width: 992px) {
+  .App {
+    padding: 20px;
+  }
+  
+  .original-text, .translated-text {
+    height: 400px;
+  }
+}
+
+/* Accessibility improvements */
+button:focus, select:focus, input:focus {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+  }
+  
+  .App-header h1 {
+    color: #f0f0f0;
+  }
+  
+  .App-header p {
+    color: #cccccc;
+  }
+  
+  .app-nav {
+    background-color: #2c2c2c;
+  }
+  
+  .nav-item:hover {
+    background-color: #3c3c3c;
+  }
+  
+  .original-text, .translated-text, .extracted-text, .tts-text-container {
+    background-color: #2c2c2c;
+    border-color: #444;
+    color: #f0f0f0;
+  }
+  
+  .explanation-popup, .translation-popup {
+    background-color: #2c2c2c;
+    border-color: #444;
+    color: #f0f0f0;
+  }
+  
+  button {
+    background-color: #444 !important;
+  }
+  
+  button:hover {
+    background-color: #555 !important;
+  }
+  
+  .play-button {
+    background-color: #2a7d4f !important;
+  }
+  
+  .play-button:hover {
+    background-color: #1e6b3e !important;
+  }
+  
+  .pause-button {
+    background-color: #c27c0e !important;
+  }
+  
+  .pause-button:hover {
+    background-color: #a66a0c !important;
+  }
+  
+  .stop-button {
+    background-color: #b83c30 !important;
+  }
+  
+  .stop-button:hover {
+    background-color: #9c3328 !important;
+  }
+  
+  .explain-button {
+    background-color: #7d4e9b !important;
+  }
+  
+  .explain-button:hover {
+    background-color: #6a3d88 !important;
+  }
+  
+  select, input {
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+    border-color: #444;
+  }
+}
