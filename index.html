@@ -1,629 +1,177 @@
-import React, { useState } from 'react';
-
-const App = () => {
-  const [pdfFile, setPdfFile] = useState(null);
-  const [extractedText, setExtractedText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
-  const [activeSection, setActiveSection] = useState('upload');
-
-  const handleFileUpload = (file) => {
-    setPdfFile(file);
-    setExtractedText('');
-    setTranslatedText('');
-    setActiveSection('view');
-  };
-
-  const handleTextExtracted = (text) => {
-    setExtractedText(text);
-  };
-
-  const handleTextTranslated = (text) => {
-    setTranslatedText(text);
-  };
-
-  const handleLanguageChange = (language) => {
-    setSelectedLanguage(language);
-  };
-
-  const handleSectionChange = (section) => {
-    // Only allow navigation to sections that make sense based on current state
-    if (section === 'upload' || 
-        (pdfFile && ['view', 'translate', 'listen'].includes(section)) ||
-        section === 'about') {
-      setActiveSection(section);
-    }
-  };
-
-  // Components
-  const Navigation = ({ activeSection, onSectionChange }) => {
-    const sections = [
-      { id: 'upload', label: 'Upload PDF' },
-      { id: 'view', label: 'View PDF' },
-      { id: 'translate', label: 'Translate' },
-      { id: 'listen', label: 'Listen' },
-      { id: 'about', label: 'About' }
-    ];
-
-    return (
-      <nav className="app-nav">
-        {sections.map(section => (
-          <div
-            key={section.id}
-            className={`nav-item ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => onSectionChange(section.id)}
-            role="button"
-            tabIndex={0}
-            aria-label={`Switch to ${section.label} section`}
-            style={{
-              padding: '8px 15px',
-              margin: '0 5px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              fontWeight: 500,
-              backgroundColor: activeSection === section.id ? '#3498db' : 'transparent',
-              color: activeSection === section.id ? 'white' : 'inherit'
-            }}
-          >
-            {section.label}
-          </div>
-        ))}
-      </nav>
-    );
-  };
-
-  const PDFUploader = ({ onFileUpload }) => {
-    const [isDragging, setIsDragging] = useState(false);
-    const [fileName, setFileName] = useState('');
-
-    const handleDragOver = (e) => {
-      e.preventDefault();
-      setIsDragging(true);
-    };
-
-    const handleDragLeave = () => {
-      setIsDragging(false);
-    };
-
-    const handleDrop = (e) => {
-      e.preventDefault();
-      setIsDragging(false);
-      
-      const files = e.dataTransfer.files;
-      if (files.length > 0 && files[0].type === 'application/pdf') {
-        processFile(files[0]);
-      }
-    };
-
-    const handleFileChange = (e) => {
-      const files = e.target.files;
-      if (files.length > 0 && files[0].type === 'application/pdf') {
-        processFile(files[0]);
-      }
-    };
-
-    const processFile = (file) => {
-      setFileName(file.name);
-      onFileUpload(file);
-    };
-
-    return (
-      <div style={{ width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-        <div 
-          style={{
-            border: `2px dashed ${isDragging ? '#2980b9' : '#3498db'}`,
-            borderRadius: '8px',
-            padding: '40px 20px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            backgroundColor: isDragging ? 'rgba(52, 152, 219, 0.1)' : 'transparent'
-          }}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <h3 style={{ marginTop: 0, color: '#2c3e50' }}>Upload PDF</h3>
-            <p>Drag and drop your PDF file here or click to browse</p>
-            {fileName && <p style={{ marginTop: '15px', fontWeight: 'bold', color: '#2c3e50' }}>Selected: {fileName}</p>}
-            <input 
-              type="file" 
-              id="pdf-file" 
-              accept=".pdf" 
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-            <label 
-              htmlFor="pdf-file" 
-              style={{
-                display: 'inline-block',
-                backgroundColor: '#3498db',
-                color: 'white',
-                padding: '10px 20px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginTop: '20px',
-                transition: 'background-color 0.3s ease'
-              }}
-            >
-              Browse Files
-            </label>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const PDFViewer = ({ file, onTextExtracted }) => {
-    const [fileUrl, setFileUrl] = useState(null);
-    const [extractedText, setExtractedText] = useState('');
-    const [isExtracting, setIsExtracting] = useState(false);
-    const [extractionComplete, setExtractionComplete] = useState(false);
-
-    React.useEffect(() => {
-      if (file) {
-        // Create a URL for the file to display in an iframe
-        const url = URL.createObjectURL(file);
-        setFileUrl(url);
-        
-        // Simulate text extraction with sample text
-        extractTextFromPDF(file);
-        
-        // Clean up URL on component unmount
-        return () => {
-          URL.revokeObjectURL(url);
-        };
-      }
-    }, [file]);
-
-    const extractTextFromPDF = (pdfFile) => {
-      setIsExtracting(true);
-      
-      // In a real app, we would use PDF.js to extract text
-      // For this demo, we'll simulate text extraction with a timeout
-      setTimeout(() => {
-        const simulatedText = `This is extracted text from ${pdfFile.name}.\n\n` +
-          `In a real application, we would use PDF.js to extract the actual text content from the PDF.\n\n` +
-          `The extracted text would appear here and could be processed for translation or text-to-speech functionality.\n\n` +
-          `For demonstration purposes, this is simulated content that represents what might be extracted from a PDF document.\n\n` +
-          `You can continue to the translation or text-to-speech sections to see how those features would work with real extracted text.`;
-        
-        setExtractedText(simulatedText);
-        if (onTextExtracted) {
-          onTextExtracted(simulatedText);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Agar.io</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: white;
+            font-family: Arial, sans-serif;
         }
-        setIsExtracting(false);
-        setExtractionComplete(true);
-      }, 2000);
-    };
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Cell class definition
+        class Cell {
+            constructor(x, y, r, color, text, link) {
+                this.position = createVector(x, y);
+                this.velocity = p5.Vector.random2D().mult(random(0.5, 1.5));
+                this.radius = r;
+                this.baseRadius = r;
+                this.pulseAmount = random(0.05, 0.15);
+                this.pulseSpeed = random(0.01, 0.03);
+                this.pulseOffset = random(0, TWO_PI);
+                this.color = color;
+                this.text = text;
+                this.link = link;
+                this.target = createVector(random(width), random(height));
+                this.maxSpeed = random(1, 2);
+                this.changeTargetCounter = 0;
+                this.changeTargetInterval = random(100, 200);
+            }
 
-    return (
-      <div style={{ width: '100%', marginTop: '20px' }}>
-        {file && (
-          <>
-            <div style={{ 
-              margin: '0 auto', 
-              maxWidth: '100%', 
-              overflowX: 'auto', 
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
-              marginBottom: '30px' 
-            }}>
-              {fileUrl && (
-                <div style={{ width: '100%', height: '500px', border: '1px solid #e0e0e0', borderRadius: '8px', overflow: 'hidden' }}>
-                  <iframe
-                    src={fileUrl}
-                    title="PDF Viewer"
-                    style={{ border: 'none', width: '100%', height: '100%' }}
-                    width="100%"
-                    height="500px"
-                  />
-                </div>
-              )}
-            </div>
+            update() {
+                // AI behavior
+                this.changeTargetCounter++;
+                if (this.changeTargetCounter > this.changeTargetInterval) {
+                    this.target = createVector(random(width), random(height));
+                    this.changeTargetCounter = 0;
+                    this.changeTargetInterval = random(100, 200);
+                }
+
+                // Pulse effect - slowly grow and shrink
+                this.radius = this.baseRadius * (1 + this.pulseAmount * sin(frameCount * this.pulseSpeed + this.pulseOffset));
+
+                // Seek target
+                let desired = p5.Vector.sub(this.target, this.position);
+                let distance = desired.mag();
+                
+                if (distance < 100) {
+                    let m = map(distance, 0, 100, 0, this.maxSpeed);
+                    desired.setMag(m);
+                } else {
+                    desired.setMag(this.maxSpeed);
+                }
+                
+                let steer = p5.Vector.sub(desired, this.velocity);
+                steer.limit(0.1);
+                this.velocity.add(steer);
+                
+                // Avoid other cells
+                for (let other of cells) {
+                    if (other !== this) {
+                        let d = p5.Vector.dist(this.position, other.position);
+                        if (d < this.radius + other.radius + 10) {
+                            let avoid = p5.Vector.sub(this.position, other.position);
+                            avoid.setMag(1);
+                            this.velocity.add(avoid);
+                            this.velocity.limit(this.maxSpeed);
+                        }
+                    }
+                }
+                
+                // Avoid edges
+                let buffer = 50;
+                if (this.position.x < buffer) {
+                    this.velocity.x += 0.1;
+                } else if (this.position.x > width - buffer) {
+                    this.velocity.x -= 0.1;
+                }
+                if (this.position.y < buffer) {
+                    this.velocity.y += 0.1;
+                } else if (this.position.y > height - buffer) {
+                    this.velocity.y -= 0.1;
+                }
+                
+                this.position.add(this.velocity);
+            }
+
+            draw() {
+                // Cell body
+                noStroke();
+                fill(this.color);
+                ellipse(this.position.x, this.position.y, this.radius * 2);
+                
+                // Cell text
+                fill(255);
+                textAlign(CENTER, CENTER);
+                
+                // Calculate the right text size to fit within the cell
+                let fontSize = this.radius * 0.8; // Start with a default size
+                textSize(fontSize);
+                
+                // Adjust text size to fit within the cell
+                while (textWidth(this.text) > this.radius * 1.5 && fontSize > 8) {
+                    fontSize -= 1;
+                    textSize(fontSize);
+                }
+                
+                text(this.text, this.position.x, this.position.y);
+            }
+
+            contains(px, py) {
+                let d = dist(px, py, this.position.x, this.position.y);
+                return d < this.radius;
+            }
+        }
+
+        // p5.js setup
+        let cells = [];
+        let cellData = [
+            { text: "Twitter", link: "https://x.com/robbygat", color: "#1DA1F2" },
+            { text: "Instagram", link: "https://www.instagram.com/robbygat/", color: "#C13584" },
+            { text: "Rare Vance", link: "https://rarevance.com", color: "#FF6B6B" },
+            { text: "Coming Soon", link: "#", color: "#43AA8B" },
+            { text: "Internet Cowboy", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
+            { text: "Photography", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
+            { text: "", link: "mailto:robb@robbygat.com", color: "transparent", isImage: true }
+        ];
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
             
-            <div style={{ 
-              textAlign: 'left', 
-              marginTop: '30px', 
-              padding: '20px', 
-              border: '1px solid #e0e0e0', 
-              borderRadius: '8px', 
-              backgroundColor: '#f9f9f9', 
-              maxHeight: '400px', 
-              overflowY: 'auto' 
-            }}>
-              <h3 style={{ marginTop: 0, color: '#2c3e50', textAlign: 'center' }}>Extracted Text</h3>
-              {isExtracting ? (
-                <p>Extracting text from PDF...</p>
-              ) : (
-                <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                  {extractionComplete ? (
-                    extractedText.split('\n').map((line, index) => (
-                      <p key={index}>{line}</p>
-                    ))
-                  ) : (
-                    <p>No text extracted yet.</p>
-                  )}
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    );
-  };
-
-  // Mock version of the translation service (for demo purposes)
-  const useTranslationService = () => {
-    const translateDocument = async (text, targetLanguage) => {
-      // In a real app, this would call an actual translation API
-      // For demo purposes, we'll return a simple transformation of the text
-      return new Promise(resolve => {
-        setTimeout(() => {
-          // Simple mock translation for demonstration
-          const translated = `${targetLanguage.toUpperCase()} translation of: ${text.substring(0, 100)}...`;
-          resolve(translated);
-        }, 1000);
-      });
-    };
-
-    return { translateDocument };
-  };
-
-  const TranslationUI = ({ text, onTranslated, onLanguageChange }) => {
-    const [targetLanguage, setTargetLanguage] = useState('es');
-    const [translatedText, setTranslatedText] = useState('');
-    const [isTranslating, setIsTranslating] = useState(false);
-    
-    // Common languages list
-    const languages = [
-      { code: 'en', name: 'English' },
-      { code: 'es', name: 'Spanish' },
-      { code: 'fr', name: 'French' },
-      { code: 'de', name: 'German' },
-      { code: 'it', name: 'Italian' },
-      { code: 'ja', name: 'Japanese' },
-      { code: 'ko', name: 'Korean' },
-      { code: 'zh-CN', name: 'Chinese (Simplified)' },
-      { code: 'ru', name: 'Russian' }
-    ];
-
-    const { translateDocument } = useTranslationService();
-
-    React.useEffect(() => {
-      if (text && targetLanguage) {
-        translateFullText();
-      }
-    }, [text, targetLanguage]);
-
-    const translateFullText = async () => {
-      if (!text) return;
-      
-      setIsTranslating(true);
-      try {
-        const translated = await translateDocument(text, targetLanguage);
-        setTranslatedText(translated);
-        if (onTranslated) {
-          onTranslated(translated);
+            // Create cells
+            for (let i = 0; i < cellData.length; i++) {
+                let x = random(width);
+                let y = random(height);
+                let r = random(50, 70); // Slightly larger cells to better fit text
+                cells.push(new Cell(x, y, r, cellData[i].color, cellData[i].text, cellData[i].link));
+            }
         }
-      } catch (error) {
-        console.error('Error translating text:', error);
-        setTranslatedText('Translation error. Please try again.');
-      } finally {
-        setIsTranslating(false);
-      }
-    };
 
-    const handleLanguageChange = (e) => {
-      const newLanguage = e.target.value;
-      setTargetLanguage(newLanguage);
-      if (onLanguageChange) {
-        onLanguageChange(newLanguage);
-      }
-    };
+        function draw() {
+            background(255);
+            
+            // Update and draw cells
+            for (let cell of cells) {
+                cell.update();
+                cell.draw();
+            }
+        }
 
-    return (
-      <div style={{ marginTop: '30px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-          <label htmlFor="language-select">Translate to:</label>
-          <select 
-            id="language-select" 
-            value={targetLanguage} 
-            onChange={handleLanguageChange}
-            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
-          >
-            {languages.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
-          </select>
-          <button 
-            onClick={translateFullText} 
-            disabled={isTranslating}
-            style={{
-              backgroundColor: isTranslating ? '#bdc3c7' : '#3498db',
-              color: 'white',
-              border: 'none',
-              padding: '8px 15px',
-              borderRadius: '4px',
-              cursor: isTranslating ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.3s ease'
-            }}
-          >
-            {isTranslating ? 'Translating...' : 'Translate'}
-          </button>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-          <div style={{ 
-            textAlign: 'left', 
-            padding: '20px', 
-            border: '1px solid #e0e0e0', 
-            borderRadius: '8px', 
-            backgroundColor: '#f9f9f9', 
-            height: '400px', 
-            overflowY: 'auto' 
-          }}>
-            <h3 style={{ marginTop: 0, color: '#2c3e50', textAlign: 'center', marginBottom: '15px' }}>Original Text</h3>
-            <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-              {text.split('\n').map((line, index) => (
-                <p key={`original-${index}`}>{line}</p>
-              ))}
-            </div>
-          </div>
-          
-          <div style={{ 
-            textAlign: 'left', 
-            padding: '20px', 
-            border: '1px solid #e0e0e0', 
-            borderRadius: '8px', 
-            backgroundColor: '#f9f9f9', 
-            height: '400px', 
-            overflowY: 'auto' 
-          }}>
-            <h3 style={{ marginTop: 0, color: '#2c3e50', textAlign: 'center', marginBottom: '15px' }}>
-              Translated Text ({languages.find(l => l.code === targetLanguage)?.name})
-            </h3>
-            {isTranslating ? (
-              <p>Translating...</p>
-            ) : (
-              <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
-                {translatedText.split('\n').map((line, index) => (
-                  <p key={`translated-${index}`}>{line}</p>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
+        function mousePressed() {
+            // Check if mouse is over any cell
+            for (let cell of cells) {
+                if (cell.contains(mouseX, mouseY)) {
+                    window.open(cell.link, '_blank');
+                    return false; // Prevent default behavior
+                }
+            }
+        }
 
-  // Mock version of text-to-speech functionality (for demo)
-  const TextToSpeechPlayer = ({ text, language }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [highlightedIndex, setHighlightedIndex] = useState(-1);
-    const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
-    
-    // Split text into sentences for highlighting
-    const sentences = text ? text.match(/[^.!?]+[.!?]+/g) || [text] : [];
-    
-    const handlePlayAudio = () => {
-      if (isPlaying) {
-        setIsPlaying(false);
-        setHighlightedIndex(-1);
-      } else {
-        setIsPlaying(true);
-        // Simulate speech playback with highlighting
-        let currentIndex = 0;
-        const interval = setInterval(() => {
-          if (currentIndex < sentences.length) {
-            setHighlightedIndex(currentIndex);
-            currentIndex++;
-          } else {
-            clearInterval(interval);
-            setIsPlaying(false);
-            setHighlightedIndex(-1);
-          }
-        }, 2000 / playbackSpeed);
-      }
-    };
-    
-    const handleStopAudio = () => {
-      setIsPlaying(false);
-      setHighlightedIndex(-1);
-    };
-    
-    return (
-      <div style={{ 
-        marginTop: '30px', 
-        border: '1px solid #e0e0e0', 
-        borderRadius: '8px', 
-        padding: '20px', 
-        backgroundColor: '#f9f9f9' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' }}>
-          <button 
-            onClick={handlePlayAudio}
-            disabled={!text}
-            style={{
-              backgroundColor: isPlaying ? '#f39c12' : '#27ae60',
-              color: 'white',
-              border: 'none',
-              padding: '8px 15px',
-              borderRadius: '4px',
-              cursor: text ? 'pointer' : 'not-allowed',
-              transition: 'background-color 0.3s ease',
-              minWidth: '80px'
-            }}
-          >
-            {isPlaying ? 'Pause' : 'Play'}
-          </button>
-          
-          <button 
-            onClick={handleStopAudio} 
-            disabled={!isPlaying}
-            style={{
-              backgroundColor: '#e74c3c',
-              color: 'white',
-              border: 'none',
-              padding: '8px 15px',
-              borderRadius: '4px',
-              cursor: isPlaying ? 'pointer' : 'not-allowed',
-              transition: 'background-color 0.3s ease',
-              minWidth: '80px'
-            }}
-          >
-            Stop
-          </button>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <label htmlFor="speed-select">Speed:</label>
-            <select 
-              id="speed-select" 
-              value={playbackSpeed} 
-              onChange={(e) => setPlaybackSpeed(parseFloat(e.target.value))}
-              style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ddd' }}
-            >
-              <option value="0.5">0.5x</option>
-              <option value="0.75">0.75x</option>
-              <option value="1.0">1.0x</option>
-              <option value="1.25">1.25x</option>
-              <option value="1.5">1.5x</option>
-              <option value="2.0">2.0x</option>
-            </select>
-          </div>
-        </div>
-        
-        <div style={{ 
-          maxHeight: '300px', 
-          overflowY: 'auto', 
-          textAlign: 'left', 
-          lineHeight: 1.6, 
-          padding: '10px', 
-          border: '1px solid #e0e0e0', 
-          borderRadius: '4px', 
-          backgroundColor: 'white' 
-        }}>
-          {sentences.map((sentence, index) => (
-            <span 
-              key={index} 
-              style={{
-                display: 'inline',
-                transition: 'background-color 0.3s ease',
-                backgroundColor: index === highlightedIndex ? '#fffacd' : 'transparent',
-                borderRadius: '3px'
-              }}
-            >
-              {sentence}
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // Render content based on active section
-  const renderContent = () => {
-    if (!pdfFile && activeSection !== 'about') {
-      return <PDFUploader onFileUpload={handleFileUpload} />;
-    }
-
-    switch (activeSection) {
-      case 'view':
-        return <PDFViewer file={pdfFile} onTextExtracted={handleTextExtracted} />;
-      case 'translate':
-        return extractedText ? (
-          <TranslationUI 
-            text={extractedText} 
-            onTranslated={handleTextTranslated}
-            onLanguageChange={handleLanguageChange}
-          />
-        ) : (
-          <div style={{ 
-            padding: '30px', 
-            textAlign: 'center', 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: '8px', 
-            margin: '20px 0' 
-          }}>
-            <p>Text extraction in progress. Please wait...</p>
-          </div>
-        );
-      case 'listen':
-        return (extractedText || translatedText) ? (
-          <TextToSpeechPlayer 
-            text={translatedText || extractedText} 
-            language={selectedLanguage}
-          />
-        ) : (
-          <div style={{ 
-            padding: '30px', 
-            textAlign: 'center', 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: '8px', 
-            margin: '20px 0' 
-          }}>
-            <p>No text available for speech. Please extract text first.</p>
-          </div>
-        );
-      case 'about':
-        return (
-          <div style={{ 
-            textAlign: 'left', 
-            padding: '20px', 
-            backgroundColor: '#f9f9f9', 
-            borderRadius: '8px', 
-            margin: '20px 0' 
-          }}>
-            <h2 style={{ color: '#2c3e50', marginBottom: '15px' }}>About Multilingual PDF Reader</h2>
-            <p>This application allows you to upload PDF files, extract and parse the text, translate the content into numerous languages, and listen to the text with synchronized highlighting.</p>
-            <h3 style={{ color: '#3498db', margin: '20px 0 10px' }}>Features:</h3>
-            <ul style={{ paddingLeft: '20px' }}>
-              <li style={{ marginBottom: '8px' }}>PDF upload and text extraction</li>
-              <li style={{ marginBottom: '8px' }}>Translation to multiple languages</li>
-              <li style={{ marginBottom: '8px' }}>Text-to-speech with synchronized highlighting</li>
-              <li style={{ marginBottom: '8px' }}>Word explanations for language learning</li>
-            </ul>
-            <p>Perfect for language learning, accessibility, and working with documents in foreign languages.</p>
-          </div>
-        );
-      default:
-        return <PDFUploader onFileUpload={handleFileUpload} />;
-    }
-  };
-
-  return (
-    <div style={{ 
-      textAlign: 'center',
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '20px'
-    }}>
-      <header style={{ marginBottom: '30px' }}>
-        <h1 style={{ color: '#2c3e50', marginBottom: '10px' }}>Multilingual PDF Reader</h1>
-        <p style={{ color: '#7f8c8d', fontSize: '1.2rem' }}>Upload, translate, and listen to PDF documents in multiple languages</p>
-      </header>
-      <Navigation 
-        activeSection={activeSection} 
-        onSectionChange={handleSectionChange} 
-      />
-      <main>
-        {renderContent()}
-      </main>
-      <footer style={{ 
-        marginTop: '30px',
-        padding: '15px',
-        borderTop: '1px solid #eee',
-        color: '#7f8c8d',
-        fontSize: '0.9rem'
-      }}>
-        <p>Built with React and PDF.js</p>
-      </footer>
-    </div>
-  );
-};
-
-export default App;
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+</html>
