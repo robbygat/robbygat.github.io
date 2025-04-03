@@ -171,6 +171,11 @@
             }
 
             contains(px, py) {
+                // For touch events, px and py might be undefined
+                if (px === undefined || py === undefined) {
+                    return false;
+                }
+                
                 let d = dist(px, py, this.position.x, this.position.y);
                 return d < this.radius;
             }
@@ -212,12 +217,15 @@
 
         function mousePressed() {
             // Check if mouse is over any cell
+            let clicked = false;
             for (let cell of cells) {
                 if (cell.contains(mouseX, mouseY)) {
                     window.open(cell.link, '_blank');
-                    return false; // Prevent default behavior
+                    clicked = true;
+                    break;
                 }
             }
+            return !clicked; // Only prevent default if no cell was clicked
         }
 
         function windowResized() {
