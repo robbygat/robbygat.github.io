@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Added user-scalable=no to prevent zooming on tap -->
+    <!-- Ensure proper scaling and prevent user scaling which can interfere -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>robbygat.com by Robert Gatzke</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
     <!-- Removed Three.js as it wasn't used -->
@@ -14,64 +15,58 @@
             background-color: white;
             font-family: Arial, sans-serif;
             position: relative;
-            /* Ensure canvas interaction works on mobile */
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Old versions of Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+            /* Prevent text selection during taps */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         canvas {
             display: block;
-            /* Fix potential iOS Safari issues */
+            /* Prevent the tap highlight effect on mobile */
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* CRT Effect Overlay */
+        /* --- CRT Effect Overlays --- */
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
-            pointer-events: none; /* Makes it clickable through */
+            pointer-events: none; /* Allow interactions to pass through */
             z-index: 2;
+             /* --- UNCOMMENT BELOW TO TEST WITHOUT THIS OVERLAY --- */
+             /* display: none; */
         }
 
-        /* Additional CRT effects */
         body::after {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(18, 16, 16, 0.1);
             opacity: 0.15;
             z-index: 2;
-            pointer-events: none;
+            pointer-events: none; /* Allow interactions to pass through */
             animation: flicker 0.15s infinite alternate;
+             /* --- UNCOMMENT BELOW TO TEST WITHOUT THIS OVERLAY --- */
+             /* display: none; */
         }
 
         @keyframes flicker {
-            0% {
-                opacity: 0.15;
-            }
-            100% {
-                opacity: 0.12;
-            }
+            0% { opacity: 0.15; }
+            100% { opacity: 0.12; }
         }
+        /* --- End CRT Effect Overlays --- */
+
     </style>
 </head>
 <body>
     <script>
-        // Cell class definition
+        // Cell class definition (mostly unchanged, ensure 'contains' uses current radius)
         class Cell {
-            constructor(x, y, r, color, text, link) {
+             constructor(x, y, r, color, text, link) {
                 this.position = createVector(x, y);
                 this.velocity = p5.Vector.random2D().mult(random(0.5, 1.5));
                 this.radius = r;
@@ -86,11 +81,10 @@
                 this.maxSpeed = random(1, 2);
                 this.changeTargetCounter = 0;
                 this.changeTargetInterval = random(100, 200);
-                this.fontSize = null; // Initialize fontSize
+                this.fontSize = null;
             }
 
             update() {
-                // AI behavior
                 this.changeTargetCounter++;
                 if (this.changeTargetCounter > this.changeTargetInterval) {
                     this.target = createVector(random(width), random(height));
@@ -98,15 +92,12 @@
                     this.changeTargetInterval = random(100, 200);
                 }
 
-                // Pulse effect - slowly grow and shrink
                 this.radius = this.baseRadius * (1 + this.pulseAmount * sin(frameCount * this.pulseSpeed + this.pulseOffset));
 
-                // If this is a text cell, calculate fontSize if needed
                 if (!this.fontSize) {
                     this.calculateFontSize();
                 }
 
-                // Seek target
                 let desired = p5.Vector.sub(this.target, this.position);
                 let distance = desired.mag();
 
@@ -121,53 +112,38 @@
                 steer.limit(0.1);
                 this.velocity.add(steer);
 
-                // Avoid other cells
                 for (let other of cells) {
                     if (other !== this) {
                         let d = p5.Vector.dist(this.position, other.position);
-                        // Increase avoidance distance slightly
-                        if (d < this.radius + other.radius + 15) {
+                        if (d < this.radius + other.radius + 15) { // Use current radius for avoidance
                             let avoid = p5.Vector.sub(this.position, other.position);
-                            // Stronger avoidance force
-                            avoid.setMag(0.5); // Was 1, reduced magnitude but applying directly
+                            avoid.setMag(0.5);
                             this.velocity.add(avoid);
-                            this.velocity.limit(this.maxSpeed); // Re-limit speed after avoidance
                         }
                     }
                 }
 
-                // Avoid edges
-                let buffer = this.radius + 10; // Dynamic buffer based on radius
-                if (this.position.x < buffer) {
-                    this.velocity.x += 0.2; // Stronger push from edge
-                } else if (this.position.x > width - buffer) {
-                    this.velocity.x -= 0.2;
-                }
-                if (this.position.y < buffer) {
-                    this.velocity.y += 0.2;
-                } else if (this.position.y > height - buffer) {
-                    this.velocity.y -= 0.2;
-                }
+                let buffer = this.radius + 10;
+                if (this.position.x < buffer) this.velocity.x += 0.2;
+                else if (this.position.x > width - buffer) this.velocity.x -= 0.2;
+                if (this.position.y < buffer) this.velocity.y += 0.2;
+                else if (this.position.y > height - buffer) this.velocity.y -= 0.2;
 
-                // Ensure velocity doesn't get stuck if exactly zero
                 if (this.velocity.magSq() < 0.01) {
                    this.velocity = p5.Vector.random2D().mult(0.1);
                 }
 
-                this.velocity.limit(this.maxSpeed); // Limit final velocity
+                this.velocity.limit(this.maxSpeed);
                 this.position.add(this.velocity);
 
-                // Constrain position strictly within bounds if somehow escapes buffer
-                 this.position.x = constrain(this.position.x, this.radius, width - this.radius);
-                 this.position.y = constrain(this.position.y, this.radius, height - this.radius);
+                this.position.x = constrain(this.position.x, this.radius, width - this.radius);
+                this.position.y = constrain(this.position.y, this.radius, height - this.radius);
             }
 
             calculateFontSize() {
-                // Calculate font size once and store it, based on baseRadius for stability
-                let testSize = this.baseRadius * 0.8; // Start with a size relative to base radius
+                let testSize = this.baseRadius * 0.8;
                 textSize(testSize);
-                // Check width against base radius for consistency
-                while (textWidth(this.text) > this.baseRadius * 1.6 && testSize > 8) { // Allowed slightly more width
+                while (textWidth(this.text) > this.baseRadius * 1.6 && testSize > 8) {
                     testSize -= 1;
                     textSize(testSize);
                 }
@@ -175,32 +151,29 @@
             }
 
             draw() {
-                // Cell body
                 noStroke();
                 fill(this.color);
-                ellipse(this.position.x, this.position.y, this.radius * 2);
+                ellipse(this.position.x, this.position.y, this.radius * 2); // Use current radius
 
-                // Cell text
-                if (this.fontSize) { // Use pre-calculated font size
-                    fill(255); // White text
+                if (this.fontSize) {
+                    fill(255);
                     textAlign(CENTER, CENTER);
-                    textSize(this.fontSize); // Apply the calculated size
+                    textSize(this.fontSize);
                     text(this.text, this.position.x, this.position.y);
                 }
             }
 
             contains(px, py) {
-                // For touch events, px and py might be undefined initially, handle this
                 if (typeof px !== 'number' || typeof py !== 'number') {
                     return false;
                 }
-                // Use current radius for checking clicks
+                // Check against the *current* radius, as it pulses
                 let d = dist(px, py, this.position.x, this.position.y);
                 return d < this.radius;
             }
         }
 
-        // p5.js setup
+        // --- Global Variables ---
         let cells = [];
         let cellData = [
             { text: "X", link: "https://x.com/robbygat", color: "#1DA1F2" },
@@ -209,87 +182,143 @@
             { text: "Soon", link: "#", color: "#43AA8B" },
             { text: "Music", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
             { text: "Photography", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
-            { text: "Contact", link: "mailto:robby@robbygat.com", color: "#FF4500" } // Removed isImage flag as it wasn't used
+            { text: "Contact", link: "mailto:robby@robbygat.com", color: "#FF4500" }
         ];
+        let cnv; // To hold the canvas element reference
 
+        // --- p5.js Setup ---
         function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            // Prevent default gestures on the canvas element itself
-            canvas.elt.addEventListener('touchstart', e => e.preventDefault());
-            canvas.elt.addEventListener('touchmove', e => e.preventDefault());
+            cnv = createCanvas(windowWidth, windowHeight);
+
+            // --- Attach direct touch listener to the canvas ---
+            // Using { passive: false } because we might call preventDefault
+            cnv.elt.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+            // Prevent scrolling/zooming initiated *on the canvas*
+            // Needed esp. on iOS to allow immediate response to touchend
+            cnv.elt.addEventListener('touchstart', (e) => {
+                 // Check if the touch is over a cell, only preventDefault then? Might be too complex.
+                 // Let's start by always preventing default on touchstart ON the canvas.
+                 e.preventDefault();
+            }, { passive: false });
+
+             // It might also be necessary to prevent touchmove
+            cnv.elt.addEventListener('touchmove', (e) => {
+                 e.preventDefault();
+            }, { passive: false });
 
 
             // Create cells
             for (let i = 0; i < cellData.length; i++) {
-                let r = random(60, 80); // Slightly larger cells for touch targets
-                let x = random(r, width - r); // Ensure they start within bounds
+                let r = random(60, 85); // Even slightly larger for easier tapping
+                let x = random(r, width - r);
                 let y = random(r, height - r);
                 cells.push(new Cell(x, y, r, cellData[i].color, cellData[i].text, cellData[i].link));
             }
+            console.log("Setup complete. Touch listener attached."); // Debug log
         }
 
+        // --- p5.js Draw ---
         function draw() {
-            background(255); // White background
-
-            // Update and draw cells
+            background(255);
             for (let cell of cells) {
                 cell.update();
                 cell.draw();
             }
         }
 
-        // --- Interaction Handling ---
-
-        // Helper function to check clicks/taps
+        // --- Interaction Check Function ---
         function checkInteraction(px, py) {
-            for (let i = cells.length - 1; i >= 0; i--) { // Iterate backwards for safety if removing elements (not needed here, but good practice)
+            console.log(`Checking interaction at screen coords: ${px.toFixed(1)}, ${py.toFixed(1)}`);
+            let interactedCell = null;
+            // Iterate from top (last drawn) to bottom
+            for (let i = cells.length - 1; i >= 0; i--) {
                 if (cells[i].contains(px, py)) {
-                    // Prevent opening '#' links or empty links
-                    if (cells[i].link && cells[i].link !== "#") {
-                         window.open(cells[i].link, '_blank');
-                    }
-                    return true; // Indicate that an interaction occurred
+                    console.log(`HIT: Cell "${cells[i].text}" contains point.`);
+                    interactedCell = cells[i];
+                    break; // Found the topmost cell hit
                 }
             }
-            return false; // No interaction with any cell
-        }
 
-        // For Desktop Clicks
-        function mousePressed() {
-            const interacted = checkInteraction(mouseX, mouseY);
-            if (interacted) {
-                return false; // Prevent default browser action ONLY if a cell was clicked
+            if (interactedCell) {
+                console.log(`Action: Opening link for "${interactedCell.text}": ${interactedCell.link}`);
+                if (interactedCell.link && interactedCell.link !== "#") {
+                    // Try opening the link - this is the critical part for mobile
+                    const newWindow = window.open(interactedCell.link, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+                         console.warn('window.open() was blocked or failed for:', interactedCell.link);
+                         // Alert might work on some mobile browsers if popup fails
+                         // alert(`Could not open link automatically. Please ensure popups are allowed for this site.`);
+                     }
+                } else {
+                    console.log(`Info: Cell "${interactedCell.text}" has no valid link.`);
+                }
+                return true; // Indicate that an interaction occurred
+            } else {
+                 console.log("Miss: No cell contains the interaction point.");
+                 return false; // No interaction occurred
             }
         }
 
-        // For Mobile Taps
-        function touchEnded() {
-            // p5.js updates mouseX and mouseY for touches as well
-            // Check if touches array is not empty to ensure it's a valid touch event
-             if (touches.length > 0) {
-                const interacted = checkInteraction(mouseX, mouseY);
-                 if (interacted) {
-                     return false; // Prevent default browser action (like zoom) ONLY if a cell was tapped
-                 }
-             }
-             // Important: Allow default actions if no cell was interacted with.
-             // Do not return anything or return true explicitly if needed by other logic.
+        // --- Touch Event Handler (attached directly to canvas) ---
+        function handleTouchEnd(event) {
+            console.log("Canvas 'touchend' event fired.");
+
+            // We only proceed if a cell was hit, otherwise allow default behaviors
+            let interactionDetected = false;
+
+            // Use the first touch point that was released
+            if (event.changedTouches.length > 0) {
+                // Get coordinates relative to the viewport
+                let touchX = event.changedTouches[0].clientX;
+                let touchY = event.changedTouches[0].clientY;
+
+                // Since canvas fills the window, clientX/Y should map directly
+                // If canvas had offsets, you'd need:
+                // let rect = cnv.elt.getBoundingClientRect();
+                // touchX = event.changedTouches[0].clientX - rect.left;
+                // touchY = event.changedTouches[0].clientY - rect.top;
+
+                interactionDetected = checkInteraction(touchX, touchY);
+            }
+
+            // *** Crucial: Only prevent default if we successfully interacted with a cell ***
+            // This stops the browser from doing things like zooming on double-tap AFTER our action.
+            if (interactionDetected) {
+                console.log("Interaction handled, calling event.preventDefault()");
+                event.preventDefault();
+            } else {
+                 console.log("No cell interaction, allowing default browser behavior.");
+            }
         }
 
+        // --- Keep mousePressed for Desktop Clicks ---
+        function mousePressed() {
+            // mouseX, mouseY are reliable in p5's mousePressed for desktop
+            console.log("p5 'mousePressed' event fired.");
+            const interacted = checkInteraction(mouseX, mouseY);
+            // Prevent default p5 behavior if interaction occurred (may not be necessary but good practice)
+            if (interacted) {
+                 return false;
+            }
+        }
 
+        // --- Window Resize ---
         function windowResized() {
             resizeCanvas(windowWidth, windowHeight);
-            // Recalculate font sizes and initial positions might be needed
-            // For simplicity, just let them continue from current positions
-             for (let cell of cells) {
-                 // Re-calculate font size in case aspect ratio changed significantly
-                 cell.calculateFontSize();
-                 // Optional: Reset target or constrain position if window got smaller
+            for (let cell of cells) {
+                 cell.calculateFontSize(); // Recalculate text size
+                 // Optional: Re-constrain/reset positions if needed
                  cell.target = createVector(random(width), random(height));
                  cell.position.x = constrain(cell.position.x, cell.radius, width - cell.radius);
                  cell.position.y = constrain(cell.position.y, cell.radius, height - cell.radius);
              }
+             console.log("Window resized."); // Debug log
         }
+
+        // We are using a direct listener, so the p5 global touchEnded is not needed
+        // function touchEnded() { /* ... */ }
+
     </script>
 </body>
 </html>
