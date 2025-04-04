@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"> <!-- Added user-scalable=no to prevent zooming on tap -->
     <title>robbygat.com by Robert Gatzke</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Removed Three.js as it wasn't used -->
     <style>
         body {
             margin: 0;
@@ -14,11 +14,20 @@
             background-color: white;
             font-family: Arial, sans-serif;
             position: relative;
+            /* Ensure canvas interaction works on mobile */
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
         }
         canvas {
             display: block;
+            /* Fix potential iOS Safari issues */
+            -webkit-tap-highlight-color: transparent;
         }
-        
+
         /* CRT Effect Overlay */
         body::before {
             content: "";
@@ -32,7 +41,7 @@
             pointer-events: none; /* Makes it clickable through */
             z-index: 2;
         }
-        
+
         /* Additional CRT effects */
         body::after {
             content: "";
@@ -47,7 +56,7 @@
             pointer-events: none;
             animation: flicker 0.15s infinite alternate;
         }
-        
+
         @keyframes flicker {
             0% {
                 opacity: 0.15;
@@ -77,6 +86,7 @@
                 this.maxSpeed = random(1, 2);
                 this.changeTargetCounter = 0;
                 this.changeTargetInterval = random(100, 200);
+                this.fontSize = null; // Initialize fontSize
             }
 
             update() {
@@ -90,61 +100,78 @@
 
                 // Pulse effect - slowly grow and shrink
                 this.radius = this.baseRadius * (1 + this.pulseAmount * sin(frameCount * this.pulseSpeed + this.pulseOffset));
-                
-                // If this is a text cell, make sure we have a stable fontSize
-                if (!this.isImage && !this.fontSize) {
-                    // Calculate font size once and store it
-                    let fontSize = this.baseRadius * 0.8;
-                    textSize(fontSize);
-                    while (textWidth(this.text) > this.baseRadius * 1.5 && fontSize > 8) {
-                        fontSize -= 1;
-                        textSize(fontSize);
-                    }
-                    this.fontSize = fontSize;
+
+                // If this is a text cell, calculate fontSize if needed
+                if (!this.fontSize) {
+                    this.calculateFontSize();
                 }
 
                 // Seek target
                 let desired = p5.Vector.sub(this.target, this.position);
                 let distance = desired.mag();
-                
+
                 if (distance < 100) {
                     let m = map(distance, 0, 100, 0, this.maxSpeed);
                     desired.setMag(m);
                 } else {
                     desired.setMag(this.maxSpeed);
                 }
-                
+
                 let steer = p5.Vector.sub(desired, this.velocity);
                 steer.limit(0.1);
                 this.velocity.add(steer);
-                
+
                 // Avoid other cells
                 for (let other of cells) {
                     if (other !== this) {
                         let d = p5.Vector.dist(this.position, other.position);
-                        if (d < this.radius + other.radius + 10) {
+                        // Increase avoidance distance slightly
+                        if (d < this.radius + other.radius + 15) {
                             let avoid = p5.Vector.sub(this.position, other.position);
-                            avoid.setMag(1);
+                            // Stronger avoidance force
+                            avoid.setMag(0.5); // Was 1, reduced magnitude but applying directly
                             this.velocity.add(avoid);
-                            this.velocity.limit(this.maxSpeed);
+                            this.velocity.limit(this.maxSpeed); // Re-limit speed after avoidance
                         }
                     }
                 }
-                
+
                 // Avoid edges
-                let buffer = 50;
+                let buffer = this.radius + 10; // Dynamic buffer based on radius
                 if (this.position.x < buffer) {
-                    this.velocity.x += 0.1;
+                    this.velocity.x += 0.2; // Stronger push from edge
                 } else if (this.position.x > width - buffer) {
-                    this.velocity.x -= 0.1;
+                    this.velocity.x -= 0.2;
                 }
                 if (this.position.y < buffer) {
-                    this.velocity.y += 0.1;
+                    this.velocity.y += 0.2;
                 } else if (this.position.y > height - buffer) {
-                    this.velocity.y -= 0.1;
+                    this.velocity.y -= 0.2;
                 }
-                
+
+                // Ensure velocity doesn't get stuck if exactly zero
+                if (this.velocity.magSq() < 0.01) {
+                   this.velocity = p5.Vector.random2D().mult(0.1);
+                }
+
+                this.velocity.limit(this.maxSpeed); // Limit final velocity
                 this.position.add(this.velocity);
+
+                // Constrain position strictly within bounds if somehow escapes buffer
+                 this.position.x = constrain(this.position.x, this.radius, width - this.radius);
+                 this.position.y = constrain(this.position.y, this.radius, height - this.radius);
+            }
+
+            calculateFontSize() {
+                // Calculate font size once and store it, based on baseRadius for stability
+                let testSize = this.baseRadius * 0.8; // Start with a size relative to base radius
+                textSize(testSize);
+                // Check width against base radius for consistency
+                while (textWidth(this.text) > this.baseRadius * 1.6 && testSize > 8) { // Allowed slightly more width
+                    testSize -= 1;
+                    textSize(testSize);
+                }
+                this.fontSize = testSize;
             }
 
             draw() {
@@ -152,30 +179,22 @@
                 noStroke();
                 fill(this.color);
                 ellipse(this.position.x, this.position.y, this.radius * 2);
-                
+
                 // Cell text
-                fill(255);
-                textAlign(CENTER, CENTER);
-                
-                // Calculate the right text size to fit within the cell
-                let fontSize = this.radius * 0.8; // Start with a default size
-                textSize(fontSize);
-                
-                // Adjust text size to fit within the cell
-                while (textWidth(this.text) > this.radius * 1.5 && fontSize > 8) {
-                    fontSize -= 1;
-                    textSize(fontSize);
+                if (this.fontSize) { // Use pre-calculated font size
+                    fill(255); // White text
+                    textAlign(CENTER, CENTER);
+                    textSize(this.fontSize); // Apply the calculated size
+                    text(this.text, this.position.x, this.position.y);
                 }
-                
-                text(this.text, this.position.x, this.position.y);
             }
 
             contains(px, py) {
-                // For touch events, px and py might be undefined
-                if (px === undefined || py === undefined) {
+                // For touch events, px and py might be undefined initially, handle this
+                if (typeof px !== 'number' || typeof py !== 'number') {
                     return false;
                 }
-                
+                // Use current radius for checking clicks
                 let d = dist(px, py, this.position.x, this.position.y);
                 return d < this.radius;
             }
@@ -190,24 +209,28 @@
             { text: "Soon", link: "#", color: "#43AA8B" },
             { text: "Music", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
             { text: "Photography", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
-            { text: "Contact", link: "mailto:robby@robbygat.com", color: "#FF4500", isImage: true }
+            { text: "Contact", link: "mailto:robby@robbygat.com", color: "#FF4500" } // Removed isImage flag as it wasn't used
         ];
 
         function setup() {
-            createCanvas(windowWidth, windowHeight);
-            
+            let canvas = createCanvas(windowWidth, windowHeight);
+            // Prevent default gestures on the canvas element itself
+            canvas.elt.addEventListener('touchstart', e => e.preventDefault());
+            canvas.elt.addEventListener('touchmove', e => e.preventDefault());
+
+
             // Create cells
             for (let i = 0; i < cellData.length; i++) {
-                let x = random(width);
-                let y = random(height);
-                let r = random(50, 70); // Slightly larger cells to better fit text
+                let r = random(60, 80); // Slightly larger cells for touch targets
+                let x = random(r, width - r); // Ensure they start within bounds
+                let y = random(r, height - r);
                 cells.push(new Cell(x, y, r, cellData[i].color, cellData[i].text, cellData[i].link));
             }
         }
 
         function draw() {
-            background(255);
-            
+            background(255); // White background
+
             // Update and draw cells
             for (let cell of cells) {
                 cell.update();
@@ -215,21 +238,57 @@
             }
         }
 
-        function mousePressed() {
-            // Check if mouse is over any cell
-            let clicked = false;
-            for (let cell of cells) {
-                if (cell.contains(mouseX, mouseY)) {
-                    window.open(cell.link, '_blank');
-                    clicked = true;
-                    break;
+        // --- Interaction Handling ---
+
+        // Helper function to check clicks/taps
+        function checkInteraction(px, py) {
+            for (let i = cells.length - 1; i >= 0; i--) { // Iterate backwards for safety if removing elements (not needed here, but good practice)
+                if (cells[i].contains(px, py)) {
+                    // Prevent opening '#' links or empty links
+                    if (cells[i].link && cells[i].link !== "#") {
+                         window.open(cells[i].link, '_blank');
+                    }
+                    return true; // Indicate that an interaction occurred
                 }
             }
-            return !clicked; // Only prevent default if no cell was clicked
+            return false; // No interaction with any cell
         }
+
+        // For Desktop Clicks
+        function mousePressed() {
+            const interacted = checkInteraction(mouseX, mouseY);
+            if (interacted) {
+                return false; // Prevent default browser action ONLY if a cell was clicked
+            }
+        }
+
+        // For Mobile Taps
+        function touchEnded() {
+            // p5.js updates mouseX and mouseY for touches as well
+            // Check if touches array is not empty to ensure it's a valid touch event
+             if (touches.length > 0) {
+                const interacted = checkInteraction(mouseX, mouseY);
+                 if (interacted) {
+                     return false; // Prevent default browser action (like zoom) ONLY if a cell was tapped
+                 }
+             }
+             // Important: Allow default actions if no cell was interacted with.
+             // Do not return anything or return true explicitly if needed by other logic.
+        }
+
 
         function windowResized() {
             resizeCanvas(windowWidth, windowHeight);
+            // Recalculate font sizes and initial positions might be needed
+            // For simplicity, just let them continue from current positions
+             for (let cell of cells) {
+                 // Re-calculate font size in case aspect ratio changed significantly
+                 cell.calculateFontSize();
+                 // Optional: Reset target or constrain position if window got smaller
+                 cell.target = createVector(random(width), random(height));
+                 cell.position.x = constrain(cell.position.x, cell.radius, width - cell.radius);
+                 cell.position.y = constrain(cell.position.y, cell.radius, height - cell.radius);
+             }
         }
     </script>
 </body>
