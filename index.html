@@ -2,43 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Ensure proper scaling and prevent user scaling which can interfere -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>robbygat.com by Robert Gatzke</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <!-- Removed Three.js as it wasn't used -->
+
+    <!-- Import Poppins font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: white;
-            font-family: Arial, sans-serif;
+            background-color: white; /* Base background */
+            font-family: 'Poppins', sans-serif; /* Apply Poppins globally */
             position: relative;
-            /* Prevent text selection during taps */
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
         }
+
+        /* Div to hold the background logo */
+        #background-logo {
+            position: fixed; /* Full screen */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex; /* Center the image */
+            justify-content: center;
+            align-items: center;
+            z-index: -1; /* Position behind the canvas */
+            opacity: 0.08; /* Adjust for desired subtlety */
+            pointer-events: none; /* Ensure it doesn't interfere with clicks */
+        }
+
+        #background-logo img {
+            max-width: 40%; /* Adjust size as needed */
+            max-height: 40%;
+            object-fit: contain; /* Scale nicely */
+        }
+
+        /* p5 canvas */
         canvas {
             display: block;
-            /* Prevent the tap highlight effect on mobile */
+            position: relative; /* Needed for z-index stacking context */
+            z-index: 1;      /* Position above the background logo */
             -webkit-tap-highlight-color: transparent;
         }
 
         /* --- CRT Effect Overlays --- */
+        /* These will be on top of the canvas (z-index 2 > z-index 1) */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
-            pointer-events: none; /* Allow interactions to pass through */
+            pointer-events: none;
             z-index: 2;
-             /* --- UNCOMMENT BELOW TO TEST WITHOUT THIS OVERLAY --- */
-             /* display: none; */
         }
 
         body::after {
@@ -48,10 +74,8 @@
             background: rgba(18, 16, 16, 0.1);
             opacity: 0.15;
             z-index: 2;
-            pointer-events: none; /* Allow interactions to pass through */
+            pointer-events: none;
             animation: flicker 0.15s infinite alternate;
-             /* --- UNCOMMENT BELOW TO TEST WITHOUT THIS OVERLAY --- */
-             /* display: none; */
         }
 
         @keyframes flicker {
@@ -63,8 +87,14 @@
     </style>
 </head>
 <body>
+    <!-- Div for the background logo -->
+    <div id="background-logo">
+        <img src="implied_logo.png" alt="Implied Logo Background">
+    </div>
+
+    <!-- p5.js script -->
     <script>
-        // Cell class definition (mostly unchanged, ensure 'contains' uses current radius)
+        // Cell class definition
         class Cell {
              constructor(x, y, r, color, text, link) {
                 this.position = createVector(x, y);
@@ -94,9 +124,12 @@
 
                 this.radius = this.baseRadius * (1 + this.pulseAmount * sin(frameCount * this.pulseSpeed + this.pulseOffset));
 
-                if (!this.fontSize) {
+                // Recalculate font size if it hasn't been set or if baseRadius changes (it doesn't here, but good practice)
+                // Font metrics depend on textSize AND the loaded font (handled in setup/preload)
+                 if (!this.fontSize) {
                     this.calculateFontSize();
-                }
+                 }
+
 
                 let desired = p5.Vector.sub(this.target, this.position);
                 let distance = desired.mag();
@@ -115,7 +148,7 @@
                 for (let other of cells) {
                     if (other !== this) {
                         let d = p5.Vector.dist(this.position, other.position);
-                        if (d < this.radius + other.radius + 15) { // Use current radius for avoidance
+                        if (d < this.radius + other.radius + 15) {
                             let avoid = p5.Vector.sub(this.position, other.position);
                             avoid.setMag(0.5);
                             this.velocity.add(avoid);
@@ -141,25 +174,38 @@
             }
 
             calculateFontSize() {
-                let testSize = this.baseRadius * 0.8;
+                // Ensure the correct font is active when calculating size
+                // textFont(loadedFont); // Not strictly needed if set globally in setup()
+                let testSize = this.baseRadius * 0.6; // Start smaller for potentially wider fonts like Poppins
                 textSize(testSize);
+                // Check against base radius * multiplier (e.g., 1.6) for padding
                 while (textWidth(this.text) > this.baseRadius * 1.6 && testSize > 8) {
                     testSize -= 1;
                     textSize(testSize);
                 }
+                 // Check if text height exceeds radius too much
+                 let textH = textAscent() + textDescent();
+                 while(textH > this.baseRadius * 1.4 && testSize > 8) { // Allow some vertical padding
+                     testSize -= 1;
+                     textSize(testSize);
+                     textH = textAscent() + textDescent();
+                 }
+
                 this.fontSize = testSize;
+                 // console.log(`Calculated font size for "${this.text}": ${this.fontSize}`); // Debug font size
             }
 
             draw() {
                 noStroke();
                 fill(this.color);
-                ellipse(this.position.x, this.position.y, this.radius * 2); // Use current radius
+                ellipse(this.position.x, this.position.y, this.radius * 2);
 
                 if (this.fontSize) {
-                    fill(255);
+                    fill(255); // White text
                     textAlign(CENTER, CENTER);
-                    textSize(this.fontSize);
-                    text(this.text, this.position.x, this.position.y);
+                    textSize(this.fontSize); // Apply pre-calculated size
+                    // Lower the text slightly to better center visually within the circle for most fonts
+                    text(this.text, this.position.x, this.position.y + this.fontSize * 0.1);
                 }
             }
 
@@ -167,139 +213,120 @@
                 if (typeof px !== 'number' || typeof py !== 'number') {
                     return false;
                 }
-                // Check against the *current* radius, as it pulses
                 let d = dist(px, py, this.position.x, this.position.y);
-                return d < this.radius;
+                return d < this.radius; // Use current dynamic radius for hit testing
             }
         }
 
         // --- Global Variables ---
         let cells = [];
         let cellData = [
-            { text: "X", link: "https://x.com/robbygat", color: "#1DA1F2" },
-            { text: "Instagram", link: "https://www.instagram.com/robbygat/", color: "#C13584" },
-            { text: "Art", link: "https://rarevance.com", color: "#FF6B6B" },
-            { text: "Soon", link: "#", color: "#43AA8B" },
-            { text: "Music", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
-            { text: "Photography", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
-            { text: "Contact", link: "mailto:robby@robbygat.com", color: "#FF4500" }
-        ];
-        let cnv; // To hold the canvas element reference
+             { text: "x/", link: "https://x.com/robbygat", color: "#1DA1F2" },
+             { text: "instagram/", link: "https://www.instagram.com/robbygat/", color: "#C13584" },
+             { text: "art/", link: "https://rarevance.com", color: "#FF6B6B" },
+             { text: "soon/", link: "#", color: "#43AA8B" },
+             { text: "music/", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
+             { text: "photography/", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
+             { text: "contact/", link: "mailto:robby@robbygat.com", color: "#FF4500" }
+         ];
+        let cnv;
+        let loadedFont; // Variable to hold the loaded font (optional if using CSS font globally)
+
+        // --- p5.js Preload (Optional but good practice for fonts used in canvas) ---
+        // function preload() {
+        //    // If you host the font file yourself or need specific p5.js font loading:
+        //    // loadedFont = loadFont('path/to/Poppins-Regular.ttf');
+        // }
+
 
         // --- p5.js Setup ---
         function setup() {
             cnv = createCanvas(windowWidth, windowHeight);
 
-            // --- Attach direct touch listener to the canvas ---
-            // Using { passive: false } because we might call preventDefault
+            // Apply the font globally within p5.js drawings
+            // If using preload(): textFont(loadedFont);
+            // If relying on CSS: p5js should pick it up, but explicitly setting helps ensure consistency
+            textFont('Poppins'); // Use the name defined in CSS
+
+            // Attach direct touch listener to the canvas
             cnv.elt.addEventListener('touchend', handleTouchEnd, { passive: false });
-
-            // Prevent scrolling/zooming initiated *on the canvas*
-            // Needed esp. on iOS to allow immediate response to touchend
-            cnv.elt.addEventListener('touchstart', (e) => {
-                 // Check if the touch is over a cell, only preventDefault then? Might be too complex.
-                 // Let's start by always preventing default on touchstart ON the canvas.
-                 e.preventDefault();
-            }, { passive: false });
-
-             // It might also be necessary to prevent touchmove
-            cnv.elt.addEventListener('touchmove', (e) => {
-                 e.preventDefault();
-            }, { passive: false });
-
+            cnv.elt.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
+            cnv.elt.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
 
             // Create cells
             for (let i = 0; i < cellData.length; i++) {
-                let r = random(60, 85); // Even slightly larger for easier tapping
+                let r = random(65, 90); // Slightly larger for taps + font
                 let x = random(r, width - r);
                 let y = random(r, height - r);
                 cells.push(new Cell(x, y, r, cellData[i].color, cellData[i].text, cellData[i].link));
             }
-            console.log("Setup complete. Touch listener attached."); // Debug log
+            console.log("Setup complete. Font set. Touch listener attached.");
         }
 
         // --- p5.js Draw ---
         function draw() {
+            // Use a solid background for the canvas itself
+            // The logo is visible via the div behind it.
             background(255);
+
             for (let cell of cells) {
                 cell.update();
                 cell.draw();
             }
         }
 
-        // --- Interaction Check Function ---
+        // --- Interaction Check Function (Unchanged) ---
         function checkInteraction(px, py) {
-            console.log(`Checking interaction at screen coords: ${px.toFixed(1)}, ${py.toFixed(1)}`);
+            // console.log(`Checking interaction at screen coords: ${px.toFixed(1)}, ${py.toFixed(1)}`); // Keep for debugging if needed
             let interactedCell = null;
-            // Iterate from top (last drawn) to bottom
             for (let i = cells.length - 1; i >= 0; i--) {
                 if (cells[i].contains(px, py)) {
-                    console.log(`HIT: Cell "${cells[i].text}" contains point.`);
+                    // console.log(`HIT: Cell "${cells[i].text}" contains point.`);
                     interactedCell = cells[i];
-                    break; // Found the topmost cell hit
+                    break;
                 }
             }
 
             if (interactedCell) {
-                console.log(`Action: Opening link for "${interactedCell.text}": ${interactedCell.link}`);
+                 // console.log(`Action: Opening link for "${interactedCell.text}": ${interactedCell.link}`);
                 if (interactedCell.link && interactedCell.link !== "#") {
-                    // Try opening the link - this is the critical part for mobile
                     const newWindow = window.open(interactedCell.link, '_blank');
                     if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
                          console.warn('window.open() was blocked or failed for:', interactedCell.link);
-                         // Alert might work on some mobile browsers if popup fails
-                         // alert(`Could not open link automatically. Please ensure popups are allowed for this site.`);
                      }
                 } else {
-                    console.log(`Info: Cell "${interactedCell.text}" has no valid link.`);
+                    // console.log(`Info: Cell "${interactedCell.text}" has no valid link.`);
                 }
-                return true; // Indicate that an interaction occurred
+                return true;
             } else {
-                 console.log("Miss: No cell contains the interaction point.");
-                 return false; // No interaction occurred
+                 // console.log("Miss: No cell contains the interaction point.");
+                 return false;
             }
         }
 
-        // --- Touch Event Handler (attached directly to canvas) ---
+        // --- Touch Event Handler (Unchanged) ---
         function handleTouchEnd(event) {
-            console.log("Canvas 'touchend' event fired.");
-
-            // We only proceed if a cell was hit, otherwise allow default behaviors
+            // console.log("Canvas 'touchend' event fired."); // Keep for debugging if needed
             let interactionDetected = false;
-
-            // Use the first touch point that was released
             if (event.changedTouches.length > 0) {
-                // Get coordinates relative to the viewport
                 let touchX = event.changedTouches[0].clientX;
                 let touchY = event.changedTouches[0].clientY;
-
-                // Since canvas fills the window, clientX/Y should map directly
-                // If canvas had offsets, you'd need:
-                // let rect = cnv.elt.getBoundingClientRect();
-                // touchX = event.changedTouches[0].clientX - rect.left;
-                // touchY = event.changedTouches[0].clientY - rect.top;
-
                 interactionDetected = checkInteraction(touchX, touchY);
             }
-
-            // *** Crucial: Only prevent default if we successfully interacted with a cell ***
-            // This stops the browser from doing things like zooming on double-tap AFTER our action.
             if (interactionDetected) {
-                console.log("Interaction handled, calling event.preventDefault()");
+                // console.log("Interaction handled, calling event.preventDefault()");
                 event.preventDefault();
             } else {
-                 console.log("No cell interaction, allowing default browser behavior.");
+                 // console.log("No cell interaction, allowing default browser behavior.");
             }
         }
 
-        // --- Keep mousePressed for Desktop Clicks ---
+        // --- Desktop Clicks (Unchanged) ---
         function mousePressed() {
-            // mouseX, mouseY are reliable in p5's mousePressed for desktop
-            console.log("p5 'mousePressed' event fired.");
+            // console.log("p5 'mousePressed' event fired."); // Keep for debugging if needed
             const interacted = checkInteraction(mouseX, mouseY);
-            // Prevent default p5 behavior if interaction occurred (may not be necessary but good practice)
             if (interacted) {
-                 return false;
+                 return false; // Prevent default behavior only if a cell was clicked
             }
         }
 
@@ -307,17 +334,16 @@
         function windowResized() {
             resizeCanvas(windowWidth, windowHeight);
             for (let cell of cells) {
-                 cell.calculateFontSize(); // Recalculate text size
-                 // Optional: Re-constrain/reset positions if needed
+                 // Force recalculation of font size as available space changed
+                 cell.fontSize = null; // Reset font size cache
+                 cell.calculateFontSize(); // Recalculate immediately
+                 // Re-constrain/reset positions
                  cell.target = createVector(random(width), random(height));
                  cell.position.x = constrain(cell.position.x, cell.radius, width - cell.radius);
                  cell.position.y = constrain(cell.position.y, cell.radius, height - cell.radius);
              }
-             console.log("Window resized."); // Debug log
+             console.log("Window resized.");
         }
-
-        // We are using a direct listener, so the p5 global touchEnded is not needed
-        // function touchEnded() { /* ... */ }
 
     </script>
 </body>
