@@ -1,420 +1,341 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robert Gatzke - Interactive Resume</title>
-    <style>
-        /* Global Styles */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Georgia', serif;
-            background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
-            color: #333;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Robert Gatzke — Interactive Resume</title>
+  <meta name="description" content="Interactive resume of Robert Gatzke — computational linguistics, AI + language tech, iOS app dev, strong communication and leadership." />
+  <meta property="og:title" content="Robert Gatzke — Interactive Resume" />
+  <meta property="og:description" content="Computational Linguistics, AI/LLM apps, iOS + web, leadership" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0b0b0b"/>
+  <style>
+    :root{
+      --bg: #0b0b0b;
+      --fg: #eaeaea;
+      --muted: #9aa0a6;
+      --accent: #7dd3fc; /* sky-300 */
+      --accent-2: #a78bfa; /* violet-400 */
+      --card: #121212;
+      --chip: #171717;
+      --glass: rgba(255,255,255,.06);
+      --border: rgba(255,255,255,.08);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f7fb; --fg:#111; --muted:#555; --accent:#0ea5e9; --accent-2:#7c3aed; --card:#ffffff; --chip:#f2f2f7; --glass:rgba(0,0,0,.04); --border:rgba(0,0,0,.08); --shadow: 0 10px 25px rgba(10, 10, 10, .08);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--fg); background:radial-gradient(1200px 600px at 10% -10%, rgba(124,58,237,.25), transparent 60%), radial-gradient(1200px 600px at 110% 10%, rgba(14,165,233,.22), transparent 60%), var(--bg);
+      background-attachment: fixed;
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .wrap{max-width:1100px; margin:0 auto; padding:24px}
+    header{
+      position:sticky; top:0; z-index:50; backdrop-filter:saturate(150%) blur(10px); background:linear-gradient(to bottom, var(--glass), transparent);
+      border-bottom:1px solid var(--border);
+    }
+    nav{display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .brand{display:flex; align-items:center; gap:14px}
+    .avatar{width:44px; height:44px; border-radius:50%; border:2px solid var(--border); object-fit:cover; box-shadow:var(--shadow)}
+    .name{font-weight:700; letter-spacing:.3px}
+    .navlinks{display:flex; gap:14px; flex-wrap:wrap}
+    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); padding:8px 12px; border-radius:999px; cursor:pointer; color:var(--fg); transition: transform .15s ease, border .2s ease, background .2s ease; box-shadow:var(--shadow)}
+    .btn:hover{transform:translateY(-1px);}
+    .btn-primary{border-color:transparent; background:linear-gradient(90deg, var(--accent), var(--accent-2)); color:#0b0b0b; font-weight:700}
 
-        h1, h2, h3 {
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+    /* Hero */
+    .hero{display:grid; grid-template-columns:1.1fr .9fr; gap:28px; align-items:center; padding:40px 24px 24px}
+    .hero-card{position:relative; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border:1px solid var(--border); border-radius:24px; padding:28px; box-shadow:var(--shadow); overflow:hidden}
+    .hero-card:before{content:""; position:absolute; inset:-2px; background: radial-gradient(600px 200px at 0% -10%, rgba(125,211,252,.18), transparent 60%), radial-gradient(600px 200px at 110% -10%, rgba(167,139,250,.16), transparent 60%); pointer-events:none}
+    .hero h1{margin:0 0 6px; font-size:40px; line-height:1.1; letter-spacing:.2px}
+    .subtitle{font-size:18px; color:var(--muted); margin-bottom:16px}
+    .hero-actions{display:flex; gap:12px; flex-wrap:wrap}
 
-        /* Header */
-        header {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: url('resumepic.jpg') no-repeat center/cover;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-        }
+    .portrait{
+      position:relative; border-radius:24px; overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow)
+    }
+    .portrait img{display:block; width:100%; height:auto}
+    .tagline{position:absolute; left:16px; bottom:16px; background:rgba(0,0,0,.45); color:white; padding:8px 12px; border-radius:12px; font-weight:600; letter-spacing:.2px}
 
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 1;
-        }
+    section{padding:32px 24px}
+    .section-title{font-size:22px; margin:0 0 16px; letter-spacing:.3px}
 
-        .header-content {
-            z-index: 2;
-            text-align: center;
-            animation: fadeIn 2s ease-in-out;
-        }
+    /* Chips & cards */
+    .chips{display:flex; flex-wrap:wrap; gap:10px}
+    .chip{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); border:1px solid var(--border); padding:8px 12px; border-radius:999px; box-shadow:var(--shadow); font-weight:600}
 
-        .header-content h1 {
-            font-size: 4em;
-            margin: 0;
-            border-bottom: 2px solid white;
-            display: inline-block;
-            padding-bottom: 10px;
-        }
+    .grid{display:grid; gap:18px}
+    .grid.cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}
+    .grid.cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}
+    @media (max-width: 900px){
+      .hero{grid-template-columns:1fr;}
+      .grid.cols-3{grid-template-columns:1fr}
+      .grid.cols-2{grid-template-columns:1fr}
+    }
 
-        .header-content p {
-            font-size: 1.5em;
-            margin-top: 10px;
-        }
+    .card{background:var(--card); border:1px solid var(--border); border-radius:20px; padding:18px; box-shadow:var(--shadow); position:relative; overflow:hidden}
+    .card h3{margin:0 0 6px}
+    .card small{color:var(--muted)}
 
-        /* Sections */
-        section {
-            padding: 60px 20px;
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-        }
+    /* Timeline */
+    .timeline{position:relative; margin-left:8px}
+    .timeline:before{content:""; position:absolute; left:10px; top:0; bottom:0; width:2px; background:linear-gradient(var(--accent), var(--accent-2)); opacity:.6}
+    .t-item{position:relative; padding-left:34px; margin:18px 0}
+    .t-item:before{content:""; position:absolute; left:3px; top:8px; width:16px; height:16px; border-radius:50%; background:linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 4px rgba(125,211,252,.15)}
 
-        /* Cover Letter Section */
-        #cover-letter {
-            background: rgba(255,255,255,0.8);
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            padding: 40px;
-            transform: skew(-5deg);
-            transition: transform 0.3s;
-        }
+    /* Footer */
+    footer{padding:40px 24px; text-align:center; color:var(--muted)}
 
-        #cover-letter:hover {
-            transform: skew(0);
-        }
+    /* Floating UI */
+    .toolbar{position:fixed; right:18px; bottom:18px; display:flex; flex-direction:column; gap:10px; z-index:60}
+    .floating{backdrop-filter:saturate(150%) blur(10px); background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:10px; box-shadow:var(--shadow)}
 
-        #cover-letter p {
-            transform: skew(5deg);
-        }
+    /* Reveal animations */
+    .reveal{opacity:0; transform:translateY(10px); transition: opacity .6s ease, transform .6s ease}
+    .reveal.in{opacity:1; transform:none}
 
-        /* Skills Section */
-        #skills {
-            text-align: center;
-        }
+    /* Print mode */
+    @media print{
+      header, .toolbar, .hero-actions .btn { display:none !important }
+      body{background:white}
+      .card, .hero-card{box-shadow:none; border:1px solid #ddd}
+      a[href^="mailto:" ]::after{content:" (" attr(href) ")"}
+    }
 
-        .skill-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .skill {
-            background: #87ceeb;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: transform 0.3s, background 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .skill:hover {
-            transform: scale(1.2) rotate(5deg);
-            background: #4682b4;
-        }
-
-        /* Achievements Timeline */
-        #achievements {
-            position: relative;
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .timeline::after {
-            content: '';
-            position: absolute;
-            width: 6px;
-            background-color: #bdbdbd;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            margin-left: -3px;
-        }
-
-        .timeline-item {
-            padding: 10px 40px;
-            position: relative;
-            background-color: inherit;
-            width: 50%;
-        }
-
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            right: -17px;
-            background-color: white;
-            border: 4px solid #ff9f55;
-            top: 15px;
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        .left {
-            left: 0;
-        }
-
-        .right {
-            left: 50%;
-        }
-
-        .right::after {
-            left: -16px;
-        }
-
-        .timeline-content {
-            padding: 20px 30px;
-            background-color: white;
-            position: relative;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: opacity 0.5s;
-            opacity: 0;
-        }
-
-        .timeline-item.visible .timeline-content {
-            opacity: 1;
-        }
-
-        /* Work Experience Accordion */
-        #experience {
-            text-align: left;
-        }
-
-        .accordion {
-            background-color: #eee;
-            color: #444;
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 15px;
-            transition: 0.4s;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .active, .accordion:hover {
-            background-color: #ccc;
-        }
-
-        .panel {
-            padding: 0 18px;
-            display: none;
-            background-color: white;
-            overflow: hidden;
-            border-radius: 0 0 5px 5px;
-        }
-
-        /* Hobbies Grid */
-        #hobbies {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .hobby {
-            background: #90ee90;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .hobby:hover {
-            transform: translateY(-10px);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Parallax Effect */
-        .parallax {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            height: 300px;
-            margin: 40px 0;
-        }
-
-        /* Responsive */
-        @media screen and (max-width: 600px) {
-            .timeline::after {
-                left: 31px;
-            }
-
-            .timeline-item {
-                width: 100%;
-                padding-left: 70px;
-                padding-right: 25px;
-            }
-
-            .timeline-item::after {
-                left: 15px;
-            }
-
-            .right {
-                left: 0%;
-            }
-        }
-    </style>
+    /* Subtle cursor halo */
+    .halo{position:fixed; width:160px; height:160px; border-radius:50%; pointer-events:none; background:radial-gradient(circle at center, rgba(125,211,252,.18), rgba(167,139,250,.12) 33%, transparent 70%); mix-blend-mode:screen; left:-1000px; top:-1000px; filter:blur(16px); opacity:.6; z-index:5}
+  </style>
 </head>
 <body>
-
-    <header>
-        <div class="header-content">
-            <h1>Robert Gatzke</h1>
-            <p>Linguistics Innovator & AI Enthusiast</p>
+  <div class="halo" aria-hidden="true"></div>
+  <header>
+    <div class="wrap">
+      <nav>
+        <div class="brand">
+          <img class="avatar" src="resumepic.jpg" alt="Portrait of Robert Gatzke" />
+          <div>
+            <div class="name">Robert Gatzke</div>
+            <small style="color:var(--muted)">Computational Linguistics • AI/LLM Apps • iOS & Web</small>
+          </div>
         </div>
-    </header>
+        <div class="navlinks">
+          <a class="btn" href="#about">About</a>
+          <a class="btn" href="#skills">Skills</a>
+          <a class="btn" href="#achievements">Achievements</a>
+          <a class="btn" href="#experience">Experience</a>
+          <a class="btn" href="#extras">Activities</a>
+          <button class="btn btn-primary" id="contactBtn" title="Copy email to clipboard">Contact</button>
+        </div>
+      </nav>
+    </div>
+  </header>
 
-    <section id="cover-letter">
-        <h2>Dear Hiring Committee,</h2>
-        <p>I am a Boston native, now residing in Worcester, Massachusetts, and a recent graduate of the University of Massachusetts Amherst, where I earned a B.A. with a concentration in Computational Linguistics and Language Technology, graduating on the Dean’s List. I am excited to bring my skills to your company and demonstrate how my strong technical background and interpersonal communication abilities make me an excellent candidate.</p>
-        <p>At UMass Amherst, home to a world-renowned linguistics department, I conducted pioneering research on effective communication strategies for language acquisition through agentic mobile applications. My independent capstone project resulted in a Swift-based iOS application that leveraged Large Language Models (LLMs) and AI APIs to enhance language learning for children and adults. This project introduced novel technology to the field and earned commendation from international experts in linguistics and second-language pedagogy. My work showcased my ability to integrate AI applications with user-focused design to create impactful solutions.</p>
-        <p>Fluent in English and conversational in Japanese and Korean, I bring linguistic versatility and cultural adaptability to global teams. Growing up alongside today’s technology, I naturally incorporate digital tools—such as interactive media, online platforms, and data visualization—into my work to optimize efficiency and engagement. I excel at collaborating with enthusiastic students and team members, and I am committed to giving my full effort to foster enthusiasm in any work environment.</p>
-        <p>My leadership abilities have also been recognized outside of academia. Congressman Joe Courtney, U.S. Representative for Connecticut’s Second District, personally invited me to Congress after identifying me as a rising student with strong leadership potential. This honor strengthened my commitment to combining technical expertise with civic engagement and professional responsibility.</p>
-        <p>I am eager to tackle new challenges, contribute innovative solutions beyond the basic job description, and grow under the guidance of experienced mentors. Thank you for considering my application. I look forward to demonstrating how my drive and creative mindset can help advance your team’s objectives.</p>
-        <p>Sincerely,<br>Robert Gatzke</p>
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-card reveal">
+        <h1>Hi, I’m Robert — Boston-born, Worcester-based.</h1>
+        <div class="subtitle">B.A. in Linguistics (Computational Concentration), University of Massachusetts Amherst — Dean’s List (2025)</div>
+        <p>
+          I build human-centered language technology. At UMass Amherst’s world-renowned linguistics program, I explored how <strong>agentic mobile applications</strong> can accelerate language acquisition. My capstone produced a Swift-based iOS app that integrates <strong>LLMs and AI APIs</strong> for learners of all ages—earning recognition from international experts in linguistics and second-language pedagogy.
+        </p>
+        <p>
+          I’m fluent in English and conversational in Japanese and Korean. I blend research-based communication strategies with modern app design to create tools that are effective, accessible, and genuinely delightful to use.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#experience">View Experience</a>
+          <a class="btn" href="#achievements">See Achievements</a>
+          <a class="btn" href="#skills">Skills</a>
+        </div>
+      </div>
+      <figure class="portrait reveal">
+        <img src="resumepic.jpg" alt="Robert Gatzke portrait" />
+        <figcaption class="tagline">Agentic AI • Language Tech • iOS</figcaption>
+      </figure>
     </section>
 
-    <div class="parallax" style="background-image: url('resumepic.jpg');"></div>
-
-    <section id="skills">
-        <h2>Skills</h2>
-        <div class="skill-cloud">
-            <div class="skill">Agentic API Implementation</div>
-            <div class="skill">Python / Pytorch</div>
-            <div class="skill">Excellent Writing Ability and Native Knowledge of English Language</div>
-            <div class="skill">Strong Understanding of Grammar, Syntax, Semantics, and Computational Linguistics</div>
-            <div class="skill">App Developing & Web Design</div>
-            <div class="skill">Teaching</div>
-            <div class="skill">Conversational in Japanese and Korean Language</div>
-            <div class="skill">Incredible Team Communication and Leadership Skills</div>
-            <div class="skill">Artistic and Quick With New Ideas/ Creative Thinking</div>
-            <div class="skill">Great With Time Management</div>
-        </div>
+    <section id="about" class="reveal">
+      <h2 class="section-title">About / Cover Letter</h2>
+      <div class="card">
+        <p>
+          Dear Hiring Committee,
+          I am a Boston native, now residing in Worcester, Massachusetts, and a recent graduate of the University of Massachusetts Amherst, where I earned a B.A. with a concentration in Computational Linguistics and Language Technology, graduating on the Dean’s List. I am excited to bring my skills to your company and demonstrate how my strong technical background and interpersonal communication abilities make me an excellent candidate.
+        </p>
+        <p>
+          At UMass Amherst, home to a world-renowned linguistics department, I conducted pioneering research on effective communication strategies for language acquisition through agentic mobile applications. My independent capstone project resulted in a Swift-based iOS application that leveraged Large Language Models (LLMs) and AI APIs to enhance language learning for children and adults. This project introduced novel technology to the field and earned commendation from international experts in linguistics and second-language pedagogy. My work showcased my ability to integrate AI applications with user-focused design to create impactful solutions.
+        </p>
+        <p>
+          Fluent in English and conversational in Japanese and Korean, I bring linguistic versatility and cultural adaptability to global teams. Growing up alongside today’s technology, I naturally incorporate digital tools—such as interactive media, online platforms, and data visualization—into my work to optimize efficiency and engagement. I excel at collaborating with enthusiastic students and team members, and I am committed to giving my full effort to foster enthusiasm in any work environment.
+        </p>
+        <p>
+          My leadership abilities have also been recognized outside of academia. Congressman Joe Courtney, U.S. Representative for Connecticut’s Second District, personally invited me to Congress after identifying me as a rising student with strong leadership potential. This honor strengthened my commitment to combining technical expertise with civic engagement and professional responsibility.
+        </p>
+        <p>
+          I am eager to tackle new challenges, contribute innovative solutions beyond the basic job description, and grow under the guidance of experienced mentors. Thank you for considering my application. I look forward to demonstrating how my drive and creative mindset can help advance your team’s objectives.
+        </p>
+        <p>Sincerely,<br/> <strong>Robert Gatzke</strong></p>
+      </div>
     </section>
 
-    <section id="achievements">
-        <h2>Achievements</h2>
-        <div class="timeline">
-            <div class="timeline-item left">
-                <div class="timeline-content">
-                    <h3>Bachelor's Degree in Linguistics (Computation Concentration)</h3>
-                    <p>University of Massachusetts Amherst – 2025</p>
-                </div>
-            </div>
-            <div class="timeline-item right">
-                <div class="timeline-content">
-                    <h3>Invitation to Congress by House of Representatives Member</h3>
-                    <p>Outstanding Leadership – 2020</p>
-                </div>
-            </div>
-            <div class="timeline-item left">
-                <div class="timeline-content">
-                    <h3>Highschool Class President</h3>
-                    <p>2016 - 2020</p>
-                </div>
-            </div>
-            <div class="timeline-item right">
-                <div class="timeline-content">
-                    <h3>The Promise & Perils of Social Media World Affairs Seminar</h3>
-                    <p>Carroll University in Waukesha, Wisconsin – 2019</p>
-                </div>
-            </div>
-            <div class="timeline-item left">
-                <div class="timeline-content">
-                    <h3>National Honor Society Vice President</h3>
-                    <p>2018 - 2019</p>
-                </div>
-            </div>
-            <div class="timeline-item right">
-                <div class="timeline-content">
-                    <h3>Putnam Rotary Club Scholarship</h3>
-                    <p>2020</p>
-                </div>
-            </div>
-            <div class="timeline-item left">
-                <div class="timeline-content">
-                    <h3>Computational Linguistics Educational App Development Thesis (Hanasu AI)</h3>
-                    <p>2025</p>
-                </div>
-            </div>
-        </div>
+    <section id="skills" class="reveal">
+      <h2 class="section-title">Skills</h2>
+      <div class="chips">
+        <span class="chip">Agentic API Implementation</span>
+        <span class="chip">Python • PyTorch</span>
+        <span class="chip">iOS (Swift)</span>
+        <span class="chip">Web Design</span>
+        <span class="chip">LLMs & Prompting</span>
+        <span class="chip">Excellent Writing</span>
+        <span class="chip">Grammar • Syntax • Semantics</span>
+        <span class="chip">Computational Linguistics</span>
+        <span class="chip">Teaching</span>
+        <span class="chip">Japanese (Conversational)</span>
+        <span class="chip">Korean (Conversational)</span>
+        <span class="chip">Leadership & Team Communication</span>
+        <span class="chip">Creative + Fast Ideation</span>
+        <span class="chip">Time Management</span>
+      </div>
     </section>
 
-    <section id="experience">
-        <h2>Work Experience</h2>
-        <button class="accordion">Deary Brothers – Manager (04/2020 - 6/2023)</button>
-        <div class="panel">
-            <p>Details about role...</p> <!-- User didn't provide details, so placeholder -->
+    <section id="achievements" class="reveal">
+      <h2 class="section-title">Achievements</h2>
+      <div class="timeline">
+        <div class="t-item">
+          <h3>B.A. in Linguistics (Computational Concentration) — UMass Amherst</h3>
+          <small>2025 • Dean’s List</small>
         </div>
-
-        <button class="accordion">Hanasu App Mobile App Developer (2024 - Present)</button>
-        <div class="panel">
-            <p>Details about role...</p> <!-- Placeholder -->
+        <div class="t-item">
+          <h3>Computational Linguistics Educational App Thesis — Hanasu AI</h3>
+          <small>2025 • Swift + LLMs • iOS</small>
         </div>
+        <div class="t-item">
+          <h3>Invitation to Congress — Recognized for Outstanding Leadership</h3>
+          <small>2020 • Invited by Rep. Joe Courtney</small>
+        </div>
+        <div class="t-item">
+          <h3>National Honor Society — Vice President</h3>
+          <small>2018–2019</small>
+        </div>
+        <div class="t-item">
+          <h3>High School Class President</h3>
+          <small>2016–2020</small>
+        </div>
+        <div class="t-item">
+          <h3>Putnam Rotary Club Scholarship</h3>
+          <small>2020</small>
+        </div>
+        <div class="t-item">
+          <h3>The Promise &amp; Perils of Social Media — World Affairs Seminar</h3>
+          <small>2019 • Carroll University, Waukesha, WI</small>
+        </div>
+      </div>
     </section>
 
-    <section id="hobbies">
-        <h2>Extracurricular Hobbies</h2>
-        <div class="hobby">Blockchain Researcher (2020 - Present)</div>
-        <div class="hobby">ESL Volunteer Teacher (2024)</div>
-        <div class="hobby">Chess Club (2023 - 2025)</div>
-        <div class="hobby">Amherst Wire (News Publication) (2020 - 2023)</div>
-        <div class="hobby">Linguistics Club (2023 - 2025)</div>
-        <div class="hobby">Japanese Language Club (2023 - 2025)</div>
-        <div class="hobby">Korean Language Club (2023 - 2025)</div>
-        <div class="hobby">Cantonese Club (2024)</div>
+    <section id="experience" class="reveal">
+      <h2 class="section-title">Work Experience</h2>
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Hanasu App — Mobile App Developer</h3>
+          <small>2024 — Present</small>
+          <p>Designed and built an iOS educational app that leverages LLMs for adaptive conversation practice and feedback. Integrated agentic flows, speech interfaces, and progress visualization.</p>
+          <div class="chips">
+            <span class="chip">Swift</span>
+            <span class="chip">LLM APIs</span>
+            <span class="chip">UX for Learning</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Deary Brothers — Manager</h3>
+          <small>04/2020 — 06/2023</small>
+          <p>Led day-to-day operations, coordinated scheduling, trained staff, and implemented process improvements to drive reliability during high-traffic periods.</p>
+          <div class="chips">
+            <span class="chip">Leadership</span>
+            <span class="chip">Ops</span>
+            <span class="chip">People Management</span>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <script>
-        // Timeline Visibility
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.5 });
+    <section id="extras" class="reveal">
+      <h2 class="section-title">Extracurricular & Hobbies</h2>
+      <div class="grid cols-3">
+        <div class="card"><h3>Blockchain Researcher</h3><small>2020 — Present</small></div>
+        <div class="card"><h3>ESL Volunteer Teacher</h3><small>2024</small></div>
+        <div class="card"><h3>Chess Club</h3><small>2023 — 2025</small></div>
+        <div class="card"><h3>Amherst Wire (News Publication)</h3><small>2020 — 2023</small></div>
+        <div class="card"><h3>Linguistics Club</h3><small>2023 — 2025</small></div>
+        <div class="card"><h3>Japanese Language Club</h3><small>2023 — 2025</small></div>
+        <div class="card"><h3>Korean Language Club</h3><small>2023 — 2025</small></div>
+        <div class="card"><h3>Cantonese Club</h3><small>2024</small></div>
+      </div>
+    </section>
+  </main>
 
-        timelineItems.forEach(item => observer.observe(item));
+  <footer>
+    <div class="wrap">
+      <p>
+        © <span id="year"></span> Robert Gatzke — Worcester, Massachusetts • <a id="mailto" href="mailto:robert.gatzke@example.com">robert.gatzke@example.com</a>
+      </p>
+      <small>Tip: press <kbd>T</kbd> to toggle theme, <kbd>G</kbd> to scroll to top.</small>
+    </div>
+  </footer>
 
-        // Accordion Functionality
-        const acc = document.getElementsByClassName('accordion');
-        for (let i = 0; i < acc.length; i++) {
-            acc[i].addEventListener('click', function() {
-                this.classList.toggle('active');
-                const panel = this.nextElementSibling;
-                if (panel.style.display === 'block') {
-                    panel.style.display = 'none';
-                } else {
-                    panel.style.display = 'block';
-                }
-            });
-        }
-    </script>
+  <div class="toolbar">
+    <button class="btn floating" id="themeToggle" aria-label="Toggle theme">Toggle Theme</button>
+    <button class="btn floating" id="printBtn" aria-label="Print / Save as PDF">Print</button>
+    <a class="btn floating" href="#about" aria-label="Jump to About">About ↓</a>
+  </div>
 
+  <script>
+    // Live year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Email copy shortcut (replace with your real email once deployed)
+    const EMAIL = 'robert.gatzke@example.com';
+    const contactBtn = document.getElementById('contactBtn');
+    contactBtn.addEventListener('click', async () => {
+      try{ await navigator.clipboard.writeText(EMAIL); contactBtn.textContent = 'Email copied!'; setTimeout(()=> contactBtn.textContent='Contact', 1400)}catch(e){ window.location.href = 'mailto:'+EMAIL }
+    });
+
+    // Theme toggle with persistence
+    const themeToggle = document.getElementById('themeToggle');
+    const applyTheme = (mode)=>{ document.documentElement.dataset.theme = mode; if(mode==='light'){document.documentElement.style.setProperty('--bg','#f6f7fb');document.documentElement.style.setProperty('--fg','#111')} else {document.documentElement.style.setProperty('--bg','#0b0b0b');document.documentElement.style.setProperty('--fg','#eaeaea')} };
+    const storedTheme = localStorage.getItem('theme');
+    if(storedTheme) applyTheme(storedTheme);
+    themeToggle.addEventListener('click',()=>{ const next = (localStorage.getItem('theme')==='light')?'dark':'light'; localStorage.setItem('theme', next); applyTheme(next)});
+
+    // Keyboard shortcuts
+    addEventListener('keydown', (e)=>{
+      if(e.key.toLowerCase()==='t'){ themeToggle.click() }
+      if(e.key.toLowerCase()==='g'){ window.scrollTo({top:0, behavior:'smooth'}) }
+    });
+
+    // Print
+    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+
+    // Intersection reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target) } })
+    }, { threshold:.14 });
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    // Subtle pointer-follow halo
+    const halo = document.querySelector('.halo');
+    let hx=-1000, hy=-1000; let px=hx, py=hy;
+    addEventListener('pointermove', (e)=>{ hx = e.clientX - 80; hy = e.clientY - 80; });
+    (function loop(){ px += (hx - px) * 0.12; py += (hy - py) * 0.12; halo.style.transform = `translate(${px}px, ${py}px)`; requestAnimationFrame(loop) })();
+
+    // Respect reduced motion
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+      document.querySelector('.halo').style.display='none';
+    }
+  </script>
 </body>
 </html>
-```
