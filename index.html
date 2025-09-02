@@ -1,350 +1,420 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>robbygat.com by Robert Gatzke</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-
-    <!-- Import Poppins font from Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robert Gatzke - Interactive Resume</title>
     <style>
+        /* Global Styles */
         body {
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            background-color: white; /* Base background */
-            font-family: 'Poppins', sans-serif; /* Apply Poppins globally */
-            position: relative;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(to bottom, #f0f8ff, #e6e6fa);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        /* Div to hold the background logo */
-        #background-logo {
-            position: fixed; /* Full screen */
+        h1, h2, h3 {
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('resumepic.jpg') no-repeat center/cover;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex; /* Center the image */
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .header-content {
+            z-index: 2;
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .header-content h1 {
+            font-size: 4em;
+            margin: 0;
+            border-bottom: 2px solid white;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .header-content p {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+
+        /* Sections */
+        section {
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Cover Letter Section */
+        #cover-letter {
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 40px;
+            transform: skew(-5deg);
+            transition: transform 0.3s;
+        }
+
+        #cover-letter:hover {
+            transform: skew(0);
+        }
+
+        #cover-letter p {
+            transform: skew(5deg);
+        }
+
+        /* Skills Section */
+        #skills {
+            text-align: center;
+        }
+
+        .skill-cloud {
+            display: flex;
+            flex-wrap: wrap;
             justify-content: center;
-            align-items: center;
-            z-index: -1; /* Position behind the canvas */
-            opacity: 0.08; /* Adjust for desired subtlety */
-            pointer-events: none; /* Ensure it doesn't interfere with clicks */
+            gap: 20px;
         }
 
-        #background-logo img {
-            max-width: 40%; /* Adjust size as needed */
-            max-height: 40%;
-            object-fit: contain; /* Scale nicely */
+        .skill {
+            background: #87ceeb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* p5 canvas */
-        canvas {
-            display: block;
-            position: relative; /* Needed for z-index stacking context */
-            z-index: 1;      /* Position above the background logo */
-            -webkit-tap-highlight-color: transparent;
+        .skill:hover {
+            transform: scale(1.2) rotate(5deg);
+            background: #4682b4;
         }
 
-        /* --- CRT Effect Overlays --- */
-        /* These will be on top of the canvas (z-index 2 > z-index 1) */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-            z-index: 2;
+        /* Achievements Timeline */
+        #achievements {
+            position: relative;
         }
 
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(18, 16, 16, 0.1);
-            opacity: 0.15;
-            z-index: 2;
-            pointer-events: none;
-            animation: flicker 0.15s infinite alternate;
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        @keyframes flicker {
-            0% { opacity: 0.15; }
-            100% { opacity: 0.12; }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: #bdbdbd;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
         }
-        /* --- End CRT Effect Overlays --- */
 
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background-color: inherit;
+            width: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -17px;
+            background-color: white;
+            border: 4px solid #ff9f55;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        .right {
+            left: 50%;
+        }
+
+        .right::after {
+            left: -16px;
+        }
+
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: white;
+            position: relative;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.5s;
+            opacity: 0;
+        }
+
+        .timeline-item.visible .timeline-content {
+            opacity: 1;
+        }
+
+        /* Work Experience Accordion */
+        #experience {
+            text-align: left;
+        }
+
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .active, .accordion:hover {
+            background-color: #ccc;
+        }
+
+        .panel {
+            padding: 0 18px;
+            display: none;
+            background-color: white;
+            overflow: hidden;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* Hobbies Grid */
+        #hobbies {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .hobby {
+            background: #90ee90;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .hobby:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Parallax Effect */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            height: 300px;
+            margin: 40px 0;
+        }
+
+        /* Responsive */
+        @media screen and (max-width: 600px) {
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+
+            .timeline-item::after {
+                left: 15px;
+            }
+
+            .right {
+                left: 0%;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Div for the background logo -->
-    <div id="background-logo">
-        <img src="implied_yellow_font.png" alt="Implied Logo Background">
-    </div>
 
-    <!-- p5.js script -->
+    <header>
+        <div class="header-content">
+            <h1>Robert Gatzke</h1>
+            <p>Linguistics Innovator & AI Enthusiast</p>
+        </div>
+    </header>
+
+    <section id="cover-letter">
+        <h2>Dear Hiring Committee,</h2>
+        <p>I am a Boston native, now residing in Worcester, Massachusetts, and a recent graduate of the University of Massachusetts Amherst, where I earned a B.A. with a concentration in Computational Linguistics and Language Technology, graduating on the Dean’s List. I am excited to bring my skills to your company and demonstrate how my strong technical background and interpersonal communication abilities make me an excellent candidate.</p>
+        <p>At UMass Amherst, home to a world-renowned linguistics department, I conducted pioneering research on effective communication strategies for language acquisition through agentic mobile applications. My independent capstone project resulted in a Swift-based iOS application that leveraged Large Language Models (LLMs) and AI APIs to enhance language learning for children and adults. This project introduced novel technology to the field and earned commendation from international experts in linguistics and second-language pedagogy. My work showcased my ability to integrate AI applications with user-focused design to create impactful solutions.</p>
+        <p>Fluent in English and conversational in Japanese and Korean, I bring linguistic versatility and cultural adaptability to global teams. Growing up alongside today’s technology, I naturally incorporate digital tools—such as interactive media, online platforms, and data visualization—into my work to optimize efficiency and engagement. I excel at collaborating with enthusiastic students and team members, and I am committed to giving my full effort to foster enthusiasm in any work environment.</p>
+        <p>My leadership abilities have also been recognized outside of academia. Congressman Joe Courtney, U.S. Representative for Connecticut’s Second District, personally invited me to Congress after identifying me as a rising student with strong leadership potential. This honor strengthened my commitment to combining technical expertise with civic engagement and professional responsibility.</p>
+        <p>I am eager to tackle new challenges, contribute innovative solutions beyond the basic job description, and grow under the guidance of experienced mentors. Thank you for considering my application. I look forward to demonstrating how my drive and creative mindset can help advance your team’s objectives.</p>
+        <p>Sincerely,<br>Robert Gatzke</p>
+    </section>
+
+    <div class="parallax" style="background-image: url('resumepic.jpg');"></div>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <div class="skill-cloud">
+            <div class="skill">Agentic API Implementation</div>
+            <div class="skill">Python / Pytorch</div>
+            <div class="skill">Excellent Writing Ability and Native Knowledge of English Language</div>
+            <div class="skill">Strong Understanding of Grammar, Syntax, Semantics, and Computational Linguistics</div>
+            <div class="skill">App Developing & Web Design</div>
+            <div class="skill">Teaching</div>
+            <div class="skill">Conversational in Japanese and Korean Language</div>
+            <div class="skill">Incredible Team Communication and Leadership Skills</div>
+            <div class="skill">Artistic and Quick With New Ideas/ Creative Thinking</div>
+            <div class="skill">Great With Time Management</div>
+        </div>
+    </section>
+
+    <section id="achievements">
+        <h2>Achievements</h2>
+        <div class="timeline">
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>Bachelor's Degree in Linguistics (Computation Concentration)</h3>
+                    <p>University of Massachusetts Amherst – 2025</p>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>Invitation to Congress by House of Representatives Member</h3>
+                    <p>Outstanding Leadership – 2020</p>
+                </div>
+            </div>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>Highschool Class President</h3>
+                    <p>2016 - 2020</p>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>The Promise & Perils of Social Media World Affairs Seminar</h3>
+                    <p>Carroll University in Waukesha, Wisconsin – 2019</p>
+                </div>
+            </div>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>National Honor Society Vice President</h3>
+                    <p>2018 - 2019</p>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <h3>Putnam Rotary Club Scholarship</h3>
+                    <p>2020</p>
+                </div>
+            </div>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <h3>Computational Linguistics Educational App Development Thesis (Hanasu AI)</h3>
+                    <p>2025</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2>Work Experience</h2>
+        <button class="accordion">Deary Brothers – Manager (04/2020 - 6/2023)</button>
+        <div class="panel">
+            <p>Details about role...</p> <!-- User didn't provide details, so placeholder -->
+        </div>
+
+        <button class="accordion">Hanasu App Mobile App Developer (2024 - Present)</button>
+        <div class="panel">
+            <p>Details about role...</p> <!-- Placeholder -->
+        </div>
+    </section>
+
+    <section id="hobbies">
+        <h2>Extracurricular Hobbies</h2>
+        <div class="hobby">Blockchain Researcher (2020 - Present)</div>
+        <div class="hobby">ESL Volunteer Teacher (2024)</div>
+        <div class="hobby">Chess Club (2023 - 2025)</div>
+        <div class="hobby">Amherst Wire (News Publication) (2020 - 2023)</div>
+        <div class="hobby">Linguistics Club (2023 - 2025)</div>
+        <div class="hobby">Japanese Language Club (2023 - 2025)</div>
+        <div class="hobby">Korean Language Club (2023 - 2025)</div>
+        <div class="hobby">Cantonese Club (2024)</div>
+    </section>
+
     <script>
-        // Cell class definition
-        class Cell {
-             constructor(x, y, r, color, text, link) {
-                this.position = createVector(x, y);
-                this.velocity = p5.Vector.random2D().mult(random(0.5, 1.5));
-                this.radius = r;
-                this.baseRadius = r;
-                this.pulseAmount = random(0.05, 0.15);
-                this.pulseSpeed = random(0.01, 0.03);
-                this.pulseOffset = random(0, TWO_PI);
-                this.color = color;
-                this.text = text;
-                this.link = link;
-                this.target = createVector(random(width), random(height));
-                this.maxSpeed = random(1, 2);
-                this.changeTargetCounter = 0;
-                this.changeTargetInterval = random(100, 200);
-                this.fontSize = null;
-            }
-
-            update() {
-                this.changeTargetCounter++;
-                if (this.changeTargetCounter > this.changeTargetInterval) {
-                    this.target = createVector(random(width), random(height));
-                    this.changeTargetCounter = 0;
-                    this.changeTargetInterval = random(100, 200);
+        // Timeline Visibility
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
                 }
+            });
+        }, { threshold: 0.5 });
 
-                this.radius = this.baseRadius * (1 + this.pulseAmount * sin(frameCount * this.pulseSpeed + this.pulseOffset));
+        timelineItems.forEach(item => observer.observe(item));
 
-                // Recalculate font size if it hasn't been set or if baseRadius changes (it doesn't here, but good practice)
-                // Font metrics depend on textSize AND the loaded font (handled in setup/preload)
-                 if (!this.fontSize) {
-                    this.calculateFontSize();
-                 }
-
-
-                let desired = p5.Vector.sub(this.target, this.position);
-                let distance = desired.mag();
-
-                if (distance < 100) {
-                    let m = map(distance, 0, 100, 0, this.maxSpeed);
-                    desired.setMag(m);
+        // Accordion Functionality
+        const acc = document.getElementsByClassName('accordion');
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener('click', function() {
+                this.classList.toggle('active');
+                const panel = this.nextElementSibling;
+                if (panel.style.display === 'block') {
+                    panel.style.display = 'none';
                 } else {
-                    desired.setMag(this.maxSpeed);
+                    panel.style.display = 'block';
                 }
-
-                let steer = p5.Vector.sub(desired, this.velocity);
-                steer.limit(0.1);
-                this.velocity.add(steer);
-
-                for (let other of cells) {
-                    if (other !== this) {
-                        let d = p5.Vector.dist(this.position, other.position);
-                        if (d < this.radius + other.radius + 15) {
-                            let avoid = p5.Vector.sub(this.position, other.position);
-                            avoid.setMag(0.5);
-                            this.velocity.add(avoid);
-                        }
-                    }
-                }
-
-                let buffer = this.radius + 10;
-                if (this.position.x < buffer) this.velocity.x += 0.2;
-                else if (this.position.x > width - buffer) this.velocity.x -= 0.2;
-                if (this.position.y < buffer) this.velocity.y += 0.2;
-                else if (this.position.y > height - buffer) this.velocity.y -= 0.2;
-
-                if (this.velocity.magSq() < 0.01) {
-                   this.velocity = p5.Vector.random2D().mult(0.1);
-                }
-
-                this.velocity.limit(this.maxSpeed);
-                this.position.add(this.velocity);
-
-                this.position.x = constrain(this.position.x, this.radius, width - this.radius);
-                this.position.y = constrain(this.position.y, this.radius, height - this.radius);
-            }
-
-            calculateFontSize() {
-                // Ensure the correct font is active when calculating size
-                // textFont(loadedFont); // Not strictly needed if set globally in setup()
-                let testSize = this.baseRadius * 0.6; // Start smaller for potentially wider fonts like Poppins
-                textSize(testSize);
-                // Check against base radius * multiplier (e.g., 1.6) for padding
-                while (textWidth(this.text) > this.baseRadius * 1.6 && testSize > 8) {
-                    testSize -= 1;
-                    textSize(testSize);
-                }
-                 // Check if text height exceeds radius too much
-                 let textH = textAscent() + textDescent();
-                 while(textH > this.baseRadius * 1.4 && testSize > 8) { // Allow some vertical padding
-                     testSize -= 1;
-                     textSize(testSize);
-                     textH = textAscent() + textDescent();
-                 }
-
-                this.fontSize = testSize;
-                 // console.log(`Calculated font size for "${this.text}": ${this.fontSize}`); // Debug font size
-            }
-
-            draw() {
-                noStroke();
-                fill(this.color);
-                ellipse(this.position.x, this.position.y, this.radius * 2);
-
-                if (this.fontSize) {
-                    fill(255); // White text
-                    textAlign(CENTER, CENTER);
-                    textSize(this.fontSize); // Apply pre-calculated size
-                    // Lower the text slightly to better center visually within the circle for most fonts
-                    text(this.text, this.position.x, this.position.y + this.fontSize * 0.1);
-                }
-            }
-
-            contains(px, py) {
-                if (typeof px !== 'number' || typeof py !== 'number') {
-                    return false;
-                }
-                let d = dist(px, py, this.position.x, this.position.y);
-                return d < this.radius; // Use current dynamic radius for hit testing
-            }
+            });
         }
-
-        // --- Global Variables ---
-        let cells = [];
-        let cellData = [
-             { text: "x/", link: "https://x.com/robbygat", color: "#1DA1F2" },
-             { text: "instagram/", link: "https://www.instagram.com/robbygat/", color: "#C13584" },
-             { text: "art/", link: "https://rarevance.com", color: "#FF6B6B" },
-             { text: "soon/", link: "#", color: "#43AA8B" },
-             { text: "music/", link: "https://linktr.ee/internetcowboy", color: "#F9C74F" },
-             { text: "photography/", link: "https://www.instagram.com/robbygatzke/", color: "#8A2BE2" },
-             { text: "contact/", link: "mailto:robby@robbygat.com", color: "#FF4500" }
-         ];
-        let cnv;
-        let loadedFont; // Variable to hold the loaded font (optional if using CSS font globally)
-
-        // --- p5.js Preload (Optional but good practice for fonts used in canvas) ---
-        // function preload() {
-        //    // If you host the font file yourself or need specific p5.js font loading:
-        //    // loadedFont = loadFont('path/to/Poppins-Regular.ttf');
-        // }
-
-
-        // --- p5.js Setup ---
-        function setup() {
-            cnv = createCanvas(windowWidth, windowHeight);
-
-            // Apply the font globally within p5.js drawings
-            // If using preload(): textFont(loadedFont);
-            // If relying on CSS: p5js should pick it up, but explicitly setting helps ensure consistency
-            textFont('Poppins'); // Use the name defined in CSS
-
-            // Attach direct touch listener to the canvas
-            cnv.elt.addEventListener('touchend', handleTouchEnd, { passive: false });
-            cnv.elt.addEventListener('touchstart', (e) => { e.preventDefault(); }, { passive: false });
-            cnv.elt.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
-
-            // Create cells
-            for (let i = 0; i < cellData.length; i++) {
-                let r = random(65, 90); // Slightly larger for taps + font
-                let x = random(r, width - r);
-                let y = random(r, height - r);
-                cells.push(new Cell(x, y, r, cellData[i].color, cellData[i].text, cellData[i].link));
-            }
-            console.log("Setup complete. Font set. Touch listener attached.");
-        }
-
-        // --- p5.js Draw ---
-        function draw() {
-            // Use a solid background for the canvas itself
-            // The logo is visible via the div behind it.
-            background(255);
-
-            for (let cell of cells) {
-                cell.update();
-                cell.draw();
-            }
-        }
-
-        // --- Interaction Check Function (Unchanged) ---
-        function checkInteraction(px, py) {
-            // console.log(`Checking interaction at screen coords: ${px.toFixed(1)}, ${py.toFixed(1)}`); // Keep for debugging if needed
-            let interactedCell = null;
-            for (let i = cells.length - 1; i >= 0; i--) {
-                if (cells[i].contains(px, py)) {
-                    // console.log(`HIT: Cell "${cells[i].text}" contains point.`);
-                    interactedCell = cells[i];
-                    break;
-                }
-            }
-
-            if (interactedCell) {
-                 // console.log(`Action: Opening link for "${interactedCell.text}": ${interactedCell.link}`);
-                if (interactedCell.link && interactedCell.link !== "#") {
-                    const newWindow = window.open(interactedCell.link, '_blank');
-                    if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-                         console.warn('window.open() was blocked or failed for:', interactedCell.link);
-                     }
-                } else {
-                    // console.log(`Info: Cell "${interactedCell.text}" has no valid link.`);
-                }
-                return true;
-            } else {
-                 // console.log("Miss: No cell contains the interaction point.");
-                 return false;
-            }
-        }
-
-        // --- Touch Event Handler (Unchanged) ---
-        function handleTouchEnd(event) {
-            // console.log("Canvas 'touchend' event fired."); // Keep for debugging if needed
-            let interactionDetected = false;
-            if (event.changedTouches.length > 0) {
-                let touchX = event.changedTouches[0].clientX;
-                let touchY = event.changedTouches[0].clientY;
-                interactionDetected = checkInteraction(touchX, touchY);
-            }
-            if (interactionDetected) {
-                // console.log("Interaction handled, calling event.preventDefault()");
-                event.preventDefault();
-            } else {
-                 // console.log("No cell interaction, allowing default browser behavior.");
-            }
-        }
-
-        // --- Desktop Clicks (Unchanged) ---
-        function mousePressed() {
-            // console.log("p5 'mousePressed' event fired."); // Keep for debugging if needed
-            const interacted = checkInteraction(mouseX, mouseY);
-            if (interacted) {
-                 return false; // Prevent default behavior only if a cell was clicked
-            }
-        }
-
-        // --- Window Resize ---
-        function windowResized() {
-            resizeCanvas(windowWidth, windowHeight);
-            for (let cell of cells) {
-                 // Force recalculation of font size as available space changed
-                 cell.fontSize = null; // Reset font size cache
-                 cell.calculateFontSize(); // Recalculate immediately
-                 // Re-constrain/reset positions
-                 cell.target = createVector(random(width), random(height));
-                 cell.position.x = constrain(cell.position.x, cell.radius, width - cell.radius);
-                 cell.position.y = constrain(cell.position.y, cell.radius, height - cell.radius);
-             }
-             console.log("Window resized.");
-        }
-
     </script>
+
 </body>
 </html>
+```
