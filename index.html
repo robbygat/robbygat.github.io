@@ -278,48 +278,39 @@
             line-height: 1.7;
         }
 
-        /* NEW/RESTORED: Venue Section */
+        /* NEW: 3-Column Venue Section */
         .venue-section {
-            background: var(--sand);
             border-radius: 32px;
             margin: 4rem 2rem;
             overflow: hidden;
             padding: 0; /* Remove default section padding */
+            max-width: none; /* Allow it to be wider */
         }
-        .venue-content {
+        .venue-content-three-col {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 600px;
+            grid-template-columns: 1fr 1fr 1fr;
+            min-height: 650px;
         }
-        .venue-info {
-            padding: 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .venue-map {
-            position: relative;
+        .venue-image-col {
             background-image: url('kosamui4.jpg');
             background-size: cover;
             background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-        .venue-map::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.2); /* Subtle overlay for map visibility */
-            z-index: 1;
-        }
-        .venue-map iframe {
+        .venue-map-col {
             position: relative;
-            z-index: 2;
+        }
+        .venue-map-col iframe {
             width: 100%;
             height: 100%;
             border: 0;
             filter: grayscale(0.2) contrast(1.1);
+        }
+        .venue-info-col {
+            background: var(--sand);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .address-card {
             background: white;
@@ -337,6 +328,7 @@
             color: rgba(10, 10, 10, 0.6);
             line-height: 1.6;
         }
+
 
         /* RSVP Section */
         .bg-image-section {
@@ -485,6 +477,21 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) { /* Adjust breakpoint for 3 columns */
+            .venue-content-three-col {
+                grid-template-columns: 1fr; /* Stack the 3 columns */
+            }
+            .venue-image-col {
+                min-height: 300px;
+            }
+            .venue-map-col {
+                min-height: 350px;
+            }
+            .venue-info-col {
+                padding: 3rem 2rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -505,15 +512,6 @@
             .hero, .bg-image-section {
                 background-attachment: scroll;
             }
-            .venue-content {
-                grid-template-columns: 1fr; /* Stack columns on mobile */
-            }
-            .venue-info {
-                padding: 3rem 2rem;
-            }
-            .venue-map {
-                min-height: 350px;
-            }
             #rsvp.bg-image-section {
                 margin: 2rem 1rem;
                 padding: 3rem 1.5rem;
@@ -525,7 +523,11 @@
             section {
                 padding: 4rem 1.5rem;
             }
-            /* NEW: Sleek Masonry-style Gallery for Mobile */
+            .venue-section {
+                 margin: 2rem 1rem;
+                 border-radius: 20px;
+            }
+            /* Sleek Masonry-style Gallery for Mobile */
             .gallery-grid {
                 display: block;
                 column-count: 2;
@@ -546,10 +548,6 @@
             }
             .countdown-number {
                 font-size: 1.75rem;
-            }
-            .venue-section {
-                border-radius: 20px;
-                margin: 2rem 1rem;
             }
         }
 
@@ -623,11 +621,19 @@
     </section>
 
     <section id="venue" class="venue-section">
-        <div class="venue-content">
-            <div class="venue-info fade-in">
+        <div class="venue-content-three-col">
+            <div class="venue-image-col"></div>
+            <div class="venue-map-col">
+                <iframe 
+                    src="https://maps.google.com/maps?q=Ko%20Samui&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+            </div>
+            <div class="venue-info-col fade-in">
                 <div class="section-label mono-font">The Destination</div>
                 <h2 class="section-title display-font">Ko Samui Paradise</h2>
-                <p class="section-description" style="margin-left: 0; margin-right: 0; max-width: none;">
+                <p class="section-description" style="margin: 0; max-width: none;">
                     Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. 
                     Join us in this tropical sanctuary as we begin our forever.
                 </p>
@@ -637,13 +643,6 @@
                     Thailand's Gulf Paradise<br>
                     <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
                 </div>
-            </div>
-            <div class="venue-map">
-                <iframe 
-                    src="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
             </div>
         </div>
     </section>
@@ -701,7 +700,6 @@
     <script>
         // Countdown Timer
         function updateCountdown() {
-            // The wedding date is in the future relative to the current time of Sep 12, 2025
             const wedding = new Date('2026-05-04T00:00:00').getTime();
             const now = new Date().getTime();
             const distance = wedding - now;
@@ -756,7 +754,7 @@
 
         // Gallery Population
         const galleryGrid = document.querySelector('.gallery-grid');
-        const imageCount = 20; // Total number of instagram images
+        const imageCount = 20;
 
         for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
