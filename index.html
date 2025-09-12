@@ -796,21 +796,31 @@
 
         // NEW: Automated Carousel Logic
         const track = document.querySelector('.gallery-carousel-track');
-        const imageCount = 20; // You have 20 images in total (instagram1.png to instagram20.png)
+        const imageCount = 49;
         let currentIndex = 0;
         let autoSlideInterval;
 
-        // Populate Carousel with images
+        // Populate Carousel with images from the 'gif folder'
         for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item';
             const img = document.createElement('img');
-            img.src = `instagram${i}.png`;
+
+            // This logic assumes a mix of extensions.
+            let extension = '.jpg';
+            if (i % 3 === 0) {
+                extension = '.jpeg';
+            } else if (i % 5 === 0) {
+                extension = '.JPG';
+            }
+            
+            img.src = `gif folder/${i}${extension}`;
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
             item.appendChild(img);
             track.appendChild(item);
         }
+
         const items = document.querySelectorAll('.gallery-item');
 
         function updateCarousel() {
