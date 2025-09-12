@@ -1,241 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom, #ffffff, #e0f2fe);
-            color: #1e3a8a;
-        }
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
-        }
-        #carousel-container {
-            height: 80vh;
-            max-height: 800px;
-        }
-        .parallax {
-            background-attachment: fixed;
-            background-size: cover;
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rob & Nano - Wedding in Paradise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #ffffff, #e0f2fe);
+      color: #1e3a8a;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+    }
+    #carousel-container {
+      width: 100%;
+      height: 80vh;
+      max-height: 800px;
+      position: relative;
+      perspective: 1000px;
+      overflow: hidden;
+    }
+  </style>
+  <!-- Three.js, OrbitControls, GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
 </head>
 <body class="antialiased">
-    <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80');">
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
-        <div class="relative z-10 text-center text-white">
-            <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
-            <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
-            <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
-            <div id="countdown" class="text-lg md:text-xl"></div>
-        </div>
-    </section>
+  <!-- Hero Section -->
+  <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80');">
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
+    <div class="relative z-10 text-center text-white">
+      <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
+      <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
+      <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
+      <div id="countdown" class="text-lg md:text-xl"></div>
+    </div>
+  </section>
 
-    <!-- Our Story Section -->
-    <section class="py-20 px-4 md:px-20 bg-white">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
-            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
-            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
-        </div>
-    </section>
+  <!-- Our Story Section -->
+  <section class="py-20 px-4 md:px-20 bg-white">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-4xl font-bold mb-8">Our Story</h2>
+      <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
+      <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
+    </div>
+  </section>
 
-    <!-- 3D Gallery Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-12">Memories in 3D</h2>
-            <div id="carousel-container" class="rounded-3xl shadow-2xl overflow-hidden"></div>
-        </div>
-    </section>
+  <!-- 3D Gallery Section -->
+  <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-12">Memories in 3D</h2>
+      <div id="carousel-container" class="rounded-3xl shadow-2xl"></div>
+    </div>
+  </section>
 
-    <!-- Location Section -->
-    <section class="py-20 px-4 md:px-20 parallax" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
-        <div class="max-w-4xl mx-auto text-center text-white">
-            <h2 class="text-4xl font-bold mb-8">The Venue: Koh Samui</h2>
-            <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
-            <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
+  <!-- Location Section -->
+  <section class="py-20 px-4 md:px-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
+    <div class="max-w-4xl mx-auto text-center text-white">
+      <h2 class="text-4xl font-bold mb-8">The Venue: Koh Samui</h2>
+      <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
+      <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </section>
 
-    <!-- RSVP Section -->
-    <section class="py-20 px-4 md:px-20 bg-white">
-        <div class="max-w-md mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
-            <form id="rsvp-form" class="space-y-4">
-                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
-                <input type="submit" value="Send RSVP" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
-            </form>
-        </div>
-    </section>
+  <!-- RSVP Section -->
+  <section class="py-20 px-4 md:px-20 bg-white">
+    <div class="max-w-md mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
+      <form id="rsvp-form" class="space-y-4">
+        <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+        <input type="submit" value="Send RSVP" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+      </form>
+    </div>
+  </section>
 
-    <!-- Invitation Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-white to-blue-50">
-        <div class="max-w-md mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-8">Send an Invitation</h2>
-            <form id="invitation-form" class="space-y-4">
-                <input type="text" name="guest_name" placeholder="Guest Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="guest_email" placeholder="Guest Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea name="message" placeholder="Personal Message" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
-                <input type="submit" value="Prepare Email Invitation" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
-            </form>
-        </div>
-    </section>
+  <!-- Invitation Section -->
+  <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-white to-blue-50">
+    <div class="max-w-md mx-auto">
+      <h2 class="text-4xl font-bold text-center mb-8">Send an Invitation</h2>
+      <form id="invitation-form" class="space-y-4">
+        <input type="text" name="guest_name" placeholder="Guest Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="email" name="guest_email" placeholder="Guest Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <textarea name="message" placeholder="Personal Message" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+        <input type="submit" value="Prepare Email Invitation" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+      </form>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <footer class="py-8 text-center text-blue-800 bg-white">
-        <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
-    </footer>
+  <!-- Footer -->
+  <footer class="py-8 text-center text-blue-800 bg-white">
+    <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
+  </footer>
 
-    <script>
-        // Countdown
-        const weddingDate = new Date('2026-05-04T00:00:00');
-        const countdownEl = document.getElementById('countdown');
-        function updateCountdown() {
-            const now = new Date();
-            const diff = weddingDate - now;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            countdownEl.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until our special day!`;
-        }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+  <script>
+    // --- Countdown Timer ---
+    const weddingDate = new Date('2026-05-04T00:00:00');
+    const countdownEl = document.getElementById('countdown');
+    function updateCountdown() {
+      const now = new Date();
+      const diff = weddingDate - now;
+      if (diff <= 0) {
+        countdownEl.innerHTML = "Our day has arrived!";
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s until our special day!`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
 
-        // 3D Carousel - Circular Ring with Orbit Controls, Hover Effects, and Smooth Animations
-        const container = document.getElementById('carousel-container');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(renderer.domElement);
+    // --- 3D Carousel: using Three.js + GSAP ---
+    (function() {
+      const container = document.getElementById('carousel-container');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 0, 30);
 
-        camera.position.set(0, 0, 20);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
 
-        const group = new THREE.Group();
-        scene.add(group);
+      const group = new THREE.Group();
+      scene.add(group);
 
-        const radius = 15;
-        const images = [];
-        for (let i = 1; i <= 20; i++) {
-            images.push(`instagram${i}.png`); // Images in the same folder as index.html
-        }
+      const radius = 20;
+      const images = [];
+      for (let i = 1; i <= 20; i++) {
+        images.push(`instagram${i}.png`);
+      }
 
-        const textureLoader = new THREE.TextureLoader();
-        const meshes = [];
-        images.forEach((url, index) => {
-            textureLoader.load(url, (texture) => {
-                const aspect = texture.image.width / texture.image.height;
-                const geometry = new THREE.PlaneGeometry(4 * aspect, 4); // Adjusted for image aspect ratio
-                const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-                const mesh = new THREE.Mesh(geometry, material);
-                const angle = (index / images.length) * Math.PI * 2;
-                mesh.position.set(radius * Math.sin(angle), 0, radius * Math.cos(angle));
-                mesh.lookAt(0, 0, 0);
-                group.add(mesh);
-                meshes.push(mesh);
-            }, undefined, (error) => {
-                console.error(`Error loading ${url}:`, error);
-            });
+      const textureLoader = new THREE.TextureLoader();
+      const meshes = [];
+
+      images.forEach((url, idx) => {
+        textureLoader.load(url, texture => {
+          const geo = new THREE.PlaneGeometry(8, 8 * (texture.image.height / texture.image.width));
+          const mat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, transparent: true });
+          const mesh = new THREE.Mesh(geo, mat);
+
+          // position in a circle
+          const angle = (idx / images.length) * Math.PI * 2;
+          mesh.position.x = radius * Math.sin(angle);
+          mesh.position.z = radius * Math.cos(angle);
+          mesh.position.y = 0;
+
+          mesh.lookAt(0, 0, 0);
+
+          group.add(mesh);
+          meshes.push(mesh);
         });
+      });
 
-        // Lighting for depth
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-        scene.add(ambientLight);
+      // Lighting (optional, helps with appearance)
+      const ambient = new THREE.AmbientLight(0xffffff, 1.0);
+      scene.add(ambient);
 
-        // Controls
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableZoom = false;
-        controls.enablePan = false;
-        controls.minPolarAngle = Math.PI / 2;
-        controls.maxPolarAngle = Math.PI / 2;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.5;
+      // Controls / auto-rotate
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.4;
+      controls.minPolarAngle = Math.PI / 2;
+      controls.maxPolarAngle = Math.PI / 2;
 
-        // Interaction
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        let hoveredMesh = null;
+      // Raycaster for hover + interaction
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      let hovered = null;
 
-        function onMouseMove(event) {
-            const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      function onMouseMove(event) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(meshes);
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(meshes);
 
-            if (hoveredMesh && (!intersects.length || intersects[0].object !== hoveredMesh)) {
-                gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
-                gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z, duration: 0.5 });
-                hoveredMesh = null;
+        if (hovered && (!intersects.length || intersects[0].object !== hovered)) {
+          // reset previous
+          gsap.to(hovered.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+          hovered = null;
+        }
+
+        if (intersects.length > 0) {
+          const obj = intersects[0].object;
+          if (obj !== hovered) {
+            if (hovered) {
+              gsap.to(hovered.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
             }
-
-            if (intersects.length > 0) {
-                const newHovered = intersects[0].object;
-                if (newHovered !== hoveredMesh) {
-                    if (hoveredMesh) {
-                        gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
-                        gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z, duration: 0.5 });
-                    }
-                    hoveredMesh = newHovered;
-                    if (!hoveredMesh.originalPosition) hoveredMesh.originalPosition = { z: hoveredMesh.position.z };
-                    gsap.to(hoveredMesh.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.5 });
-                    gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z + 3, duration: 0.5 });
-                }
-            }
+            hovered = obj;
+            gsap.to(hovered.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.5 });
+          }
         }
+      }
 
-        renderer.domElement.addEventListener('mousemove', onMouseMove);
+      renderer.domElement.addEventListener('mousemove', onMouseMove);
 
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        animate();
+      // Animation loop
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
 
-        // Resize
-        window.addEventListener('resize', () => {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        });
-
-        // EmailJS RSVP
-        (function() {
-            emailjs.init("YOUR_PUBLIC_KEY_HERE");
-        })();
-
-        document.getElementById('rsvp-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
-                .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
-        });
-
-        // Invitation Mailto
-        document.getElementById('invitation-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = this.guest_name.value;
-            const email = this.guest_email.value;
-            const message = this.message.value;
-            const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026, in Koh Samui.\n\n${message}\n\nRSVP at: [URL]\n\nLove,\nRob & Nano`;
-            window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
-        });
-    </script>
+      // Resize handling
+      window.addEventListener('resize', () => {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      });
+    })();
+  </script>
 </body>
 </html>
