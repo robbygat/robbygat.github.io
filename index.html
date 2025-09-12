@@ -114,7 +114,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // 3D Carousel - New Approach: Circular Ring with Orbit Controls
+        // 3D Carousel - Circular Ring with Orbit Controls, Hover Effects, and Smooth Animations
         const container = document.getElementById('carousel-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -129,15 +129,16 @@
 
         const radius = 15;
         const images = [];
-        for (let i = 1; i <= 20; i++) {  // Adjusted to 20 images
-            images.push(`instagram${i}.png`);  // Local images in same directory
+        for (let i = 1; i <= 20; i++) {
+            images.push(`instagram${i}.png`); // Images in the same folder as index.html
         }
 
         const textureLoader = new THREE.TextureLoader();
         const meshes = [];
         images.forEach((url, index) => {
             textureLoader.load(url, (texture) => {
-                const geometry = new THREE.PlaneGeometry(4, 6);
+                const aspect = texture.image.width / texture.image.height;
+                const geometry = new THREE.PlaneGeometry(4 * aspect, 4); // Adjusted for image aspect ratio
                 const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
                 const mesh = new THREE.Mesh(geometry, material);
                 const angle = (index / images.length) * Math.PI * 2;
@@ -145,6 +146,8 @@
                 mesh.lookAt(0, 0, 0);
                 group.add(mesh);
                 meshes.push(mesh);
+            }, undefined, (error) => {
+                console.error(`Error loading ${url}:`, error);
             });
         });
 
@@ -174,8 +177,9 @@
             raycaster.setFromCamera(mouse, camera);
             const intersects = raycaster.intersectObjects(meshes);
 
-            if (hoveredMesh && !intersects.length) {
+            if (hoveredMesh && (!intersects.length || intersects[0].object !== hoveredMesh)) {
                 gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+                gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z, duration: 0.5 });
                 hoveredMesh = null;
             }
 
@@ -184,9 +188,12 @@
                 if (newHovered !== hoveredMesh) {
                     if (hoveredMesh) {
                         gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+                        gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z, duration: 0.5 });
                     }
                     hoveredMesh = newHovered;
+                    if (!hoveredMesh.originalPosition) hoveredMesh.originalPosition = { z: hoveredMesh.position.z };
                     gsap.to(hoveredMesh.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.5 });
+                    gsap.to(hoveredMesh.position, { z: hoveredMesh.originalPosition.z + 3, duration: 0.5 });
                 }
             }
         }
