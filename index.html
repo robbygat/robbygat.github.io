@@ -15,18 +15,58 @@
         h1, h2 {
             font-family: 'Playfair Display', serif;
         }
-        #gallery-container {
-            height: 80vh;
-            max-height: 800px;
-            position: relative;
-        }
         .parallax {
             background-attachment: fixed;
             background-size: cover;
         }
+        .gallery {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .image-container:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: opacity 0.5s ease;
+        }
+        .image-container .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .image-container:hover .overlay {
+            opacity: 1;
+        }
+        .confetti {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+        }
     </style>
-    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-    <script src="https://rawgit.com/IdeaSpaceVR/aframe-particle-system-component/master/dist/aframe-particle-system-component.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body class="antialiased">
@@ -50,12 +90,12 @@
         </div>
     </section>
 
-    <!-- Immersive Gallery Section -->
+    <!-- 3D Interactive Gallery with Physics and Confetti -->
     <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-12">Immersive Memories</h2>
-            <p class="text-center text-lg mb-6">Dive into our world—drag to explore, hover to enlarge. For VR mode, use a compatible device!</p>
-            <div id="gallery-container" class="rounded-3xl shadow-2xl overflow-hidden"></div>
+            <h2 class="text-4xl font-bold text-center mb-12">Memories in Motion</h2>
+            <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+            <canvas id="confetti-canvas" class="confetti"></canvas>
         </div>
     </section>
 
@@ -115,55 +155,102 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // A-Frame Immersive Gallery
-        const container = document.getElementById('gallery-container');
-        const scene = document.createElement('a-scene');
-        scene.setAttribute('embedded', true);
-        scene.innerHTML = `
-            <a-sky color="#e0f2fe"></a-sky>
-            <a-light type="ambient" intensity="1"></a-light>
-            <a-light type="directional" intensity="0.5" position="0 10 0"></a-light>
-            <a-entity particle-system="preset: snow; color: #ffffff,#ffd700; particleCount: 2000; size: 0.05; velocityValue: 0 -0.5 0; velocitySpread: 0.5 0.5 0.5"></a-entity>
-            <a-camera position="0 1.6 0">
-                <a-cursor color="#4CC3D9" fuse="false"></a-cursor>
-            </a-camera>
-        `;
-        container.appendChild(scene);
-
-        const group = document.createElement('a-entity');
-        group.setAttribute('id', 'gallery-group');
-        group.setAttribute('animation', 'property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 60000; easing: linear');
-        scene.appendChild(group);
-
+        // Interactive Gallery with Physics and Confetti
+        const galleryContainer = document.getElementById('gallery-container');
         const images = [];
         for (let i = 1; i <= 20; i++) {
-            images.push(`instagram${i}.png`);
+            images.push(`instagram${i}.png`); // Local images in same folder
         }
 
-        images.forEach((src, index) => {
-            const entity = document.createElement('a-image');
-            entity.setAttribute('src', src);
-            const angle = (index / images.length) * 360;
-            const rad = 10;
-            const x = rad * Math.sin(angle * Math.PI / 180);
-            const z = rad * Math.cos(angle * Math.PI / 180);
-            entity.setAttribute('position', `${x} 0 ${z}`);
-            entity.setAttribute('rotation', `0 ${-angle} 0`);
-            entity.setAttribute('scale', '3 4 1'); // Base scale adjusted for visibility
-            entity.setAttribute('class', 'clickable');
-            group.appendChild(entity);
+        images.forEach(imgSrc => {
+            const div = document.createElement('div');
+            div.className = 'image-container';
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.alt = `Wedding Memory ${imgSrc}`;
+            img.onload = () => {
+                div.appendChild(img);
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                overlay.textContent = 'Hover for Magic';
+                div.appendChild(overlay);
+                galleryContainer.appendChild(div);
+            };
+            img.onerror = () => console.error(`Failed to load ${imgSrc}`);
+        });
 
-            // Interaction
-            entity.addEventListener('mouseenter', () => {
-                entity.setAttribute('scale', '4.5 6 1');
+        // p5.js Confetti Effect
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const sketch = (p) => {
+            let confetti = [];
+
+            p.setup = () => {
+                p.createCanvas(window.innerWidth, window.innerHeight).parent('confetti-canvas');
+                p.noStroke();
+            };
+
+            p.draw = () => {
+                p.background(0, 10); // Slight fade for effect
+                confetti.forEach((c, i) => {
+                    c.y += c.speed;
+                    c.x += p.random(-1, 1);
+                    c.rotation += c.spin;
+                    p.push();
+                    p.translate(c.x, c.y);
+                    p.rotate(c.rotation);
+                    p.fill(c.color);
+                    p.ellipse(0, 0, c.size, c.size);
+                    p.pop();
+                    if (c.y > p.height) confetti.splice(i, 1);
+                });
+                if (p.random() < 0.1) confetti.push({
+                    x: p.random(p.width),
+                    y: -10,
+                    speed: p.random(1, 5),
+                    size: p.random(5, 15),
+                    color: p.color(p.random(100, 255), p.random(100, 255), p.random(100, 255), 150),
+                    rotation: 0,
+                    spin: p.random(-0.1, 0.1)
+                });
+            };
+
+            p.windowResized = () => {
+                p.resizeCanvas(window.innerWidth, window.innerHeight);
+            };
+        };
+        new p5(sketch);
+
+        // Physics Simulation with CANNON.js (Hover Bounce)
+        const world = new CANNON.World();
+        world.gravity.set(0, -9.82, 0); // Gravity for bounce effect
+        const bodies = [];
+
+        document.querySelectorAll('.image-container').forEach((container, index) => {
+            const shape = new CANNON.Box(new CANNON.Vec3(container.offsetWidth / 2 / 100, container.offsetHeight / 2 / 100, 0.1));
+            const body = new CANNON.Body({ mass: 1 });
+            body.addShape(shape);
+            body.position.set((index % 4) * 300 / 100 - 1.5, -index * 200 / 100 + 1.5, 0);
+            body.linearDamping = 0.5;
+            world.addBody(body);
+            bodies.push({ element: container, body });
+
+            container.addEventListener('mouseenter', () => {
+                body.velocity.y = 5; // Bounce up
+                gsap.to(container, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)" });
             });
-            entity.addEventListener('mouseleave', () => {
-                entity.setAttribute('scale', '3 4 1');
-            });
-            entity.addEventListener('error', () => {
-                console.error(`Failed to load image: ${src}`);
+            container.addEventListener('mouseleave', () => {
+                gsap.to(container, { scale: 1, duration: 0.3, ease: "back.out(1.7)" });
             });
         });
+
+        function updatePhysics() {
+            world.step(1 / 60);
+            bodies.forEach(({ element, body }) => {
+                element.style.transform = `translate(${body.position.x * 100}px, ${body.position.y * 100}px)`;
+            });
+            requestAnimationFrame(updatePhysics);
+        }
+        updatePhysics();
 
         // EmailJS RSVP
         (function() {
