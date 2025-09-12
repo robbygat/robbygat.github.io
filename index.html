@@ -1,245 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rob & Nano – Wedding in Paradise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #ffffff;
-      overflow-x: hidden;
-    }
-    h1, h2 {
-      font-family: 'Playfair Display', serif;
-    }
-    section {
-      padding: 80px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    .hero {
-      height: 100vh;
-      background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80') center/cover no-repeat;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: white;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.3), #000000c0);
-    }
-    .hero .content {
-      position: relative;
-      z-index: 2;
-    }
-    .hero h1 {
-      font-size: 4rem;
-    }
-    .countdown {
-      font-size: 1.25rem;
-      margin-top: 20px;
-    }
-    #carousel-container {
-      height: 80vh;
-      border-radius: 30px;
-      overflow: hidden;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-      border: none;
-    }
-    input[type="submit"] {
-      background: #4f46e5;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      background: #111;
-      color: #ccc;
-    }
-    canvas {
-      display: block;
-    }
-  </style>
-  <!-- External Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rob & Nano - Wedding in Paradise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #e0f2fe);
+            color: #1e3a8a;
+        }
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+        #gallery-container {
+            height: 80vh;
+            max-height: 800px;
+            position: relative;
+        }
+        .parallax {
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://rawgit.com/IdeaSpaceVR/aframe-particle-system-component/master/dist/aframe-particle-system-component.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body>
+<body class="antialiased">
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80');">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
+        <div class="relative z-10 text-center text-white">
+            <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
+            <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
+            <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
+            <div id="countdown" class="text-lg md:text-xl"></div>
+        </div>
+    </section>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="content">
-      <h1>Rob & Nano</h1>
-      <p class="text-xl">Join us in Koh Samui, Thailand</p>
-      <p class="text-lg">May 4th, 2026</p>
-      <div class="countdown" id="countdown"></div>
-    </div>
-  </section>
+    <!-- Our Story Section -->
+    <section class="py-20 px-4 md:px-20 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
+            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
+            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
+        </div>
+    </section>
 
-  <!-- OUR STORY -->
-  <section>
-    <h2 class="text-3xl font-bold text-center mb-6">Our Story</h2>
-    <p class="text-lg text-center max-w-2xl mx-auto">From chance encounters to eternal promises, our journey has been magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
-  </section>
+    <!-- Immersive Gallery Section -->
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">Immersive Memories</h2>
+            <p class="text-center text-lg mb-6">Dive into our world—drag to explore, hover to enlarge. For VR mode, use a compatible device!</p>
+            <div id="gallery-container" class="rounded-3xl shadow-2xl overflow-hidden"></div>
+        </div>
+    </section>
 
-  <!-- 3D MEMORIES IN SPACE -->
-  <section>
-    <h2 class="text-3xl font-bold text-center mb-6">Memories in 3D</h2>
-    <div id="carousel-container">
-      <canvas id="bg"></canvas>
-    </div>
-  </section>
+    <!-- Location Section -->
+    <section class="py-20 px-4 md:px-20 parallax" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
+        <div class="max-w-4xl mx-auto text-center text-white">
+            <h2 class="text-4xl font-bold mb-8">The Venue: Koh Samui</h2>
+            <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
+            <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
 
-  <!-- LOCATION -->
-  <section>
-    <h2 class="text-3xl font-bold text-center mb-6">The Venue: Koh Samui</h2>
-    <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-  </section>
+    <!-- RSVP Section -->
+    <section class="py-20 px-4 md:px-20 bg-white">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
+            <form id="rsvp-form" class="space-y-4">
+                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input type="submit" value="Send RSVP" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+            </form>
+        </div>
+    </section>
 
-  <!-- RSVP -->
-  <section>
-    <h2 class="text-3xl font-bold text-center mb-6">RSVP</h2>
-    <form id="rsvp-form">
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="email" name="email" placeholder="Your Email" required>
-      <textarea name="message" placeholder="Attending, guest names, allergies?" required></textarea>
-      <input type="submit" value="Send RSVP">
-    </form>
-  </section>
+    <!-- Invitation Section -->
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-white to-blue-50">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8">Send an Invitation</h2>
+            <form id="invitation-form" class="space-y-4">
+                <input type="text" name="guest_name" placeholder="Guest Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="guest_email" placeholder="Guest Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea name="message" placeholder="Personal Message" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input type="submit" value="Prepare Email Invitation" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+            </form>
+        </div>
+    </section>
 
-  <!-- INVITE -->
-  <section>
-    <h2 class="text-3xl font-bold text-center mb-6">Send an Invite</h2>
-    <form id="invitation-form">
-      <input type="text" name="guest_name" placeholder="Guest Name" required>
-      <input type="email" name="guest_email" placeholder="Guest Email" required>
-      <textarea name="message" placeholder="Personal Message" required></textarea>
-      <input type="submit" value="Send Invite Email">
-    </form>
-  </section>
+    <!-- Footer -->
+    <footer class="py-8 text-center text-blue-800 bg-white">
+        <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
+    </footer>
 
-  <footer>
-    <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
-  </footer>
+    <script>
+        // Countdown
+        const weddingDate = new Date('2026-05-04T00:00:00');
+        const countdownEl = document.getElementById('countdown');
+        function updateCountdown() {
+            const now = new Date();
+            const diff = weddingDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            countdownEl.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until our special day!`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-  <!-- JS SCRIPT -->
-  <script>
-    // Countdown Timer
-    const weddingDate = new Date('2026-05-04T00:00:00');
-    const countdownEl = document.getElementById('countdown');
-    function updateCountdown() {
-      const now = new Date();
-      const diff = weddingDate - now;
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      countdownEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s to go!`;
-    }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+        // A-Frame Immersive Gallery
+        const container = document.getElementById('gallery-container');
+        const scene = document.createElement('a-scene');
+        scene.setAttribute('embedded', true);
+        scene.innerHTML = `
+            <a-sky color="#e0f2fe"></a-sky>
+            <a-light type="ambient" intensity="1"></a-light>
+            <a-light type="directional" intensity="0.5" position="0 10 0"></a-light>
+            <a-entity particle-system="preset: snow; color: #ffffff,#ffd700; particleCount: 2000; size: 0.05; velocityValue: 0 -0.5 0; velocitySpread: 0.5 0.5 0.5"></a-entity>
+            <a-camera position="0 1.6 0">
+                <a-cursor color="#4CC3D9" fuse="false"></a-cursor>
+            </a-camera>
+        `;
+        container.appendChild(scene);
 
-    // 3D MEMORY SPACE
-    const canvas = document.getElementById("bg");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-    camera.position.z = 50;
+        const group = document.createElement('a-entity');
+        group.setAttribute('id', 'gallery-group');
+        group.setAttribute('animation', 'property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 60000; easing: linear');
+        scene.appendChild(group);
 
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+        const images = [];
+        for (let i = 1; i <= 20; i++) {
+            images.push(`instagram${i}.png`);
+        }
 
-    // Floating images
-    const loader = new THREE.TextureLoader();
-    const group = new THREE.Group();
-    scene.add(group);
+        images.forEach((src, index) => {
+            const entity = document.createElement('a-image');
+            entity.setAttribute('src', src);
+            const angle = (index / images.length) * 360;
+            const rad = 10;
+            const x = rad * Math.sin(angle * Math.PI / 180);
+            const z = rad * Math.cos(angle * Math.PI / 180);
+            entity.setAttribute('position', `${x} 0 ${z}`);
+            entity.setAttribute('rotation', `0 ${-angle} 0`);
+            entity.setAttribute('scale', '3 4 1'); // Base scale adjusted for visibility
+            entity.setAttribute('class', 'clickable');
+            group.appendChild(entity);
 
-    for (let i = 1; i <= 20; i++) {
-      loader.load(`instagram${i}.png`, (texture) => {
-        const ratio = texture.image.height / texture.image.width;
-        const geom = new THREE.PlaneGeometry(6, 6 * ratio);
-        const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0.9 });
-        const mesh = new THREE.Mesh(geom, mat);
-
-        const phi = Math.acos(2 * Math.random() - 1);
-        const theta = 2 * Math.PI * Math.random();
-        const r = 30 + Math.random() * 20;
-
-        mesh.position.set(
-          r * Math.sin(phi) * Math.cos(theta),
-          r * Math.sin(phi) * Math.sin(theta),
-          r * Math.cos(phi)
-        );
-        mesh.rotation.set(Math.random(), Math.random(), Math.random());
-        group.add(mesh);
-
-        // Animation
-        gsap.to(mesh.rotation, {
-          x: "+=" + Math.random() * 2,
-          y: "+=" + Math.random() * 2,
-          duration: 20 + Math.random() * 20,
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
+            // Interaction
+            entity.addEventListener('mouseenter', () => {
+                entity.setAttribute('scale', '4.5 6 1');
+            });
+            entity.addEventListener('mouseleave', () => {
+                entity.setAttribute('scale', '3 4 1');
+            });
+            entity.addEventListener('error', () => {
+                console.error(`Failed to load image: ${src}`);
+            });
         });
-      });
-    }
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
-    scene.add(ambientLight);
+        // EmailJS RSVP
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY_HERE");
+        })();
 
-    function animate() {
-      requestAnimationFrame(animate);
-      group.rotation.y += 0.001;
-      renderer.render(scene, camera);
-    }
-    animate();
+        document.getElementById('rsvp-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
+                .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
+        });
 
-    window.addEventListener('resize', () => {
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-    });
-
-    // EmailJS
-    (function() {
-      emailjs.init("YOUR_PUBLIC_KEY_HERE");
-    })();
-
-    document.getElementById('rsvp-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
-        .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
-    });
-
-    document.getElementById('invitation-form').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const name = this.guest_name.value;
-      const email = this.guest_email.value;
-      const message = this.message.value;
-      const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026 in Koh Samui!\n\n${message}\n\nLove,\nRob & Nano`;
-      window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
-    });
-  </script>
+        // Invitation Mailto
+        document.getElementById('invitation-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = this.guest_name.value;
+            const email = this.guest_email.value;
+            const message = this.message.value;
+            const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026, in Koh Samui.\n\n${message}\n\nRSVP at: [URL]\n\nLove,\nRob & Nano`;
+            window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
+        });
+    </script>
 </body>
 </html>
