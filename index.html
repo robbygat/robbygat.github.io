@@ -133,25 +133,23 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            background: linear-gradient(135deg, #FAFAF9 0%, #F5F2EA 100%);
             overflow: hidden;
+            background-image: url('kosamui1.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            color: white;
         }
 
-        .hero-bg {
+        .hero::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.15;
-            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1440 820" xmlns="http://www.w3.org/2000/svg"><path d="M0,400 C320,300 520,500 720,400 C920,300 1120,500 1440,400 L1440,820 L0,820 Z" fill="%23D4AF37" opacity="0.3"/></svg>');
-            background-size: cover;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+            background: rgba(10, 10, 10, 0.45);
+            z-index: 1;
         }
 
         .hero-content {
@@ -168,7 +166,7 @@
             font-weight: 600;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--ocean);
+            color: rgba(255, 255, 255, 0.8);
             margin-bottom: 1.5rem;
             opacity: 0;
             animation: fadeInUp 0.8s ease forwards;
@@ -179,7 +177,7 @@
             line-height: 0.9;
             letter-spacing: -0.03em;
             margin-bottom: 1.5rem;
-            color: var(--ink);
+            color: white;
             opacity: 0;
             animation: fadeInUp 0.8s ease 0.2s forwards;
         }
@@ -187,7 +185,7 @@
         .hero-subtitle {
             font-size: clamp(1.1rem, 2vw, 1.4rem);
             font-weight: 400;
-            color: rgba(10, 10, 10, 0.7);
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 3rem;
             letter-spacing: -0.01em;
             opacity: 0;
@@ -279,49 +277,59 @@
             margin: 0 auto;
             line-height: 1.7;
         }
-
-        /* Venue Section */
-        .venue-section {
-            background: var(--sand);
-            border-radius: 32px;
-            margin: 4rem 2rem;
-            overflow: hidden;
-        }
-
-        .venue-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 600px;
-        }
-
-        .venue-info {
-            padding: 4rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .venue-map {
+        
+        /* NEW: Shared styles for sections with image backgrounds */
+        .bg-image-section {
             position: relative;
-            background: #E5E5E5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            padding: 8rem 2rem;
+            color: white;
+            max-width: none; /* Allow section to be full width */
         }
 
-        .venue-map iframe {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            filter: grayscale(0.2) contrast(1.1);
+        .bg-image-section::before {
+            content: '';
+            position: absolute;
+            inset: 0; /* shorthand for top, right, bottom, left = 0 */
+            background: rgba(10, 10, 10, 0.55);
+            z-index: 1;
         }
 
+        .bg-image-section > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Ko Samui Paradise Section (formerly Venue) */
+        #venue {
+            background-image: url('kosamui4.jpg');
+        }
+
+        .venue-content-wrapper {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        #venue .section-title,
+        #venue .section-description,
+        #venue .section-label {
+            color: white;
+        }
+
+        #venue .section-label {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
         .address-card {
             background: white;
             border-radius: 16px;
             padding: 2rem;
             margin-top: 2rem;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            color: var(--ink); /* Reset text color for card */
         }
 
         .address-card h4 {
@@ -336,42 +344,31 @@
         }
 
         /* RSVP Section */
-        .rsvp-section {
-            background: linear-gradient(135deg, #5B8A99 0%, #95A99C 100%);
+        #rsvp.bg-image-section {
+            background-image: url('kosamui3.jpg');
             border-radius: 32px;
+            margin: 4rem 2rem;
             padding: 4rem;
-            margin: 4rem 0;
-            position: relative;
-            overflow: hidden;
         }
 
-        .rsvp-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            pointer-events: none;
+        #rsvp.bg-image-section::before {
+            border-radius: 32px;
+            background: rgba(10, 10, 10, 0.6);
         }
-
+        
         .rsvp-form {
             max-width: 600px;
             margin: 0 auto;
-            position: relative;
-            z-index: 2;
         }
 
-        .rsvp-section .section-title,
-        .rsvp-section .section-description {
+        #rsvp .section-title,
+        #rsvp .section-description,
+        #rsvp .section-label {
             color: white;
         }
-
-        .rsvp-section .section-label {
-            color: rgba(255, 255, 255, 0.8);
+        #rsvp .section-label {
+             color: rgba(255, 255, 255, 0.8);
         }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -401,7 +398,6 @@
         textarea.form-input {
             resize: vertical;
             min-height: 120px;
-            font-family: inherit;
         }
 
         .btn-submit {
@@ -423,10 +419,6 @@
             box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
         }
 
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-
         /* Gallery */
         .gallery-grid {
             display: grid;
@@ -440,7 +432,7 @@
             aspect-ratio: 1;
             border-radius: 16px;
             overflow: hidden;
-            background: linear-gradient(135deg, #F5F2EA 0%, #E8B4B8 100%);
+            background: var(--sand);
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -459,15 +451,6 @@
 
         .gallery-item:hover img {
             transform: scale(1.1);
-        }
-
-        .gallery-placeholder {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem;
-            opacity: 0.3;
         }
 
         /* Footer */
@@ -527,21 +510,24 @@
             .countdown-number {
                 font-size: 2rem;
             }
-
-            .venue-content {
-                grid-template-columns: 1fr;
+            
+            /* Disable parallax on mobile as it can be janky */
+            .hero, .bg-image-section {
+                background-attachment: scroll;
             }
 
-            .venue-info {
-                padding: 3rem 2rem;
+            .bg-image-section {
+                padding: 6rem 1.5rem;
             }
-
-            .venue-map {
-                min-height: 300px;
+            
+            #rsvp.bg-image-section {
+                margin: 2rem 1rem;
+                padding: 3rem 1.5rem;
+                border-radius: 20px;
             }
-
-            .rsvp-section {
-                padding: 3rem 2rem;
+            
+            #rsvp.bg-image-section::before {
+                border-radius: 20px;
             }
 
             section {
@@ -565,12 +551,6 @@
 
             .countdown-number {
                 font-size: 1.75rem;
-            }
-
-            .venue-section,
-            .rsvp-section {
-                border-radius: 20px;
-                margin: 2rem 1rem;
             }
         }
 
@@ -619,7 +599,6 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <div class="nav-wrapper" id="navbar">
         <nav>
             <div class="nav-logo display-font">R & N</div>
@@ -637,9 +616,7 @@
         </nav>
     </div>
 
-    <!-- Hero Section -->
     <section id="home" class="hero">
-        <div class="hero-bg"></div>
         <div class="hero-content">
             <div class="hero-date mono-font">05 • 04 • 2026</div>
             <h1 class="hero-title display-font">Rob & Nano</h1>
@@ -650,66 +627,52 @@
         </div>
     </section>
 
-    <!-- Venue Section -->
-    <div id="venue" class="venue-section">
-        <div class="venue-content">
-            <div class="venue-info fade-in">
-                <div class="section-label mono-font">The Destination</div>
-                <h2 class="section-title display-font">Ko Samui Paradise</h2>
-                <p class="section-description">
-                    Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. 
-                    Join us in this tropical sanctuary as we begin our forever.
-                </p>
-                <div class="address-card">
-                    <h4 class="display-font">Island of Dreams</h4>
-                    <p>Ko Samui, Surat Thani<br>
-                    Thailand's Gulf Paradise<br>
-                    <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
-                </div>
-            </div>
-            <div class="venue-map">
-                <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" 
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- RSVP Section -->
-    <section id="rsvp">
-        <div class="rsvp-section">
-            <div class="rsvp-form">
-                <div class="section-header">
-                    <div class="section-label mono-font">Save Your Seat</div>
-                    <h2 class="section-title display-font">Join Our Celebration</h2>
-                    <p class="section-description">
-                        Your presence would make our special day complete
-                    </p>
-                </div>
-                <form id="rsvpForm">
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Your full name" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-input" placeholder="Email address" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-input" placeholder="Number of guests">
-                    </div>
-                    <div class="form-group">
-                        <textarea class="form-input" placeholder="Dietary preferences or special message (optional)"></textarea>
-                    </div>
-                    <div style="text-align: center;">
-                        <button type="submit" class="btn-submit">Confirm Attendance</button>
-                    </div>
-                </form>
+    <section id="venue" class="bg-image-section">
+        <div class="venue-content-wrapper fade-in">
+            <div class="section-label mono-font">The Destination</div>
+            <h2 class="section-title display-font">Ko Samui Paradise</h2>
+            <p class="section-description">
+                Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. 
+                Join us in this tropical sanctuary as we begin our forever.
+            </p>
+            <div class="address-card">
+                <h4 class="display-font">Island of Dreams</h4>
+                <p>Ko Samui, Surat Thani<br>
+                Thailand's Gulf Paradise<br>
+                <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
             </div>
         </div>
     </section>
 
-    <!-- Gallery Section -->
+    <section id="rsvp" class="bg-image-section">
+        <div class="rsvp-form">
+            <div class="section-header">
+                <div class="section-label mono-font">Save Your Seat</div>
+                <h2 class="section-title display-font">Join Our Celebration</h2>
+                <p class="section-description">
+                    Your presence would make our special day complete
+                </p>
+            </div>
+            <form id="rsvpForm">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Your full name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-input" placeholder="Email address" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder="Number of guests">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-input" placeholder="Dietary preferences or special message (optional)"></textarea>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn-submit">Confirm Attendance</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
     <section id="gallery">
         <div class="section-header fade-in">
             <div class="section-label mono-font">Our Journey</div>
@@ -719,11 +682,9 @@
             </p>
         </div>
         <div class="gallery-grid">
-            <!-- Gallery items will be populated by JavaScript -->
-        </div>
+            </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="footer-content">
             <div class="footer-names display-font">Rob & Nano</div>
@@ -742,9 +703,9 @@
 
             if (distance < 0) {
                 document.getElementById('countdown').innerHTML = `
-                    <div class="countdown-item">
+                    <div class="countdown-item" style="grid-column: 1 / -1;">
                         <div class="countdown-number">🎉</div>
-                        <div class="countdown-label">Today!</div>
+                        <div class="countdown-label">Happily Ever After!</div>
                     </div>
                 `;
                 return;
@@ -788,17 +749,22 @@
             }
         });
 
-        // Gallery Population with placeholders
+        // Gallery Population
         const galleryGrid = document.querySelector('.gallery-grid');
-        const emojis = ['🌺', '🌴', '🌊', '💑', '🏝️', '🌅', '💍', '🥂', '🎊'];
-        
-        for (let i = 0; i < 9; i++) {
+        const imageCount = 20; // Total number of instagram images
+
+        for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item fade-in';
-            item.style.animationDelay = `${i * 0.1}s`;
-            item.innerHTML = `
-                <div class="gallery-placeholder">${emojis[i]}</div>
-            `;
+            // Stagger the animation
+            item.style.animationDelay = `${(i - 1) * 0.05}s`; 
+
+            const img = document.createElement('img');
+            img.src = `instagram${i}.png`;
+            img.alt = `Captured Moment ${i}`;
+            img.loading = 'lazy'; // Lazy load images for better performance
+
+            item.appendChild(img);
             galleryGrid.appendChild(item);
         }
 
@@ -854,6 +820,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.animationPlayState = 'running';
+                    observer.unobserve(entry.target); // Optional: stop observing once animated
                 }
             });
         }, observerOptions);
