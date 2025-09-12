@@ -81,24 +81,6 @@
         </div>
     </section>
 
-    <!-- Our Story Section -->
-    <section class="py-20 px-4 md:px-20 bg-white">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
-            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
-            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
-        </div>
-    </section>
-
-    <!-- 3D Interactive Gallery with Physics and Confetti -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-12">Memories in Motion</h2>
-            <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-            <canvas id="confetti-canvas" class="confetti"></canvas>
-        </div>
-    </section>
-
     <!-- Location Section -->
     <section class="py-20 px-4 md:px-20 parallax" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
         <div class="max-w-4xl mx-auto text-center text-white">
@@ -121,16 +103,21 @@
         </div>
     </section>
 
-    <!-- Invitation Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-white to-blue-50">
-        <div class="max-w-md mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-8">Send an Invitation</h2>
-            <form id="invitation-form" class="space-y-4">
-                <input type="text" name="guest_name" placeholder="Guest Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="guest_email" placeholder="Guest Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea name="message" placeholder="Personal Message" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
-                <input type="submit" value="Prepare Email Invitation" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
-            </form>
+    <!-- Our Story Section -->
+    <section class="py-20 px-4 md:px-20 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
+            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
+            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
+        </div>
+    </section>
+
+    <!-- Photo Gallery Section -->
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">Our Precious Moments</h2>
+            <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+            <canvas id="confetti-canvas" class="confetti"></canvas>
         </div>
     </section>
 
@@ -155,7 +142,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Interactive Gallery with Physics and Confetti
+        // Photo Gallery with Physics and Confetti
         const galleryContainer = document.getElementById('gallery-container');
         const images = [];
         for (let i = 1; i <= 20; i++) {
@@ -261,16 +248,6 @@
             event.preventDefault();
             emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
                 .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
-        });
-
-        // Invitation Mailto
-        document.getElementById('invitation-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = this.guest_name.value;
-            const email = this.guest_email.value;
-            const message = this.message.value;
-            const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026, in Koh Samui.\n\n${message}\n\nRSVP at: [URL]\n\nLove,\nRob & Nano`;
-            window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
         });
     </script>
 </body>
