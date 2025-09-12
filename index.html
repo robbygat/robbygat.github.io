@@ -1,628 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --coral: #FF6B6B;
-            --turquoise: #2DD4BF;
-            --gold: #FBBF24;
-            --dark-teal: #134E4A;
-            --cream: #FEFCE8;
-            --charcoal: #1E293B;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>Rob & Nano - Wedding in Paradise</title>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Marcellus&display=swap"
+        rel="stylesheet">
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Lightbox -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff6f61;
+      --secondary: #4dd0e1;
+      --accent: #fdd835;
+      --dark: #0f172a;
+      --light: #f8fafc;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--light);
+      color: var(--dark);
+    }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--cream);
-            color: var(--charcoal);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+    h1, h2, h3 {
+      font-family: 'Marcellus', serif;
+      letter-spacing: 0.5px;
+    }
 
-        h1, h2, h3 {
-            font-family: 'Playfair Display', serif;
-        }
+    .hero {
+      background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.55)),
+      url('kosamui1.jpg') center/cover no-repeat;
+    }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
 
-        .hero-section {
-            position: relative;
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: url('kosamui1.jpg') center/cover no-repeat;
-            overflow: hidden;
-        }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
 
-        .wave-bg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113.64,31.08,1200,41.09V0H0Z" fill="rgba(255,255,255,0.3)"/></svg>') repeat-x;
-            background-size: cover;
-            animation: wave 10s linear infinite;
-        }
+    .glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+    }
 
-        @keyframes wave {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-1200px); }
-        }
+    .gallery-grid img {
+      transition: transform 0.4s ease;
+    }
 
-        .hero-title {
-            font-size: clamp(2.5rem, 6vw, 5rem);
-            color: var(--gold);
-            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
-            line-height: 1.1;
-        }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+    }
 
-        .hero-subtitle, .hero-date {
-            color: white;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.6);
-            font-size: clamp(0.9rem, 1.8vw, 1.8rem);
-            font-weight: 400;
-        }
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
 
-        .countdown-display {
-            background: linear-gradient(135deg, var(--dark-teal), #1E293B);
-            border-radius: 10px;
-            padding: 12px;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--gold);
-            max-width: 450px;
-            margin: 0 auto;
-        }
+    .nav-bar a {
+      color: white;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
 
-        .segment-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+    .nav-bar a:hover {
+      color: var(--accent);
+    }
 
-        .time-segment {
-            background: #111827;
-            border-radius: 6px;
-            padding: 8px 6px;
-            min-width: 60px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-
-        .segment-number {
-            font-family: 'Space Mono', monospace;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--gold);
-            text-shadow: 0 0 5px var(--gold);
-            animation: glow 1.2s ease-in-out infinite alternate;
-        }
-
-        .segment-label {
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.7rem;
-            color: #E5E7EB;
-            text-transform: uppercase;
-            margin-top: 3px;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 5px var(--gold); }
-            to { text-shadow: 0 0 10px var(--gold), 0 0 15px var(--gold); }
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gold), var(--coral));
-            color: var(--charcoal);
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(251, 191, 36, 0.4);
-            background: linear-gradient(135deg, var(--coral), var(--gold));
-        }
-
-        .section-title {
-            font-size: clamp(1.8rem, 3.5vw, 3rem);
-            color: var(--dark-teal);
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-input {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid transparent;
-            border-radius: 10px;
-            padding: 10px 18px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(6px);
-            width: 100%;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
-        }
-
-        .form-input::placeholder {
-            color: #6B7280;
-        }
-
-        .parallax-section {
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .gallery-item::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.3));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-item:hover::after {
-            opacity: 1;
-        }
-
-        .nav-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(19, 78, 74, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-        }
-
-        .nav-bar a {
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
-
-        .nav-bar a:hover {
-            color: var(--gold);
-        }
-
-        @media (max-width: 768px) {
-            .hero-section { min-height: 60vh; }
-            .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); }
-            .hero-subtitle, .hero-date { font-size: clamp(0.8rem, 1.6vw, 1.4rem); }
-            .section-title { font-size: clamp(1.5rem, 3vw, 2.2rem); }
-            .countdown-display { padding: 10px; max-width: 85%; }
-            .segment-container { gap: 6px; }
-            .time-segment { min-width: 50px; padding: 6px 5px; }
-            .segment-number { font-size: 1.4rem; }
-            .segment-label { font-size: 0.6rem; }
-            .parallax-section { min-height: 50vh; }
-            .form-input { padding: 8px 15px; font-size: 0.85rem; }
-            .btn-primary { padding: 8px 20px; font-size: 0.8rem; }
-            .gallery-item img { height: 200px; }
-            .nav-bar { padding: 0.75rem 0; }
-            .nav-bar a { font-size: 0.8rem; }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title { font-size: clamp(1.8rem, 4vw, 2.8rem); }
-            .countdown-display { padding: 8px; }
-            .time-segment { min-width: 40px; }
-            .segment-number { font-size: 1.2rem; }
-            .gallery-item img { height: 150px; }
-            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
-        }
-
-        html {
-            scroll-behavior: smooth;
-            touch-action: manipulation;
-        }
-
-        .fade-in {
-            opacity: 0;
-            animation: fadeIn 0.8s ease-in forwards;
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        .slide-up {
-            transform: translateY(20px);
-            opacity: 0;
-            animation: slideUp 0.6s ease-out forwards;
-        }
-
-        @keyframes slideUp {
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .heart {
-            position: absolute;
-            color: var(--coral);
-            font-size: 1rem;
-            opacity: 0;
-            animation: floatHeart 3s ease-in-out infinite;
-        }
-
-        @keyframes floatHeart {
-            0% { transform: translateY(0); opacity: 0; }
-            50% { transform: translateY(-25px); opacity: 0.5; }
-            100% { transform: translateY(-50px); opacity: 0; }
-        }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="nav-bar">
-        <div class="max-w-7xl mx-auto px-4 flex justify-center gap-6">
-            <a href="#home" class="fade-in">Home</a>
-            <a href="#venue" class="fade-in">Venue</a>
-            <a href="#rsvp" class="fade-in">RSVP</a>
-            <a href="#gallery" class="fade-in">Gallery</a>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero-section">
-        <div class="wave-bg"></div>
-        <canvas id="particle-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></canvas>
-        <div class="relative z-20 text-center px-4 w-full">
-            <div class="glass rounded-2xl px-6 py-6 max-w-3xl mx-auto fade-in">
-                <h1 class="hero-title font-bold mb-3">Rob & Nano</h1>
-                <p class="hero-subtitle mb-2">Join us in Paradise</p>
-                <p class="hero-date font-medium mb-4">Ko Samui, Thailand • May 4th, 2026</p>
-                <div class="countdown-display slide-up">
-                    <div id="countdown" class="segment-container"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Nav -->
+<nav class="nav-bar">
+  <div class="max-w-6xl mx-auto px-6 flex justify-center gap-8 py-4">
+    <a href="#home">Home</a>
+    <a href="#venue">Venue</a>
+    <a href="#rsvp">RSVP</a>
+    <a href="#gallery">Gallery</a>
+  </div>
+</nav>
 
-    <!-- The Venue Section -->
-    <section id="venue" class="parallax-section bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
-        <div class="relative z-10 max-w-5xl mx-auto text-center px-4">
-            <div class="glass rounded-2xl px-6 py-8 slide-up">
-                <h2 class="section-title text-white mb-6">The Venue</h2>
-                <div class="section-content text-white mb-6">
-                    <p class="text-base mb-4">Immerse yourself in the magic of Ko Samui, where crystal waters and lush jungles create the perfect backdrop for our love story.</p>
-                    <p class="text-sm opacity-90">Celebrate with us in this tropical haven under a canopy of stars.</p>
-                </div>
-                <div class="rounded-2xl overflow-hidden shadow-xl max-w-3xl mx-auto">
-                    <iframe class="w-full h-64" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Hero -->
+<section id="home" class="hero h-screen flex items-center justify-center text-center text-white relative">
+  <div class="max-w-3xl px-6">
+    <h1 class="text-5xl md:text-6xl font-bold mb-4">Rob & Nano</h1>
+    <p class="text-xl mb-2">Wedding in Paradise</p>
+    <p class="text-lg mb-6">Ko Samui, Thailand • May 4th, 2026</p>
+    <a href="#rsvp" class="btn-primary">Reserve Your Spot ✨</a>
+  </div>
+</section>
 
-    <!-- RSVP Section -->
-    <section id="rsvp" class="parallax-section bg-cover bg-center" style="background-image: url('kosamui4.jpg');">
-        <div class="max-w-xl mx-auto px-4">
-            <h2 class="section-title text-white mb-6 slide-up">Reserve Your Place</h2>
-            <div class="glass rounded-2xl p-6 slide-up">
-                <form id="rsvp-form" class="space-y-5">
-                    <div>
-                        <input type="text" name="name" placeholder="Your Full Name" required class="form-input">
-                    </div>
-                    <div>
-                        <input type="email" name="email" placeholder="Email Address" required class="form-input">
-                    </div>
-                    <div>
-                        <textarea name="message" placeholder="Share your excitement, dietary preferences, or special requests..." required class="form-input h-20 resize-none"></textarea>
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn-primary cursor-pointer text-sm">Send RSVP ✨</button>
-                    </div>
-                </form>
-                <div id="rsvp-confirmation" class="hidden text-center text-base text-white mt-3">Thank You! Your RSVP is Confirmed! 💕</div>
-            </div>
-        </div>
-    </section>
+<!-- Venue -->
+<section id="venue" class="py-20 bg-gradient-to-b from-white to-gray-50">
+  <div class="max-w-5xl mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-6 text-gray-800">The Venue</h2>
+    <p class="text-lg text-gray-600 mb-6">
+      Immerse yourself in the magic of Ko Samui, where crystal waters and lush jungles create the perfect backdrop for
+      our love story.
+    </p>
+    <div class="rounded-xl overflow-hidden shadow-lg">
+      <iframe class="w-full h-72"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus"
+              allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
 
-    <!-- Photo Gallery Section -->
-    <section id="gallery" class="py-16 px-4 bg-cream">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="section-title mb-8 slide-up">Captured Moments</h2>
-            <div class="gallery-grid">
-                <!-- Dynamically populated by JavaScript -->
-            </div>
-        </div>
-    </section>
+<!-- RSVP -->
+<section id="rsvp" class="py-20 bg-gradient-to-b from-gray-50 to-white">
+  <div class="max-w-lg mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-8 text-gray-800">Reserve Your Place</h2>
+    <form id="rsvp-form" class="glass p-8 space-y-5">
+      <input type="text" name="name" placeholder="Your Full Name" required
+             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none"/>
+      <input type="email" name="email" placeholder="Email Address" required
+             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none"/>
+      <textarea name="message" placeholder="Message, dietary preferences, or requests..." required
+                class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary outline-none h-24 resize-none"></textarea>
+      <button type="submit" class="btn-primary w-full">Send RSVP</button>
+      <p id="rsvp-confirmation" class="hidden mt-3 text-green-600 font-medium">Your RSVP has been sent! 💕</p>
+    </form>
+  </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="py-8 text-center bg-dark-teal">
-        <div class="glass rounded-full inline-block px-6 py-3">
-            <p class="font-medium text-sm text-white">&copy; 2025 Rob & Nano's Wedding • Made with 💝</p>
-        </div>
-    </footer>
+<!-- Gallery -->
+<section id="gallery" class="py-20 bg-gradient-to-b from-white to-gray-50">
+  <div class="max-w-6xl mx-auto px-6">
+    <h2 class="text-4xl font-bold mb-10 text-center text-gray-800">Captured Moments</h2>
+    <div class="gallery-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <a href="instagram1.png" data-lightbox="gallery"><img src="instagram1.png" alt="Memory 1"
+                                                            class="rounded-lg shadow-lg"/></a>
+      <a href="instagram2.png" data-lightbox="gallery"><img src="instagram2.png" alt="Memory 2"
+                                                            class="rounded-lg shadow-lg"/></a>
+      <a href="instagram3.png" data-lightbox="gallery"><img src="instagram3.png" alt="Memory 3"
+                                                            class="rounded-lg shadow-lg"/></a>
+      <a href="instagram4.png" data-lightbox="gallery"><img src="instagram4.png" alt="Memory 4"
+                                                            class="rounded-lg shadow-lg"/></a>
+      <!-- Add more as needed -->
+    </div>
+  </div>
+</section>
 
-    <!-- Scripts -->
-    <script>
-        // Lenis Smooth Scrolling
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof Lenis === 'undefined') {
-                console.warn('Lenis not loaded, falling back to default scrolling');
-                return;
-            }
+<!-- Footer -->
+<footer class="bg-dark py-8 text-center text-white">
+  <p>&copy; 2025 Rob & Nano's Wedding • Made with 💝</p>
+</footer>
 
-            const lenis = new Lenis({
-                duration: 1,
-                easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                smooth: true,
-                smoothTouch: true
-            });
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // EmailJS Init
+  (function () {
+    if (typeof emailjs === 'undefined') return;
+    emailjs.init("YOUR_PUBLIC_KEY_HERE");
+  })();
 
-            function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
-            }
-            requestAnimationFrame(raf);
-        });
-
-        // Countdown
-        const weddingDate = new Date('2026-05-04T00:00:00');
-        const countdownEl = document.getElementById('countdown');
-
-        function createSegmentDisplay(value, label) {
-            return `
-                <div class="time-segment">
-                    <div class="segment-number">${value.toString().padStart(2, '0')}</div>
-                    <div class="segment-label">${label}</div>
-                </div>
-            `;
-        }
-
-        function updateCountdown() {
-            const now = new Date();
-            const diff = weddingDate - now;
-
-            if (diff <= 0) {
-                countdownEl.innerHTML = `
-                    <div class="time-segment" style="min-width: 180px;">
-                        <div class="segment-number" style="font-size: 1.1rem;">🎉 IT'S HERE! 🎉</div>
-                        <div class="segment-label">The Big Day!</div>
-                    </div>
-                `;
-                clearInterval(countdownInterval);
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            countdownEl.innerHTML = 
-                createSegmentDisplay(days, 'DAYS') +
-                createSegmentDisplay(hours, 'HOURS') +
-                createSegmentDisplay(minutes, 'MIN') +
-                createSegmentDisplay(seconds, 'SEC');
-        }
-
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        // Particle and Heart Animation
-        const particleSketch = (p) => {
-            let particles = [];
-            let hearts = [];
-
-            p.setup = () => {
-                const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
-                canvas.parent('particle-canvas');
-                for (let i = 0; i < 60; i++) {
-                    particles.push({
-                        x: p.random(p.width),
-                        y: p.random(p.height),
-                        vx: p.random(-0.6, 0.6),
-                        vy: p.random(-0.6, 0.6),
-                        size: p.random(1, 3),
-                        alpha: p.random(30, 70)
-                    });
-                }
-                for (let i = 0; i < 6; i++) {
-                    hearts.push({
-                        x: p.random(p.width),
-                        y: p.height,
-                        speed: p.random(0.6, 2),
-                        delay: p.random(0, 3)
-                    });
-                }
-            };
-
-            p.draw = () => {
-                p.clear();
-                particles.forEach(particle => {
-                    particle.x += particle.vx;
-                    particle.y += particle.vy;
-                    if (particle.x < 0 || particle.x > p.width) particle.vx *= -1;
-                    if (particle.y < 0 || particle.y > p.height) particle.vy *= -1;
-                    p.fill(251, 191, 36, particle.alpha);
-                    p.noStroke();
-                    p.ellipse(particle.x, particle.y, particle.size);
-                });
-
-                hearts.forEach(heart => {
-                    heart.y -= heart.speed;
-                    if (heart.y < -50) heart.y = p.height;
-                    p.fill(255, 107, 107);
-                    p.textSize(16);
-                    p.text('💕', heart.x, heart.y);
-                });
-            };
-
-            p.windowResized = () => {
-                p.resizeCanvas(window.innerWidth, window.innerHeight);
-            };
-        };
-        new p5(particleSketch);
-
-        // Gallery Population
-        const galleryGrid = document.querySelector('.gallery-grid');
-        const images = Array.from({ length: 20 }, (_, i) => `instagram${i + 1}.png`);
-        images.forEach((img, i) => {
-            const galleryItem = document.createElement('a');
-            galleryItem.className = 'gallery-item fade-in';
-            galleryItem.href = img;
-            galleryItem.setAttribute('data-lightbox', 'gallery');
-            galleryItem.innerHTML = `<img src="${img}" alt="Memory ${i + 1}" loading="lazy">`;
-            galleryGrid.appendChild(galleryItem);
-        });
-
-        // EmailJS Setup
-        (function() {
-            if (typeof emailjs === 'undefined') {
-                console.error('EmailJS not loaded');
-                return;
-            }
-            emailjs.init("YOUR_PUBLIC_KEY_HERE");
-        })();
-
-        const rsvpForm = document.getElementById('rsvp-form');
-        rsvpForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const confirmation = document.getElementById('rsvp-confirmation');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = 'Sending... ✨';
-            submitBtn.disabled = true;
-
-            emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
-                .then(() => {
-                    submitBtn.innerHTML = 'Sent! 💕';
-                    confirmation.classList.remove('hidden');
-                    anime({
-                        targets: '#rsvp-confirmation',
-                        scale: [0, 1],
-                        opacity: [0, 1],
-                        easing: 'easeOutElastic(1, 0.6)',
-                        duration: 600
-                    });
-                    setTimeout(() => {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                        confirmation.classList.add('hidden');
-                        event.target.reset();
-                    }, 2000);
-                }, (error) => {
-                    submitBtn.innerHTML = 'Try Again 💫';
-                    submitBtn.disabled = false;
-                    console.error('EmailJS error:', error);
-                });
-        });
-
-        // Anime.js for Animations
-        document.querySelectorAll('.btn-primary').forEach(btn => {
-            btn.addEventListener('mouseenter', () => {
-                anime({
-                    targets: btn,
-                    scale: 1.05,
-                    duration: 200,
-                    easing: 'easeOutQuad'
-                });
-            });
-            btn.addEventListener('mouseleave', () => {
-                anime({
-                    targets: btn,
-                    scale: 1,
-                    duration: 200,
-                    easing: 'easeOutQuad'
-                });
-            });
-        });
-
-        // Scroll-Triggered Animations
-        document.querySelectorAll('.fade-in, .slide-up').forEach((el, i) => {
-            anime({
-                targets: el,
-                opacity: [0, 1],
-                translateY: el.classList.contains('slide-up') ? [20, 0] : 0,
-                duration: 600,
-                delay: i * 100,
-                easing: 'easeOutQuad'
-            });
-        });
-    </script>
+  // RSVP
+  const form = document.getElementById('rsvp-form');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
+      .then(() => {
+        document.getElementById('rsvp-confirmation').classList.remove('hidden');
+        form.reset();
+      }, (error) => {
+        alert('Something went wrong. Please try again.');
+        console.error(error);
+      });
+  });
+</script>
 </body>
 </html>
