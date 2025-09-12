@@ -71,7 +71,7 @@
 </head>
 <body class="antialiased">
     <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80');">
+    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('kosamui.jpg');">
         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
         <div class="relative z-10 text-center text-white">
             <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
@@ -209,7 +209,7 @@
 
         // Physics Simulation with CANNON.js (Hover Bounce)
         const world = new CANNON.World();
-        world.gravity.set(0, -9.82, 0); // Gravity for bounce effect
+        world.gravity.set(0, -9.82, 0);
         const bodies = [];
 
         document.querySelectorAll('.image-container').forEach((container, index) => {
@@ -222,7 +222,7 @@
             bodies.push({ element: container, body });
 
             container.addEventListener('mouseenter', () => {
-                body.velocity.y = 5; // Bounce up
+                body.velocity.y = 5;
                 gsap.to(container, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)" });
             });
             container.addEventListener('mouseleave', () => {
