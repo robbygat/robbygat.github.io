@@ -354,6 +354,7 @@
             border-radius: 32px;
             margin: 4rem 2rem;
             padding: 4rem;
+            background-attachment: scroll; /* Changed for mobile */
         }
         #rsvp.bg-image-section::before {
             border-radius: 32px;
@@ -534,6 +535,7 @@
             .countdown-number {
                 font-size: 2rem;
             }
+            /* Background attachment fixed for mobile to avoid performance issues */
             .hero, .bg-image-section {
                 background-attachment: scroll;
             }
@@ -645,7 +647,7 @@
                 <div class="section-label mono-font">The Destination</div>
                 <h2 class="section-title display-font">Ko Samui Paradise</h2>
                 <p class="section-description" style="margin: 0; max-width: none;">
-                    Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. 
+                    Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love.
                     Join us in this tropical sanctuary as we begin our forever.
                 </p>
                 <div class="address-card">
@@ -656,10 +658,11 @@
                 </div>
             </div>
             <div class="venue-map-col">
-                <iframe 
-                    src="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc"
-                    allowfullscreen="" 
-                    loading="lazy">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.001179441104!2d100.45952077478547!3d12.910999077826011!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x307d79f699999999%3A0x1234567890abcdef!2sYour%20Venue%20Name%2C%20Ko%20Samui!5e0!3m2!1sen!2sus!4v1630547485000!5m2!1sen!2sus"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
         </div>
@@ -767,7 +770,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Navbar scroll effect
+        //Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) navbar.classList.add('scrolled');
@@ -776,11 +779,11 @@
 
         // NEW: Automated Carousel Logic
         const track = document.querySelector('.gallery-carousel-track');
-        const imageCount = 20;
+        const imageCount = 20; // You have 20 images in total (instagram1.png to instagram20.png)
         let currentIndex = 0;
         let autoSlideInterval;
 
-        // Populate Carousel
+        // Populate Carousel with images
         for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item';
@@ -833,14 +836,14 @@
             e.preventDefault();
             const btn = e.target.querySelector('.btn-submit');
             const originalText = btn.textContent;
-            
+
             btn.textContent = 'Sending...';
             btn.disabled = true;
-            
+
             setTimeout(() => {
                 btn.textContent = '✓ Confirmed!';
                 btn.style.background = 'var(--sage)';
-                
+
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.disabled = false;
@@ -864,6 +867,8 @@
         // Mobile menu toggle
         document.getElementById('menuToggle').addEventListener('click', function() {
             this.classList.toggle('active');
+            // You might want to add logic here to toggle a mobile menu overlay
+            // For example: document.querySelector('.nav-links').classList.toggle('open');
         });
 
         // Intersection Observer for fade-in animations
