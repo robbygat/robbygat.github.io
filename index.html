@@ -220,15 +220,6 @@
                 .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
         });
 
-        // Invitation Mailto
-        document.getElementById('invitation-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = this.guest_name.value;
-            const email = this.guest_email.value;
-            const message = this.message.value;
-            const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026, in Koh Samui.\n\n${message}\n\nRSVP at: [URL]\n\nLove,\nRob & Nano`;
-            window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
-        });
     </script>
 </body>
 </html>
