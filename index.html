@@ -1,354 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Robert Gatzke — Interactive Resume</title>
-  <meta name="description" content="Interactive resume of Robert Gatzke — computational linguistics, AI + language tech, iOS app dev, strong communication and leadership." />
-  <meta property="og:title" content="Robert Gatzke — Interactive Resume" />
-  <meta property="og:description" content="Computational Linguistics, AI/LLM apps, iOS + web, leadership" />
-  <meta property="og:type" content="website" />
-  <meta name="theme-color" content="#0b0b0b"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg: #0b0b0b;
-      --fg: #eaeaea;
-      --muted: #9aa0a6;
-      --accent: #7dd3fc; /* sky-300 */
-      --accent-2: #a78bfa; /* violet-400 */
-      --card: #121212;
-      --chip: #171717;
-      --glass: rgba(255,255,255,.06);
-      --border: rgba(255,255,255,.08);
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --glow: 0 0 15px rgba(125,211,252,.2);
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f6f7fb; --fg:#111; --muted:#555; --accent:#0ea5e9; --accent-2:#7c3aed; --card:#ffffff; --chip:#f2f2f7; --glass:rgba(0,0,0,.04); --border:rgba(0,0,0,.08); --shadow: 0 10px 25px rgba(10, 10, 10, .08); --glow: 0 0 15px rgba(14,165,233,.15);
-      }
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font: 16px/1.6 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji";
-      color:var(--fg); background:radial-gradient(1200px 600px at 10% -10%, rgba(124,58,237,.25), transparent 60%), radial-gradient(1200px 600px at 110% 10%, rgba(14,165,233,.22), transparent 60%), var(--bg);
-      background-attachment: fixed;
-      overflow-x:hidden;
-    }
-    a{color:inherit; text-decoration:none; transition:color .2s ease}
-    a:hover{color:var(--accent)}
-    .wrap{max-width:1100px; margin:0 auto; padding:24px}
-    header{
-      position:sticky; top:0; z-index:50; backdrop-filter:saturate(150%) blur(10px); background:linear-gradient(to bottom, var(--glass), transparent);
-      border-bottom:1px solid var(--border); transition:background .3s ease;
-    }
-    nav{display:flex; gap:10px; align-items:center; justify-content:space-between}
-    .brand{display:flex; align-items:center; gap:14px}
-    .avatar{width:44px; height:44px; border-radius:50%; border:2px solid var(--border); object-fit:cover; box-shadow:var(--shadow), var(--glow)}
-    .name{font-weight:700; letter-spacing:.3px}
-    .navlinks{display:flex; gap:14px; flex-wrap:wrap}
-    .btn{appearance:none; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); padding:8px 12px; border-radius:999px; cursor:pointer; color:var(--fg); transition: transform .15s ease, border .2s ease, background .2s ease, box-shadow .2s ease; box-shadow:var(--shadow)}
-    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow), var(--glow);}
-    .btn-primary{border-color:transparent; background:linear-gradient(90deg, var(--accent), var(--accent-2)); color:#0b0b0b; font-weight:700}
-
-    /* Hero */
-    .hero{display:grid; grid-template-columns:1.1fr .9fr; gap:28px; align-items:center; padding:40px 24px 24px}
-    .hero-card{position:relative; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)); border:1px solid var(--border); border-radius:24px; padding:28px; box-shadow:var(--shadow), var(--glow); overflow:hidden; transition:transform .3s ease, box-shadow .3s ease}
-    .hero-card:hover{transform:translateY(-5px); box-shadow:var(--shadow), 0 0 20px rgba(125,211,252,.3)}
-    .hero-card:before{content:""; position:absolute; inset:-2px; background: radial-gradient(600px 200px at 0% -10%, rgba(125,211,252,.18), transparent 60%), radial-gradient(600px 200px at 110% -10%, rgba(167,139,250,.16), transparent 60%); pointer-events:none; opacity:0.8; transition:opacity .3s ease}
-    .hero-card:hover:before{opacity:1}
-    .hero h1{margin:0 0 6px; font-size:40px; line-height:1.1; letter-spacing:.2px; font-weight:800}
-    .subtitle{font-size:18px; color:var(--muted); margin-bottom:16px; font-weight:500}
-    .hero-actions{display:flex; gap:12px; flex-wrap:wrap}
-
-    .portrait{
-      position:relative; border-radius:24px; overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow), var(--glow); transition:transform .3s ease, box-shadow .3s ease
-    }
-    .portrait:hover{transform:scale(1.02); box-shadow:var(--shadow), 0 0 20px rgba(167,139,250,.3)}
-    .portrait img{display:block; width:100%; height:auto; transition:transform .5s ease}
-    .portrait:hover img{transform:scale(1.05)}
-    .tagline{position:absolute; left:16px; bottom:16px; background:linear-gradient(90deg, rgba(125,211,252,.5), rgba(167,139,250,.5)); color:#fff; padding:8px 12px; border-radius:12px; font-weight:600; letter-spacing:.2px; backdrop-filter:blur(5px)}
-
-    section{padding:32px 24px}
-    .section-title{font-size:22px; margin:0 0 16px; letter-spacing:.3px; font-weight:700; position:relative; display:inline-block}
-    .section-title:after{content:""; position:absolute; bottom:-4px; left:0; width:100%; height:2px; background:linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius:2px}
-
-    /* Chips & cards */
-    .chips{display:flex; flex-wrap:wrap; gap:10px}
-    .chip{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0)); border:1px solid var(--border); padding:8px 12px; border-radius:999px; box-shadow:var(--shadow); font-weight:600; transition:transform .2s ease, box-shadow .2s ease}
-    .chip:hover{transform:translateY(-2px); box-shadow:var(--shadow), var(--glow)}
-
-    .grid{display:grid; gap:18px}
-    .grid.cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}
-    .grid.cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}
-    @media (max-width: 900px){
-      .hero{grid-template-columns:1fr;}
-      .grid.cols-3{grid-template-columns:1fr}
-      .grid.cols-2{grid-template-columns:1fr}
-    }
-
-    .card{background:var(--card); border:1px solid var(--border); border-radius:20px; padding:18px; box-shadow:var(--shadow); position:relative; overflow:hidden; transition:transform .3s ease, box-shadow .3s ease}
-    .card:hover{transform:translateY(-5px); box-shadow:var(--shadow), var(--glow)}
-    .card h3{margin:0 0 6px; font-weight:700}
-    .card small{color:var(--muted); font-weight:400}
-
-    /* Timeline */
-    .timeline{position:relative; margin-left:8px}
-    .timeline:before{content:""; position:absolute; left:10px; top:0; bottom:0; width:2px; background:linear-gradient(var(--accent), var(--accent-2)); opacity:.6}
-    .t-item{position:relative; padding-left:34px; margin:18px 0; transition:transform .3s ease}
-    .t-item:hover{transform:translateX(5px)}
-    .t-item:before{content:""; position:absolute; left:3px; top:8px; width:16px; height:16px; border-radius:50%; background:linear-gradient(180deg, var(--accent), var(--accent-2)); box-shadow:0 0 0 4px rgba(125,211,252,.15), var(--glow); transition:box-shadow .2s ease}
-    .t-item:hover:before{box-shadow:0 0 0 6px rgba(125,211,252,.25), var(--glow)}
-
-    /* Footer */
-    footer{padding:40px 24px; text-align:center; color:var(--muted); border-top:1px solid var(--border)}
-
-    /* Floating UI */
-    .toolbar{position:fixed; right:18px; bottom:18px; display:flex; flex-direction:column; gap:10px; z-index:60}
-    .floating{backdrop-filter:saturate(150%) blur(10px); background:var(--glass); border:1px solid var(--border); border-radius:14px; padding:10px; box-shadow:var(--shadow); transition:transform .2s ease}
-    .floating:hover{transform:scale(1.05)}
-
-    /* Reveal animations */
-    .reveal{opacity:0; transform:translateY(20px); transition: opacity .8s ease, transform .8s ease}
-    .reveal.in{opacity:1; transform:none}
-
-    /* Print mode */
-    @media print{
-      header, .toolbar, .hero-actions .btn { display:none !important }
-      body{background:white; font-family:'Inter', sans-serif}
-      .card, .hero-card{box-shadow:none; border:1px solid #ddd}
-      a[href^="mailto:" ]::after{content:" (" attr(href) ")"}
-    }
-
-    /* Subtle cursor halo */
-    .halo{position:fixed; width:160px; height:160px; border-radius:50%; pointer-events:none; background:radial-gradient(circle at center, rgba(125,211,252,.18), rgba(167,139,250,.12) 33%, transparent 70%); mix-blend-mode:screen; left:-1000px; top:-1000px; filter:blur(16px); opacity:.6; z-index:5; transition:opacity .3s ease}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rob & Nano - Wedding in Paradise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #e0f2fe);
+            color: #1e3a8a;
+        }
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+        }
+        #carousel-container {
+            height: 80vh;
+            max-height: 800px;
+        }
+        .parallax {
+            background-attachment: fixed;
+            background-size: cover;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body>
-  <div class="halo" aria-hidden="true"></div>
-  <header>
-    <div class="wrap">
-      <nav>
-        <div class="brand">
-          <img class="avatar" src="resumepic.jpg" alt="Portrait of Robert Gatzke" />
-          <div>
-            <div class="name">Robert Gatzke</div>
-            <small style="color:var(--muted)">Computational Linguistics • AI/LLM Apps • iOS & Web</small>
-          </div>
+<body class="antialiased">
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80');">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
+        <div class="relative z-10 text-center text-white">
+            <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
+            <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
+            <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
+            <div id="countdown" class="text-lg md:text-xl"></div>
         </div>
-        <div class="navlinks">
-          <a class="btn" href="#about">About</a>
-          <a class="btn" href="#skills">Skills</a>
-          <a class="btn" href="#achievements">Achievements</a>
-          <a class="btn" href="#experience">Experience</a>
-          <a class="btn" href="#extras">Activities</a>
-          <button class="btn btn-primary" id="contactBtn" title="Copy email to clipboard">Contact</button>
-        </div>
-      </nav>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="hero">
-      <div class="hero-card reveal">
-        <h1>Hi, I’m Robert — Worcester-based.</h1>
-        <div class="subtitle">B.A. in Linguistics (Computational Concentration), University of Massachusetts Amherst — Dean’s List (2025)</div>
-        <p>
-          As a linguist, I build human-centered language technology. At UMass Amherst’s world-renowned linguistics program, I explored how <strong>agentic mobile applications</strong> can accelerate language acquisition. My capstone produced a Swift-based iOS app that integrates <strong>LLMs and AI APIs</strong> for learners of all ages—earning recognition from international experts in linguistics and second-language pedagogy.
-        </p>
-        <p>
-          I’m fluent in English and conversational in Japanese and Korean. I blend research-based communication strategies with modern app design to create tools that are effective, accessible, and genuinely delightful to use.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#experience">View Experience</a>
-          <a class="btn" href="#achievements">See Achievements</a>
-          <a class="btn" href="#skills">Skills</a>
-        </div>
-      </div>
-      <figure class="portrait reveal">
-        <img src="resumepic.jpg" alt="Robert Gatzke portrait" />
-        <figcaption class="tagline">Agentic AI • Language Tech • iOS</figcaption>
-      </figure>
     </section>
 
-    <section id="about" class="reveal">
-      <h2 class="section-title">About</h2>
-      <div class="card">
-        <p>
-          I am residing in Worcester, Massachusetts, and a recent graduate of the University of Massachusetts Amherst, where I earned a B.A. with a concentration in Computational Linguistics and Language Technology, graduating on the Dean’s List. As a linguist specializing in computational linguistics, I work in language education with agentic AI and mobile applications, and I am currently trying to incorporate PyTorch for language education deep learning experiments. I am excited to demonstrate how my strong technical background and interpersonal communication abilities make me an excellent addition to innovative teams.
-        </p>
-        <p>
-          At UMass Amherst, home to a world-renowned linguistics department, I conducted pioneering research on effective communication strategies for language acquisition through agentic mobile applications. My independent capstone project resulted in a Swift-based iOS application that leveraged Large Language Models (LLMs) and AI APIs to enhance language learning for children and adults. This project introduced novel technology to the field and earned commendation from international experts in linguistics and second-language pedagogy. My work showcased my ability to integrate AI applications with user-focused design to create impactful solutions.
-        </p>
-        <p>
-          Fluent in English and conversational in Japanese and Korean, I bring linguistic versatility and cultural adaptability to global teams. Growing up alongside today’s technology, I naturally incorporate digital tools—such as interactive media, online platforms, and data visualization—into my work to optimize efficiency and engagement. I excel at collaborating with enthusiastic students and team members, and I am committed to giving my full effort to foster enthusiasm in any work environment.
-        </p>
-        <p>
-          My leadership abilities have also been recognized outside of academia. Congressman Joe Courtney, U.S. Representative for Connecticut’s Second District, personally invited me to Congress after identifying me as a rising student with strong leadership potential. This honor strengthened my commitment to combining technical expertise with civic engagement and professional responsibility.
-        </p>
-        <p>
-          I am eager to tackle new challenges, contribute innovative solutions beyond the basic job description, and grow under the guidance of experienced mentors. Thank you for considering my profile. I look forward to demonstrating how my drive and creative mindset can help advance team objectives.
-        </p>
-      </div>
+    <!-- Our Story Section -->
+    <section class="py-20 px-4 md:px-20 bg-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
+            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
+            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
+        </div>
     </section>
 
-    <section id="skills" class="reveal">
-      <h2 class="section-title">Skills</h2>
-      <div class="chips">
-        <span class="chip">Agentic API Implementation</span>
-        <span class="chip">Python • PyTorch</span>
-        <span class="chip">iOS (Swift)</span>
-        <span class="chip">Web Design</span>
-        <span class="chip">LLMs & Prompting</span>
-        <span class="chip">Excellent Writing</span>
-        <span class="chip">Grammar • Syntax • Semantics</span>
-        <span class="chip">Computational Linguistics</span>
-        <span class="chip">Teaching</span>
-        <span class="chip">Japanese (Conversational)</span>
-        <span class="chip">Korean (Conversational)</span>
-        <span class="chip">Leadership & Team Communication</span>
-        <span class="chip">Creative + Fast Ideation</span>
-        <span class="chip">Time Management</span>
-      </div>
+    <!-- 3D Gallery Section -->
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">Memories in 3D</h2>
+            <div id="carousel-container" class="rounded-3xl shadow-2xl overflow-hidden"></div>
+        </div>
     </section>
 
-    <section id="achievements" class="reveal">
-      <h2 class="section-title">Achievements</h2>
-      <div class="timeline">
-        <div class="t-item">
-          <h3>B.A. in Linguistics (Computational Concentration) — UMass Amherst</h3>
-          <small>2025 • Dean’s List</small>
+    <!-- Location Section -->
+    <section class="py-20 px-4 md:px-20 parallax" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
+        <div class="max-w-4xl mx-auto text-center text-white">
+            <h2 class="text-4xl font-bold mb-8">The Venue: Koh Samui</h2>
+            <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
+            <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
         </div>
-        <div class="t-item">
-          <h3>Computational Linguistics Educational App Thesis — Hanasu AI</h3>
-          <small>2025 • Swift + LLMs • iOS</small>
-        </div>
-        <div class="t-item">
-          <h3>Invitation to Congress — Recognized for Outstanding Leadership</h3>
-          <small>2020 • Invited by Rep. Joe Courtney</small>
-        </div>
-        <div class="t-item">
-          <h3>National Honor Society — Vice President</h3>
-          <small>2018–2019</small>
-        </div>
-        <div class="t-item">
-          <h3>High School Class President</h3>
-          <small>2016–2020</small>
-        </div>
-        <div class="t-item">
-          <h3>Putnam Rotary Club Scholarship</h3>
-          <small>2020</small>
-        </div>
-        <div class="t-item">
-          <h3>The Promise &amp; Perils of Social Media — World Affairs Seminar</h3>
-          <small>2019 • Carroll University, Waukesha, WI</small>
-        </div>
-      </div>
     </section>
 
-    <section id="experience" class="reveal">
-      <h2 class="section-title">Work Experience</h2>
-      <div class="grid cols-2">
-        <article class="card">
-          <h3>Hanasu App — Mobile App Developer</h3>
-          <small>2024 — Present</small>
-          <p>Designed and built an iOS educational app that leverages LLMs for adaptive conversation practice and feedback. Integrated agentic flows, speech interfaces, and progress visualization. Currently incorporating PyTorch for deep learning experiments in language education.</p>
-          <div class="chips">
-            <span class="chip">Swift</span>
-            <span class="chip">LLM APIs</span>
-            <span class="chip">PyTorch</span>
-            <span class="chip">UX for Learning</span>
-          </div>
-        </article>
-        <article class="card">
-          <h3>Deary Brothers — Manager</h3>
-          <small>04/2020 — 06/2023</small>
-          <p>I tracked and managed inventory for a famous restaurant that gets over 1000 orders a day. I was also involved in scheduling employees and being their management staff for all inquiries. I was also required to open and close the restaurant and prepare the machines alone, while the owner was not present.</p>
-          <div class="chips">
-            <span class="chip">Leadership</span>
-            <span class="chip">Teamwork</span>
-            <span class="chip">People Management</span>
-          </div>
-        </article>
-      </div>
+    <!-- RSVP Section -->
+    <section class="py-20 px-4 md:px-20 bg-white">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
+            <form id="rsvp-form" class="space-y-4">
+                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input type="submit" value="Send RSVP" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+            </form>
+        </div>
     </section>
 
-    <section id="extras" class="reveal">
-      <h2 class="section-title">Extracurricular & Hobbies</h2>
-      <div class="grid cols-3">
-        <div class="card"><h3>Blockchain Researcher</h3><small>2020 — Present</small></div>
-        <div class="card"><h3>ESL Volunteer Teacher</h3><small>2024</small></div>
-        <div class="card"><h3>Chess Club</h3><small>2023 — 2025</small></div>
-        <div class="card"><h3>Amherst Wire (News Publication)</h3><small>2020 — 2023</small></div>
-        <div class="card"><h3>Linguistics Club</h3><small>2023 — 2025</small></div>
-        <div class="card"><h3>Japanese Language Club</h3><small>2023 — 2025</small></div>
-        <div class="card"><h3>Korean Language Club</h3><small>2023 — 2025</small></div>
-        <div class="card"><h3>Cantonese Club</h3><small>2024</small></div>
-      </div>
+    <!-- Invitation Section -->
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-white to-blue-50">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-8">Send an Invitation</h2>
+            <form id="invitation-form" class="space-y-4">
+                <input type="text" name="guest_name" placeholder="Guest Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="guest_email" placeholder="Guest Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea name="message" placeholder="Personal Message" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
+                <input type="submit" value="Prepare Email Invitation" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+            </form>
+        </div>
     </section>
-  </main>
 
-  <footer>
-    <div class="wrap">
-      <p>
-        © <span id="year"></span> Robert Gatzke — Worcester, Massachusetts • <a id="mailto" href="mailto:robby@robbygat.com">robby@robbygat.com</a>
-      </p>
-      <small>Tip: press <kbd>T</kbd> to toggle theme, <kbd>G</kbd> to scroll to top.</small>
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="py-8 text-center text-blue-800 bg-white">
+        <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
+    </footer>
 
-  <div class="toolbar">
-    <button class="btn floating" id="themeToggle" aria-label="Toggle theme">Toggle Theme</button>
-    <button class="btn floating" id="printBtn" aria-label="Print / Save as PDF">Print</button>
-    <a class="btn floating" href="#about" aria-label="Jump to About">About ↓</a>
-  </div>
+    <script>
+        // Countdown
+        const weddingDate = new Date('2026-05-04T00:00:00');
+        const countdownEl = document.getElementById('countdown');
+        function updateCountdown() {
+            const now = new Date();
+            const diff = weddingDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            countdownEl.innerHTML = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until our special day!`;
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
-  <script>
-    // Live year
-    document.getElementById('year').textContent = new Date().getFullYear();
+        // 3D Carousel - New Approach: Circular Ring with Orbit Controls
+        const container = document.getElementById('carousel-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        container.appendChild(renderer.domElement);
 
-    // Email copy shortcut (replace with your real email once deployed)
-    const EMAIL = 'robby@robbygat.com';
-    const contactBtn = document.getElementById('contactBtn');
-    contactBtn.addEventListener('click', async () => {
-      try{ await navigator.clipboard.writeText(EMAIL); contactBtn.textContent = 'Email copied!'; setTimeout(()=> contactBtn.textContent='Contact', 1400)}catch(e){ window.location.href = 'mailto:'+EMAIL }
-    });
+        camera.position.set(0, 0, 20);
 
-    // Theme toggle with persistence
-    const themeToggle = document.getElementById('themeToggle');
-    const applyTheme = (mode)=>{ document.documentElement.dataset.theme = mode; if(mode==='light'){document.documentElement.style.setProperty('--bg','#f6f7fb');document.documentElement.style.setProperty('--fg','#111')} else {document.documentElement.style.setProperty('--bg','#0b0b0b');document.documentElement.style.setProperty('--fg','#eaeaea')} };
-    const storedTheme = localStorage.getItem('theme');
-    if(storedTheme) applyTheme(storedTheme);
-    themeToggle.addEventListener('click',()=>{ const next = (localStorage.getItem('theme')==='light')?'dark':'light'; localStorage.setItem('theme', next); applyTheme(next)});
+        const group = new THREE.Group();
+        scene.add(group);
 
-    // Keyboard shortcuts
-    addEventListener('keydown', (e)=>{
-      if(e.key.toLowerCase()==='t'){ themeToggle.click() }
-      if(e.key.toLowerCase()==='g'){ window.scrollTo({top:0, behavior:'smooth'}) }
-    });
+        const radius = 15;
+        const images = [];
+        for (let i = 1; i <= 20; i++) {
+            images.push(`./instagram${i}.png`); // Local files in same directory
+        }
 
-    // Print
-    document.getElementById('printBtn').addEventListener('click', ()=> window.print());
+        const textureLoader = new THREE.TextureLoader();
+        const meshes = [];
+        images.forEach((url, index) => {
+            textureLoader.load(url, (texture) => {
+                const geometry = new THREE.PlaneGeometry(4, 6);
+                const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+                const mesh = new THREE.Mesh(geometry, material);
+                const angle = (index / images.length) * Math.PI * 2;
+                mesh.position.set(radius * Math.sin(angle), 0, radius * Math.cos(angle));
+                mesh.lookAt(0, 0, 0);
+                group.add(mesh);
+                meshes.push(mesh);
+            });
+        });
 
-    // Intersection reveal
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target) } })
-    }, { threshold:.14 });
-    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+        // Lighting for depth
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(ambientLight);
 
-    // Subtle pointer-follow halo
-    const halo = document.querySelector('.halo');
-    let hx=-1000, hy=-1000; let px=hx, py=hy;
-    addEventListener('pointermove', (e)=>{ hx = e.clientX - 80; hy = e.clientY - 80; });
-    (function loop(){ px += (hx - px) * 0.12; py += (hy - py) * 0.12; halo.style.transform = `translate(${px}px, ${py}px)`; requestAnimationFrame(loop) })();
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.minPolarAngle = Math.PI / 2;
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
 
-    // Respect reduced motion
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches){
-      document.querySelector('.halo').style.display='none';
-    }
-  </script>
+        // Interaction
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredMesh = null;
+
+        function onMouseMove(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(meshes);
+
+            if (hoveredMesh && !intersects.length) {
+                gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+                hoveredMesh = null;
+            }
+
+            if (intersects.length > 0) {
+                const newHovered = intersects[0].object;
+                if (newHovered !== hoveredMesh) {
+                    if (hoveredMesh) {
+                        gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.5 });
+                    }
+                    hoveredMesh = newHovered;
+                    gsap.to(hoveredMesh.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 0.5 });
+                }
+            }
+        }
+
+        renderer.domElement.addEventListener('mousemove', onMouseMove);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Resize
+        window.addEventListener('resize', () => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        // EmailJS RSVP
+        (function() {
+            emailjs.init("YOUR_PUBLIC_KEY_HERE");
+        })();
+
+        document.getElementById('rsvp-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
+                .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
+        });
+
+        // Invitation Mailto
+        document.getElementById('invitation-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = this.guest_name.value;
+            const email = this.guest_email.value;
+            const message = this.message.value;
+            const body = `Dear ${name},\n\nYou are invited to Rob and Nano's wedding on May 4th, 2026, in Koh Samui.\n\n${message}\n\nRSVP at: [URL]\n\nLove,\nRob & Nano`;
+            window.location.href = `mailto:${email}?subject=Wedding Invitation&body=${encodeURIComponent(body)}`;
+        });
+    </script>
 </body>
 </html>
-```
