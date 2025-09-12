@@ -4,59 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
     <style>
-        /* Base fonts */
         body {
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(to bottom, #ffffff, #86efac);
             color: #228B22; /* forest green */
-            overflow-x: hidden;
         }
+
         h1, h2 {
             font-family: 'Playfair Display', serif;
             color: white;
             background-color: #228B22; /* forest green */
-            padding: 0.75rem 1.25rem;
+            padding: 0.5rem 1rem;
             border-radius: 8px;
             display: inline-block;
-            line-height: 1.1;
-            letter-spacing: 0.05em;
-            user-select: none;
-            /* Animated underline */
-            position: relative;
-            overflow: hidden;
         }
-        h1::after, h2::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 3px;
-            width: 100%;
-            background: #7CFC00;
-            transform: translateX(-100%);
-            transition: transform 0.5s ease;
-            border-radius: 4px;
-        }
-        h1:hover::after, h2:hover::after {
-            transform: translateX(0);
-        }
+
         p, div, span, label {
             color: #228B22;
             background-color: #d0f0d0; /* light forest green */
-            padding: 0.35rem 0.65rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 6px;
-            line-height: 1.5;
-            font-weight: 400;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        p:hover, div:hover, span:hover, label:hover {
-            background-color: #c0e8c0;
-            color: #1b6a1b;
         }
 
         .parallax {
@@ -67,7 +37,7 @@
         .gallery {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px 0;
+            padding: 20px;
         }
 
         .image-container {
@@ -75,23 +45,21 @@
             overflow: hidden;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            cursor: pointer;
-            will-change: transform;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .image-container:hover {
-            transform: translateY(-12px) scale(1.07);
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.22);
-            z-index: 10;
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
+
         .image-container img {
             width: 100%;
             height: auto;
             display: block;
             transition: opacity 0.5s ease;
-            border-radius: 15px;
-            pointer-events: none;
         }
+
         .image-container .overlay {
             position: absolute;
             top: 0;
@@ -105,97 +73,98 @@
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
-            font-weight: 700;
-            font-size: 1.1rem;
-            user-select: none;
-            border-radius: 15px;
+            font-weight: bold;
         }
+
         .image-container:hover .overlay {
             opacity: 1;
         }
 
-        /* Confetti */
-        #confetti-canvas {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            pointer-events: none !important;
-            z-index: 50 !important;
+        .confetti {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* Form inputs */
         input, textarea {
             background-color: #d0f0d0;
             color: #228B22;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: box-shadow 0.3s ease;
         }
+
         input::placeholder, textarea::placeholder {
             color: #228B22;
-            opacity: 0.85;
-            font-weight: 400;
+            opacity: 0.8;
         }
-        input:focus, textarea:focus {
-            box-shadow: 0 0 10px #2ca02c;
-            outline: none;
-        }
+
         input[type="submit"] {
             background-color: #228B22;
             color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
         input[type="submit"]:hover {
             background-color: #1e7a1e;
-            transform: scale(1.05);
         }
 
-        /* Hero Section enhancements */
-        section.relative.h-screen.flex.items-center.justify-center.bg-cover.bg-center {
-            position: relative;
-            overflow: hidden;
+        /* Countdown Clock Styles */
+        #countdown {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #228B22; /* forest green */
+            text-shadow: 0 0 8px rgba(34, 139, 34, 0.8);
+            animation: pulseGlow 2.5s infinite ease-in-out;
+            letter-spacing: 0.05em;
+            user-select: none;
         }
 
-        /* Backdrop blur fix */
-        .bg-green-800.bg-opacity-0.backdrop-blur-md {
-            backdrop-filter: blur(12px);
-            background-color: rgba(34, 139, 34, 0.35);
+        @keyframes pulseGlow {
+            0%, 100% {
+                text-shadow: 0 0 8px rgba(34, 139, 34, 0.8), 0 0 20px rgba(34, 139, 34, 0.6);
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                text-shadow: 0 0 12px rgba(34, 139, 34, 1), 0 0 30px rgba(34, 139, 34, 0.9);
+                transform: scale(1.05);
+                opacity: 0.85;
+            }
         }
 
-        /* Smooth fade-in helper */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        .countdown-segment {
+            display: inline-block;
+            margin: 0 6px;
+            min-width: 80px;
+            transition: transform 0.3s ease;
         }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+
+        .countdown-segment:hover {
+            transform: scale(1.2);
+            color: #32CD32; /* lighter green on hover */
+            cursor: default;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body class="antialiased">
 
     <!-- Hero Section -->
     <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('kosamui1.jpg');">
-        <div class="absolute inset-0 bg-green-900 bg-opacity-0"></div>
+        <div class="absolute inset-0 bg-green-900 bg-opacity-20"></div>
         <div class="relative z-10 text-center text-white px-6">
             <div class="inline-block bg-green-800 bg-opacity-0 backdrop-blur-md rounded-xl px-8 py-6 shadow-lg">
-                <h1 class="text-6xl md:text-8xl font-bold mb-4 fade-in">Rob & Nano / UNDER CONSTRUCTION</h1>
-                <p class="text-2xl md:text-4xl mb-2 fade-in" style="transition-delay: 0.2s;">Join us in Ko Samui, Thailand</p>
-                <p class="text-xl md:text-2xl mb-6 fade-in" style="transition-delay: 0.4s;">May 4th, 2026</p>
-                <div id="countdown" class="text-lg md:text-xl text-white font-semibold fade-in" style="transition-delay: 0.6s;"></div>
+                <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano / UNDER CONSTRUCTION</h1>
+                <p class="text-2xl md:text-4xl mb-2">Join us in Ko Samui, Thailand</p>
+                <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
+                <div id="countdown" class="text-lg md:text-xl text-white"></div>
             </div>
         </div>
     </section>
 
     <!-- Location Section -->
-    <section class="py-20 px-4 md:px-20 parallax bg-cover bg-center fade-in" style="background-image: url('kosamui3.jpg');">
+    <section class="py-20 px-4 md:px-20 parallax bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
         <div class="max-w-4xl mx-auto text-center text-white">
             <h2 class="text-4xl font-bold mb-8">The Venue: Ko Samui</h2>
             <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
@@ -204,20 +173,20 @@
     </section>
 
     <!-- RSVP Section -->
-    <section class="py-20 px-4 md:px-20 bg-white fade-in">
+    <section class="py-20 px-4 md:px-20 bg-white">
         <div class="max-w-md mx-auto">
             <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
-            <form id="rsvp-form" class="space-y-6">
-                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 transition duration-300" />
-                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 transition duration-300" />
-                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 h-32 transition duration-300"></textarea>
-                <input type="submit" value="Send RSVP" class="w-full p-4 rounded-lg cursor-pointer transition duration-300" />
+            <form id="rsvp-form" class="space-y-4">
+                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
+                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
+                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 h-32"></textarea>
+                <input type="submit" value="Send RSVP" class="w-full p-4 rounded-lg cursor-pointer transition duration-300">
             </form>
         </div>
     </section>
 
     <!-- Our Story Section -->
-    <section class="py-20 px-4 md:px-20 bg-white fade-in">
+    <section class="py-20 px-4 md:px-20 bg-white">
         <div class="max-w-4xl mx-auto text-center">
             <h2 class="text-4xl font-bold mb-8">Our Story</h2>
             <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
@@ -226,81 +195,65 @@
     </section>
 
     <!-- Photo Gallery Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-green-50 to-white fade-in">
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-green-50 to-white">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl font-bold text-center mb-12">Our Precious Moments</h2>
             <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-            <canvas id="confetti-canvas"></canvas>
+            <canvas id="confetti-canvas" class="confetti"></canvas>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 text-center bg-white fade-in">
+    <footer class="py-8 text-center bg-white">
         <p class="text-green-800">&copy; 2025 robbygat.com All rights reserved.</p>
     </footer>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
-    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-
     <script>
-        // Animate fade-in on scroll
-        const fadeEls = document.querySelectorAll('.fade-in');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting){
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {threshold: 0.15});
-        fadeEls.forEach(el => observer.observe(el));
-
-        // Countdown with GSAP animation on update
+        // Countdown
         const weddingDate = new Date('2026-05-04T00:00:00');
         const countdownEl = document.getElementById('countdown');
-        let lastTime = '';
+
         function updateCountdown() {
             const now = new Date();
             const diff = weddingDate - now;
-            if(diff <= 0){
-                countdownEl.textContent = "The big day is here!";
+
+            if (diff <= 0) {
+                countdownEl.innerHTML = `<span class="countdown-segment">It's Here! 🎉</span>`;
+                clearInterval(countdownInterval);
                 return;
             }
+
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            const timeStr = `${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds until our special day!`;
-            if(timeStr !== lastTime){
-                gsap.to(countdownEl, {duration: 0.4, opacity: 0, onComplete: () => {
-                    countdownEl.textContent = timeStr;
-                    gsap.to(countdownEl, {duration: 0.4, opacity: 1});
-                }});
-                lastTime = timeStr;
-            }
+
+            countdownEl.innerHTML = `
+                <span class="countdown-segment">${days} days</span>
+                <span class="countdown-segment">${hours} hrs</span>
+                <span class="countdown-segment">${minutes} mins</span>
+                <span class="countdown-segment">${seconds} sec</span>
+                <span class="countdown-segment">until our special day!</span>
+            `;
         }
-        setInterval(updateCountdown, 1000);
+
+        const countdownInterval = setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Photo Gallery Animation
+        // Photo Gallery
         const galleryContainer = document.getElementById('gallery-container');
         const images = [];
         for (let i = 1; i <= 20; i++) {
             images.push(`instagram${i}.png`);
         }
 
-        images.forEach((imgSrc, index) => {
+        images.forEach(imgSrc => {
             const div = document.createElement('div');
             div.className = 'image-container';
-            div.style.opacity = 0;
-            div.style.transform = 'translateY(20px)';
             const img = document.createElement('img');
             img.src = imgSrc;
             img.alt = `Wedding Memory ${imgSrc}`;
-
             img.onload = () => {
                 div.appendChild(img);
                 const overlay = document.createElement('div');
@@ -308,29 +261,22 @@
                 overlay.textContent = 'Hover for Magic';
                 div.appendChild(overlay);
                 galleryContainer.appendChild(div);
-                gsap.to(div, {
-                    duration: 0.7,
-                    opacity: 1,
-                    y: 0,
-                    delay: index * 0.1,
-                    ease: "power2.out"
-                });
             };
             img.onerror = () => console.error(`Failed to load ${imgSrc}`);
         });
 
-        // p5.js Confetti - improved sizing & performance
+        // p5.js Confetti
         const confettiCanvas = document.getElementById('confetti-canvas');
         const sketch = (p) => {
             let confetti = [];
 
             p.setup = () => {
-                p.createCanvas(window.innerWidth, window.innerHeight);
+                p.createCanvas(window.innerWidth, window.innerHeight).parent('confetti-canvas');
                 p.noStroke();
             };
 
             p.draw = () => {
-                p.clear();
+                p.background(0, 10);
                 confetti.forEach((c, i) => {
                     c.y += c.speed;
                     c.x += p.random(-1, 1);
@@ -343,12 +289,12 @@
                     p.pop();
                     if (c.y > p.height) confetti.splice(i, 1);
                 });
-                if (p.random() < 0.12) confetti.push({
+                if (p.random() < 0.1) confetti.push({
                     x: p.random(p.width),
                     y: -10,
                     speed: p.random(1, 5),
                     size: p.random(5, 15),
-                    color: p.color(p.random(100, 255), p.random(100, 255), p.random(100, 255), 180),
+                    color: p.color(p.random(100, 255), p.random(100, 255), p.random(100, 255), 150),
                     rotation: 0,
                     spin: p.random(-0.1, 0.1)
                 });
@@ -360,7 +306,7 @@
         };
         new p5(sketch);
 
-        // EmailJS Initialization
+        // EmailJS
         (function() {
             emailjs.init("YOUR_PUBLIC_KEY_HERE");
         })();
