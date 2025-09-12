@@ -327,6 +327,21 @@
         .address-card p {
             color: rgba(10, 10, 10, 0.6);
             line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .map-button {
+            display: inline-block;
+            background: var(--ocean);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+        .map-button:hover {
+            background: var(--ink);
         }
 
         /* RSVP Section */
@@ -354,7 +369,6 @@
             border-radius: 32px;
             margin: 4rem 2rem;
             padding: 4rem;
-            background-attachment: scroll; /* Changed for mobile */
         }
         #rsvp.bg-image-section::before {
             border-radius: 32px;
@@ -535,7 +549,6 @@
             .countdown-number {
                 font-size: 2rem;
             }
-            /* Background attachment fixed for mobile to avoid performance issues */
             .hero, .bg-image-section {
                 background-attachment: scroll;
             }
@@ -655,14 +668,14 @@
                     <p>Ko Samui, Surat Thani<br>
                     Thailand's Gulf Paradise<br>
                     <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
+                    <a href="http://googleusercontent.com/maps.google.com/6" target="_blank" class="map-button">View on Google Maps</a>
                 </div>
             </div>
             <div class="venue-map-col">
                 <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.001179441104!2d100.45952077478547!3d12.910999077826011!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x307d79f699999999%3A0x1234567890abcdef!2sYour%20Venue%20Name%2C%20Ko%20Samui!5e0!3m2!1sen!2sus!4v1630547485000!5m2!1sen!2sus"
+                    src="http://googleusercontent.com/maps.google.com/7"
                     allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade">
+                    loading="lazy">
                 </iframe>
             </div>
         </div>
