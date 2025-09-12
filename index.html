@@ -10,20 +10,36 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(to bottom, #ffffff, #86efac);
-            color: #1e3a8a;
+            color: #228B22; /* forest green */
         }
+
         h1, h2 {
             font-family: 'Playfair Display', serif;
+            color: white;
+            background-color: #228B22; /* forest green */
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: inline-block;
         }
+
+        p, div, span, label {
+            color: #228B22;
+            background-color: #d0f0d0; /* light forest green */
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+
         .parallax {
             background-attachment: fixed;
             background-size: cover;
         }
+
         .gallery {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+
         .image-container {
             position: relative;
             overflow: hidden;
@@ -31,37 +47,62 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .image-container:hover {
             transform: translateY(-10px) scale(1.05);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
         }
+
         .image-container img {
             width: 100%;
             height: auto;
             display: block;
             transition: opacity 0.5s ease;
         }
+
         .image-container .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(34, 139, 34, 0.7); /* semi-transparent forest green */
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             transition: opacity 0.3s ease;
+            font-weight: bold;
         }
+
         .image-container:hover .overlay {
             opacity: 1;
         }
+
         .confetti {
             position: absolute;
             z-index: 10;
             pointer-events: none;
+        }
+
+        input, textarea {
+            background-color: #d0f0d0;
+            color: #228B22;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #228B22;
+            opacity: 0.8;
+        }
+
+        input[type="submit"] {
+            background-color: #228B22;
+            color: white;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1e7a1e;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
@@ -73,13 +114,13 @@
 
     <!-- Hero Section -->
     <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('kosamui1.jpg');">
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-0"></div>
+        <div class="absolute inset-0 bg-green-900 bg-opacity-60"></div>
         <div class="relative z-10 text-center text-white px-6">
-            <div class="inline-block bg-white bg-opacity-20 backdrop-blur-md rounded-xl px-8 py-6 shadow-lg">
-                <h1 class="text-6xl md:text-8xl font-bold mb-4 text-white drop-shadow-lg">Rob & Nano</h1>
+            <div class="inline-block bg-green-800 bg-opacity-80 backdrop-blur-md rounded-xl px-8 py-6 shadow-lg">
+                <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
                 <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
                 <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
-                <div id="countdown" class="text-lg md:text-xl"></div>
+                <div id="countdown" class="text-lg md:text-xl text-white"></div>
             </div>
         </div>
     </section>
@@ -98,10 +139,10 @@
         <div class="max-w-md mx-auto">
             <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
             <form id="rsvp-form" class="space-y-4">
-                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"></textarea>
-                <input type="submit" value="Send RSVP" class="w-full p-4 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition duration-300">
+                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
+                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
+                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 h-32"></textarea>
+                <input type="submit" value="Send RSVP" class="w-full p-4 rounded-lg cursor-pointer transition duration-300">
             </form>
         </div>
     </section>
@@ -116,7 +157,7 @@
     </section>
 
     <!-- Photo Gallery Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-blue-50 to-white">
+    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-green-50 to-white">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-4xl font-bold text-center mb-12">Our Precious Moments</h2>
             <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
@@ -125,8 +166,8 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 text-center text-blue-800 bg-white">
-        <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
+    <footer class="py-8 text-center bg-white">
+        <p class="text-green-800">&copy; 2025 Rob & Nano. All rights reserved.</p>
     </footer>
 
     <!-- Scripts -->
@@ -210,38 +251,6 @@
             };
         };
         new p5(sketch);
-
-        // Physics
-        const world = new CANNON.World();
-        world.gravity.set(0, -9.82, 0);
-        const bodies = [];
-
-        document.querySelectorAll('.image-container').forEach((container, index) => {
-            const shape = new CANNON.Box(new CANNON.Vec3(container.offsetWidth / 2 / 100, container.offsetHeight / 2 / 100, 0.1));
-            const body = new CANNON.Body({ mass: 1 });
-            body.addShape(shape);
-            body.position.set((index % 4) * 300 / 100 - 1.5, -index * 200 / 100 + 1.5, 0);
-            body.linearDamping = 0.5;
-            world.addBody(body);
-            bodies.push({ element: container, body });
-
-            container.addEventListener('mouseenter', () => {
-                body.velocity.y = 5;
-                gsap.to(container, { scale: 1.05, duration: 0.3, ease: "back.out(1.7)" });
-            });
-            container.addEventListener('mouseleave', () => {
-                gsap.to(container, { scale: 1, duration: 0.3, ease: "back.out(1.7)" });
-            });
-        });
-
-        function updatePhysics() {
-            world.step(1 / 60);
-            bodies.forEach(({ element, body }) => {
-                element.style.transform = `translate(${body.position.x * 100}px, ${body.position.y * 100}px)`;
-            });
-            requestAnimationFrame(updatePhysics);
-        }
-        updatePhysics();
 
         // EmailJS
         (function() {
