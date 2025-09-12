@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         :root {
@@ -57,12 +57,6 @@
             background: url('kosamui1.jpg') center/cover no-repeat;
         }
 
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(13, 79, 60, 0.5), rgba(212, 175, 55, 0.4));
-        }
-
         .hero-title {
             font-size: clamp(4rem, 10vw, 10rem);
             background: linear-gradient(135deg, var(--accent-gold), var(--primary-gold), #FFF);
@@ -105,14 +99,16 @@
         }
 
         .segment-number {
-            font-family: 'Courier New', monospace;
-            font-size: 3rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
             color: var(--accent-gold);
-            text-shadow: 0 0 10px var(--accent-gold);
+            text-shadow: 0 0 10px var(--accent-gold), 0 0 20px var(--accent-gold);
             animation: glow 2s ease-in-out infinite alternate;
         }
 
         .segment-label {
+            font-family: 'Lora', serif;
             font-size: 0.9rem;
             color: #888;
             text-transform: uppercase;
@@ -182,16 +178,21 @@
             z-index: 1;
         }
 
-        .parallax-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(13, 79, 60, 0.6), rgba(16, 185, 129, 0.4), rgba(212, 175, 55, 0.6));
-        }
-
         .gallery-container {
             position: relative;
             height: 600px;
             perspective: 1000px;
+        }
+
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            text-shadow: 0 0 10px var(--accent-gold);
         }
 
         .timeline-container {
@@ -246,7 +247,7 @@
         @media (max-width: 768px) {
             .segment-container { gap: 10px; }
             .time-segment { min-width: 80px; padding: 15px 10px; }
-            .segment-number { font-size: 2rem; }
+            .segment-number { font-size: 2.5rem; }
             .countdown-display { padding: 20px 15px; }
             .gallery-container { height: 400px; }
             .timeline-date { flex: 0 0 100px; font-size: 1.2rem; }
@@ -293,6 +294,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/scrollmagic@2.0.8/scrollmagic/minified/ScrollMagic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
@@ -301,7 +303,6 @@
 <body>
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="hero-overlay"></div>
         <canvas id="particle-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></canvas>
         <div class="relative z-20 text-center px-6 w-full">
             <div class="glass rounded-3xl px-12 py-10 max-w-4xl mx-auto fade-in">
@@ -317,7 +318,6 @@
 
     <!-- The Venue Section -->
     <section id="venue" class="parallax-section bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
-        <div class="parallax-overlay"></div>
         <div class="relative z-10 max-w-6xl mx-auto text-center px-6">
             <div class="glass-dark rounded-3xl px-12 py-16">
                 <h2 class="section-title text-white mb-12">The Venue</h2>
@@ -372,7 +372,7 @@
     </section>
 
     <!-- RSVP Section -->
-    <section id="rsvp" class="py-32 px-6 md:px-20 bg-gradient-to-br from-green-50 to-blue-50">
+    <section id="rsvp" class="py-32 px-6 md:px-20 parallax-section bg-cover bg-center" style="background-image: url('kosamui4.jpg');">
         <div class="max-w-2xl mx-auto">
             <h2 class="section-title mb-16 slide-up">Reserve Your Place</h2>
             <div class="glass rounded-3xl p-12 slide-up">
@@ -399,7 +399,9 @@
     <section id="gallery" class="py-32 px-6 md:px-20">
         <div class="max-w-7xl mx-auto">
             <h2 class="section-title mb-16 slide-up">Captured Moments</h2>
-            <div id="gallery-container" class="gallery-container"></div>
+            <div id="gallery-container" class="gallery-container">
+                <div id="loading-indicator" class="loading-indicator">Loading Gallery...</div>
+            </div>
             <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000;"></canvas>
         </div>
     </section>
@@ -413,7 +415,7 @@
 
     <!-- Scripts -->
     <script>
-        // Wait for Lenis to load
+        // Lenis Smooth Scrolling
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof Lenis === 'undefined') {
                 console.warn('Lenis not loaded, falling back to default scrolling');
@@ -531,84 +533,82 @@
         };
         new p5(particleSketch);
 
-        // Three.js Photo Gallery with Drag Controls
+        // Three.js Photo Gallery with OrbitControls
         const galleryContainer = document.getElementById('gallery-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 600, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.setSize(window.innerWidth, 600);
         galleryContainer.appendChild(renderer.domElement);
 
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = true;
+        controls.enablePan = false;
+        controls.enableRotate = true;
+        controls.rotateSpeed = 0.5;
+        controls.minDistance = 5;
+        controls.maxDistance = 10;
+
         const images = Array.from({ length: 20 }, (_, i) => `instagram${i + 1}.png`);
         const textures = [];
         const loader = new THREE.TextureLoader();
-        const materials = images.map(img => {
-            const texture = loader.load(img, undefined, undefined, () => console.warn(`Failed to load ${img}`));
-            textures.push(texture);
-            return new THREE.MeshBasicMaterial({ map: texture });
-        });
-
-        const radius = 5;
+        let loadedImages = 0;
         const meshes = [];
-        images.forEach((_, i) => {
-            const geometry = new THREE.PlaneGeometry(2, 2);
-            const mesh = new THREE.Mesh(geometry, materials[i]);
-            const angle = (i / images.length) * Math.PI * 2;
-            mesh.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
-            mesh.rotation.y = -angle;
-            scene.add(mesh);
-            meshes.push(mesh);
+
+        images.forEach((img, i) => {
+            loader.load(
+                img,
+                (texture) => {
+                    textures.push(texture);
+                    const geometry = new THREE.PlaneGeometry(2, 2);
+                    const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    const angle = (i / images.length) * Math.PI * 2;
+                    const radius = 5;
+                    mesh.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+                    mesh.rotation.y = -angle;
+                    scene.add(mesh);
+                    meshes.push(mesh);
+                    loadedImages++;
+                    if (loadedImages === images.length) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                },
+                undefined,
+                () => {
+                    console.warn(`Failed to load ${img}`);
+                    loadedImages++;
+                    if (loadedImages === images.length) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                }
+            );
         });
 
-        camera.position.z = 8;
-        let currentAngle = 0;
-        let targetAngle = 0;
-        let isDragging = false;
-        let previousMouseX = 0;
-
-        galleryContainer.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            previousMouseX = e.clientX;
-        });
-
-        galleryContainer.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                const delta = (e.clientX - previousMouseX) * 0.01;
-                targetAngle += delta;
-                previousMouseX = e.clientX;
-            }
-        });
-
-        galleryContainer.addEventListener('mouseup', () => {
-            isDragging = false;
-            triggerConfetti();
-        });
-
-        galleryContainer.addEventListener('click', () => {
-            gsap.to({ angle: currentAngle }, {
-                angle: targetAngle,
-                duration: 1,
-                onUpdate: function() { currentAngle = this.targets()[0].angle; }
-            });
-            triggerConfetti();
-        });
+        camera.position.set(0, 0, 8);
+        controls.update();
 
         function animateGallery() {
             requestAnimationFrame(animateGallery);
-            currentAngle += (targetAngle - currentAngle) * 0.1;
-            meshes.forEach((mesh, i) => {
-                const baseAngle = (i / images.length) * Math.PI * 2;
-                mesh.position.set(Math.cos(baseAngle + currentAngle) * radius, 0, Math.sin(baseAngle + currentAngle) * radius);
-                mesh.rotation.y = -(baseAngle + currentAngle);
-            });
+            controls.update();
             renderer.render(scene, camera);
         }
         animateGallery();
 
+        galleryContainer.addEventListener('click', () => {
+            triggerConfetti();
+        });
+
+        // Debounced Resize Handler
+        let resizeTimeout;
         window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, 600);
-            camera.aspect = window.innerWidth / 600;
-            camera.updateProjectionMatrix();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                renderer.setSize(window.innerWidth, 600);
+                camera.aspect = window.innerWidth / 600;
+                camera.updateProjectionMatrix();
+            }, 100);
         });
 
         // Confetti
