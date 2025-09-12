@@ -4,222 +4,469 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-gold: #D4AF37;
+            --accent-gold: #FFD700;
+            --dark-emerald: #0D4F3C;
+            --light-emerald: #10B981;
+            --sage-green: #87A96B;
+            --cream: #FDF6E3;
+            --charcoal: #2D3748;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to bottom, #ffffff, #86efac);
-            color: #228B22; /* forest green */
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F7FAFC 50%, var(--cream) 100%);
+            color: var(--charcoal);
+            overflow-x: hidden;
         }
 
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
+        .serif-font {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .glass-dark {
+            background: rgba(13, 79, 60, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* Seven-segment display styles */
+        .countdown-display {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--primary-gold);
+        }
+
+        .segment-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-segment {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #0a0a0a;
+            border-radius: 15px;
+            padding: 20px 15px;
+            min-width: 120px;
+            border: 2px solid #333;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .segment-number {
+            font-family: 'Courier New', monospace;
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            text-shadow: 
+                0 0 10px var(--accent-gold),
+                0 0 20px var(--accent-gold),
+                0 0 30px var(--accent-gold);
+            letter-spacing: -2px;
+            line-height: 1;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .segment-label {
+            font-size: 0.9rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 
+                    0 0 10px var(--accent-gold),
+                    0 0 20px var(--accent-gold),
+                    0 0 30px var(--accent-gold);
+            }
+            to {
+                text-shadow: 
+                    0 0 15px var(--accent-gold),
+                    0 0 25px var(--accent-gold),
+                    0 0 35px var(--accent-gold),
+                    0 0 45px var(--accent-gold);
+            }
+        }
+
+        /* Hero section enhancements */
+        .hero-overlay {
+            background: linear-gradient(
+                135deg,
+                rgba(13, 79, 60, 0.4) 0%,
+                rgba(16, 185, 129, 0.3) 50%,
+                rgba(212, 175, 55, 0.3) 100%
+            );
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--primary-gold) 50%, #FFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 2.5rem);
             color: white;
-            background-color: #228B22; /* forest green */
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            display: inline-block;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
         }
 
-        p, div, span, label {
-            color: #228B22;
-            background-color: #d0f0d0; /* light forest green */
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
+        .hero-date {
+            font-size: clamp(1rem, 2.5vw, 2rem);
+            color: var(--accent-gold);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            margin-bottom: 2rem;
         }
 
-        .parallax {
-            background-attachment: fixed;
-            background-size: cover;
+        /* Button enhancements */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--accent-gold) 100%);
+            color: var(--charcoal);
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            border: none;
         }
 
-        .gallery {
-            max-width: 1200px;
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--primary-gold) 100%);
+        }
+
+        /* Section styling */
+        .section-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--dark-emerald);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-content {
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: var(--charcoal);
         }
 
-        .image-container {
+        /* Form styling */
+        .form-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 18px 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: #888;
+        }
+
+        /* Gallery enhancements */
+        .gallery-item {
             position: relative;
             overflow: hidden;
-            border-radius: 15px;
+            border-radius: 20px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .image-container:hover {
-            transform: translateY(-10px) scale(1.05);
+        .gallery-item:hover {
+            transform: scale(1.05) rotate(2deg);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
 
-        .image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: opacity 0.5s ease;
-        }
-
-        .image-container .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .gallery-item img {
             width: 100%;
             height: 100%;
-            background: rgba(34, 139, 34, 0.7); /* semi-transparent forest green */
-            color: white;
+            object-fit: cover;
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.9) 0%, rgba(13, 79, 60, 0.9) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            font-weight: bold;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
         }
 
-        .image-container:hover .overlay {
+        .gallery-item:hover .gallery-overlay {
             opacity: 1;
         }
 
-        .confetti {
+        /* Parallax enhancements */
+        .parallax-section {
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .parallax-overlay {
             position: absolute;
-            z-index: 10;
-            pointer-events: none;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(13, 79, 60, 0.6) 0%,
+                rgba(16, 185, 129, 0.4) 50%,
+                rgba(212, 175, 55, 0.6) 100%
+            );
         }
 
-        input, textarea {
-            background-color: #d0f0d0;
-            color: #228B22;
+        /* Floating elements */
+        .floating {
+            animation: float 3s ease-in-out infinite;
         }
 
-        input::placeholder, textarea::placeholder {
-            color: #228B22;
-            opacity: 0.8;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
-        input[type="submit"] {
-            background-color: #228B22;
-            color: white;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .segment-container {
+                gap: 10px;
+            }
+            
+            .time-segment {
+                min-width: 80px;
+                padding: 15px 10px;
+            }
+            
+            .segment-number {
+                font-size: 2rem;
+            }
+            
+            .countdown-display {
+                padding: 20px 15px;
+            }
         }
 
-        input[type="submit"]:hover {
-            background-color: #1e7a1e;
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
 
-        /* Countdown Clock Styles */
-        #countdown {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #228B22; /* forest green */
-            text-shadow: 0 0 8px rgba(34, 139, 34, 0.8);
-            animation: pulseGlow 2.5s infinite ease-in-out;
-            letter-spacing: 0.05em;
-            user-select: none;
+        /* Loading animation */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
         }
 
-        @keyframes pulseGlow {
-            0%, 100% {
-                text-shadow: 0 0 8px rgba(34, 139, 34, 0.8), 0 0 20px rgba(34, 139, 34, 0.6);
-                transform: scale(1);
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .slide-up {
+            transform: translateY(50px);
+            opacity: 0;
+            animation: slideUp 1s ease-out forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
                 opacity: 1;
             }
-            50% {
-                text-shadow: 0 0 12px rgba(34, 139, 34, 1), 0 0 30px rgba(34, 139, 34, 0.9);
-                transform: scale(1.05);
-                opacity: 0.85;
-            }
-        }
-
-        .countdown-segment {
-            display: inline-block;
-            margin: 0 6px;
-            min-width: 80px;
-            transition: transform 0.3s ease;
-        }
-
-        .countdown-segment:hover {
-            transform: scale(1.2);
-            color: #32CD32; /* lighter green on hover */
-            cursor: default;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
-    <script src="https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
-<body class="antialiased">
+<body>
 
     <!-- Hero Section -->
-    <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('kosamui1.jpg');">
-        <div class="absolute inset-0 bg-green-900 bg-opacity-20"></div>
-        <div class="relative z-10 text-center text-white px-6">
-            <div class="inline-block bg-green-800 bg-opacity-0 backdrop-blur-md rounded-xl px-8 py-6 shadow-lg">
-                <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
-                <p class="text-2xl md:text-4xl mb-2">Join us in Ko Samui, Thailand / UNDER CONSTRUCTION</p>
-                <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
-                <div id="countdown" class="text-lg md:text-xl text-white"></div>
+    <section class="relative min-h-screen flex items-center justify-center bg-cover bg-center parallax-section" style="background-image: url('kosamui1.jpg');">
+        <div class="hero-overlay absolute inset-0"></div>
+        <div class="relative z-20 text-center px-6 w-full">
+            <div class="glass rounded-3xl px-12 py-10 max-w-4xl mx-auto fade-in">
+                <h1 class="hero-title serif-font font-bold mb-6">Rob & Nano</h1>
+                <p class="hero-subtitle font-light">Join us in Paradise</p>
+                <p class="hero-date serif-font font-medium mb-8">Ko Samui, Thailand</p>
+                <p class="hero-date serif-font font-semibold mb-12">May 4th, 2026</p>
+                
+                <!-- Digital Countdown Display -->
+                <div class="countdown-display max-w-4xl mx-auto slide-up">
+                    <div id="countdown" class="segment-container"></div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Location Section -->
-    <section class="py-20 px-4 md:px-20 parallax bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
-        <div class="max-w-4xl mx-auto text-center text-white">
-            <h2 class="text-4xl font-bold mb-8">The Venue: Ko Samui</h2>
-            <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
-            <iframe class="w-full h-96 rounded-2xl shadow-lg" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
-        </div>
-    </section>
-
-    <!-- RSVP Section -->
-    <section class="py-20 px-4 md:px-20 bg-white">
-        <div class="max-w-md mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-8">RSVP</h2>
-            <form id="rsvp-form" class="space-y-4">
-                <input type="text" name="name" placeholder="Your Name" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
-                <input type="email" name="email" placeholder="Your Email" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600">
-                <textarea name="message" placeholder="Message (e.g., attending, guests, dietary needs)" required class="w-full p-4 border border-green-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 h-32"></textarea>
-                <input type="submit" value="Send RSVP" class="w-full p-4 rounded-lg cursor-pointer transition duration-300">
-            </form>
+    <section class="py-32 px-6 md:px-20 parallax-section bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
+        <div class="parallax-overlay"></div>
+        <div class="relative z-10 max-w-6xl mx-auto text-center">
+            <div class="glass-dark rounded-3xl px-12 py-16">
+                <h2 class="section-title serif-font text-white mb-12">The Venue</h2>
+                <div class="section-content text-white mb-12">
+                    <p class="text-xl mb-8">Experience the magic of Ko Samui, where pristine beaches meet tropical luxury. Our celebration will unfold in one of Thailand's most breathtaking destinations.</p>
+                    <p class="text-lg opacity-90">Palm-fringed shores, crystal-clear waters, and unforgettable sunsets await as we begin our forever together.</p>
+                </div>
+                <div class="rounded-3xl overflow-hidden shadow-2xl max-w-4xl mx-auto">
+                    <iframe class="w-full h-96" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Our Story Section -->
-    <section class="py-20 px-4 md:px-20 bg-white">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-4xl font-bold mb-8">Our Story</h2>
-            <p class="text-lg mb-6">From chance encounters to eternal promises, our journey has been nothing short of magical. Rob and Nano met under the stars, and now we're excited to share our special day with you in the paradise of Koh Samui.</p>
-            <p class="text-lg">We can't wait to celebrate our love surrounded by the beauty of Thailand's beaches and our closest friends and family.</p>
+    <section class="py-32 px-6 md:px-20">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="section-title serif-font mb-16 slide-up">Our Journey</h2>
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="glass rounded-3xl p-12 slide-up">
+                    <div class="section-content">
+                        <p class="text-lg mb-6 leading-relaxed">From a serendipitous meeting under starlit skies to this moment of eternal commitment, our love story has been written in the language of dreams.</p>
+                        <p class="text-lg mb-6 leading-relaxed">Every chapter has led us here—to Ko Samui, where we'll exchange vows surrounded by nature's splendor and the warmth of those we cherish most.</p>
+                        <p class="text-lg leading-relaxed">Join us as we celebrate not just our union, but the incredible journey that brought two hearts together in perfect harmony.</p>
+                    </div>
+                </div>
+                <div class="floating">
+                    <div class="glass rounded-3xl p-8 text-center">
+                        <div class="text-6xl mb-6">💕</div>
+                        <h3 class="serif-font text-3xl text-var(--dark-emerald) mb-4">Love Stories</h3>
+                        <p class="text-lg text-gray-600">Begin with a single moment and last a lifetime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP Section -->
+    <section class="py-32 px-6 md:px-20 bg-gradient-to-br from-green-50 to-blue-50">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="section-title serif-font mb-16 slide-up">Reserve Your Place</h2>
+            <div class="glass rounded-3xl p-12 slide-up">
+                <form id="rsvp-form" class="space-y-8">
+                    <div>
+                        <input type="text" name="name" placeholder="Your Full Name" required 
+                               class="form-input w-full">
+                    </div>
+                    <div>
+                        <input type="email" name="email" placeholder="Email Address" required 
+                               class="form-input w-full">
+                    </div>
+                    <div>
+                        <textarea name="message" placeholder="Share your excitement, dietary preferences, or special requests..." required 
+                                  class="form-input w-full h-32 resize-none"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary cursor-pointer text-lg">
+                            Send Our RSVP ✨
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </section>
 
     <!-- Photo Gallery Section -->
-    <section class="py-20 px-4 md:px-20 bg-gradient-to-b from-green-50 to-white">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-4xl font-bold text-center mb-12">Our Precious Moments</h2>
-            <div id="gallery-container" class="gallery grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-            <canvas id="confetti-canvas" class="confetti"></canvas>
+    <section class="py-32 px-6 md:px-20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-title serif-font mb-16 slide-up">Captured Moments</h2>
+            <div id="gallery-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
+            <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000;"></canvas>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 text-center bg-white">
-        <p class="text-green-800">&copy; 2025 robbygat.com All rights reserved.</p>
+    <footer class="py-16 text-center">
+        <div class="glass rounded-full inline-block px-12 py-6">
+            <p class="text-var(--charcoal) font-medium">&copy; 2025 Rob & Nano's Wedding • Made with 💝</p>
+        </div>
     </footer>
 
     <!-- Scripts -->
     <script>
-        // Countdown
+        // Digital Seven-Segment Countdown
         const weddingDate = new Date('2026-05-04T00:00:00');
         const countdownEl = document.getElementById('countdown');
+
+        function createSegmentDisplay(value, label) {
+            return `
+                <div class="time-segment">
+                    <div class="segment-number">${value.toString().padStart(2, '0')}</div>
+                    <div class="segment-label">${label}</div>
+                </div>
+            `;
+        }
 
         function updateCountdown() {
             const now = new Date();
             const diff = weddingDate - now;
 
             if (diff <= 0) {
-                countdownEl.innerHTML = `<span class="countdown-segment">It's Here! 🎉</span>`;
+                countdownEl.innerHTML = `
+                    <div class="time-segment" style="min-width: 300px;">
+                        <div class="segment-number" style="font-size: 2rem;">🎉 IT'S HERE! 🎉</div>
+                        <div class="segment-label">The Big Day Has Arrived!</div>
+                    </div>
+                `;
                 clearInterval(countdownInterval);
                 return;
             }
@@ -229,92 +476,178 @@
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-            countdownEl.innerHTML = `
-                <span class="countdown-segment">${days} days</span>
-                <span class="countdown-segment">${hours} hrs</span>
-                <span class="countdown-segment">${minutes} mins</span>
-                <span class="countdown-segment">${seconds} sec</span>
-                <span class="countdown-segment">until our special day!</span>
-            `;
+            countdownEl.innerHTML = 
+                createSegmentDisplay(days, 'DAYS') +
+                createSegmentDisplay(hours, 'HOURS') +
+                createSegmentDisplay(minutes, 'MINUTES') +
+                createSegmentDisplay(seconds, 'SECONDS');
         }
 
         const countdownInterval = setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Photo Gallery
+        // Enhanced Photo Gallery
         const galleryContainer = document.getElementById('gallery-container');
         const images = [];
         for (let i = 1; i <= 20; i++) {
             images.push(`instagram${i}.png`);
         }
 
-        images.forEach(imgSrc => {
+        images.forEach((imgSrc, index) => {
             const div = document.createElement('div');
-            div.className = 'image-container';
+            div.className = 'gallery-item fade-in';
+            div.style.animationDelay = `${index * 0.1}s`;
+            
             const img = document.createElement('img');
             img.src = imgSrc;
             img.alt = `Wedding Memory ${imgSrc}`;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'gallery-overlay';
+            overlay.innerHTML = '<span>💕 Precious Moment</span>';
+            
             img.onload = () => {
                 div.appendChild(img);
-                const overlay = document.createElement('div');
-                overlay.className = 'overlay';
-                overlay.textContent = 'Hover for Magic';
                 div.appendChild(overlay);
                 galleryContainer.appendChild(div);
             };
-            img.onerror = () => console.error(`Failed to load ${imgSrc}`);
+            
+            img.onerror = () => {
+                // Skip failed images silently
+            };
+
+            // Add click event for confetti
+            div.addEventListener('click', () => {
+                triggerConfetti();
+            });
         });
 
-        // p5.js Confetti
-        const confettiCanvas = document.getElementById('confetti-canvas');
+        // Enhanced p5.js Confetti
+        let confettiSketch;
         const sketch = (p) => {
-            let confetti = [];
+            let particles = [];
+            let colors = ['#D4AF37', '#FFD700', '#10B981', '#0D4F3C', '#87A96B'];
 
             p.setup = () => {
-                p.createCanvas(window.innerWidth, window.innerHeight).parent('confetti-canvas');
-                p.noStroke();
+                let canvas = p.createCanvas(window.innerWidth, window.innerHeight);
+                canvas.parent('confetti-canvas');
+                p.colorMode(p.HSB, 360, 100, 100, 100);
             };
 
             p.draw = () => {
-                p.background(0, 10);
-                confetti.forEach((c, i) => {
-                    c.y += c.speed;
-                    c.x += p.random(-1, 1);
-                    c.rotation += c.spin;
+                p.clear();
+                
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let particle = particles[i];
+                    
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    particle.vy += 0.1; // gravity
+                    particle.rotation += particle.rotationSpeed;
+                    particle.life--;
+                    
                     p.push();
-                    p.translate(c.x, c.y);
-                    p.rotate(c.rotation);
-                    p.fill(c.color);
-                    p.ellipse(0, 0, c.size, c.size);
+                    p.translate(particle.x, particle.y);
+                    p.rotate(particle.rotation);
+                    p.fill(particle.color);
+                    p.noStroke();
+                    
+                    if (particle.shape === 'circle') {
+                        p.ellipse(0, 0, particle.size);
+                    } else {
+                        p.rectMode(p.CENTER);
+                        p.rect(0, 0, particle.size, particle.size);
+                    }
+                    
                     p.pop();
-                    if (c.y > p.height) confetti.splice(i, 1);
-                });
-                if (p.random() < 0.1) confetti.push({
-                    x: p.random(p.width),
-                    y: -10,
-                    speed: p.random(1, 5),
-                    size: p.random(5, 15),
-                    color: p.color(p.random(100, 255), p.random(100, 255), p.random(100, 255), 150),
-                    rotation: 0,
-                    spin: p.random(-0.1, 0.1)
-                });
+                    
+                    if (particle.life <= 0 || particle.y > p.height + 50) {
+                        particles.splice(i, 1);
+                    }
+                }
             };
 
             p.windowResized = () => {
                 p.resizeCanvas(window.innerWidth, window.innerHeight);
             };
         };
-        new p5(sketch);
 
-        // EmailJS
+        confettiSketch = new p5(sketch);
+
+        function triggerConfetti() {
+            for (let i = 0; i < 30; i++) {
+                confettiSketch.particles.push({
+                    x: confettiSketch.random(confettiSketch.width),
+                    y: -50,
+                    vx: confettiSketch.random(-3, 3),
+                    vy: confettiSketch.random(-2, -8),
+                    size: confettiSketch.random(8, 20),
+                    color: confettiSketch.random(['#D4AF37', '#FFD700', '#10B981', '#0D4F3C', '#87A96B']),
+                    rotation: 0,
+                    rotationSpeed: confettiSketch.random(-0.3, 0.3),
+                    life: 300,
+                    shape: confettiSketch.random(['circle', 'square'])
+                });
+            }
+        }
+
+        // EmailJS Setup
         (function() {
             emailjs.init("YOUR_PUBLIC_KEY_HERE");
         })();
 
         document.getElementById('rsvp-form').addEventListener('submit', function(event) {
             event.preventDefault();
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = 'Sending... ✨';
+            submitBtn.disabled = true;
+            
             emailjs.sendForm('YOUR_SERVICE_ID_HERE', 'YOUR_TEMPLATE_ID_HERE', this)
-                .then(() => alert('RSVP sent!'), (error) => alert('Failed to send RSVP.'));
+                .then(() => {
+                    submitBtn.innerHTML = 'Sent! 💕';
+                    triggerConfetti();
+                    setTimeout(() => {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                        event.target.reset();
+                    }, 3000);
+                }, (error) => {
+                    submitBtn.innerHTML = 'Try Again 💫';
+                    submitBtn.disabled = false;
+                    console.error('EmailJS error:', error);
+                });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.slide-up, .fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth parallax scrolling
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax-section');
+            
+            parallaxElements.forEach(element => {
+                const speed = 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
         });
     </script>
 </body>
