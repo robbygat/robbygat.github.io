@@ -441,6 +441,8 @@
             overflow: hidden;
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            /* Add a smooth transition for the height change */
+            transition: height 0.5s ease-in-out;
         }
         .gallery-carousel-track {
             display: flex;
@@ -448,12 +450,14 @@
         }
         .gallery-item {
             min-width: 100%;
-            aspect-ratio: 16 / 10; /* Cinematic aspect ratio */
+            /* Remove aspect ratio to allow natural sizing */
+            /* aspect-ratio: 16 / 10; */ 
         }
         .gallery-item img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto; /* Allow height to adjust naturally */
+            /* Remove object-fit to prevent cropping */
+            /* object-fit: cover; */
         }
         .carousel-btn {
             position: absolute;
@@ -571,7 +575,7 @@
                  border-radius: 20px;
             }
              .gallery-item {
-                aspect-ratio: 4 / 3;
+                /* aspect-ratio: 4 / 3; */
             }
         }
 
@@ -796,9 +800,12 @@
 
         // NEW: Automated Carousel Logic
         const track = document.querySelector('.gallery-carousel-track');
+        const container = document.querySelector('.gallery-carousel-container');
         const imageCount = 49;
         let currentIndex = 0;
         let autoSlideInterval;
+
+        const imageElements = [];
 
         // Populate Carousel with images from the 'gif folder'
         for (let i = 1; i <= imageCount; i++) {
@@ -807,7 +814,7 @@
             const img = document.createElement('img');
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
-
+            
             // Define the possible extensions to check for
             const extensions = ['.jpg', '.JPG', '.jpeg'];
             let currentExtIndex = 0;
@@ -821,27 +828,46 @@
                 }
             }
 
-            // Set the initial source and attach the error handler
+            // Handle the image loading to update the container's height
+            img.onload = () => {
+                // Only update the height if this is the currently visible image
+                if (track.contains(item) && item.getBoundingClientRect().left >= 0 && item.getBoundingClientRect().left < container.offsetWidth) {
+                    updateCarouselHeight();
+                }
+            };
             img.onerror = tryNextExtension;
             tryNextExtension();
 
             item.appendChild(img);
             track.appendChild(item);
+            imageElements.push(item);
         }
 
-        const items = document.querySelectorAll('.gallery-item');
+        function updateCarouselHeight() {
+            // Get the image element for the current index
+            const currentItem = imageElements[currentIndex];
+            if (currentItem) {
+                const img = currentItem.querySelector('img');
+                const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+                const containerWidth = container.offsetWidth;
+                const newHeight = containerWidth / imgAspectRatio;
+                container.style.height = `${newHeight}px`;
+            }
+        }
 
         function updateCarousel() {
             track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            // Wait for a brief moment for the transform to start before updating height
+            setTimeout(updateCarouselHeight, 10);
         }
 
         function nextSlide() {
-            currentIndex = (currentIndex + 1) % items.length;
+            currentIndex = (currentIndex + 1) % imageElements.length;
             updateCarousel();
         }
 
         function prevSlide() {
-            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            currentIndex = (currentIndex - 1 + imageElements.length) % imageElements.length;
             updateCarousel();
         }
 
@@ -862,8 +888,11 @@
             stopAutoSlide(); // Stop auto-slide on manual interaction
         });
 
-        // Start auto-sliding when the page loads
-        startAutoSlide();
+        // Initialize the carousel on window load to ensure all images are measured
+        window.addEventListener('load', () => {
+            updateCarouselHeight();
+            startAutoSlide();
+        });
 
 
         // RSVP Form Handler
