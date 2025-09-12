@@ -1,3 +1,15 @@
+Of course\! I've implemented your latest requests, creating an even more dynamic and visually stunning experience for your guests.
+
+Here’s what’s new:
+
+1.  **Reordered Venue Section:** The "Ko Samui Paradise" section now has the layout you envisioned: `kosamui4.jpg` on the left, the descriptive text in the center, and the interactive Google Map on the right, pointing to the precise venue.
+2.  **Automated Photo Carousel:** The "Captured Moments" section has been completely transformed into a sleek, automated carousel. It gracefully cycles through all 20 of your Instagram photos, creating a captivating and hands-free viewing experience. For those who want to explore at their own pace, navigation arrows allow for manual control. This is a far more unique and pleasant way to showcase your journey.
+
+This should be the perfect final touch to make your website truly unforgettable.
+
+Here is the complete code:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -278,13 +290,13 @@
             line-height: 1.7;
         }
 
-        /* NEW: 3-Column Venue Section */
+        /* 3-Column Venue Section */
         .venue-section {
             border-radius: 32px;
             margin: 4rem 2rem;
             overflow: hidden;
-            padding: 0; /* Remove default section padding */
-            max-width: none; /* Allow it to be wider */
+            padding: 0;
+            max-width: none;
         }
         .venue-content-three-col {
             display: grid;
@@ -328,7 +340,6 @@
             color: rgba(10, 10, 10, 0.6);
             line-height: 1.6;
         }
-
 
         /* RSVP Section */
         .bg-image-section {
@@ -416,35 +427,61 @@
             box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
         }
 
-        /* Gallery */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 3rem;
+        /* NEW: Automated Carousel Gallery */
+        .gallery-carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px; /* Control max width */
+            margin: 3rem auto 0;
+            overflow: hidden;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        .gallery-carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
         }
         .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 16px;
-            overflow: hidden;
-            background: var(--sand);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .gallery-item:hover {
-            transform: scale(0.98);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            min-width: 100%;
+            aspect-ratio: 16 / 10; /* Cinematic aspect ratio */
         }
         .gallery-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .gallery-item:hover img {
-            transform: scale(1.1);
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s;
         }
+        .carousel-btn:hover {
+            background-color: white;
+            transform: translateY(-50%) scale(1.05);
+        }
+        .carousel-btn.prev {
+            left: 1rem;
+        }
+        .carousel-btn.next {
+            right: 1rem;
+        }
+        .carousel-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
 
         /* Footer */
         footer {
@@ -477,9 +514,9 @@
         }
 
         /* Responsive */
-        @media (max-width: 1024px) { /* Adjust breakpoint for 3 columns */
+        @media (max-width: 1024px) {
             .venue-content-three-col {
-                grid-template-columns: 1fr; /* Stack the 3 columns */
+                grid-template-columns: 1fr;
             }
             .venue-image-col {
                 min-height: 300px;
@@ -527,15 +564,8 @@
                  margin: 2rem 1rem;
                  border-radius: 20px;
             }
-            /* Sleek Masonry-style Gallery for Mobile */
-            .gallery-grid {
-                display: block;
-                column-count: 2;
-                column-gap: 1rem;
-            }
-            .gallery-item {
-                margin-bottom: 1rem;
-                break-inside: avoid; /* Prevents images from splitting across columns */
+             .gallery-item {
+                aspect-ratio: 4 / 3;
             }
         }
 
@@ -623,13 +653,6 @@
     <section id="venue" class="venue-section">
         <div class="venue-content-three-col">
             <div class="venue-image-col"></div>
-            <div class="venue-map-col">
-                <iframe 
-                    src="https://maps.google.com/maps?q=Ko%20Samui&t=&z=13&ie=UTF8&iwloc=&output=embed"
-                    allowfullscreen="" 
-                    loading="lazy">
-                </iframe>
-            </div>
             <div class="venue-info-col fade-in">
                 <div class="section-label mono-font">The Destination</div>
                 <h2 class="section-title display-font">Ko Samui Paradise</h2>
@@ -643,6 +666,13 @@
                     Thailand's Gulf Paradise<br>
                     <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
                 </div>
+            </div>
+            <div class="venue-map-col">
+                <iframe 
+                    src="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc"
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
             </div>
         </div>
     </section>
@@ -684,8 +714,16 @@
                 A collection of memories that led us here
             </p>
         </div>
-        <div class="gallery-grid">
-            </div>
+        <div class="gallery-carousel-container">
+            <div class="gallery-carousel-track">
+                </div>
+            <button class="carousel-btn prev">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+            </button>
+            <button class="carousel-btn next">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+            </button>
+        </div>
     </section>
 
     <footer>
@@ -738,37 +776,69 @@
                 </div>
             `;
         }
-
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            if (window.scrollY > 50) navbar.classList.add('scrolled');
+            else navbar.classList.remove('scrolled');
         });
 
-        // Gallery Population
-        const galleryGrid = document.querySelector('.gallery-grid');
+        // NEW: Automated Carousel Logic
+        const track = document.querySelector('.gallery-carousel-track');
         const imageCount = 20;
+        let currentIndex = 0;
+        let autoSlideInterval;
 
+        // Populate Carousel
         for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
-            item.className = 'gallery-item fade-in';
-            item.style.animationDelay = `${(i - 1) * 0.05}s`; 
-
+            item.className = 'gallery-item';
             const img = document.createElement('img');
             img.src = `instagram${i}.png`;
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
-
             item.appendChild(img);
-            galleryGrid.appendChild(item);
+            track.appendChild(item);
         }
+        const items = document.querySelectorAll('.gallery-item');
+
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % items.length;
+            updateCarousel();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + items.length) % items.length;
+            updateCarousel();
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        document.querySelector('.carousel-btn.next').addEventListener('click', () => {
+            nextSlide();
+            stopAutoSlide(); // Stop auto-slide on manual interaction
+        });
+        document.querySelector('.carousel-btn.prev').addEventListener('click', () => {
+            prevSlide();
+            stopAutoSlide(); // Stop auto-slide on manual interaction
+        });
+
+        // Start auto-sliding when the page loads
+        startAutoSlide();
+
 
         // RSVP Form Handler
         document.getElementById('rsvpForm').addEventListener('submit', (e) => {
@@ -798,10 +868,7 @@
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
@@ -812,11 +879,7 @@
         });
 
         // Intersection Observer for fade-in animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -825,7 +888,6 @@
                 }
             });
         }, observerOptions);
-
         document.querySelectorAll('.fade-in').forEach(el => {
             el.style.animationPlayState = 'paused';
             observer.observe(el);
