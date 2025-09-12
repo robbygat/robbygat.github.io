@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Rob & Nano - Wedding in Paradise</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -70,19 +70,22 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body class="antialiased">
+
     <!-- Hero Section -->
     <section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('kosamui1.jpg');">
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-0"></div>
-        <div class="relative z-10 text-center text-white">
-            <h1 class="text-6xl md:text-8xl font-bold mb-4">Rob & Nano</h1>
-            <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
-            <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
-            <div id="countdown" class="text-lg md:text-xl"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-blue-900 opacity-50"></div>
+        <div class="relative z-10 text-center text-white px-6">
+            <div class="inline-block bg-white bg-opacity-20 backdrop-blur-md rounded-xl px-8 py-6 shadow-lg">
+                <h1 class="text-6xl md:text-8xl font-bold mb-4 text-white drop-shadow-lg">Rob & Nano</h1>
+                <p class="text-2xl md:text-4xl mb-2">Join us in Koh Samui, Thailand</p>
+                <p class="text-xl md:text-2xl mb-6">May 4th, 2026</p>
+                <div id="countdown" class="text-lg md:text-xl"></div>
+            </div>
         </div>
     </section>
 
     <!-- Location Section -->
-    <section class="py-20 px-4 md:px-20 parallax" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80');">
+    <section class="py-20 px-4 md:px-20 parallax bg-cover bg-center" style="background-image: url('kosamui2.jpg');">
         <div class="max-w-4xl mx-auto text-center text-white">
             <h2 class="text-4xl font-bold mb-8">The Venue: Koh Samui</h2>
             <p class="text-lg mb-6">Discover the tropical paradise where our dreams come true.</p>
@@ -126,6 +129,7 @@
         <p>&copy; 2025 Rob & Nano. All rights reserved.</p>
     </footer>
 
+    <!-- Scripts -->
     <script>
         // Countdown
         const weddingDate = new Date('2026-05-04T00:00:00');
@@ -142,11 +146,11 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Photo Gallery with Physics and Confetti
+        // Photo Gallery
         const galleryContainer = document.getElementById('gallery-container');
         const images = [];
         for (let i = 1; i <= 20; i++) {
-            images.push(`instagram${i}.png`); // Local images in same folder
+            images.push(`instagram${i}.png`);
         }
 
         images.forEach(imgSrc => {
@@ -166,7 +170,7 @@
             img.onerror = () => console.error(`Failed to load ${imgSrc}`);
         });
 
-        // p5.js Confetti Effect
+        // p5.js Confetti
         const confettiCanvas = document.getElementById('confetti-canvas');
         const sketch = (p) => {
             let confetti = [];
@@ -177,7 +181,7 @@
             };
 
             p.draw = () => {
-                p.background(0, 10); // Slight fade for effect
+                p.background(0, 10);
                 confetti.forEach((c, i) => {
                     c.y += c.speed;
                     c.x += p.random(-1, 1);
@@ -207,7 +211,7 @@
         };
         new p5(sketch);
 
-        // Physics Simulation with CANNON.js (Hover Bounce)
+        // Physics
         const world = new CANNON.World();
         world.gravity.set(0, -9.82, 0);
         const bodies = [];
@@ -239,7 +243,7 @@
         }
         updatePhysics();
 
-        // EmailJS RSVP
+        // EmailJS
         (function() {
             emailjs.init("YOUR_PUBLIC_KEY_HERE");
         })();
