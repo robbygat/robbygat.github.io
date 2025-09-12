@@ -805,18 +805,26 @@
             const item = document.createElement('div');
             item.className = 'gallery-item';
             const img = document.createElement('img');
-
-            // This logic assumes a mix of extensions.
-            let extension = '.jpg';
-            if (i % 3 === 0) {
-                extension = '.jpeg';
-            } else if (i % 5 === 0) {
-                extension = '.JPG';
-            }
-            
-            img.src = `gif folder/${i}${extension}`;
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
+
+            // Define the possible extensions to check for
+            const extensions = ['.jpg', '.JPG', '.jpeg'];
+            let currentExtIndex = 0;
+            
+            // Function to try the next available extension
+            function tryNextExtension() {
+                if (currentExtIndex < extensions.length) {
+                    const nextExtension = extensions[currentExtIndex];
+                    img.src = `gif folder/${i}${nextExtension}`;
+                    currentExtIndex++;
+                }
+            }
+
+            // Set the initial source and attach the error handler
+            img.onerror = tryNextExtension;
+            tryNextExtension();
+
             item.appendChild(img);
             track.appendChild(item);
         }
