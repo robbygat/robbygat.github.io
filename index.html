@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
     <title>Rob & Nano - Wedding in Paradise</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500;600&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-gold: #D4AF37;
-            --accent-gold: #FFD700;
-            --dark-emerald: #0D4F3C;
-            --light-emerald: #10B981;
-            --sage-green: #87A96B;
-            --cream: #FDF6E3;
-            --charcoal: #2D3748;
+            --primary-gold: #E8B923;
+            --accent-gold: #F4D03F;
+            --dark-emerald: #064E3B;
+            --light-emerald: #34D399;
+            --cream: #FEF9E7;
+            --charcoal: #1F2937;
         }
 
         * {
@@ -24,33 +23,34 @@
         }
 
         body {
-            font-family: 'Lora', serif;
-            background: linear-gradient(135deg, var(--cream) 0%, #F7FAFC 50%, var(--cream) 100%);
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #F0FDFA 50%, var(--cream) 100%);
             color: var(--charcoal);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         h1, h2, h3 {
-            font-family: 'Playfair Display', serif;
+            font-family: 'Cinzel', serif;
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 6px 24px rgba(31, 38, 135, 0.1);
         }
 
         .glass-dark {
-            background: rgba(13, 79, 60, 0.15);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: rgba(6, 78, 59, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
         }
 
         .hero-section {
             position: relative;
-            min-height: 100vh;
+            min-height: 90vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -58,123 +58,124 @@
         }
 
         .hero-title {
-            font-size: clamp(3rem, 8vw, 8rem);
-            background: linear-gradient(135deg, var(--accent-gold), var(--primary-gold), #FFF);
+            font-size: clamp(2.5rem, 7vw, 6rem);
+            background: linear-gradient(135deg, var(--accent-gold), var(--primary-gold));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-            line-height: 1.1;
+            text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.4);
+            line-height: 1.2;
         }
 
         .hero-subtitle, .hero-date {
             color: white;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
-            font-size: clamp(1.2rem, 2.5vw, 2.5rem);
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
+            font-size: clamp(1rem, 2vw, 2rem);
+            font-weight: 400;
         }
 
         .countdown-display {
-            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #111827, #1F2937);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2), 0 8px 16px rgba(0, 0, 0, 0.15);
             border: 2px solid var(--primary-gold);
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
 
         .segment-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .time-segment {
-            background: #0a0a0a;
-            border-radius: 10px;
-            padding: 15px 10px;
-            min-width: 80px;
-            border: 2px solid #333;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+            background: #111827;
+            border-radius: 8px;
+            padding: 10px 8px;
+            min-width: 70px;
+            border: 1px solid #374151;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
             text-align: center;
         }
 
         .segment-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--accent-gold);
-            text-shadow: 0 0 8px var(--accent-gold), 0 0 15px var(--accent-gold);
-            animation: glow 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 6px var(--accent-gold), 0 0 12px var(--accent-gold);
+            animation: glow 1.5s ease-in-out infinite alternate;
         }
 
         .segment-label {
-            font-family: 'Lora', serif;
-            font-size: 0.8rem;
-            color: #ccc;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: #D1D5DB;
             text-transform: uppercase;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         @keyframes glow {
-            from { text-shadow: 0 0 8px var(--accent-gold); }
-            to { text-shadow: 0 0 15px var(--accent-gold), 0 0 25px var(--accent-gold); }
+            from { text-shadow: 0 0 6px var(--accent-gold); }
+            to { text-shadow: 0 0 12px var(--accent-gold), 0 0 18px var(--accent-gold); }
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-gold), var(--accent-gold));
             color: var(--charcoal);
-            padding: 12px 30px;
+            padding: 10px 25px;
             border-radius: 50px;
-            font-weight: 600;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 6px 16px rgba(232, 185, 35, 0.25);
             border: none;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(232, 185, 35, 0.35);
             background: linear-gradient(135deg, var(--accent-gold), var(--primary-gold));
         }
 
         .section-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(2rem, 4vw, 3.5rem);
             color: var(--dark-emerald);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
         }
 
         .form-input {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85);
             border: 2px solid transparent;
-            border-radius: 15px;
-            padding: 15px 20px;
-            font-size: 1rem;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
             width: 100%;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--primary-gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 0 12px rgba(232, 185, 35, 0.2);
         }
 
         .form-input::placeholder {
-            color: #888;
+            color: #6B7280;
         }
 
         .parallax-section {
             background-size: cover;
             background-position: center;
             position: relative;
-            min-height: 80vh;
+            min-height: 70vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -183,10 +184,10 @@
 
         .gallery-container {
             position: relative;
-            height: 500px;
-            max-width: 1200px;
+            height: 700px;
+            max-width: 1400px;
             margin: 0 auto;
-            perspective: 1000px;
+            perspective: 1200px;
         }
 
         .loading-indicator {
@@ -194,113 +195,67 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-family: 'Lora', serif;
-            font-size: 1.5rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
             color: var(--primary-gold);
-            text-shadow: 0 0 10px var(--accent-gold);
+            text-shadow: 0 0 8px var(--accent-gold);
         }
 
         .carousel-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 20px;
+            gap: 15px;
+            z-index: 10;
         }
 
         .carousel-btn {
-            background: var(--primary-gold);
+            background: linear-gradient(135deg, var(--primary-gold), var(--accent-gold));
             color: var(--charcoal);
-            padding: 10px 20px;
+            padding: 8px 18px;
             border-radius: 50px;
             cursor: pointer;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(232, 185, 35, 0.3);
         }
 
         .carousel-btn:hover {
-            background: var(--accent-gold);
             transform: scale(1.1);
-        }
-
-        .timeline-container {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.5s ease;
-        }
-
-        .timeline-item.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .timeline-date {
-            flex: 0 0 120px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            color: var(--primary-gold);
-            text-align: right;
-            padding-right: 15px;
-        }
-
-        .timeline-content {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .timeline-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 16px rgba(232, 185, 35, 0.4);
         }
 
         @media (max-width: 768px) {
-            .hero-title { font-size: clamp(2.5rem, 6vw, 5rem); }
-            .hero-subtitle, .hero-date { font-size: clamp(1rem, 2vw, 1.8rem); }
-            .section-title { font-size: clamp(2rem, 4vw, 3rem); }
-            .countdown-display { padding: 15px; max-width: 100%; }
-            .segment-container { gap: 8px; }
-            .time-segment { min-width: 60px; padding: 10px 8px; }
-            .segment-number { font-size: 1.8rem; }
-            .segment-label { font-size: 0.7rem; }
-            .gallery-container { height: 300px; }
-            .parallax-section { min-height: 60vh; }
-            .timeline-date { flex: 0 0 80px; font-size: 1rem; }
-            .timeline-image { width: 60px; height: 60px; }
-            .form-input { padding: 12px 15px; font-size: 0.9rem; }
-            .btn-primary { padding: 10px 25px; font-size: 0.9rem; }
+            .hero-section { min-height: 70vh; }
+            .hero-title { font-size: clamp(2rem, 5vw, 4rem); }
+            .hero-subtitle, .hero-date { font-size: clamp(0.9rem, 1.8vw, 1.5rem); }
+            .section-title { font-size: clamp(1.8rem, 3.5vw, 2.5rem); }
+            .countdown-display { padding: 12px; max-width: 90%; }
+            .segment-container { gap: 6px; }
+            .time-segment { min-width: 55px; padding: 8px 6px; }
+            .segment-number { font-size: 1.5rem; }
+            .segment-label { font-size: 0.65rem; }
+            .gallery-container { height: 400px; max-width: 100%; }
+            .parallax-section { min-height: 50vh; }
+            .form-input { padding: 10px 15px; font-size: 0.85rem; }
+            .btn-primary { padding: 8px 20px; font-size: 0.85rem; }
+            .carousel-btn { padding: 6px 12px; font-size: 0.8rem; }
         }
 
         @media (max-width: 480px) {
-            .hero-title { font-size: clamp(2rem, 5vw, 4rem); }
+            .hero-title { font-size: clamp(1.8rem, 4vw, 3rem); }
             .countdown-display { padding: 10px; }
-            .time-segment { min-width: 50px; }
-            .segment-number { font-size: 1.5rem; }
-            .gallery-container { height: 200px; }
-            .timeline-content { flex-direction: column; align-items: flex-start; }
-            .timeline-image { width: 100%; height: 100px; margin-bottom: 10px; }
+            .time-segment { min-width: 45px; }
+            .segment-number { font-size: 1.2rem; }
+            .gallery-container { height: 300px; }
+            .carousel-controls { bottom: 10px; gap: 10px; }
         }
 
         html {
             scroll-behavior: smooth;
+            touch-action: manipulation;
         }
 
         .fade-in {
@@ -313,9 +268,9 @@
         }
 
         .slide-up {
-            transform: translateY(50px);
+            transform: translateY(30px);
             opacity: 0;
-            animation: slideUp 1s ease-out forwards;
+            animation: slideUp 0.8s ease-out forwards;
         }
 
         @keyframes slideUp {
@@ -325,15 +280,15 @@
         .heart {
             position: absolute;
             color: var(--accent-gold);
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             opacity: 0;
-            animation: floatHeart 5s ease-in-out infinite;
+            animation: floatHeart 4s ease-in-out infinite;
         }
 
         @keyframes floatHeart {
             0% { transform: translateY(0); opacity: 0; }
-            50% { transform: translateY(-40px); opacity: 0.7; }
-            100% { transform: translateY(-80px); opacity: 0; }
+            50% { transform: translateY(-30px); opacity: 0.6; }
+            100% { transform: translateY(-60px); opacity: 0; }
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
@@ -341,7 +296,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/scrollmagic@2.0.8/scrollmagic/minified/ScrollMagic.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.42/dist/lenis.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
@@ -350,10 +304,10 @@
     <section class="hero-section">
         <canvas id="particle-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5;"></canvas>
         <div class="relative z-20 text-center px-4 w-full">
-            <div class="glass rounded-3xl px-8 py-8 max-w-4xl mx-auto fade-in">
-                <h1 class="hero-title font-bold mb-4">Rob & Nano</h1>
-                <p class="hero-subtitle font-light mb-3">Join us in Paradise</p>
-                <p class="hero-date font-medium mb-6">Ko Samui, Thailand • May 4th, 2026</p>
+            <div class="glass rounded-3xl px-6 py-6 max-w-3xl mx-auto fade-in">
+                <h1 class="hero-title font-bold mb-3">Rob & Nano</h1>
+                <p class="hero-subtitle mb-2">Join us in Paradise</p>
+                <p class="hero-date font-medium mb-4">Ko Samui, Thailand • May 4th, 2026</p>
                 <div class="countdown-display slide-up">
                     <div id="countdown" class="segment-container"></div>
                 </div>
@@ -363,15 +317,15 @@
 
     <!-- The Venue Section -->
     <section id="venue" class="parallax-section bg-cover bg-center" style="background-image: url('kosamui3.jpg');">
-        <div class="relative z-10 max-w-6xl mx-auto text-center px-4">
-            <div class="glass-dark rounded-3xl px-8 py-12">
-                <h2 class="section-title text-white mb-8">The Venue</h2>
-                <div class="section-content text-white mb-8">
-                    <p class="text-lg mb-6">Discover the enchantment of Ko Samui, where turquoise waters and golden sands create a dreamlike setting for our special day.</p>
-                    <p class="text-base opacity-90">Join us at this tropical paradise, where love and nature intertwine under Thailand’s starry skies.</p>
+        <div class="relative z-10 max-w-5xl mx-auto text-center px-4">
+            <div class="glass-dark rounded-3xl px-6 py-10">
+                <h2 class="section-title text-white mb-6">The Venue</h2>
+                <div class="section-content text-white mb-6">
+                    <p class="text-base mb-4">Discover the enchantment of Ko Samui, where turquoise waters and golden sands create a dreamlike setting for our special day.</p>
+                    <p class="text-sm opacity-90">Join us at this tropical paradise, where love and nature intertwine under Thailand’s starry skies.</p>
                 </div>
-                <div class="rounded-3xl overflow-hidden shadow-2xl max-w-4xl mx-auto">
-                    <iframe class="w-full h-80" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
+                <div class="rounded-3xl overflow-hidden shadow-2xl max-w-3xl mx-auto">
+                    <iframe class="w-full h-64" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126357.37362657878!2d99.99136336601027!3d9.512016514958456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f65847a05f0d%3A0x10223bc2c2602!2sKo%20Samui%2C%20Ko%20Samui%20District%2C%20Surat%20Thani%2C%20Thailand!5e0!3m2!1sen!2sus!4v1726079200000!5m2!1sen!2sus" allowfullscreen="" loading="lazy"></iframe>
                 </div>
             </div>
         </div>
@@ -379,10 +333,10 @@
 
     <!-- RSVP Section -->
     <section id="rsvp" class="parallax-section bg-cover bg-center" style="background-image: url('kosamui4.jpg');">
-        <div class="max-w-2xl mx-auto px-4">
-            <h2 class="section-title text-white mb-8 slide-up">Reserve Your Place</h2>
-            <div class="glass rounded-3xl p-8 slide-up">
-                <form id="rsvp-form" class="space-y-6">
+        <div class="max-w-xl mx-auto px-4">
+            <h2 class="section-title text-white mb-6 slide-up">Reserve Your Place</h2>
+            <div class="glass rounded-3xl p-6 slide-up">
+                <form id="rsvp-form" class="space-y-5">
                     <div>
                         <input type="text" name="name" placeholder="Your Full Name" required class="form-input">
                     </div>
@@ -390,75 +344,36 @@
                         <input type="email" name="email" placeholder="Email Address" required class="form-input">
                     </div>
                     <div>
-                        <textarea name="message" placeholder="Share your excitement, dietary preferences, or special requests..." required class="form-input h-24 resize-none"></textarea>
+                        <textarea name="message" placeholder="Share your excitement, dietary preferences, or special requests..." required class="form-input h-20 resize-none"></textarea>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn-primary cursor-pointer text-base">Send Our RSVP ✨</button>
+                        <button type="submit" class="btn-primary cursor-pointer text-sm">Send Our RSVP ✨</button>
                     </div>
                 </form>
-                <div id="rsvp-confirmation" class="hidden text-center text-lg text-white mt-4">Thank You! Your RSVP is Confirmed! 💕</div>
+                <div id="rsvp-confirmation" class="hidden text-center text-base text-white mt-3">Thank You! Your RSVP is Confirmed! 💕</div>
             </div>
         </div>
     </section>
 
     <!-- Photo Gallery Section -->
-    <section id="gallery" class="py-24 px-4">
+    <section id="gallery" class="py-20 px-4 bg-gradient-to-b from-cream to-white">
         <div class="max-w-7xl mx-auto">
-            <h2 class="section-title mb-12 slide-up">Captured Moments</h2>
+            <h2 class="section-title mb-10 slide-up">Captured Moments</h2>
             <div id="gallery-container" class="gallery-container">
                 <div id="loading-indicator" class="loading-indicator">Loading Gallery...</div>
                 <div class="carousel-controls">
-                    <div class="carousel-btn" id="prev-btn">← Prev</div>
-                    <div class="carousel-btn" id="next-btn">Next →</div>
+                    <div class="carousel-btn" id="prev-btn">←</div>
+                    <div class="carousel-btn" id="next-btn">→</div>
                 </div>
             </div>
             <canvas id="confetti-canvas" style="position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000;"></canvas>
         </div>
     </section>
 
-    <!-- Our Journey Section -->
-    <section id="journey" class="py-24 px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="section-title mb-12 slide-up">Our Journey</h2>
-            <div class="timeline-container">
-                <div class="timeline-item">
-                    <div class="timeline-date">2018</div>
-                    <div class="timeline-content">
-                        <img src="timeline1.jpg" alt="First Meeting" class="timeline-image">
-                        <div>
-                            <h3 class="text-xl font-semibold text-var(--dark-emerald)">First Meeting</h3>
-                            <p>A chance encounter under a starlit sky sparked the beginning of our love story.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-date">2020</div>
-                    <div class="timeline-content">
-                        <img src="timeline2.jpg" alt="First Adventure" class="timeline-image">
-                        <div>
-                            <h3 class="text-xl font-semibold text-var(--dark-emerald)">First Adventure</h3>
-                            <p>We explored the world together, creating memories that deepened our bond.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-date">2024</div>
-                    <div class="timeline-content">
-                        <img src="timeline3.jpg" alt="The Proposal" class="timeline-image">
-                        <div>
-                            <h3 class="text-xl font-semibold text-var(--dark-emerald)">The Proposal</h3>
-                            <p>A magical moment where we promised to spend forever together.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
-    <footer class="py-12 text-center">
-        <div class="glass rounded-full inline-block px-8 py-4">
-            <p class="font-medium text-base">&copy; 2025 Rob & Nano's Wedding • Made with 💝</p>
+    <footer class="py-10 text-center">
+        <div class="glass rounded-full inline-block px-6 py-3">
+            <p class="font-medium text-sm">&copy; 2025 Rob & Nano's Wedding • Made with 💝</p>
         </div>
     </footer>
 
@@ -474,7 +389,8 @@
             const lenis = new Lenis({
                 duration: 1.2,
                 easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                smooth: true
+                smooth: true,
+                smoothTouch: true
             });
 
             function raf(time) {
@@ -503,8 +419,8 @@
 
             if (diff <= 0) {
                 countdownEl.innerHTML = `
-                    <div class="time-segment" style="min-width: 250px;">
-                        <div class="segment-number" style="font-size: 1.5rem;">🎉 IT'S HERE! 🎉</div>
+                    <div class="time-segment" style="min-width: 200px;">
+                        <div class="segment-number" style="font-size: 1.2rem;">🎉 IT'S HERE! 🎉</div>
                         <div class="segment-label">The Big Day Has Arrived!</div>
                     </div>
                 `;
@@ -535,22 +451,22 @@
             p.setup = () => {
                 const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
                 canvas.parent('particle-canvas');
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < 80; i++) {
                     particles.push({
                         x: p.random(p.width),
                         y: p.random(p.height),
-                        vx: p.random(-1, 1),
-                        vy: p.random(-1, 1),
-                        size: p.random(2, 5),
-                        alpha: p.random(50, 100)
+                        vx: p.random(-0.8, 0.8),
+                        vy: p.random(-0.8, 0.8),
+                        size: p.random(2, 4),
+                        alpha: p.random(40, 80)
                     });
                 }
-                for (let i = 0; i < 10; i++) {
+                for (let i = 0; i < 8; i++) {
                     hearts.push({
                         x: p.random(p.width),
                         y: p.height,
-                        speed: p.random(1, 3),
-                        delay: p.random(0, 5)
+                        speed: p.random(0.8, 2.5),
+                        delay: p.random(0, 4)
                     });
                 }
             };
@@ -570,8 +486,8 @@
                 hearts.forEach(heart => {
                     heart.y -= heart.speed;
                     if (heart.y < -50) heart.y = p.height;
-                    p.fill(212, 175, 55);
-                    p.textSize(24);
+                    p.fill(232, 185, 35);
+                    p.textSize(20);
                     p.text('💕', heart.x, heart.y);
                 });
             };
@@ -586,48 +502,53 @@
         const galleryContainer = document.getElementById('gallery-container');
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, galleryContainer.clientWidth / 500, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, galleryContainer.clientWidth / 700, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        renderer.setSize(galleryContainer.clientWidth, 500);
+        renderer.setSize(galleryContainer.clientWidth, 700);
         galleryContainer.appendChild(renderer.domElement);
 
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableZoom = false;
         controls.enablePan = false;
-        controls.rotateSpeed = 0.3;
+        controls.rotateSpeed = 0.4;
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 1.5;
-        controls.minDistance = 4;
-        controls.maxDistance = 6;
+        controls.autoRotateSpeed = 1.2;
+        controls.minDistance = 6;
+        controls.maxDistance = 8;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(8, 8, 8);
+        scene.add(pointLight);
+        const pointLight2 = new THREE.PointLight(0xffffff, 0.5);
+        pointLight2.position.set(-8, -8, -8);
+        scene.add(pointLight2);
 
         const images = Array.from({ length: 20 }, (_, i) => `instagram${i + 1}.png`);
         const meshes = [];
         const loader = new THREE.TextureLoader();
         let loadedImages = 0;
 
-        // Add ambient and point lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xffffff, 0.8);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
-
         images.forEach((img, i) => {
             loader.load(
                 img,
                 (texture) => {
-                    const geometry = new THREE.PlaneGeometry(2, 2);
+                    const geometry = new THREE.PlaneGeometry(3, 3);
                     const material = new THREE.MeshStandardMaterial({
                         map: texture,
                         side: THREE.DoubleSide,
-                        metalness: 0.2,
-                        roughness: 0.5
+                        metalness: 0.3,
+                        roughness: 0.4,
+                        transparent: true
                     });
                     const mesh = new THREE.Mesh(geometry, material);
                     const angle = (i / images.length) * Math.PI * 2;
-                    const radius = 4;
+                    const radius = 6;
                     mesh.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
                     mesh.rotation.y = -angle;
+                    mesh.userData = { index: i };
                     scene.add(mesh);
                     meshes.push(mesh);
                     loadedImages++;
@@ -646,7 +567,7 @@
             );
         });
 
-        camera.position.set(0, 0, 5);
+        camera.position.set(0, 0, 7);
         controls.update();
 
         // Carousel Controls
@@ -657,15 +578,50 @@
         nextBtn.addEventListener('click', () => {
             currentIndex = (currentIndex + 1) % images.length;
             const targetAngle = -(currentIndex / images.length) * Math.PI * 2;
-            gsap.to(controls, { target: targetAngle, duration: 1, ease: 'power2.out' });
+            gsap.to(controls, { target: targetAngle, duration: 0.8, ease: 'power2.out' });
             triggerConfetti();
+            anime({
+                targets: meshes[currentIndex],
+                scale: [1, 1.2, 1],
+                duration: 1000,
+                easing: 'easeOutElastic(1, 0.6)'
+            });
         });
 
         prevBtn.addEventListener('click', () => {
             currentIndex = (currentIndex - 1 + images.length) % images.length;
             const targetAngle = -(currentIndex / images.length) * Math.PI * 2;
-            gsap.to(controls, { target: targetAngle, duration: 1, ease: 'power2.out' });
+            gsap.to(controls, { target: targetAngle, duration: 0.8, ease: 'power2.out' });
             triggerConfetti();
+            anime({
+                targets: meshes[currentIndex],
+                scale: [1, 1.2, 1],
+                duration: 1000,
+                easing: 'easeOutElastic(1, 0.6)'
+            });
+        });
+
+        // Hover Effects
+        galleryContainer.addEventListener('mousemove', (event) => {
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(meshes);
+            meshes.forEach(mesh => mesh.scale.set(1, 1, 1));
+            if (intersects.length > 0) {
+                const mesh = intersects[0].object;
+                anime({
+                    targets: mesh.scale,
+                    x: 1.1,
+                    y: 1.1,
+                    z: 1.1,
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
         });
 
         function animateGallery() {
@@ -681,8 +637,9 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 const width = galleryContainer.clientWidth;
-                renderer.setSize(width, 500);
-                camera.aspect = width / 500;
+                const height = window.innerWidth <= 768 ? 400 : window.innerWidth <= 480 ? 300 : 700;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
                 camera.updateProjectionMatrix();
             }, 100);
         });
@@ -691,7 +648,7 @@
         let confettiSketch;
         const confetti = (p) => {
             let particles = [];
-            let colors = ['#D4AF37', '#FFD700', '#10B981', '#0D4F3C', '#87A96B'];
+            let colors = ['#E8B923', '#F4D03F', '#34D399', '#064E3B', '#9CA3AF'];
 
             p.setup = () => {
                 const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
@@ -704,7 +661,7 @@
                     let particle = particles[i];
                     particle.x += particle.vx;
                     particle.y += particle.vy;
-                    particle.vy += 0.1;
+                    particle.vy += 0.08;
                     particle.rotation += particle.rotationSpeed;
                     particle.life--;
 
@@ -734,17 +691,17 @@
         confettiSketch = new p5(confetti);
 
         function triggerConfetti() {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 60; i++) {
                 confettiSketch.particles.push({
                     x: confettiSketch.random(confettiSketch.width),
                     y: -50,
-                    vx: confettiSketch.random(-5, 5),
-                    vy: confettiSketch.random(-2, -8),
-                    size: confettiSketch.random(8, 20),
-                    color: confettiSketch.random(['#D4AF37', '#FFD700', '#10B981', '#0D4F3C', '#87A96B']),
+                    vx: confettiSketch.random(-4, 4),
+                    vy: confettiSketch.random(-2, -6),
+                    size: confettiSketch.random(6, 16),
+                    color: confettiSketch.random(['#E8B923', '#F4D03F', '#34D399', '#064E3B', '#9CA3AF']),
                     rotation: 0,
-                    rotationSpeed: confettiSketch.random(-0.3, 0.3),
-                    life: 300,
+                    rotationSpeed: confettiSketch.random(-0.2, 0.2),
+                    life: 250,
                     shape: confettiSketch.random(['circle', 'square'])
                 });
             }
@@ -777,15 +734,15 @@
                         targets: '#rsvp-confirmation',
                         scale: [0, 1],
                         opacity: [0, 1],
-                        easing: 'easeOutElastic(1, .6)',
-                        duration: 1000
+                        easing: 'easeOutElastic(1, 0.6)',
+                        duration: 800
                     });
                     setTimeout(() => {
                         submitBtn.innerHTML = originalText;
                         submitBtn.disabled = false;
                         confirmation.classList.add('hidden');
                         event.target.reset();
-                    }, 3000);
+                    }, 2500);
                 }, (error) => {
                     submitBtn.innerHTML = 'Try Again 💫';
                     submitBtn.disabled = false;
@@ -793,19 +750,8 @@
                 });
         });
 
-        // ScrollMagic for Timeline Animations
-        const controller = new ScrollMagic.Controller();
-        document.querySelectorAll('.timeline-item').forEach((item, index) => {
-            new ScrollMagic.Scene({
-                triggerElement: item,
-                triggerHook: 0.8
-            })
-            .setClassToggle(item, 'visible')
-            .addTo(controller);
-        });
-
         // Anime.js for Button Hover
-        document.querySelectorAll('.btn-primary').forEach(btn => {
+        document.querySelectorAll('.btn-primary, .carousel-btn').forEach(btn => {
             btn.addEventListener('mouseenter', () => {
                 anime({
                     targets: btn,
