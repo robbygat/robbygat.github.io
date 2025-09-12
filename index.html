@@ -134,7 +134,7 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            background-image: url('https://placehold.co/1920x1080/F5F2EA/0A0A0A?text=Kosamui+1');
+            background-image: url('kosamui1.jpg');
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
@@ -292,7 +292,7 @@
             min-height: 650px;
         }
         .venue-image-col {
-            background-image: url('https://placehold.co/1000x1000/F5F2EA/0A0A0A?text=Kosamui+4');
+            background-image: url('kosamui4.jpg');
             background-size: cover;
             background-position: center;
         }
@@ -350,7 +350,7 @@
             z-index: 2;
         }
         #rsvp.bg-image-section {
-            background-image: url('https://placehold.co/1920x1080/F5F2EA/0A0A0A?text=Kosamui+3');
+            background-image: url('kosamui3.jpg');
             border-radius: 32px;
             margin: 4rem 2rem;
             padding: 4rem;
@@ -553,7 +553,7 @@
                  border-radius: 20px;
             }
              .gallery-item {
-                 aspect-ratio: 4 / 3;
+                aspect-ratio: 4 / 3;
             }
         }
 
@@ -579,10 +579,6 @@
             to {
                 opacity: 1;
                 transform: translateY(0);
-            }
-            from {
-                opacity: 0;
-                transform: translateY(20px);
             }
         }
 
@@ -653,16 +649,15 @@
                     Join us in this tropical sanctuary as we begin our forever.
                 </p>
                 <div class="address-card">
-                    <h4 class="display-font">Banyan Tree Samui</h4>
-                    <p>
-                        99/96 Moo 4, Maret, Ko Samui, Surat Thani 84310, Thailand<br>
-                        <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span>
-                    </p>
+                    <h4 class="display-font">Island of Dreams</h4>
+                    <p>Ko Samui, Surat Thani<br>
+                    Thailand's Gulf Paradise<br>
+                    <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
                 </div>
             </div>
             <div class="venue-map-col">
                 <iframe 
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31481.332309190135!2d100.00049488340334!3d9.497556019777995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3054f15b3e230759%3A0x6d90a184e499d084!2sBanyan%20Tree%20Samui!5e0!3m2!1sen!2sjp!4v1709210000000!5m2!1sen!2sjp"
+                    src="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc"
                     allowfullscreen="" 
                     loading="lazy">
                 </iframe>
@@ -790,7 +785,7 @@
             const item = document.createElement('div');
             item.className = 'gallery-item';
             const img = document.createElement('img');
-            img.src = `https://placehold.co/1920x1200/F5F2EA/0A0A0A?text=Image+${i}`;
+            img.src = `instagram${i}.png`;
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
             item.appendChild(img);
