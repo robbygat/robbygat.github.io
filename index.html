@@ -33,7 +33,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Typography */
         .display-font {
             font-family: 'Instrument Serif', Georgia, serif;
             font-weight: 400;
@@ -43,7 +42,6 @@
             font-family: 'JetBrains Mono', 'Courier New', monospace;
         }
 
-        /* Navigation */
         .nav-wrapper {
             position: fixed;
             top: 0;
@@ -108,7 +106,6 @@
             width: 100%;
         }
 
-        /* Mobile Menu */
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -126,7 +123,6 @@
             transition: all 0.3s;
         }
 
-        /* Hero Section */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -203,7 +199,6 @@
             }
         }
 
-        /* Countdown */
         .countdown-wrapper {
             display: inline-block;
             background: white;
@@ -241,7 +236,6 @@
             color: rgba(10, 10, 10, 0.5);
         }
 
-        /* Sections */
         section {
             padding: 6rem 2rem;
             max-width: 1400px;
@@ -278,7 +272,6 @@
             line-height: 1.7;
         }
 
-        /* 3-Column Venue Section */
         .venue-section {
             border-radius: 32px;
             margin: 4rem 2rem;
@@ -286,25 +279,30 @@
             padding: 0;
             max-width: none;
         }
+
         .venue-content-three-col {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             min-height: 650px;
         }
+
         .venue-image-col {
             background-image: url('kosamui4.jpg');
             background-size: cover;
             background-position: center;
         }
+
         .venue-map-col {
             position: relative;
         }
+
         .venue-map-col iframe {
             width: 100%;
             height: 100%;
             border: 0;
             filter: grayscale(0.2) contrast(1.1);
         }
+
         .venue-info-col {
             background: var(--sand);
             padding: 3rem;
@@ -312,6 +310,7 @@
             flex-direction: column;
             justify-content: center;
         }
+
         .address-card {
             background: white;
             border-radius: 16px;
@@ -319,15 +318,18 @@
             margin-top: 2rem;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
         }
+
         .address-card h4 {
             font-size: 1.125rem;
             margin-bottom: 0.75rem;
             color: var(--ink);
         }
+
         .address-card p {
             color: rgba(10, 10, 10, 0.6);
             line-height: 1.6;
         }
+
         .btn-view-venue {
             display: inline-block;
             background: var(--ocean);
@@ -340,12 +342,12 @@
             transition: background-color 0.3s, transform 0.3s;
             margin-top: 1rem;
         }
+
         .btn-view-venue:hover {
             background: var(--ink);
             transform: translateY(-2px);
         }
 
-        /* RSVP Section */
         .bg-image-section {
             position: relative;
             background-size: cover;
@@ -354,6 +356,7 @@
             color: white;
             max-width: none;
         }
+
         .bg-image-section::before {
             content: '';
             position: absolute;
@@ -361,36 +364,51 @@
             background: rgba(10, 10, 10, 0.55);
             z-index: 1;
         }
+
         .bg-image-section > * {
             position: relative;
             z-index: 2;
         }
+
         #rsvp.bg-image-section {
             background-image: url('kosamui3.jpg');
             border-radius: 32px;
             margin: 4rem 2rem;
             padding: 4rem;
-            background-attachment: scroll; /* Changed for mobile */
+            background-attachment: scroll;
         }
+
         #rsvp.bg-image-section::before {
             border-radius: 32px;
             background: rgba(10, 10, 10, 0.6);
         }
+
         .rsvp-form {
             max-width: 600px;
             margin: 0 auto;
         }
+
         #rsvp .section-title,
         #rsvp .section-description,
         #rsvp .section-label {
             color: white;
         }
+
         #rsvp .section-label {
-             color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.8);
         }
+
         .form-group {
             margin-bottom: 1.5rem;
         }
+
+        .form-group label {
+            color: white;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
         .form-input {
             width: 100%;
             padding: 1rem 1.5rem;
@@ -402,18 +420,22 @@
             transition: all 0.3s;
             color: var(--ink);
         }
+
         .form-input:focus {
             outline: none;
             border-color: var(--gold);
             box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
         }
+
         .form-input::placeholder {
             color: rgba(10, 10, 10, 0.4);
         }
+
         textarea.form-input {
             resize: vertical;
             min-height: 120px;
         }
+
         .btn-submit {
             background: var(--gold);
             color: var(--ink);
@@ -427,38 +449,42 @@
             letter-spacing: -0.01em;
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
+
         .btn-submit:hover {
             transform: translateY(-2px);
             box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
         }
 
-        /* NEW: Automated Carousel Gallery */
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .gallery-carousel-container {
             position: relative;
             width: 100%;
-            max-width: 900px; /* Control max width */
+            max-width: 900px;
             margin: 3rem auto 0;
             overflow: hidden;
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            /* Add a smooth transition for the height change */
             transition: height 0.5s ease-in-out;
         }
+
         .gallery-carousel-track {
             display: flex;
             transition: transform 0.5s ease-in-out;
         }
+
         .gallery-item {
             min-width: 100%;
-            /* Remove aspect ratio to allow natural sizing */
-            /* aspect-ratio: 16 / 10; */ 
         }
+
         .gallery-item img {
             width: 100%;
-            height: auto; /* Allow height to adjust naturally */
-            /* Remove object-fit to prevent cropping */
-            /* object-fit: cover; */
+            height: auto;
         }
+
         .carousel-btn {
             position: absolute;
             top: 50%;
@@ -476,53 +502,59 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: all 0.2s;
         }
+
         .carousel-btn:hover {
             background-color: white;
             transform: translateY(-50%) scale(1.05);
         }
+
         .carousel-btn.prev {
             left: 1rem;
         }
+
         .carousel-btn.next {
             right: 1rem;
         }
+
         .carousel-btn svg {
             width: 24px;
             height: 24px;
         }
 
-
-        /* Footer */
         footer {
             text-align: center;
             padding: 4rem 2rem;
             border-top: 1px solid rgba(10, 10, 10, 0.08);
         }
+
         .footer-content {
             max-width: 600px;
             margin: 0 auto;
         }
+
         .footer-names {
             font-size: 2rem;
             letter-spacing: -0.02em;
             margin-bottom: 1rem;
             color: var(--ink);
         }
+
         .footer-date {
             font-size: 0.875rem;
             color: rgba(10, 10, 10, 0.5);
             letter-spacing: 0.05em;
         }
+
         .hearts {
             display: inline-block;
             animation: pulse 2s ease-in-out infinite;
         }
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .venue-content-three-col {
                 grid-template-columns: 1fr;
@@ -555,7 +587,6 @@
             .countdown-number {
                 font-size: 2rem;
             }
-            /* Background attachment fixed for mobile to avoid performance issues */
             .hero, .bg-image-section {
                 background-attachment: scroll;
             }
@@ -571,11 +602,8 @@
                 padding: 4rem 1.5rem;
             }
             .venue-section {
-                 margin: 2rem 1rem;
-                 border-radius: 20px;
-            }
-             .gallery-item {
-                /* aspect-ratio: 4 / 3; */
+                margin: 2rem 1rem;
+                border-radius: 20px;
             }
         }
 
@@ -591,12 +619,12 @@
             }
         }
 
-        /* Loading Animation */
         .fade-in {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.8s ease forwards;
         }
+
         @keyframes fadeIn {
             to {
                 opacity: 1;
@@ -604,28 +632,28 @@
             }
         }
 
-        /* Smooth Scroll */
         html {
             scroll-behavior: smooth;
         }
 
-        /* Selection */
         ::selection {
             background: var(--gold);
             color: var(--ink);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
         }
+
         ::-webkit-scrollbar-track {
             background: var(--pearl);
         }
+
         ::-webkit-scrollbar-thumb {
             background: var(--ocean);
             border-radius: 5px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: var(--ink);
         }
@@ -698,21 +726,30 @@
                     Your presence would make our special day complete
                 </p>
             </div>
-            <form id="rsvpForm">
+            <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
                 <div class="form-group">
-                    <input type="text" class="form-input" placeholder="Your full name UNDER CONSTRUCTION / DO NOT SUBMIT" required>
+                    <input type="email" class="form-input" name="email" placeholder="Your email address" required>
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-input" placeholder="Email address UNDER CONSTRUCTION / DO NOT SUBMIT" required>
+                    <label>How many guests will be attending?</label>
+                    <select class="form-input" name="guest_count" id="guestCount" required>
+                        <option value="">Select number of guests</option>
+                        <option value="1">1 Guest</option>
+                        <option value="2">2 Guests</option>
+                        <option value="3">3 Guests</option>
+                        <option value="4">4 Guests</option>
+                        <option value="5">5 Guests</option>
+                        <option value="6">6 Guests</option>
+                        <option value="7">7 Guests</option>
+                        <option value="8">8 Guests</option>
+                    </select>
                 </div>
+                <div id="guestNamesContainer"></div>
                 <div class="form-group">
-                    <input type="text" class="form-input" placeholder="Number of guests UNDER CONSTRUCTION / DO NOT SUBMIT">
-                </div>
-                <div class="form-group">
-                    <textarea class="form-input" placeholder="UNDER CONSTRUCTION / DO NOT SUBMIT"></textarea>
+                    <textarea class="form-input" name="message" placeholder="Leave us a message (optional)" rows="4"></textarea>
                 </div>
                 <div style="text-align: center;">
-                    <button type="submit" class="btn-submit">UNDER CONSTRUCTION / DO NOT SUBMIT</button>
+                    <button type="submit" class="btn-submit">Confirm Attendance</button>
                 </div>
             </form>
         </div>
@@ -727,8 +764,7 @@
             </p>
         </div>
         <div class="gallery-carousel-container">
-            <div class="gallery-carousel-track">
-                </div>
+            <div class="gallery-carousel-track"></div>
             <button class="carousel-btn prev">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
             </button>
@@ -791,14 +827,95 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        //Navbar scroll effect
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
         });
 
-        // NEW: Automated Carousel Logic
+        // Dynamic Guest Names Input
+        const guestCountSelect = document.getElementById('guestCount');
+        const guestNamesContainer = document.getElementById('guestNamesContainer');
+
+        guestCountSelect.addEventListener('change', function() {
+            const count = parseInt(this.value);
+            guestNamesContainer.innerHTML = '';
+
+            if (count > 0) {
+                const guestNamesGroup = document.createElement('div');
+                guestNamesGroup.className = 'form-group';
+                guestNamesGroup.style.marginTop = '1.5rem';
+
+                const label = document.createElement('label');
+                label.style.color = 'white';
+                label.style.display = 'block';
+                label.style.marginBottom = '0.5rem';
+                label.style.fontSize = '0.95rem';
+                label.textContent = 'Please enter the names of all guests:';
+                guestNamesGroup.appendChild(label);
+
+                for (let i = 1; i <= count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-input';
+                    input.name = `guest_${i}_name`;
+                    input.placeholder = `Guest ${i} full name`;
+                    input.required = true;
+                    input.style.marginBottom = '0.75rem';
+                    guestNamesGroup.appendChild(input);
+                }
+
+                guestNamesContainer.appendChild(guestNamesGroup);
+            }
+        });
+
+        // RSVP Form Handler with Formspree
+        document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-submit');
+            const originalText = btn.textContent;
+
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData(e.target);
+                const response = await fetch(e.target.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    btn.textContent = '✓ Confirmed!';
+                    btn.style.background = 'var(--sage)';
+
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                        btn.style.background = '';
+                        e.target.reset();
+                        guestNamesContainer.innerHTML = '';
+                    }, 3000);
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                btn.textContent = 'Error - Try Again';
+                btn.style.background = 'var(--sunset)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    btn.style.background = '';
+                }, 3000);
+            }
+        });
+
+        // Automated Carousel Logic
         const track = document.querySelector('.gallery-carousel-track');
         const container = document.querySelector('.gallery-carousel-container');
         const imageCount = 49;
@@ -815,11 +932,9 @@
             img.alt = `Captured Moment ${i}`;
             img.loading = 'lazy';
             
-            // Define the possible extensions to check for
             const extensions = ['.jpg', '.JPG', '.jpeg'];
             let currentExtIndex = 0;
             
-            // Function to try the next available extension
             function tryNextExtension() {
                 if (currentExtIndex < extensions.length) {
                     const nextExtension = extensions[currentExtIndex];
@@ -828,9 +943,7 @@
                 }
             }
 
-            // Handle the image loading to update the container's height
             img.onload = () => {
-                // Only update the height if this is the currently visible image
                 if (track.contains(item) && item.getBoundingClientRect().left >= 0 && item.getBoundingClientRect().left < container.offsetWidth) {
                     updateCarouselHeight();
                 }
@@ -844,7 +957,6 @@
         }
 
         function updateCarouselHeight() {
-            // Get the image element for the current index
             const currentItem = imageElements[currentIndex];
             if (currentItem) {
                 const img = currentItem.querySelector('img');
@@ -857,7 +969,6 @@
 
         function updateCarousel() {
             track.style.transform = `translateX(-${currentIndex * 100}%)`;
-            // Wait for a brief moment for the transform to start before updating height
             setTimeout(updateCarouselHeight, 10);
         }
 
@@ -872,7 +983,7 @@
         }
 
         function startAutoSlide() {
-            autoSlideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
+            autoSlideInterval = setInterval(nextSlide, 4000);
         }
 
         function stopAutoSlide() {
@@ -881,40 +992,16 @@
 
         document.querySelector('.carousel-btn.next').addEventListener('click', () => {
             nextSlide();
-            stopAutoSlide(); // Stop auto-slide on manual interaction
+            stopAutoSlide();
         });
         document.querySelector('.carousel-btn.prev').addEventListener('click', () => {
             prevSlide();
-            stopAutoSlide(); // Stop auto-slide on manual interaction
+            stopAutoSlide();
         });
 
-        // Initialize the carousel on window load to ensure all images are measured
         window.addEventListener('load', () => {
             updateCarouselHeight();
             startAutoSlide();
-        });
-
-
-        // RSVP Form Handler
-        document.getElementById('rsvpForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('.btn-submit');
-            const originalText = btn.textContent;
-
-            btn.textContent = 'Sending...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.textContent = '✓ Confirmed!';
-                btn.style.background = 'var(--sage)';
-
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    btn.style.background = '';
-                    e.target.reset();
-                }, 2000);
-            }, 1500);
         });
 
         // Smooth scroll for navigation links
@@ -931,8 +1018,6 @@
         // Mobile menu toggle
         document.getElementById('menuToggle').addEventListener('click', function() {
             this.classList.toggle('active');
-            // You might want to add logic here to toggle a mobile menu overlay
-            // For example: document.querySelector('.nav-links').classList.toggle('open');
         });
 
         // Intersection Observer for fade-in animations
