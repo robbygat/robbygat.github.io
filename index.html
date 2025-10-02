@@ -460,6 +460,44 @@
             cursor: not-allowed;
         }
 
+        .success-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .success-message .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-message h3 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .success-message p {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
         .gallery-carousel-container {
             position: relative;
             width: 100%;
@@ -890,16 +928,15 @@
                 });
 
                 if (response.ok) {
-                    btn.textContent = '✓ Confirmed!';
-                    btn.style.background = 'var(--sage)';
-
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.disabled = false;
-                        btn.style.background = '';
-                        e.target.reset();
-                        guestNamesContainer.innerHTML = '';
-                    }, 3000);
+                    // Replace the entire form with success message
+                    const rsvpFormContainer = document.querySelector('.rsvp-form');
+                    rsvpFormContainer.innerHTML = `
+                        <div class="success-message">
+                            <div class="success-icon">✨</div>
+                            <h3 class="display-font">Thank You for RSVPing!</h3>
+                            <p>We are so excited to share this special moment with you. See you in paradise!</p>
+                        </div>
+                    `;
                 } else {
                     throw new Error('Form submission failed');
                 }
