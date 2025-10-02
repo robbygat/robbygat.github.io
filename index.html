@@ -63,24 +63,17 @@
         nav {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1.25rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .nav-logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.75rem;
         }
 
         .language-switcher {
             display: flex;
             gap: 0.5rem;
             background: white;
-            padding: 0.35rem;
+            padding: 0.4rem;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
@@ -89,15 +82,15 @@
             background: transparent;
             border: none;
             border-radius: 8px;
-            padding: 0.4rem 0.9rem;
-            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--ink);
             display: flex;
             align-items: center;
-            gap: 0.35rem;
+            gap: 0.4rem;
         }
 
         .language-switcher button:hover {
@@ -109,35 +102,6 @@
             background: var(--gold);
             color: white;
             box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
-        }
-
-        .nav-logo {
-            font-size: 1.5rem;
-            letter-spacing: -0.02em;
-            color: var(--ink);
-            position: relative;
-            height: 1.5em;
-            overflow: hidden;
-        }
-
-        .rotating-names {
-            position: relative;
-            display: inline-block;
-        }
-
-        .name-item {
-            opacity: 0;
-            transform: translateY(20px);
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-
-        .name-item.active {
-            opacity: 1;
-            transform: translateY(0);
-            position: relative;
         }
 
         .nav-links {
@@ -241,6 +205,23 @@
             color: white;
             opacity: 0;
             animation: fadeInUp 0.8s ease 0.2s forwards;
+            position: relative;
+            min-height: 1.2em;
+        }
+
+        .rotating-name {
+            opacity: 0;
+            transform: translateY(30px);
+            position: absolute;
+            width: 100%;
+            left: 0;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .rotating-name.active {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
         }
 
         .hero-subtitle {
@@ -658,21 +639,6 @@
             50% { transform: scale(1.1); }
         }
 
-        /* Hide Google Translate elements */
-        .goog-te-banner-frame,
-        .goog-te-gadget,
-        #google_translate_element {
-            display: none !important;
-        }
-
-        body {
-            top: 0 !important;
-        }
-
-        .skiptranslate {
-            display: none !important;
-        }
-
         @media (max-width: 1024px) {
             .venue-content-three-col {
                 grid-template-columns: 1fr;
@@ -723,14 +689,6 @@
                 margin: 2rem 1rem;
                 border-radius: 20px;
             }
-            .language-switcher {
-                flex-direction: column;
-                gap: 0.3rem;
-            }
-            .language-switcher button {
-                padding: 0.35rem 0.7rem;
-                font-size: 0.75rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -742,6 +700,14 @@
             }
             .countdown-number {
                 font-size: 1.75rem;
+            }
+            .language-switcher {
+                gap: 0.3rem;
+                padding: 0.3rem;
+            }
+            .language-switcher button {
+                padding: 0.4rem 0.7rem;
+                font-size: 0.8rem;
             }
         }
 
@@ -788,34 +754,25 @@
 <body>
     <div class="nav-wrapper" id="navbar">
         <nav>
-            <div class="nav-logo-container">
-                <div class="language-switcher">
-                    <button class="lang-btn active" data-lang="en">
-                        <span>🇺🇸</span>
-                        <span>EN</span>
-                    </button>
-                    <button class="lang-btn" data-lang="ja">
-                        <span>🇯🇵</span>
-                        <span>日本語</span>
-                    </button>
-                    <button class="lang-btn" data-lang="th">
-                        <span>🇹🇭</span>
-                        <span>ไทย</span>
-                    </button>
-                </div>
-                <div class="nav-logo display-font">
-                    <div class="rotating-names">
-                        <span class="name-item active" data-lang="en">Rob & Nano</span>
-                        <span class="name-item" data-lang="ja">ロバートとなの</span>
-                        <span class="name-item" data-lang="th">โรเบิร์ตและธารินี</span>
-                    </div>
-                </div>
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="en">
+                    <span>🇺🇸</span>
+                    <span>EN</span>
+                </button>
+                <button class="lang-btn" data-lang="ja">
+                    <span>🇯🇵</span>
+                    <span>日本語</span>
+                </button>
+                <button class="lang-btn" data-lang="th">
+                    <span>🇹🇭</span>
+                    <span>ไทย</span>
+                </button>
             </div>
             <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#venue">Venue</a></li>
-                <li><a href="#rsvp">RSVP</a></li>
-                <li><a href="#gallery">Moments</a></li>
+                <li><a href="#home" data-i18n="nav.home">Home</a></li>
+                <li><a href="#venue" data-i18n="nav.venue">Venue</a></li>
+                <li><a href="#rsvp" data-i18n="nav.rsvp">RSVP</a></li>
+                <li><a href="#gallery" data-i18n="nav.gallery">Moments</a></li>
             </ul>
             <button class="menu-toggle" id="menuToggle">
                 <span></span>
@@ -828,8 +785,12 @@
     <section id="home" class="hero">
         <div class="hero-content">
             <div class="hero-date mono-font">05 • 04 • 2026</div>
-            <h1 class="hero-title display-font">Rob & Nano</h1>
-            <p class="hero-subtitle">Making the absolute best out of life everyday!</p>
+            <h1 class="hero-title display-font">
+                <span class="rotating-name active" data-lang="en">Rob & Nano</span>
+                <span class="rotating-name" data-lang="ja">ロバートとなの</span>
+                <span class="rotating-name" data-lang="th">โรเบิร์ตและธารินี</span>
+            </h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">Making the absolute best out of life everyday!</p>
             <div class="countdown-wrapper">
                 <div id="countdown" class="countdown mono-font"></div>
             </div>
@@ -840,18 +801,20 @@
         <div class="venue-content-three-col">
             <div class="venue-image-col"></div>
             <div class="venue-info-col fade-in">
-                <div class="section-label mono-font">The Destination</div>
-                <h2 class="section-title display-font">Ko Samui Paradise</h2>
-                <p class="section-description" style="margin: 0; max-width: none;">
+                <div class="section-label mono-font" data-i18n="venue.label">The Destination</div>
+                <h2 class="section-title display-font" data-i18n="venue.title">Ko Samui Paradise</h2>
+                <p class="section-description" style="margin: 0; max-width: none;" data-i18n="venue.description">
                     Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love.
                     Join us in this tropical sanctuary as we begin our forever.
                 </p>
                 <div class="address-card">
-                    <h4 class="display-font">Island of Dreams</h4>
-                    <p>Ko Samui, Surat Thani<br>
-                    Thailand's Gulf Paradise<br>
-                    <span style="color: var(--ocean); font-weight: 500;">Beachfront Ceremony at Sunset</span></p>
-                    <a href="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc" class="btn-view-venue" target="_blank">View Venue</a>
+                    <h4 class="display-font" data-i18n="venue.card.title">Island of Dreams</h4>
+                    <p>
+                        <span data-i18n="venue.card.location1">Ko Samui, Surat Thani</span><br>
+                        <span data-i18n="venue.card.location2">Thailand's Gulf Paradise</span><br>
+                        <span style="color: var(--ocean); font-weight: 500;" data-i18n="venue.card.ceremony">Beachfront Ceremony at Sunset</span>
+                    </p>
+                    <a href="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc" class="btn-view-venue" target="_blank" data-i18n="venue.button">View Venue</a>
                 </div>
             </div>
             <div class="venue-map-col">
@@ -868,36 +831,36 @@
     <section id="rsvp" class="bg-image-section">
         <div class="rsvp-form">
             <div class="section-header">
-                <div class="section-label mono-font">Save Your Seat</div>
-                <h2 class="section-title display-font">Join Our Celebration</h2>
-                <p class="section-description">
+                <div class="section-label mono-font" data-i18n="rsvp.label">Save Your Seat</div>
+                <h2 class="section-title display-font" data-i18n="rsvp.title">Join Our Celebration</h2>
+                <p class="section-description" data-i18n="rsvp.description">
                     Your presence would make our special day complete
                 </p>
             </div>
             <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
                 <div class="form-group">
-                    <input type="email" class="form-input" name="email" placeholder="Your email address" required>
+                    <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
                 </div>
                 <div class="form-group">
-                    <label>How many guests will be attending?</label>
+                    <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
                     <select class="form-input" name="guest_count" id="guestCount" required>
-                        <option value="">Select number of guests</option>
-                        <option value="1">1 Guest</option>
-                        <option value="2">2 Guests</option>
-                        <option value="3">3 Guests</option>
-                        <option value="4">4 Guests</option>
-                        <option value="5">5 Guests</option>
-                        <option value="6">6 Guests</option>
-                        <option value="7">7 Guests</option>
-                        <option value="8">8 Guests</option>
+                        <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
+                        <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
+                        <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
+                        <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
+                        <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
+                        <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
+                        <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
+                        <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
+                        <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
                     </select>
                 </div>
                 <div id="guestNamesContainer"></div>
                 <div class="form-group">
-                    <textarea class="form-input" name="message" placeholder="Leave us a message (optional)" rows="4"></textarea>
+                    <textarea class="form-input" name="message" data-i18n-placeholder="rsvp.form.message" placeholder="Leave us a message (optional)" rows="4"></textarea>
                 </div>
                 <div style="text-align: center;">
-                    <button type="submit" class="btn-submit">Confirm Attendance</button>
+                    <button type="submit" class="btn-submit" data-i18n="rsvp.form.submit">Confirm Attendance</button>
                 </div>
             </form>
         </div>
@@ -905,9 +868,9 @@
 
     <section id="gallery">
         <div class="section-header fade-in">
-            <div class="section-label mono-font">Our Journey</div>
-            <h2 class="section-title display-font">Core Memories</h2>
-            <p class="section-description">
+            <div class="section-label mono-font" data-i18n="gallery.label">Our Journey</div>
+            <h2 class="section-title display-font" data-i18n="gallery.title">Core Memories</h2>
+            <p class="section-description" data-i18n="gallery.description">
                 A collection of memories that led us here
             </p>
         </div>
@@ -926,120 +889,297 @@
         <div class="footer-content">
             <div class="footer-names display-font">Rob & Nano</div>
             <div class="footer-date mono-font">
-                Forever begins May 4th, 2026 <span class="hearts">💕</span>
+                <span data-i18n="footer.text">Forever begins May 4th, 2026</span> <span class="hearts">💕</span>
             </div>
         </div>
     </footer>
 
-    <!-- Hidden Google Translate Element -->
-    <div id="google_translate_element" style="display: none;"></div>
+    <script>
+        // Complete translations for all text content
+        const translations = {
+            en: {
+                nav: {
+                    home: 'Home',
+                    venue: 'Venue',
+                    rsvp: 'RSVP',
+                    gallery: 'Moments'
+                },
+                hero: {
+                    names: 'Rob & Nano',
+                    subtitle: 'Making the absolute best out of life everyday!'
+                },
+                countdown: {
+                    days: 'Days',
+                    hours: 'Hours',
+                    minutes: 'Minutes',
+                    seconds: 'Seconds',
+                    complete: 'Happily Ever After!'
+                },
+                venue: {
+                    label: 'The Destination',
+                    title: 'Ko Samui Paradise',
+                    description: 'Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. Join us in this tropical sanctuary as we begin our forever.',
+                    card: {
+                        title: 'Island of Dreams',
+                        location1: 'Ko Samui, Surat Thani',
+                        location2: "Thailand's Gulf Paradise",
+                        ceremony: 'Beachfront Ceremony at Sunset'
+                    },
+                    button: 'View Venue'
+                },
+                rsvp: {
+                    label: 'Save Your Seat',
+                    title: 'Join Our Celebration',
+                    description: 'Your presence would make our special day complete',
+                    form: {
+                        email: 'Your email address',
+                        guestLabel: 'How many guests will be attending?',
+                        selectGuests: 'Select number of guests',
+                        guest1: '1 Guest',
+                        guest2: '2 Guests',
+                        guest3: '3 Guests',
+                        guest4: '4 Guests',
+                        guest5: '5 Guests',
+                        guest6: '6 Guests',
+                        guest7: '7 Guests',
+                        guest8: '8 Guests',
+                        namesLabel: 'Please enter the names of all guests:',
+                        guestName: 'Guest',
+                        fullName: 'full name',
+                        message: 'Leave us a message (optional)',
+                        submit: 'Confirm Attendance',
+                        sending: 'Sending...',
+                        error: 'Error - Try Again'
+                    },
+                    success: {
+                        title: 'Thank You for RSVPing!',
+                        message: 'We are so excited to share this special moment with you. See you in paradise!'
+                    }
+                },
+                gallery: {
+                    label: 'Our Journey',
+                    title: 'Core Memories',
+                    description: 'A collection of memories that led us here'
+                },
+                footer: {
+                    text: 'Forever begins May 4th, 2026'
+                }
+            },
+            ja: {
+                nav: {
+                    home: 'ホーム',
+                    venue: '会場',
+                    rsvp: '出欠確認',
+                    gallery: '思い出'
+                },
+                hero: {
+                    names: 'ロバートとなの',
+                    subtitle: '毎日を最高に楽しく生きる！'
+                },
+                countdown: {
+                    days: '日',
+                    hours: '時間',
+                    minutes: '分',
+                    seconds: '秒',
+                    complete: '永遠の幸せ！'
+                },
+                venue: {
+                    label: '目的地',
+                    title: 'コ・サムイ・パラダイス',
+                    description: 'ターコイズブルーの海が黄金の海岸と出会い、古代の椰子の木が永遠の愛の物語をささやく場所。私たちの永遠が始まるこの楽園でお会いしましょう。',
+                    card: {
+                        title: '夢の島',
+                        location1: 'コ・サムイ、スラートターニー',
+                        location2: 'タイ湾の楽園',
+                        ceremony: '夕日のビーチフロント式'
+                    },
+                    button: '会場を見る'
+                },
+                rsvp: {
+                    label: '席を予約',
+                    title: '私たちのお祝いにご参加ください',
+                    description: 'あなたの存在が私たちの特別な日を完璧にします',
+                    form: {
+                        email: 'メールアドレス',
+                        guestLabel: '何名様が出席されますか？',
+                        selectGuests: 'ゲスト数を選択',
+                        guest1: '1名',
+                        guest2: '2名',
+                        guest3: '3名',
+                        guest4: '4名',
+                        guest5: '5名',
+                        guest6: '6名',
+                        guest7: '7名',
+                        guest8: '8名',
+                        namesLabel: 'すべてのゲストのお名前を入力してください：',
+                        guestName: 'ゲスト',
+                        fullName: 'のフルネーム',
+                        message: 'メッセージを残す（任意）',
+                        submit: '出席を確認',
+                        sending: '送信中...',
+                        error: 'エラー - 再試行'
+                    },
+                    success: {
+                        title: 'ご出席ありがとうございます！',
+                        message: 'この特別な瞬間をあなたと共有できることをとても楽しみにしています。楽園でお会いしましょう！'
+                    }
+                },
+                gallery: {
+                    label: '私たちの旅',
+                    title: '大切な思い出',
+                    description: 'ここに至るまでの思い出のコレクション'
+                },
+                footer: {
+                    text: '2026年5月4日、永遠が始まります'
+                }
+            },
+            th: {
+                nav: {
+                    home: 'หน้าแรก',
+                    venue: 'สถานที่',
+                    rsvp: 'ยืนยันการเข้าร่วม',
+                    gallery: 'ความทรงจำ'
+                },
+                hero: {
+                    names: 'โรเบิร์ตและธารินี',
+                    subtitle: 'ทำให้ทุกวันเป็นวันที่ดีที่สุดในชีวิต!'
+                },
+                countdown: {
+                    days: 'วัน',
+                    hours: 'ชั่วโมง',
+                    minutes: 'นาที',
+                    seconds: 'วินาที',
+                    complete: 'มีความสุขตลอดไป!'
+                },
+                venue: {
+                    label: 'จุดหมายปลายทาง',
+                    title: 'สวรรค์เกาะสมุย',
+                    description: 'ที่ซึ่งน้ำทะเลสีเทอร์ควอยส์พบกับชายหาดทองคำ และต้นปาล์มโบราณกระซิบเรื่องราวแห่งความรักนิรันดร์ ร่วมกับเราในสถานที่แห่งนี้เพื่อเริ่มต้นตลอดกาลของเรา',
+                    card: {
+                        title: 'เกาะแห่งความฝัน',
+                        location1: 'เกาะสมุย สุราษฎร์ธานี',
+                        location2: 'สวรรค์อ่าวไทย',
+                        ceremony: 'พิธีริมชายหาดยามพระอาทิตย์ตก'
+                    },
+                    button: 'ดูสถานที่'
+                },
+                rsvp: {
+                    label: 'จองที่นั่งของคุณ',
+                    title: 'ร่วมฉลองกับเรา',
+                    description: 'การมาร่วมงานของคุณจะทำให้วันพิเศษของเราสมบูรณ์แบบ',
+                    form: {
+                        email: 'ที่อยู่อีเมลของคุณ',
+                        guestLabel: 'จะมีแขกกี่คนเข้าร่วม?',
+                        selectGuests: 'เลือกจำนวนแขก',
+                        guest1: '1 คน',
+                        guest2: '2 คน',
+                        guest3: '3 คน',
+                        guest4: '4 คน',
+                        guest5: '5 คน',
+                        guest6: '6 คน',
+                        guest7: '7 คน',
+                        guest8: '8 คน',
+                        namesLabel: 'กรุณากรอกชื่อของแขกทุกคน:',
+                        guestName: 'แขกคนที่',
+                        fullName: 'ชื่อเต็ม',
+                        message: 'ฝากข้อความถึงเรา (ไม่บังคับ)',
+                        submit: 'ยืนยันการเข้าร่วม',
+                        sending: 'กำลังส่ง...',
+                        error: 'ข้อผิดพลาด - ลองอีกครั้ง'
+                    },
+                    success: {
+                        title: 'ขอบคุณที่ยืนยันการเข้าร่วม!',
+                        message: 'เรารู้สึกตื่นเต้นมากที่จะได้แบ่งปันช่วงเวลาพิเศษนี้กับคุณ พบกันที่สวรรค์!'
+                    }
+                },
+                gallery: {
+                    label: 'การเดินทางของเรา',
+                    title: 'ความทรงจำหลัก',
+                    description: 'คอลเลกชั่นของความทรงจำที่นำเรามาที่นี่'
+                },
+                footer: {
+                    text: 'ตลอดกาลเริ่มต้น 4 พฤษภาคม 2026'
+                }
+            }
+        };
 
-    <script type="text/javascript">
-        // Google Translate Initialization
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,ja,th',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-
-        // Language Translation System
+        // Language management
         let currentLang = 'en';
         let autoRotateInterval;
 
-        function triggerGoogleTranslate(lang) {
-            const frame = document.querySelector('.goog-te-menu-frame');
-            if (!frame) {
-                setTimeout(() => triggerGoogleTranslate(lang), 100);
-                return;
-            }
-
-            const frameDoc = frame.contentDocument || frame.contentWindow.document;
-            const langMap = {
-                'en': 'English',
-                'ja': 'Japanese',
-                'th': 'Thai'
-            };
-
-            const langLinks = frameDoc.querySelectorAll('a.goog-te-menu2-item span.text');
-            for (let link of langLinks) {
-                if (link.textContent.includes(langMap[lang])) {
-                    link.parentElement.click();
-                    break;
-                }
-            }
-        }
-
-        function updateActiveName(lang) {
-            const nameItems = document.querySelectorAll('.name-item');
-            nameItems.forEach(item => {
-                item.classList.remove('active');
-                if (item.dataset.lang === lang) {
-                    item.classList.add('active');
-                }
-            });
-        }
-
-        function updateActiveButton(lang) {
-            const langBtns = document.querySelectorAll('.lang-btn');
-            langBtns.forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.lang === lang) {
-                    btn.classList.add('active');
-                }
-            });
-        }
-
-        function changeLang(lang, isManual = false) {
-            if (lang === currentLang && !isManual) return;
-            
+        function updateContent(lang) {
             currentLang = lang;
-            updateActiveName(lang);
-            updateActiveButton(lang);
-            triggerGoogleTranslate(lang);
+            const t = translations[lang];
+
+            // Update all elements with data-i18n attributes
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const keys = key.split('.');
+                let value = t;
+                for (let k of keys) {
+                    value = value[k];
+                }
+                el.textContent = value;
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                const keys = key.split('.');
+                let value = t;
+                for (let k of keys) {
+                    value = value[k];
+                }
+                el.placeholder = value;
+            });
+
+            // Update rotating names in hero
+            updateActiveHeroName(lang);
+            
+            // Update countdown labels
+            updateCountdown();
+
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
         }
 
-        // Auto-rotate names every 2 seconds
+        function updateActiveHeroName(lang) {
+            document.querySelectorAll('.rotating-name').forEach(el => {
+                el.classList.toggle('active', el.dataset.lang === lang);
+            });
+        }
+
+        // Auto-rotate hero names every 2 seconds
         function startAutoRotate() {
             const langs = ['en', 'ja', 'th'];
             let index = 0;
             
             autoRotateInterval = setInterval(() => {
                 index = (index + 1) % langs.length;
-                updateActiveName(langs[index]);
+                updateActiveHeroName(langs[index]);
             }, 2000);
         }
 
-        // Stop auto-rotate when user manually selects language
         function stopAutoRotate() {
             clearInterval(autoRotateInterval);
         }
 
-        // Language button click handlers
-        document.addEventListener('DOMContentLoaded', function() {
-            const langBtns = document.querySelectorAll('.lang-btn');
-            
-            langBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    stopAutoRotate();
-                    const lang = this.dataset.lang;
-                    changeLang(lang, true);
-                });
+        // Language button handlers
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                stopAutoRotate();
+                updateContent(this.dataset.lang);
             });
-
-            // Start auto-rotating names
-            startAutoRotate();
-
-            // Initialize with English
-            setTimeout(() => {
-                changeLang('en', true);
-            }, 500);
         });
+
+        // Start auto-rotating hero names
+        startAutoRotate();
 
         // Countdown Timer
         function updateCountdown() {
+            const t = translations[currentLang].countdown;
             const wedding = new Date('2026-05-04T00:00:00').getTime();
             const now = new Date().getTime();
             const distance = wedding - now;
@@ -1048,7 +1188,7 @@
                 document.getElementById('countdown').innerHTML = `
                     <div class="countdown-item" style="grid-column: 1 / -1;">
                         <div class="countdown-number">🎉</div>
-                        <div class="countdown-label">Happily Ever After!</div>
+                        <div class="countdown-label">${t.complete}</div>
                     </div>
                 `;
                 return;
@@ -1062,19 +1202,19 @@
             document.getElementById('countdown').innerHTML = `
                 <div class="countdown-item">
                     <div class="countdown-number">${String(days).padStart(2, '0')}</div>
-                    <div class="countdown-label">Days</div>
+                    <div class="countdown-label">${t.days}</div>
                 </div>
                 <div class="countdown-item">
                     <div class="countdown-number">${String(hours).padStart(2, '0')}</div>
-                    <div class="countdown-label">Hours</div>
+                    <div class="countdown-label">${t.hours}</div>
                 </div>
                 <div class="countdown-item">
                     <div class="countdown-number">${String(minutes).padStart(2, '0')}</div>
-                    <div class="countdown-label">Minutes</div>
+                    <div class="countdown-label">${t.minutes}</div>
                 </div>
                 <div class="countdown-item">
                     <div class="countdown-number">${String(seconds).padStart(2, '0')}</div>
-                    <div class="countdown-label">Seconds</div>
+                    <div class="countdown-label">${t.seconds}</div>
                 </div>
             `;
         }
@@ -1094,6 +1234,7 @@
 
         guestCountSelect.addEventListener('change', function() {
             const count = parseInt(this.value);
+            const t = translations[currentLang].rsvp.form;
             guestNamesContainer.innerHTML = '';
 
             if (count > 0) {
@@ -1106,7 +1247,7 @@
                 label.style.display = 'block';
                 label.style.marginBottom = '0.5rem';
                 label.style.fontSize = '0.95rem';
-                label.textContent = 'Please enter the names of all guests:';
+                label.textContent = t.namesLabel;
                 guestNamesGroup.appendChild(label);
 
                 for (let i = 1; i <= count; i++) {
@@ -1114,7 +1255,7 @@
                     input.type = 'text';
                     input.className = 'form-input';
                     input.name = `guest_${i}_name`;
-                    input.placeholder = `Guest ${i} full name`;
+                    input.placeholder = `${t.guestName} ${i} ${t.fullName}`;
                     input.required = true;
                     input.style.marginBottom = '0.75rem';
                     guestNamesGroup.appendChild(input);
@@ -1124,13 +1265,14 @@
             }
         });
 
-        // RSVP Form Handler with Formspree
+        // RSVP Form Handler
         document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = e.target.querySelector('.btn-submit');
+            const t = translations[currentLang].rsvp;
             const originalText = btn.textContent;
 
-            btn.textContent = 'Sending...';
+            btn.textContent = t.form.sending;
             btn.disabled = true;
 
             try {
@@ -1148,15 +1290,15 @@
                     rsvpFormContainer.innerHTML = `
                         <div class="success-message">
                             <div class="success-icon">✨</div>
-                            <h3 class="display-font">Thank You for RSVPing!</h3>
-                            <p>We are so excited to share this special moment with you. See you in paradise!</p>
+                            <h3 class="display-font">${t.success.title}</h3>
+                            <p>${t.success.message}</p>
                         </div>
                     `;
                 } else {
                     throw new Error('Form submission failed');
                 }
             } catch (error) {
-                btn.textContent = 'Error - Try Again';
+                btn.textContent = t.form.error;
                 btn.style.background = 'var(--sunset)';
 
                 setTimeout(() => {
@@ -1167,7 +1309,7 @@
             }
         });
 
-        // Automated Carousel Logic
+        // Gallery Carousel
         const track = document.querySelector('.gallery-carousel-track');
         const container = document.querySelector('.gallery-carousel-container');
         const imageCount = 49;
@@ -1255,7 +1397,7 @@
             startAutoSlide();
         });
 
-        // Smooth scroll for navigation links
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -1271,7 +1413,7 @@
             this.classList.toggle('active');
         });
 
-        // Intersection Observer for fade-in animations
+        // Intersection Observer
         const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -1285,10 +1427,9 @@
             el.style.animationPlayState = 'paused';
             observer.observe(el);
         });
-    </script>
 
-    <!-- Load Google Translate API -->
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+        // Initialize
+        updateContent('en');
+    </script>
 </body>
 </html>
-
