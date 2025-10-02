@@ -700,7 +700,19 @@
 <body>
     <div class="nav-wrapper" id="navbar">
         <nav>
-            <div class="nav-logo display-font">R & N</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-start;">
+    <!-- Language Selector -->
+    <div id="language-selector" style="margin-bottom:5px;">
+        <select id="langSelect" style="padding:4px 8px; border-radius:6px; font-size:0.9rem;">
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="th">ไทย</option>
+        </select>
+    </div>
+    <!-- Logo -->
+    <div class="nav-logo display-font">R & N</div>
+</div>
+
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#venue">Venue</a></li>
@@ -1072,5 +1084,56 @@
             observer.observe(el);
         });
     </script>
+    <!-- Google Translate API -->
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+            {pageLanguage: 'en', includedLanguages: 'en,ja,th', autoDisplay: false}, 
+            'google_translate_element'
+        );
+    }
+
+    // Manual selector override
+    document.addEventListener("DOMContentLoaded", function () {
+        const langSelect = document.getElementById("langSelect");
+        const heroTitle = document.querySelector(".hero-title");
+        const footerNames = document.getElementById("footerNames");
+
+        function updateNames(lang) {
+            if (lang === "ja") {
+                heroTitle.textContent = "ロバートとなの";
+                footerNames.textContent = "ロバートとなの";
+            } else if (lang === "th") {
+                heroTitle.textContent = "โรเบิร์ตและธารินี";
+                footerNames.textContent = "โรเบิร์ตและธารินี";
+            } else {
+                heroTitle.textContent = "Rob & Nano";
+                footerNames.textContent = "Rob & Nano";
+            }
+        }
+
+        langSelect.addEventListener("change", function () {
+            const lang = this.value;
+            updateNames(lang);
+
+            // Trigger Google Translate
+            const frame = document.querySelector("iframe.goog-te-menu-frame");
+            if (frame) {
+                const frameDoc = frame.contentDocument || frame.contentWindow.document;
+                const langLinks = frameDoc.querySelectorAll("a.goog-te-menu2-item span.text");
+                for (let i = 0; i < langLinks.length; i++) {
+                    if (langLinks[i].innerText.toLowerCase().indexOf(lang === "en" ? "english" : (lang === "ja" ? "japanese" : "thai")) > -1) {
+                        langLinks[i].click();
+                        break;
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<div id="google_translate_element" style="display:none;"></div>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
