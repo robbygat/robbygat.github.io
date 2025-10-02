@@ -69,10 +69,75 @@
             align-items: center;
         }
 
+        .nav-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.35rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .language-switcher button {
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .language-switcher button:hover {
+            background: var(--sand);
+            transform: translateY(-1px);
+        }
+
+        .language-switcher button.active {
+            background: var(--gold);
+            color: white;
+            box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+        }
+
         .nav-logo {
             font-size: 1.5rem;
             letter-spacing: -0.02em;
             color: var(--ink);
+            position: relative;
+            height: 1.5em;
+            overflow: hidden;
+        }
+
+        .rotating-names {
+            position: relative;
+            display: inline-block;
+        }
+
+        .name-item {
+            opacity: 0;
+            transform: translateY(20px);
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .name-item.active {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
         }
 
         .nav-links {
@@ -147,45 +212,6 @@
             background: rgba(10, 10, 10, 0.45);
             z-index: 1;
         }
-.language-switcher {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.language-switcher button {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.language-switcher button:hover {
-  background: #f0f0f0;
-  transform: scale(1.05);
-}
-
-/* Animation for names */
-.rotating-names {
-  position: relative;
-  overflow: hidden;
-  height: 2em;
-}
-
-#rotatingName {
-  display: inline-block;
-  animation: fadeInOut 2s infinite;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(20px); }
-  20% { opacity: 1; transform: translateY(0); }
-  80% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
 
         .hero-content {
             position: relative;
@@ -632,6 +658,21 @@
             50% { transform: scale(1.1); }
         }
 
+        /* Hide Google Translate elements */
+        .goog-te-banner-frame,
+        .goog-te-gadget,
+        #google_translate_element {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        .skiptranslate {
+            display: none !important;
+        }
+
         @media (max-width: 1024px) {
             .venue-content-three-col {
                 grid-template-columns: 1fr;
@@ -681,6 +722,14 @@
             .venue-section {
                 margin: 2rem 1rem;
                 border-radius: 20px;
+            }
+            .language-switcher {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+            .language-switcher button {
+                padding: 0.35rem 0.7rem;
+                font-size: 0.75rem;
             }
         }
 
@@ -738,31 +787,30 @@
 </head>
 <body>
     <div class="nav-wrapper" id="navbar">
-        
         <nav>
-            <div class="language-switcher">
-  <button data-lang="en">🇺🇸 English</button>
-  <button data-lang="ja">🇯🇵 日本語</button>
-  <button data-lang="th">🇹🇭 ไทย</button>
-</div>
-
-<div class="nav-logo display-font rotating-names">
-  <span id="rotatingName">Rob & Nano</span>
-</div>
-
-            <div style="display:flex; flex-direction:column; align-items:flex-start;">
-    <!-- Language Selector -->
-    <div id="language-selector" style="margin-bottom:5px;">
-        <select id="langSelect" style="padding:4px 8px; border-radius:6px; font-size:0.9rem;">
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="th">ไทย</option>
-        </select>
-    </div>
-    <!-- Logo -->
-    <div class="nav-logo display-font">R & N</div>
-</div>
-
+            <div class="nav-logo-container">
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="en">
+                        <span>🇺🇸</span>
+                        <span>EN</span>
+                    </button>
+                    <button class="lang-btn" data-lang="ja">
+                        <span>🇯🇵</span>
+                        <span>日本語</span>
+                    </button>
+                    <button class="lang-btn" data-lang="th">
+                        <span>🇹🇭</span>
+                        <span>ไทย</span>
+                    </button>
+                </div>
+                <div class="nav-logo display-font">
+                    <div class="rotating-names">
+                        <span class="name-item active" data-lang="en">Rob & Nano</span>
+                        <span class="name-item" data-lang="ja">ロバートとなの</span>
+                        <span class="name-item" data-lang="th">โรเบิร์ตและธารินี</span>
+                    </div>
+                </div>
+            </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#venue">Venue</a></li>
@@ -883,7 +931,113 @@
         </div>
     </footer>
 
-    <script>
+    <!-- Hidden Google Translate Element -->
+    <div id="google_translate_element" style="display: none;"></div>
+
+    <script type="text/javascript">
+        // Google Translate Initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,ja,th',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
+        // Language Translation System
+        let currentLang = 'en';
+        let autoRotateInterval;
+
+        function triggerGoogleTranslate(lang) {
+            const frame = document.querySelector('.goog-te-menu-frame');
+            if (!frame) {
+                setTimeout(() => triggerGoogleTranslate(lang), 100);
+                return;
+            }
+
+            const frameDoc = frame.contentDocument || frame.contentWindow.document;
+            const langMap = {
+                'en': 'English',
+                'ja': 'Japanese',
+                'th': 'Thai'
+            };
+
+            const langLinks = frameDoc.querySelectorAll('a.goog-te-menu2-item span.text');
+            for (let link of langLinks) {
+                if (link.textContent.includes(langMap[lang])) {
+                    link.parentElement.click();
+                    break;
+                }
+            }
+        }
+
+        function updateActiveName(lang) {
+            const nameItems = document.querySelectorAll('.name-item');
+            nameItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.lang === lang) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function updateActiveButton(lang) {
+            const langBtns = document.querySelectorAll('.lang-btn');
+            langBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function changeLang(lang, isManual = false) {
+            if (lang === currentLang && !isManual) return;
+            
+            currentLang = lang;
+            updateActiveName(lang);
+            updateActiveButton(lang);
+            triggerGoogleTranslate(lang);
+        }
+
+        // Auto-rotate names every 2 seconds
+        function startAutoRotate() {
+            const langs = ['en', 'ja', 'th'];
+            let index = 0;
+            
+            autoRotateInterval = setInterval(() => {
+                index = (index + 1) % langs.length;
+                updateActiveName(langs[index]);
+            }, 2000);
+        }
+
+        // Stop auto-rotate when user manually selects language
+        function stopAutoRotate() {
+            clearInterval(autoRotateInterval);
+        }
+
+        // Language button click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const langBtns = document.querySelectorAll('.lang-btn');
+            
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    stopAutoRotate();
+                    const lang = this.dataset.lang;
+                    changeLang(lang, true);
+                });
+            });
+
+            // Start auto-rotating names
+            startAutoRotate();
+
+            // Initialize with English
+            setTimeout(() => {
+                changeLang('en', true);
+            }, 500);
+        });
+
         // Countdown Timer
         function updateCountdown() {
             const wedding = new Date('2026-05-04T00:00:00').getTime();
@@ -990,7 +1144,6 @@
                 });
 
                 if (response.ok) {
-                    // Replace the entire form with success message
                     const rsvpFormContainer = document.querySelector('.rsvp-form');
                     rsvpFormContainer.innerHTML = `
                         <div class="success-message">
@@ -1023,7 +1176,6 @@
 
         const imageElements = [];
 
-        // Populate Carousel with images from the 'gif folder'
         for (let i = 1; i <= imageCount; i++) {
             const item = document.createElement('div');
             item.className = 'gallery-item';
@@ -1134,113 +1286,9 @@
             observer.observe(el);
         });
     </script>
-    <!-- Google Translate API -->
-<script type="text/javascript">
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-            {pageLanguage: 'en', includedLanguages: 'en,ja,th', autoDisplay: false}, 
-            'google_translate_element'
-        );
-    }
 
-    // Manual selector override
-    document.addEventListener("DOMContentLoaded", function () {
-        const langSelect = document.getElementById("langSelect");
-        const heroTitle = document.querySelector(".hero-title");
-        const footerNames = document.getElementById("footerNames");
-
-        function updateNames(lang) {
-            if (lang === "ja") {
-                heroTitle.textContent = "ロバートとなの";
-                footerNames.textContent = "ロバートとなの";
-            } else if (lang === "th") {
-                heroTitle.textContent = "โรเบิร์ตและธารินี";
-                footerNames.textContent = "โรเบิร์ตและธารินี";
-            } else {
-                heroTitle.textContent = "Rob & Nano";
-                footerNames.textContent = "Rob & Nano";
-            }
-        }
-
-        langSelect.addEventListener("change", function () {
-            const lang = this.value;
-            updateNames(lang);
-
-            // Trigger Google Translate
-            const frame = document.querySelector("iframe.goog-te-menu-frame");
-            if (frame) {
-                const frameDoc = frame.contentDocument || frame.contentWindow.document;
-                const langLinks = frameDoc.querySelectorAll("a.goog-te-menu2-item span.text");
-                for (let i = 0; i < langLinks.length; i++) {
-                    if (langLinks[i].innerText.toLowerCase().indexOf(lang === "en" ? "english" : (lang === "ja" ? "japanese" : "thai")) > -1) {
-                        langLinks[i].click();
-                        break;
-                    }
-                }
-            }
-        });
-    });
-</script>
-
-<div id="google_translate_element" style="display:none;"></div>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <!-- Google Translate API -->
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      { pageLanguage: 'en', includedLanguages: 'en,ja,th', autoDisplay: false },
-      'google_translate_element'
-    );
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".language-switcher button");
-    const rotatingName = document.getElementById("rotatingName");
-
-    const translations = {
-      en: "Rob & Nano",
-      ja: "ロバートとなの",
-      th: "โรเบิร์ตและธารินี"
-    };
-
-    let index = 0;
-    const langs = Object.keys(translations);
-
-    // Cycle names every 2s
-    setInterval(() => {
-      index = (index + 1) % langs.length;
-      const lang = langs[index];
-      rotatingName.textContent = translations[lang];
-    }, 2000);
-
-    // Manual language change (full site)
-    buttons.forEach(btn => {
-      btn.addEventListener("click", function () {
-        const lang = this.getAttribute("data-lang");
-
-        // Set "Rob & Nano" immediately
-        rotatingName.textContent = translations[lang];
-
-        // Trigger Google Translate iframe
-        const frame = document.querySelector("iframe.goog-te-menu-frame");
-        if (frame) {
-          const frameDoc = frame.contentDocument || frame.contentWindow.document;
-          const langLinks = frameDoc.querySelectorAll("a.goog-te-menu2-item span.text");
-          for (let i = 0; i < langLinks.length; i++) {
-            if (langLinks[i].innerText.toLowerCase().includes(lang === "en" ? "english" : lang === "ja" ? "japanese" : "thai")) {
-              langLinks[i].click();
-              break;
-            }
-          }
-        }
-      });
-    });
-  });
-</script>
-
-<div id="google_translate_element" style="display:none;"></div>
-<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-
+    <!-- Load Google Translate API -->
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
+
