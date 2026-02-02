@@ -448,6 +448,47 @@
             margin-bottom: 1.5rem;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-helper {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.4rem;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gold);
+        }
+
         .form-group label {
             color: white;
             display: block;
@@ -553,6 +594,89 @@
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             transition: height 0.5s ease-in-out;
+        }
+
+        .dress-code-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .dress-code-card,
+        .travel-tips-card {
+            background: white;
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .dress-code-card h3,
+        .travel-tips-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--ink);
+        }
+
+        .dress-code-card ul,
+        .travel-tips-card ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+            color: rgba(10, 10, 10, 0.7);
+        }
+
+        .dress-code-card li,
+        .travel-tips-card li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .dress-code-card li::before,
+        .travel-tips-card li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--ocean);
+        }
+
+        .travel-tips-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .travel-tips-card p {
+            color: rgba(10, 10, 10, 0.7);
+            margin: 0;
+            line-height: 1.7;
+        }
+
+        .phrases-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.75rem;
+        }
+
+        .phrases-table th,
+        .phrases-table td {
+            text-align: left;
+            padding: 0.5rem 0.25rem;
+            border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+            vertical-align: top;
+        }
+
+        .phrases-table th {
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(10, 10, 10, 0.5);
+        }
+
+        .phrases-table td {
+            color: rgba(10, 10, 10, 0.75);
         }
 
         .gallery-carousel-track {
@@ -689,6 +813,18 @@
                 margin: 2rem 1rem;
                 border-radius: 20px;
             }
+            .dress-code-grid {
+                grid-template-columns: 1fr;
+            }
+            .travel-tips-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -784,7 +920,7 @@
 
     <section id="home" class="hero">
         <div class="hero-content">
-            <div class="hero-date mono-font">05 • 04 • 2026</div>
+            <div class="hero-date mono-font">05 • 05 • 2026 • Arrive 4:30 PM</div>
             <h1 class="hero-title display-font">
                 <span class="rotating-name active" data-lang="en">Rob & Nano</span>
                 <span class="rotating-name" data-lang="ja">ロバートとなの</span>
@@ -804,15 +940,14 @@
                 <div class="section-label mono-font" data-i18n="venue.label">The Destination</div>
                 <h2 class="section-title display-font" data-i18n="venue.title">Ko Samui Paradise</h2>
                 <p class="section-description" style="margin: 0; max-width: none;" data-i18n="venue.description">
-                    Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love.
                     Join us in this tropical sanctuary as we begin our forever.
                 </p>
                 <div class="address-card">
-                    <h4 class="display-font" data-i18n="venue.card.title">Island of Dreams</h4>
+                    <h4 class="display-font" data-i18n="venue.card.title">Baan Kilee</h4>
                     <p>
-                        <span data-i18n="venue.card.location1">Ko Samui, Surat Thani</span><br>
-                        <span data-i18n="venue.card.location2">Thailand's Gulf Paradise</span><br>
-                        <span style="color: var(--ocean); font-weight: 500;" data-i18n="venue.card.ceremony">Beachfront Ceremony at Sunset</span>
+                        <span data-i18n="venue.card.location1">Koh Samui, Thailand</span><br>
+                        <span data-i18n="venue.card.location2">Wednesday, May 5th, 2026</span><br>
+                        <span style="color: var(--ocean); font-weight: 500;" data-i18n="venue.card.ceremony">Arrive at 4:30 PM</span>
                     </p>
                     <a href="https://maps.app.goo.gl/ckaj7bEMK83cdMP46?g_st=ipc" class="btn-view-venue" target="_blank" data-i18n="venue.button">View Venue</a>
                 </div>
@@ -828,6 +963,159 @@
         </div>
     </section>
 
+    <section id="dress-code">
+        <div class="section-header fade-in">
+            <div class="section-label mono-font" data-i18n="dressCode.label">Dress Code</div>
+            <h2 class="section-title display-font" data-i18n="dressCode.title">Dress Code Summary</h2>
+        </div>
+        <div class="dress-code-grid fade-in">
+            <div class="dress-code-card">
+                <h3 class="display-font" data-i18n="dressCode.women.title">Women</h3>
+                <ul>
+                    <li data-i18n="dressCode.women.item1">Light blue dresses</li>
+                </ul>
+            </div>
+            <div class="dress-code-card">
+                <h3 class="display-font" data-i18n="dressCode.men.title">Men</h3>
+                <ul>
+                    <li data-i18n="dressCode.men.item1">Tops: White shirts</li>
+                    <li data-i18n="dressCode.men.item2">Bottoms: Beige trousers or shorts</li>
+                    <li data-i18n="dressCode.men.item3">Jackets and neckties are optional</li>
+                </ul>
+            </div>
+            <div class="dress-code-card">
+                <h3 class="display-font" data-i18n="dressCode.accessories.title">Accessories (Optional)</h3>
+                <ul>
+                    <li data-i18n="dressCode.accessories.item1">Bow ties, pocket squares, or suspenders in light blue tones are welcome to add a coordinated look</li>
+                </ul>
+            </div>
+            <div class="dress-code-card">
+                <h3 class="display-font" data-i18n="dressCode.shoes.title">Shoes</h3>
+                <ul>
+                    <li data-i18n="dressCode.shoes.item1">Sandals, loafers, espadrilles, or any shoes suitable for walking on the beach</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="travel-tips">
+        <div class="section-header fade-in">
+            <div class="section-label mono-font" data-i18n="travelTips.label">Travel</div>
+            <h2 class="section-title display-font" data-i18n="travelTips.title">✈️ Koh Samui Travel Tips</h2>
+        </div>
+        <div class="travel-tips-grid fade-in">
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.gettingAround.title">🚗 Getting Around</h3>
+                <ul>
+                    <li data-i18n="travelTips.gettingAround.item1">Download the Grab app (Thailand’s version of Uber) and add your card before arrival.</li>
+                    <li data-i18n="travelTips.gettingAround.item2">If your villa (Airbnb) is on a hill, ask if Grab cars can access it. If not, villa staff can arrange local taxis.</li>
+                </ul>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.sim.title">📱 SIM &amp; Connectivity</h3>
+                <ul>
+                    <li data-i18n="travelTips.sim.item1">Best data options:</li>
+                    <li data-i18n="travelTips.sim.item2">Airalo eSIM</li>
+                    <li data-i18n="travelTips.sim.item3">AIS or True Move physical SIM (available at Samui airport or 7-Eleven)</li>
+                </ul>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.money.title">💵 Money &amp; ATMs</h3>
+                <p data-i18n="travelTips.money.text">ATMs and exchange booths are everywhere - airport, beach road, malls, and every 7-Eleven.</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.tipping.title">🤝 Tipping Etiquette</h3>
+                <p data-i18n="travelTips.tipping.text">Not mandatory but appreciated. Around 10% or rounding up fares is common for great service.</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.about.title">🏝️ About Samui</h3>
+                <p data-i18n="travelTips.about.text">A small island (52 km around).</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.activities.title">🧭 Best Activities for Wedding Guests in Koh Samui</h3>
+                <p data-i18n="travelTips.activities.text">Beaches, waterfalls, temples, shopping, spas, and beach clubs.</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.hydration.title">💧 Stay Hydrated!</h3>
+                <p data-i18n="travelTips.hydration.text">Only drink bottled water (tap water isn’t drinkable). Rehydration drinks are sold in all 7-Elevens.</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="travelTips.mosquitoes.title">🦟 Mosquitoes</h3>
+                <p data-i18n="travelTips.mosquitoes.text">Some inland or garden areas can have mosquitoes, especially at sunset time. Available repellents can be found easily at 7-Eleven or local pharmacies.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="local-tips">
+        <div class="section-header fade-in">
+            <div class="section-label mono-font" data-i18n="localTips.label">Local Tips</div>
+            <h2 class="section-title display-font" data-i18n="localTips.title">Helpful Thai Phrases &amp; Stays</h2>
+        </div>
+        <div class="travel-tips-grid fade-in">
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="localTips.phrases.title">📘 Useful Thai Phrases</h3>
+                <table class="phrases-table">
+                    <thead>
+                        <tr>
+                            <th data-i18n="localTips.phrases.headers.english">English</th>
+                            <th data-i18n="localTips.phrases.headers.thai">Thai</th>
+                            <th data-i18n="localTips.phrases.headers.pronunciation">Pronunciation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-i18n="localTips.phrases.items.thankYouMale.english">Thank you (male)</td>
+                            <td>ขอบคุณครับ</td>
+                            <td>Khob Khun Krub</td>
+                        </tr>
+                        <tr>
+                            <td data-i18n="localTips.phrases.items.thankYouFemale.english">Thank you (female)</td>
+                            <td>ขอบคุณค่ะ</td>
+                            <td>Khob Khun Kha</td>
+                        </tr>
+                        <tr>
+                            <td data-i18n="localTips.phrases.items.delicious.english">Delicious</td>
+                            <td>อร่อย</td>
+                            <td>Aroy</td>
+                        </tr>
+                        <tr>
+                            <td data-i18n="localTips.phrases.items.notSpicy.english">Not spicy</td>
+                            <td>ไม่เผ็ด</td>
+                            <td>Mai Ped</td>
+                        </tr>
+                        <tr>
+                            <td data-i18n="localTips.phrases.items.veryDrunk.english">Very drunk</td>
+                            <td>เมามาก</td>
+                            <td>Mao Mak</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="localTips.stays.title">🏨 Nearby Accommodation</h3>
+                <ul>
+                    <li><strong data-i18n="localTips.stays.closeTitle">Close to Baan Kilee</strong></li>
+                    <li>Kanokburi</li>
+                    <li>Sea Valley Resort</li>
+                    <li>Anahata</li>
+                    <li>Nikki Beach Samui</li>
+                    <li>Intercontinental Samui</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong data-i18n="localTips.stays.airbnbTitle">Airbnb Options</strong> <span data-i18n="localTips.stays.airbnbText">— Look for Lipa Talay (there are around 7 villas affordable just right across from Baan Kilee).</span></p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="localTips.thingsToDo.title">🗺️ Things to Do in Koh Samui</h3>
+                <p data-i18n="localTips.thingsToDo.text">For easy planning, we’ve put together a list of recommended activities (note – we will update more new places soon!).</p>
+            </div>
+            <div class="travel-tips-card">
+                <h3 class="display-font" data-i18n="localTips.bestActivities.title">🌴 Best Activities for Wedding Guests</h3>
+                <p>
+                    <a href="https://www.dreamcatchers-events.com/best-activities-for-wedding-guests-in-koh-samui/" target="_blank" rel="noopener" data-i18n="localTips.bestActivities.link">Best Activities for Wedding Guests in Koh Samui</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
     <section id="rsvp" class="bg-image-section">
         <div class="rsvp-form">
             <div class="section-header">
@@ -838,22 +1126,64 @@
                 </p>
             </div>
             <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
-                <div class="form-group">
-                    <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
-                </div>
-                <div class="form-group">
-                    <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
-                    <select class="form-input" name="guest_count" id="guestCount" required>
-                        <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
-                        <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
-                        <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
-                        <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
-                        <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
-                        <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
-                        <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
-                        <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
-                        <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
-                    </select>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
+                        <select class="form-input" name="guest_count" id="guestCount" required>
+                            <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
+                            <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
+                            <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
+                            <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
+                            <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
+                            <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
+                            <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
+                            <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
+                            <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrivalDate" data-i18n="rsvp.form.arrivalDateLabel">Arrival date to Samui</label>
+                        <input type="date" class="form-input" name="arrival_date_samui" id="arrivalDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="hotelName" data-i18n="rsvp.form.hotelNameLabel">Hotel name</label>
+                        <input type="text" class="form-input" name="hotel_name" id="hotelName" data-i18n-placeholder="rsvp.form.hotelNamePlaceholder" placeholder="Hotel or villa name">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkinDate" data-i18n="rsvp.form.checkinDateLabel">Hotel check-in date</label>
+                        <input type="date" class="form-input" name="hotel_checkin_date" id="checkinDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="kidsAges" data-i18n="rsvp.form.kidsAgesLabel">Kids (and ages)</label>
+                        <input type="text" class="form-input" name="kids_ages" id="kidsAges" data-i18n-placeholder="rsvp.form.kidsAgesPlaceholder" placeholder="e.g., 1 child (age 4)">
+                    </div>
+                    <div class="form-group">
+                        <label for="dietaryRequests" data-i18n="rsvp.form.dietaryLabel">Dietary requests</label>
+                        <input type="text" class="form-input" name="dietary_requests" id="dietaryRequests" data-i18n-placeholder="rsvp.form.dietaryPlaceholder" placeholder="Vegetarian, allergies, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="mealSelection" data-i18n="rsvp.form.mealLabel">Meal selection (plated dinner)</label>
+                        <select class="form-input" name="meal_selection" id="mealSelection">
+                            <option value="" data-i18n="rsvp.form.mealSelect">Select a meal</option>
+                            <option value="chicken" data-i18n="rsvp.form.mealChicken">Chicken</option>
+                            <option value="fish" data-i18n="rsvp.form.mealFish">Fish</option>
+                            <option value="vegetarian" data-i18n="rsvp.form.mealVegetarian">Vegetarian</option>
+                            <option value="other" data-i18n="rsvp.form.mealOther">Other / Let us know</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="rsvp.form.eventsLabel">RSVP for non-wedding events</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="events_welcome_drinks" value="yes"> <span data-i18n="rsvp.form.eventsWelcome">Welcome drinks</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_boat_trip" value="yes"> <span data-i18n="rsvp.form.eventsBoat">Boat trip</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_recovery_bbq" value="yes"> <span data-i18n="rsvp.form.eventsBbq">Recovery BBQ</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_other" value="yes"> <span data-i18n="rsvp.form.eventsOther">Other events</span></label>
+                        </div>
+                        <div class="form-helper" data-i18n="rsvp.form.eventsHelper">We’ll share exact times and details closer to the date.</div>
+                    </div>
                 </div>
                 <div id="guestNamesContainer"></div>
                 <div class="form-group">
@@ -889,7 +1219,7 @@
         <div class="footer-content">
             <div class="footer-names display-font">Rob & Nano</div>
             <div class="footer-date mono-font">
-                <span data-i18n="footer.text">Forever begins May 4th, 2026</span> <span class="hearts">💕</span>
+                <span data-i18n="footer.text">Forever begins May 5th, 2026</span> <span class="hearts">💕</span>
             </div>
         </div>
     </footer>
@@ -918,14 +1248,108 @@
                 venue: {
                     label: 'The Destination',
                     title: 'Ko Samui Paradise',
-                    description: 'Where turquoise waters meet golden shores, and ancient palms whisper stories of eternal love. Join us in this tropical sanctuary as we begin our forever.',
+                    description: 'Join us in this tropical sanctuary as we begin our forever.',
                     card: {
-                        title: 'Island of Dreams',
-                        location1: 'Ko Samui, Surat Thani',
-                        location2: "Thailand's Gulf Paradise",
-                        ceremony: 'Beachfront Ceremony at Sunset'
+                        title: 'Baan Kilee',
+                        location1: 'Koh Samui, Thailand',
+                        location2: 'Wednesday, May 5th, 2026',
+                        ceremony: 'Arrive at 4:30 PM'
                     },
                     button: 'View Venue'
+                },
+                dressCode: {
+                    label: 'Dress Code',
+                    title: 'Dress Code Summary',
+                    women: {
+                        title: 'Women',
+                        item1: 'Light blue dresses'
+                    },
+                    men: {
+                        title: 'Men',
+                        item1: 'Tops: White shirts',
+                        item2: 'Bottoms: Beige trousers or shorts',
+                        item3: 'Jackets and neckties are optional'
+                    },
+                    accessories: {
+                        title: 'Accessories (Optional)',
+                        item1: 'Bow ties, pocket squares, or suspenders in light blue tones are welcome to add a coordinated look'
+                    },
+                    shoes: {
+                        title: 'Shoes',
+                        item1: 'Sandals, loafers, espadrilles, or any shoes suitable for walking on the beach'
+                    }
+                },
+                travelTips: {
+                    label: 'Travel',
+                    title: '✈️ Koh Samui Travel Tips',
+                    gettingAround: {
+                        title: '🚗 Getting Around',
+                        item1: 'Download the Grab app (Thailand’s version of Uber) and add your card before arrival.',
+                        item2: 'If your villa (Airbnb) is on a hill, ask if Grab cars can access it. If not, villa staff can arrange local taxis.'
+                    },
+                    sim: {
+                        title: '📱 SIM & Connectivity',
+                        item1: 'Best data options:',
+                        item2: 'Airalo eSIM',
+                        item3: 'AIS or True Move physical SIM (available at Samui airport or 7-Eleven)'
+                    },
+                    money: {
+                        title: '💵 Money & ATMs',
+                        text: 'ATMs and exchange booths are everywhere - airport, beach road, malls, and every 7-Eleven.'
+                    },
+                    tipping: {
+                        title: '🤝 Tipping Etiquette',
+                        text: 'Not mandatory but appreciated. Around 10% or rounding up fares is common for great service.'
+                    },
+                    about: {
+                        title: '🏝️ About Samui',
+                        text: 'A small island (52 km around).'
+                    },
+                    activities: {
+                        title: '🧭 Best Activities for Wedding Guests in Koh Samui',
+                        text: 'Beaches, waterfalls, temples, shopping, spas, and beach clubs.'
+                    },
+                    hydration: {
+                        title: '💧 Stay Hydrated!',
+                        text: 'Only drink bottled water (tap water isn’t drinkable). Rehydration drinks are sold in all 7-Elevens.'
+                    },
+                    mosquitoes: {
+                        title: '🦟 Mosquitoes',
+                        text: 'Some inland or garden areas can have mosquitoes, especially at sunset time. Available repellents can be found easily at 7-Eleven or local pharmacies.'
+                    }
+                },
+                localTips: {
+                    label: 'Local Tips',
+                    title: 'Helpful Thai Phrases & Stays',
+                    phrases: {
+                        title: '📘 Useful Thai Phrases',
+                        headers: {
+                            english: 'English',
+                            thai: 'Thai',
+                            pronunciation: 'Pronunciation'
+                        },
+                        items: {
+                            thankYouMale: { english: 'Thank you (male)' },
+                            thankYouFemale: { english: 'Thank you (female)' },
+                            delicious: { english: 'Delicious' },
+                            notSpicy: { english: 'Not spicy' },
+                            veryDrunk: { english: 'Very drunk' }
+                        }
+                    },
+                    stays: {
+                        title: '🏨 Nearby Accommodation',
+                        closeTitle: 'Close to Baan Kilee',
+                        airbnbTitle: 'Airbnb Options',
+                        airbnbText: '— Look for Lipa Talay (there are around 7 villas affordable just right across from Baan Kilee).'
+                    },
+                    thingsToDo: {
+                        title: '🗺️ Things to Do in Koh Samui',
+                        text: 'For easy planning, we’ve put together a list of recommended activities (note – we will update more new places soon!).'
+                    },
+                    bestActivities: {
+                        title: '🌴 Best Activities for Wedding Guests',
+                        link: 'Best Activities for Wedding Guests in Koh Samui'
+                    }
                 },
                 rsvp: {
                     label: 'Save Your Seat',
@@ -946,6 +1370,26 @@
                         namesLabel: 'Please enter the names of all guests:',
                         guestName: 'Guest',
                         fullName: 'full name',
+                        arrivalDateLabel: 'Arrival date to Samui',
+                        hotelNameLabel: 'Hotel name',
+                        hotelNamePlaceholder: 'Hotel or villa name',
+                        checkinDateLabel: 'Hotel check-in date',
+                        kidsAgesLabel: 'Kids (and ages)',
+                        kidsAgesPlaceholder: 'e.g., 1 child (age 4)',
+                        dietaryLabel: 'Dietary requests',
+                        dietaryPlaceholder: 'Vegetarian, allergies, etc.',
+                        mealLabel: 'Meal selection (plated dinner)',
+                        mealSelect: 'Select a meal',
+                        mealChicken: 'Chicken',
+                        mealFish: 'Fish',
+                        mealVegetarian: 'Vegetarian',
+                        mealOther: 'Other / Let us know',
+                        eventsLabel: 'RSVP for non-wedding events',
+                        eventsWelcome: 'Welcome drinks',
+                        eventsBoat: 'Boat trip',
+                        eventsBbq: 'Recovery BBQ',
+                        eventsOther: 'Other events',
+                        eventsHelper: 'We’ll share exact times and details closer to the date.',
                         message: 'Leave us a message (optional)',
                         submit: 'Confirm Attendance',
                         sending: 'Sending...',
@@ -962,7 +1406,7 @@
                     description: 'A collection of memories that led us here'
                 },
                 footer: {
-                    text: 'Forever begins May 4th, 2026'
+                    text: 'Forever begins May 5th, 2026'
                 }
             },
             ja: {
@@ -986,14 +1430,108 @@
                 venue: {
                     label: '目的地',
                     title: 'コ・サムイ・パラダイス',
-                    description: 'ターコイズブルーの海が黄金の海岸と出会い、古代の椰子の木が永遠の愛の物語をささやく場所。私たちの永遠が始まるこの楽園でお会いしましょう。',
+                    description: '私たちの永遠が始まるこの楽園でお会いしましょう。',
                     card: {
-                        title: '夢の島',
-                        location1: 'コ・サムイ、スラートターニー',
-                        location2: 'タイ湾の楽園',
-                        ceremony: '夕日のビーチフロント式'
+                        title: 'バーン・キリー',
+                        location1: 'コ・サムイ、タイ',
+                        location2: '2026年5月5日（水）',
+                        ceremony: '16:30 到着'
                     },
                     button: '会場を見る'
+                },
+                dressCode: {
+                    label: 'ドレスコード',
+                    title: 'ドレスコード概要',
+                    women: {
+                        title: '女性',
+                        item1: 'ライトブルーのドレス'
+                    },
+                    men: {
+                        title: '男性',
+                        item1: 'トップス：白いシャツ',
+                        item2: 'ボトムス：ベージュのパンツまたはショートパンツ',
+                        item3: 'ジャケットとネクタイは任意'
+                    },
+                    accessories: {
+                        title: 'アクセサリー（任意）',
+                        item1: 'ライトブルーの蝶ネクタイ、ポケットチーフ、サスペンダーで統一感を出すのもおすすめです'
+                    },
+                    shoes: {
+                        title: '靴',
+                        item1: 'サンダル、ローファー、エスパドリーユ、またはビーチを歩ける靴'
+                    }
+                },
+                travelTips: {
+                    label: 'トラベル',
+                    title: '✈️ サムイ島 旅のヒント',
+                    gettingAround: {
+                        title: '🚗 移動手段',
+                        item1: 'Grabアプリ（タイ版Uber）をダウンロードし、到着前にカードを登録してください。',
+                        item2: '丘の上のヴィラ（Airbnb）の場合、Grabが入れるか確認を。難しい場合はヴィラスタッフがタクシーを手配してくれます。'
+                    },
+                    sim: {
+                        title: '📱 SIM＆通信',
+                        item1: 'おすすめのデータ手段：',
+                        item2: 'Airalo eSIM',
+                        item3: 'AISまたはTrue Moveの物理SIM（サムイ空港や7‑Elevenで購入可）'
+                    },
+                    money: {
+                        title: '💵 お金とATM',
+                        text: 'ATMや両替所は空港、ビーチロード、モール、7‑Elevenなど各所にあります。'
+                    },
+                    tipping: {
+                        title: '🤝 チップの目安',
+                        text: '必須ではありませんが喜ばれます。良いサービスには10％程度、または端数の切り上げが一般的です。'
+                    },
+                    about: {
+                        title: '🏝️ サムイ島について',
+                        text: '小さな島で、島一周は約52kmです。'
+                    },
+                    activities: {
+                        title: '🧭 サムイ島でのおすすめアクティビティ',
+                        text: 'ビーチ、滝、寺院、ショッピング、スパ、ビーチクラブ。'
+                    },
+                    hydration: {
+                        title: '💧 水分補給！',
+                        text: '水道水は飲めません。ボトル水のみ飲み、経口補水飲料は7‑Elevenで購入できます。'
+                    },
+                    mosquitoes: {
+                        title: '🦟 蚊',
+                        text: '内陸や庭のあるエリアは、特に夕方に蚊が出やすいです。虫よけは7‑Elevenや薬局で簡単に買えます。'
+                    }
+                },
+                localTips: {
+                    label: 'ローカル情報',
+                    title: '役立つタイ語フレーズ＆宿泊先',
+                    phrases: {
+                        title: '📘 使えるタイ語フレーズ',
+                        headers: {
+                            english: '英語',
+                            thai: 'タイ語',
+                            pronunciation: '発音'
+                        },
+                        items: {
+                            thankYouMale: { english: 'ありがとう（男性）' },
+                            thankYouFemale: { english: 'ありがとう（女性）' },
+                            delicious: { english: 'おいしい' },
+                            notSpicy: { english: '辛くしないで' },
+                            veryDrunk: { english: 'とても酔っている' }
+                        }
+                    },
+                    stays: {
+                        title: '🏨 近くの宿泊先',
+                        closeTitle: 'バーン・キリー周辺',
+                        airbnbTitle: 'Airbnbの候補',
+                        airbnbText: '— リパ・タレー周辺（バーン・キリーの向かいに手頃なヴィラが約7棟あります）。'
+                    },
+                    thingsToDo: {
+                        title: '🗺️ サムイ島でできること',
+                        text: '計画に便利なおすすめリストを用意しました（新しい場所も随時更新します！）。'
+                    },
+                    bestActivities: {
+                        title: '🌴 ウェディングゲスト向けおすすめアクティビティ',
+                        link: 'サムイ島のウェディングゲスト向けおすすめアクティビティ'
+                    }
                 },
                 rsvp: {
                     label: '席を予約',
@@ -1014,6 +1552,26 @@
                         namesLabel: 'すべてのゲストのお名前を入力してください：',
                         guestName: 'ゲスト',
                         fullName: 'のフルネーム',
+                        arrivalDateLabel: 'サムイ到着日',
+                        hotelNameLabel: '宿泊先名',
+                        hotelNamePlaceholder: 'ホテルまたはヴィラ名',
+                        checkinDateLabel: 'チェックイン日',
+                        kidsAgesLabel: 'お子さま（年齢）',
+                        kidsAgesPlaceholder: '例：1人（4歳）',
+                        dietaryLabel: '食事のご要望',
+                        dietaryPlaceholder: 'ベジタリアン、アレルギーなど',
+                        mealLabel: '食事の選択（プレート）',
+                        mealSelect: '食事を選択',
+                        mealChicken: 'チキン',
+                        mealFish: '魚',
+                        mealVegetarian: 'ベジタリアン',
+                        mealOther: 'その他 / 相談',
+                        eventsLabel: 'ウェディング以外のイベント参加',
+                        eventsWelcome: 'ウェルカムドリンク',
+                        eventsBoat: 'ボートトリップ',
+                        eventsBbq: 'リカバリーBBQ',
+                        eventsOther: 'その他のイベント',
+                        eventsHelper: '時間や詳細は後日ご案内します。',
                         message: 'メッセージを残す（任意）',
                         submit: '出席を確認',
                         sending: '送信中...',
@@ -1030,7 +1588,7 @@
                     description: 'ここに至るまでの思い出のコレクション'
                 },
                 footer: {
-                    text: '2026年5月4日、永遠が始まります'
+                    text: '2026年5月5日、永遠が始まります'
                 }
             },
             th: {
@@ -1054,14 +1612,108 @@
                 venue: {
                     label: 'จุดหมายปลายทาง',
                     title: 'สวรรค์เกาะสมุย',
-                    description: 'ที่ซึ่งน้ำทะเลสีเทอร์ควอยส์พบกับชายหาดทองคำ และต้นปาล์มโบราณกระซิบเรื่องราวแห่งความรักนิรันดร์ ร่วมกับเราในสถานที่แห่งนี้เพื่อเริ่มต้นตลอดกาลของเรา',
+                    description: 'ร่วมกับเราในสถานที่แห่งนี้เพื่อเริ่มต้นตลอดกาลของเรา',
                     card: {
-                        title: 'เกาะแห่งความฝัน',
-                        location1: 'เกาะสมุย สุราษฎร์ธานี',
-                        location2: 'สวรรค์อ่าวไทย',
-                        ceremony: 'พิธีริมชายหาดยามพระอาทิตย์ตก'
+                        title: 'Baan Kilee',
+                        location1: 'เกาะสมุย ประเทศไทย',
+                        location2: 'วันพุธที่ 5 พฤษภาคม 2026',
+                        ceremony: 'มาถึงเวลา 16:30 น.'
                     },
                     button: 'ดูสถานที่'
+                },
+                dressCode: {
+                    label: 'ชุดแต่งกาย',
+                    title: 'สรุปชุดแต่งกาย',
+                    women: {
+                        title: 'ผู้หญิง',
+                        item1: 'เดรสสีฟ้าอ่อน'
+                    },
+                    men: {
+                        title: 'ผู้ชาย',
+                        item1: 'เสื้อเชิ้ตสีขาว',
+                        item2: 'กางเกงสีเบจหรือกางเกงขาสั้น',
+                        item3: 'แจ็กเก็ตและเนกไทเป็นทางเลือก'
+                    },
+                    accessories: {
+                        title: 'เครื่องประดับ (ไม่จำเป็น)',
+                        item1: 'ยินดีให้ใส่โบไท ผ้าเช็ดหน้ากระเป๋า หรือสายเอี๊ยมโทนสีฟ้าอ่อนเพื่อให้ดูเข้าชุด'
+                    },
+                    shoes: {
+                        title: 'รองเท้า',
+                        item1: 'รองเท้าแตะ โลฟเฟอร์ เอสปาดริล หรือรองเท้าที่เหมาะกับการเดินชายหาด'
+                    }
+                },
+                travelTips: {
+                    label: 'การเดินทาง',
+                    title: '✈️ เคล็ดลับการเดินทางเกาะสมุย',
+                    gettingAround: {
+                        title: '🚗 การเดินทางภายในเกาะ',
+                        item1: 'ดาวน์โหลดแอป Grab (คล้าย Uber ในไทย) และเพิ่มบัตรก่อนเดินทาง',
+                        item2: 'ถ้าวิลล่าของคุณ (Airbnb) อยู่บนเขา ให้สอบถามว่า Grab เข้าได้หรือไม่ ถ้าไม่ได้ พนักงานวิลล่าสามารถเรียกแท็กซี่ท้องถิ่นให้ได้'
+                    },
+                    sim: {
+                        title: '📱 ซิมและสัญญาณ',
+                        item1: 'ตัวเลือกเน็ตที่แนะนำ:',
+                        item2: 'Airalo eSIM',
+                        item3: 'ซิมจริง AIS หรือ True Move (มีที่สนามบินสมุยหรือ 7‑Eleven)'
+                    },
+                    money: {
+                        title: '💵 เงินและตู้ ATM',
+                        text: 'ตู้ ATM และจุดแลกเงินมีอยู่ทั่วไป ทั้งสนามบิน ถนนเลียบหาด ห้างสรรพสินค้า และทุก 7‑Eleven'
+                    },
+                    tipping: {
+                        title: '🤝 มารยาทการให้ทิป',
+                        text: 'ไม่จำเป็นแต่ถ้าให้จะเป็นที่ชื่นชม โดยทั่วไปให้ประมาณ 10% หรือปัดเศษค่าโดยสารเมื่อบริการดี'
+                    },
+                    about: {
+                        title: '🏝️ เกี่ยวกับเกาะสมุย',
+                        text: 'เกาะเล็ก ๆ (รอบเกาะประมาณ 52 กม.)'
+                    },
+                    activities: {
+                        title: '🧭 กิจกรรมแนะนำสำหรับแขกงานแต่งในเกาะสมุย',
+                        text: 'ชายหาด น้ำตก วัด ช้อปปิ้ง สปา และบีชคลับ'
+                    },
+                    hydration: {
+                        title: '💧 ดื่มน้ำให้เพียงพอ!',
+                        text: 'ควรดื่มน้ำขวดเท่านั้น (น้ำประปาดื่มไม่ได้) เครื่องดื่มเกลือแร่มีขายที่ 7‑Eleven ทุกสาขา'
+                    },
+                    mosquitoes: {
+                        title: '🦟 ยุง',
+                        text: 'บางพื้นที่ด้านในหรือบริเวณสวนอาจมียุง โดยเฉพาะช่วงพระอาทิตย์ตก ยากันยุงหาซื้อได้ง่ายที่ 7‑Eleven หรือร้านขายยา'
+                    }
+                },
+                localTips: {
+                    label: 'เคล็ดลับท้องถิ่น',
+                    title: 'วลีไทยที่มีประโยชน์และที่พัก',
+                    phrases: {
+                        title: '📘 วลีภาษาไทยที่ใช้บ่อย',
+                        headers: {
+                            english: 'อังกฤษ',
+                            thai: 'ไทย',
+                            pronunciation: 'การออกเสียง'
+                        },
+                        items: {
+                            thankYouMale: { english: 'ขอบคุณ (ผู้ชาย)' },
+                            thankYouFemale: { english: 'ขอบคุณ (ผู้หญิง)' },
+                            delicious: { english: 'อร่อย' },
+                            notSpicy: { english: 'ไม่เผ็ด' },
+                            veryDrunk: { english: 'เมามาก' }
+                        }
+                    },
+                    stays: {
+                        title: '🏨 ที่พักใกล้เคียง',
+                        closeTitle: 'ใกล้ Baan Kilee',
+                        airbnbTitle: 'ตัวเลือก Airbnb',
+                        airbnbText: '— มองหา Lipa Talay (มีวิลล่าราคาเหมาะสมประมาณ 7 หลังอยู่ตรงข้าม Baan Kilee)'
+                    },
+                    thingsToDo: {
+                        title: '🗺️ กิจกรรมในเกาะสมุย',
+                        text: 'เพื่อให้ง่ายต่อการวางแผน เราจัดลิสต์กิจกรรมแนะนำไว้ให้แล้ว (หมายเหตุ – จะอัปเดตสถานที่ใหม่เพิ่มเติมเร็ว ๆ นี้!)'
+                    },
+                    bestActivities: {
+                        title: '🌴 กิจกรรมแนะนำสำหรับแขกงานแต่ง',
+                        link: 'กิจกรรมแนะนำสำหรับแขกงานแต่งในเกาะสมุย'
+                    }
                 },
                 rsvp: {
                     label: 'จองที่นั่งของคุณ',
@@ -1082,6 +1734,26 @@
                         namesLabel: 'กรุณากรอกชื่อของแขกทุกคน:',
                         guestName: 'แขกคนที่',
                         fullName: 'ชื่อเต็ม',
+                        arrivalDateLabel: 'วันที่มาถึงสมุย',
+                        hotelNameLabel: 'ชื่อโรงแรม/ที่พัก',
+                        hotelNamePlaceholder: 'ชื่อโรงแรมหรือวิลล่า',
+                        checkinDateLabel: 'วันที่เช็คอิน',
+                        kidsAgesLabel: 'เด็ก (และอายุ)',
+                        kidsAgesPlaceholder: 'เช่น เด็ก 1 คน (อายุ 4)',
+                        dietaryLabel: 'ข้อจำกัดด้านอาหาร',
+                        dietaryPlaceholder: 'มังสวิรัติ แพ้อาหาร ฯลฯ',
+                        mealLabel: 'เลือกเมนู (ดินเนอร์แบบเสิร์ฟ)',
+                        mealSelect: 'เลือกเมนู',
+                        mealChicken: 'ไก่',
+                        mealFish: 'ปลา',
+                        mealVegetarian: 'มังสวิรัติ',
+                        mealOther: 'อื่น ๆ / แจ้งเพิ่มเติม',
+                        eventsLabel: 'ยืนยันเข้าร่วมอีเวนต์นอกงานแต่ง',
+                        eventsWelcome: 'เครื่องดื่มต้อนรับ',
+                        eventsBoat: 'ทริปเรือ',
+                        eventsBbq: 'รีคัฟเวอรี BBQ',
+                        eventsOther: 'อีเวนต์อื่น ๆ',
+                        eventsHelper: 'เราจะแจ้งเวลาและรายละเอียดใกล้วันงานอีกครั้ง',
                         message: 'ฝากข้อความถึงเรา (ไม่บังคับ)',
                         submit: 'ยืนยันการเข้าร่วม',
                         sending: 'กำลังส่ง...',
@@ -1098,7 +1770,7 @@
                     description: 'คอลเลกชั่นของความทรงจำที่นำเรามาที่นี่'
                 },
                 footer: {
-                    text: 'ตลอดกาลเริ่มต้น 4 พฤษภาคม 2026'
+                    text: 'ตลอดกาลเริ่มต้น 5 พฤษภาคม 2026'
                 }
             }
         };
@@ -1180,7 +1852,7 @@
         // Countdown Timer
         function updateCountdown() {
             const t = translations[currentLang].countdown;
-            const wedding = new Date('2026-05-04T00:00:00').getTime();
+            const wedding = new Date('2026-05-05T00:00:00').getTime();
             const now = new Date().getTime();
             const distance = wedding - now;
 
