@@ -326,6 +326,27 @@
             max-width: none;
         }
 
+        .villa-gallery {
+            margin: 4rem 2rem;
+        }
+
+        .villa-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .villa-grid img {
+            width: 100%;
+            height: 100%;
+            border-radius: 18px;
+            object-fit: cover;
+            display: block;
+            min-height: 220px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+
         .venue-content-three-col {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -603,6 +624,72 @@
             margin-top: 2.5rem;
         }
 
+        .must-read-section {
+            background: var(--sand);
+            border-radius: 32px;
+            margin: 4rem 2rem;
+            padding: 4rem;
+            max-width: none;
+        }
+
+        .must-read-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .must-read-card {
+            background: white;
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .must-read-images {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        .must-read-images img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            object-fit: cover;
+        }
+
+        .details-card {
+            background: white;
+            border-radius: 18px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+            margin-top: 1.5rem;
+        }
+
+        .details-card summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--ink);
+            list-style: none;
+        }
+
+        .details-card summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .details-card summary::after {
+            content: '+';
+            float: right;
+            color: var(--ocean);
+        }
+
+        .details-card[open] summary::after {
+            content: '–';
+        }
+
         .dress-code-card,
         .travel-tips-card {
             background: white;
@@ -619,7 +706,8 @@
         }
 
         .dress-code-card ul,
-        .travel-tips-card ul {
+        .travel-tips-card ul,
+        .must-read-card ul {
             list-style: none;
             padding-left: 0;
             margin: 0;
@@ -627,14 +715,16 @@
         }
 
         .dress-code-card li,
-        .travel-tips-card li {
+        .travel-tips-card li,
+        .must-read-card li {
             margin-bottom: 0.5rem;
             padding-left: 1.25rem;
             position: relative;
         }
 
         .dress-code-card li::before,
-        .travel-tips-card li::before {
+        .travel-tips-card li::before,
+        .must-read-card li::before {
             content: '•';
             position: absolute;
             left: 0;
@@ -813,6 +903,23 @@
                 margin: 2rem 1rem;
                 border-radius: 20px;
             }
+            .villa-gallery {
+                margin: 2rem 1rem;
+            }
+            .villa-grid {
+                grid-template-columns: 1fr;
+            }
+            .must-read-section {
+                margin: 2rem 1rem;
+                padding: 2.5rem 1.5rem;
+                border-radius: 20px;
+            }
+            .must-read-grid {
+                grid-template-columns: 1fr;
+            }
+            .must-read-images {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
             .dress-code-grid {
                 grid-template-columns: 1fr;
             }
@@ -933,6 +1040,136 @@
         </div>
     </section>
 
+    <section id="must-read" class="must-read-section">
+        <div class="section-header fade-in">
+            <div class="section-label mono-font" data-i18n="mustRead.label">Must Read</div>
+            <h2 class="section-title display-font" data-i18n="mustRead.title">Wedding Essentials</h2>
+            <p class="section-description" data-i18n="mustRead.description">
+                The most important details at a glance.
+            </p>
+        </div>
+        <div class="must-read-grid fade-in">
+            <div class="must-read-card">
+                <h3 class="display-font" data-i18n="mustRead.women.title">Women’s Dress Code</h3>
+                <ul>
+                    <li data-i18n="mustRead.women.item1">Light blue dresses</li>
+                    <li data-i18n="mustRead.women.item2">Bring swimsuits if you want to swim later in the evening</li>
+                </ul>
+                <div class="must-read-images">
+                    <img src="womandresscode1.jpg" alt="Women's dress code inspiration 1">
+                    <img src="womandresscode2.jpg" alt="Women's dress code inspiration 2">
+                    <img src="womandresscode3.png" alt="Women's dress code inspiration 3">
+                </div>
+            </div>
+            <div class="must-read-card">
+                <h3 class="display-font" data-i18n="mustRead.men.title">Men’s Dress Code</h3>
+                <ul>
+                    <li data-i18n="mustRead.men.item1">Tops: White shirts</li>
+                    <li data-i18n="mustRead.men.item2">Bottoms: Beige trousers or shorts</li>
+                    <li data-i18n="mustRead.men.item3">Jackets and neckties are optional</li>
+                </ul>
+                <details class="details-card">
+                    <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
+                    <p data-i18n="mustRead.flight.text1">If you’re flying from America, we recommend leaving on April 30th.</p>
+                    <p data-i18n="mustRead.flight.text2">Book a return ticket for May 7th.</p>
+                    <p data-i18n="mustRead.flight.text3">You’ll arrive on the island on May 2nd.</p>
+                </details>
+            </div>
+        </div>
+        <details class="details-card">
+            <summary data-i18n="mustRead.optional.summary">Optional Read: Hotel Recommendations</summary>
+            <p data-i18n="mustRead.optional.text">Recommended hotels near the villa:</p>
+            <ul>
+                <li data-i18n="mustRead.optional.hotel1">SamuiHaus (close to the villa, reasonable)</li>
+                <li data-i18n="mustRead.optional.hotel2">Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)</li>
+            </ul>
+        </details>
+    </section>
+
+    <section id="rsvp" class="bg-image-section">
+        <div class="rsvp-form">
+            <div class="section-header">
+                <div class="section-label mono-font" data-i18n="rsvp.label">Save Your Seat</div>
+                <h2 class="section-title display-font" data-i18n="rsvp.title">Join Our Celebration</h2>
+                <p class="section-description" data-i18n="rsvp.description">
+                    Your presence would make our special day complete
+                </p>
+            </div>
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <a href="https://maps.app.goo.gl/NvQLytWqQZhVjSrq8" class="btn-view-venue" target="_blank" rel="noopener" data-i18n="rsvp.mapLink1">Map Link 1</a>
+                <a href="https://maps.app.goo.gl/A95dgFD4t283d1Eu9" class="btn-view-venue" target="_blank" rel="noopener" style="margin-left: 0.75rem;" data-i18n="rsvp.mapLink2">Map Link 2</a>
+            </div>
+            <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
+                        <select class="form-input" name="guest_count" id="guestCount" required>
+                            <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
+                            <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
+                            <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
+                            <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
+                            <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
+                            <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
+                            <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
+                            <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
+                            <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrivalDate" data-i18n="rsvp.form.arrivalDateLabel">Arrival date to Samui</label>
+                        <input type="date" class="form-input" name="arrival_date_samui" id="arrivalDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="hotelName" data-i18n="rsvp.form.hotelNameLabel">Hotel name</label>
+                        <input type="text" class="form-input" name="hotel_name" id="hotelName" data-i18n-placeholder="rsvp.form.hotelNamePlaceholder" placeholder="Hotel or villa name">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkinDate" data-i18n="rsvp.form.checkinDateLabel">Hotel check-in date</label>
+                        <input type="date" class="form-input" name="hotel_checkin_date" id="checkinDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="kidsAges" data-i18n="rsvp.form.kidsAgesLabel">Kids (and ages)</label>
+                        <input type="text" class="form-input" name="kids_ages" id="kidsAges" data-i18n-placeholder="rsvp.form.kidsAgesPlaceholder" placeholder="e.g., 1 child (age 4)">
+                    </div>
+                    <div class="form-group">
+                        <label for="dietaryRequests" data-i18n="rsvp.form.dietaryLabel">Dietary requests</label>
+                        <input type="text" class="form-input" name="dietary_requests" id="dietaryRequests" data-i18n-placeholder="rsvp.form.dietaryPlaceholder" placeholder="Vegetarian, allergies, etc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="mealSelection" data-i18n="rsvp.form.mealLabel">Meal selection (plated dinner)</label>
+                        <select class="form-input" name="meal_selection" id="mealSelection">
+                            <option value="" data-i18n="rsvp.form.mealSelect">Select a meal</option>
+                            <option value="chicken" data-i18n="rsvp.form.mealChicken">Chicken</option>
+                            <option value="fish" data-i18n="rsvp.form.mealFish">Fish</option>
+                            <option value="vegetarian" data-i18n="rsvp.form.mealVegetarian">Vegetarian</option>
+                            <option value="other" data-i18n="rsvp.form.mealOther">Other / Let us know</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="rsvp.form.eventsLabel">RSVP for non-wedding events</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="events_welcome_drinks" value="yes"> <span data-i18n="rsvp.form.eventsWelcome">Welcome drinks</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_boat_trip" value="yes"> <span data-i18n="rsvp.form.eventsBoat">Boat trip</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_recovery_bbq" value="yes"> <span data-i18n="rsvp.form.eventsBbq">Recovery BBQ</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="events_other" value="yes"> <span data-i18n="rsvp.form.eventsOther">Other events</span></label>
+                        </div>
+                        <div class="form-helper" data-i18n="rsvp.form.eventsHelper">We’ll share exact times and details closer to the date.</div>
+                    </div>
+                </div>
+                <div id="guestNamesContainer"></div>
+                <div class="form-group">
+                    <textarea class="form-input" name="message" data-i18n-placeholder="rsvp.form.message" placeholder="Leave us a message (optional)" rows="4"></textarea>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn-submit" data-i18n="rsvp.form.submit">Confirm Attendance</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
     <section id="venue" class="venue-section">
         <div class="venue-content-three-col">
             <div class="venue-image-col"></div>
@@ -963,6 +1200,18 @@
         </div>
     </section>
 
+    <section id="villa-gallery" class="villa-gallery">
+        <div class="section-header fade-in">
+            <div class="section-label mono-font" data-i18n="villaGallery.label">The Venue</div>
+            <h2 class="section-title display-font" data-i18n="villaGallery.title">Villa Gallery</h2>
+        </div>
+        <div class="villa-grid fade-in">
+            <img src="villa1.jpg" alt="Baan Kilee villa view 1">
+            <img src="villa2.jpg" alt="Baan Kilee villa view 2">
+            <img src="villa3.jpg" alt="Baan Kilee villa view 3">
+        </div>
+    </section>
+
     <section id="dress-code">
         <div class="section-header fade-in">
             <div class="section-label mono-font" data-i18n="dressCode.label">Dress Code</div>
@@ -981,12 +1230,6 @@
                     <li data-i18n="dressCode.men.item1">Tops: White shirts</li>
                     <li data-i18n="dressCode.men.item2">Bottoms: Beige trousers or shorts</li>
                     <li data-i18n="dressCode.men.item3">Jackets and neckties are optional</li>
-                </ul>
-            </div>
-            <div class="dress-code-card">
-                <h3 class="display-font" data-i18n="dressCode.accessories.title">Accessories (Optional)</h3>
-                <ul>
-                    <li data-i18n="dressCode.accessories.item1">Bow ties, pocket squares, or suspenders in light blue tones are welcome to add a coordinated look</li>
                 </ul>
             </div>
             <div class="dress-code-card">
@@ -1116,86 +1359,6 @@
         </div>
     </section>
 
-    <section id="rsvp" class="bg-image-section">
-        <div class="rsvp-form">
-            <div class="section-header">
-                <div class="section-label mono-font" data-i18n="rsvp.label">Save Your Seat</div>
-                <h2 class="section-title display-font" data-i18n="rsvp.title">Join Our Celebration</h2>
-                <p class="section-description" data-i18n="rsvp.description">
-                    Your presence would make our special day complete
-                </p>
-            </div>
-            <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
-                        <select class="form-input" name="guest_count" id="guestCount" required>
-                            <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
-                            <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
-                            <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
-                            <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
-                            <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
-                            <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
-                            <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
-                            <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
-                            <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="arrivalDate" data-i18n="rsvp.form.arrivalDateLabel">Arrival date to Samui</label>
-                        <input type="date" class="form-input" name="arrival_date_samui" id="arrivalDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="hotelName" data-i18n="rsvp.form.hotelNameLabel">Hotel name</label>
-                        <input type="text" class="form-input" name="hotel_name" id="hotelName" data-i18n-placeholder="rsvp.form.hotelNamePlaceholder" placeholder="Hotel or villa name">
-                    </div>
-                    <div class="form-group">
-                        <label for="checkinDate" data-i18n="rsvp.form.checkinDateLabel">Hotel check-in date</label>
-                        <input type="date" class="form-input" name="hotel_checkin_date" id="checkinDate">
-                    </div>
-                    <div class="form-group">
-                        <label for="kidsAges" data-i18n="rsvp.form.kidsAgesLabel">Kids (and ages)</label>
-                        <input type="text" class="form-input" name="kids_ages" id="kidsAges" data-i18n-placeholder="rsvp.form.kidsAgesPlaceholder" placeholder="e.g., 1 child (age 4)">
-                    </div>
-                    <div class="form-group">
-                        <label for="dietaryRequests" data-i18n="rsvp.form.dietaryLabel">Dietary requests</label>
-                        <input type="text" class="form-input" name="dietary_requests" id="dietaryRequests" data-i18n-placeholder="rsvp.form.dietaryPlaceholder" placeholder="Vegetarian, allergies, etc.">
-                    </div>
-                    <div class="form-group">
-                        <label for="mealSelection" data-i18n="rsvp.form.mealLabel">Meal selection (plated dinner)</label>
-                        <select class="form-input" name="meal_selection" id="mealSelection">
-                            <option value="" data-i18n="rsvp.form.mealSelect">Select a meal</option>
-                            <option value="chicken" data-i18n="rsvp.form.mealChicken">Chicken</option>
-                            <option value="fish" data-i18n="rsvp.form.mealFish">Fish</option>
-                            <option value="vegetarian" data-i18n="rsvp.form.mealVegetarian">Vegetarian</option>
-                            <option value="other" data-i18n="rsvp.form.mealOther">Other / Let us know</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label data-i18n="rsvp.form.eventsLabel">RSVP for non-wedding events</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="events_welcome_drinks" value="yes"> <span data-i18n="rsvp.form.eventsWelcome">Welcome drinks</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_boat_trip" value="yes"> <span data-i18n="rsvp.form.eventsBoat">Boat trip</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_recovery_bbq" value="yes"> <span data-i18n="rsvp.form.eventsBbq">Recovery BBQ</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_other" value="yes"> <span data-i18n="rsvp.form.eventsOther">Other events</span></label>
-                        </div>
-                        <div class="form-helper" data-i18n="rsvp.form.eventsHelper">We’ll share exact times and details closer to the date.</div>
-                    </div>
-                </div>
-                <div id="guestNamesContainer"></div>
-                <div class="form-group">
-                    <textarea class="form-input" name="message" data-i18n-placeholder="rsvp.form.message" placeholder="Leave us a message (optional)" rows="4"></textarea>
-                </div>
-                <div style="text-align: center;">
-                    <button type="submit" class="btn-submit" data-i18n="rsvp.form.submit">Confirm Attendance</button>
-                </div>
-            </form>
-        </div>
-    </section>
-
     <section id="gallery">
         <div class="section-header fade-in">
             <div class="section-label mono-font" data-i18n="gallery.label">Our Journey</div>
@@ -1256,6 +1419,38 @@
                         ceremony: 'Arrive at 4:30 PM'
                     },
                     button: 'View Venue'
+                },
+                villaGallery: {
+                    label: 'The Venue',
+                    title: 'Villa Gallery'
+                },
+                mustRead: {
+                    label: 'Must Read',
+                    title: 'Wedding Essentials',
+                    description: 'The most important details at a glance.',
+                    women: {
+                        title: 'Women’s Dress Code',
+                        item1: 'Light blue dresses',
+                        item2: 'Bring swimsuits if you want to swim later in the evening'
+                    },
+                    men: {
+                        title: 'Men’s Dress Code',
+                        item1: 'Tops: White shirts',
+                        item2: 'Bottoms: Beige trousers or shorts',
+                        item3: 'Jackets and neckties are optional'
+                    },
+                    flight: {
+                        summary: '✈️ Flight Info (Recommended)',
+                        text1: 'If you’re flying from America, we recommend leaving on April 30th.',
+                        text2: 'Book a return ticket for May 7th.',
+                        text3: 'You’ll arrive on the island on May 2nd.'
+                    },
+                    optional: {
+                        summary: 'Optional Read: Hotel Recommendations',
+                        text: 'Recommended hotels near the villa:',
+                        hotel1: 'SamuiHaus (close to the villa, reasonable)',
+                        hotel2: 'Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)'
+                    }
                 },
                 dressCode: {
                     label: 'Dress Code',
@@ -1355,6 +1550,8 @@
                     label: 'Save Your Seat',
                     title: 'Join Our Celebration',
                     description: 'Your presence would make our special day complete',
+                    mapLink1: 'Map Link 1',
+                    mapLink2: 'Map Link 2',
                     form: {
                         email: 'Your email address',
                         guestLabel: 'How many guests will be attending?',
@@ -1438,6 +1635,38 @@
                         ceremony: '16:30 到着'
                     },
                     button: '会場を見る'
+                },
+                villaGallery: {
+                    label: '会場',
+                    title: 'ヴィラギャラリー'
+                },
+                mustRead: {
+                    label: '必読',
+                    title: 'ウェディング重要情報',
+                    description: '大切な情報をまとめました。',
+                    women: {
+                        title: '女性のドレスコード',
+                        item1: 'ライトブルーのドレス',
+                        item2: '夜に泳ぎたい方は水着をご持参ください'
+                    },
+                    men: {
+                        title: '男性のドレスコード',
+                        item1: 'トップス：白いシャツ',
+                        item2: 'ボトムス：ベージュのパンツまたはショートパンツ',
+                        item3: 'ジャケットとネクタイは任意'
+                    },
+                    flight: {
+                        summary: '✈️ フライト情報（推奨）',
+                        text1: 'アメリカ発の場合、4月30日の出発をおすすめします。',
+                        text2: '帰りの航空券は5月7日がおすすめです。',
+                        text3: '島への到着は5月2日になります。'
+                    },
+                    optional: {
+                        summary: '任意で読む：ホテルのおすすめ',
+                        text: 'ヴィラ近くのおすすめホテル：',
+                        hotel1: 'SamuiHaus（ヴィラ近く・お手頃）',
+                        hotel2: 'Kanok Buri（徒歩15〜20分、4つ星でお手頃）'
+                    }
                 },
                 dressCode: {
                     label: 'ドレスコード',
@@ -1537,6 +1766,8 @@
                     label: '席を予約',
                     title: '私たちのお祝いにご参加ください',
                     description: 'あなたの存在が私たちの特別な日を完璧にします',
+                    mapLink1: 'マップリンク 1',
+                    mapLink2: 'マップリンク 2',
                     form: {
                         email: 'メールアドレス',
                         guestLabel: '何名様が出席されますか？',
@@ -1620,6 +1851,38 @@
                         ceremony: 'มาถึงเวลา 16:30 น.'
                     },
                     button: 'ดูสถานที่'
+                },
+                villaGallery: {
+                    label: 'สถานที่จัดงาน',
+                    title: 'แกลเลอรีวิลล่า'
+                },
+                mustRead: {
+                    label: 'ควรอ่าน',
+                    title: 'ข้อมูลสำคัญงานแต่ง',
+                    description: 'สรุปข้อมูลสำคัญไว้ที่นี่',
+                    women: {
+                        title: 'ชุดแต่งกายผู้หญิง',
+                        item1: 'เดรสสีฟ้าอ่อน',
+                        item2: 'หากอยากว่ายน้ำตอนดึก กรุณานำชุดว่ายน้ำมาด้วย'
+                    },
+                    men: {
+                        title: 'ชุดแต่งกายผู้ชาย',
+                        item1: 'เสื้อเชิ้ตสีขาว',
+                        item2: 'กางเกงสีเบจหรือกางเกงขาสั้น',
+                        item3: 'แจ็กเก็ตและเนกไทเป็นทางเลือก'
+                    },
+                    flight: {
+                        summary: '✈️ ข้อมูลเที่ยวบิน (แนะนำ)',
+                        text1: 'ถ้าบินมาจากอเมริกา แนะนำให้ออกเดินทางวันที่ 30 เมษายน',
+                        text2: 'ตั๋วขากลับแนะนำวันที่ 7 พฤษภาคม',
+                        text3: 'คุณจะมาถึงเกาะวันที่ 2 พฤษภาคม'
+                    },
+                    optional: {
+                        summary: 'อ่านเพิ่มเติม: โรงแรมแนะนำ',
+                        text: 'โรงแรมแนะนำใกล้วิลล่า:',
+                        hotel1: 'SamuiHaus (ใกล้วิลล่า ราคาสมเหตุสมผล)',
+                        hotel2: 'Kanok Buri (เดิน 15–20 นาทีจากวิลล่า 4 ดาว และราคาสมเหตุสมผล)'
+                    }
                 },
                 dressCode: {
                     label: 'ชุดแต่งกาย',
@@ -1719,6 +1982,8 @@
                     label: 'จองที่นั่งของคุณ',
                     title: 'ร่วมฉลองกับเรา',
                     description: 'การมาร่วมงานของคุณจะทำให้วันพิเศษของเราสมบูรณ์แบบ',
+                    mapLink1: 'ลิงก์แผนที่ 1',
+                    mapLink2: 'ลิงก์แผนที่ 2',
                     form: {
                         email: 'ที่อยู่อีเมลของคุณ',
                         guestLabel: 'จะมีแขกกี่คนเข้าร่วม?',
