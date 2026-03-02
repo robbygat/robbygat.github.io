@@ -457,8 +457,13 @@
         }
 
         .rsvp-form {
-            max-width: 600px;
+            max-width: 760px;
             margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(4px);
         }
 
         #rsvp .section-title,
@@ -473,6 +478,10 @@
 
         .form-group {
             margin-bottom: 1.5rem;
+        }
+
+        #rsvp .section-header {
+            margin-bottom: 2rem;
         }
 
         .form-grid {
@@ -562,6 +571,7 @@
             transition: all 0.3s;
             letter-spacing: -0.01em;
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            min-width: 240px;
         }
 
         .btn-submit:hover {
@@ -942,6 +952,10 @@
                 border-radius: 20px;
                 max-width: none;
             }
+            .rsvp-form {
+                padding: 1.25rem;
+                border-radius: 16px;
+            }
             .must-read-grid {
                 grid-template-columns: 1fr;
             }
@@ -1131,10 +1145,6 @@
                     Your presence would make our special day complete
                 </p>
             </div>
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <a href="https://maps.app.goo.gl/NvQLytWqQZhVjSrq8" class="btn-view-venue" target="_blank" rel="noopener" data-i18n="rsvp.mapLink1">Map Link 1</a>
-                <a href="https://maps.app.goo.gl/A95dgFD4t283d1Eu9" class="btn-view-venue" target="_blank" rel="noopener" style="margin-left: 0.75rem;" data-i18n="rsvp.mapLink2">Map Link 2</a>
-            </div>
             <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
                 <div class="form-grid">
                     <div class="form-group full-width">
@@ -1206,35 +1216,6 @@
             <img src="villa1.jpeg" alt="Baan Kilee villa view 1" data-fallback="villa1.jpg villa1.png" loading="eager">
             <img src="villa2.jpg" alt="Baan Kilee villa view 2" data-fallback="villa2.jpeg villa2.png" loading="eager">
             <img src="villa3.jpg" alt="Baan Kilee villa view 3" data-fallback="villa3.jpeg villa3.png" loading="eager">
-        </div>
-    </section>
-
-    <section id="dress-code">
-        <div class="section-header fade-in">
-            <div class="section-label mono-font" data-i18n="dressCode.label">Dress Code</div>
-            <h2 class="section-title display-font" data-i18n="dressCode.title">Dress Code Summary</h2>
-        </div>
-        <div class="dress-code-grid fade-in">
-            <div class="dress-code-card">
-                <h3 class="display-font" data-i18n="dressCode.women.title">Women</h3>
-                <ul>
-                    <li data-i18n="dressCode.women.item1">Light blue dresses</li>
-                </ul>
-            </div>
-            <div class="dress-code-card">
-                <h3 class="display-font" data-i18n="dressCode.men.title">Men</h3>
-                <ul>
-                    <li data-i18n="dressCode.men.item1">Tops: White shirts</li>
-                    <li data-i18n="dressCode.men.item2">Bottoms: Beige trousers or shorts</li>
-                    <li data-i18n="dressCode.men.item3">Jackets and neckties are optional</li>
-                </ul>
-            </div>
-            <div class="dress-code-card">
-                <h3 class="display-font" data-i18n="dressCode.shoes.title">Shoes</h3>
-                <ul>
-                    <li data-i18n="dressCode.shoes.item1">Sandals, loafers, espadrilles, or any shoes suitable for walking on the beach</li>
-                </ul>
-            </div>
         </div>
     </section>
 
