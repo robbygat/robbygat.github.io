@@ -332,6 +332,7 @@
 
         .villa-gallery {
             margin: 4rem 2rem;
+            text-align: center;
         }
 
         .villa-grid {
@@ -1129,20 +1130,6 @@
                         <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
                     </div>
                     <div class="form-group">
-                        <label data-i18n="rsvp.form.guestLabel">How many guests will be attending?</label>
-                        <select class="form-input" name="guest_count" id="guestCount" required>
-                            <option value="" data-i18n="rsvp.form.selectGuests">Select number of guests</option>
-                            <option value="1" data-i18n="rsvp.form.guest1">1 Guest</option>
-                            <option value="2" data-i18n="rsvp.form.guest2">2 Guests</option>
-                            <option value="3" data-i18n="rsvp.form.guest3">3 Guests</option>
-                            <option value="4" data-i18n="rsvp.form.guest4">4 Guests</option>
-                            <option value="5" data-i18n="rsvp.form.guest5">5 Guests</option>
-                            <option value="6" data-i18n="rsvp.form.guest6">6 Guests</option>
-                            <option value="7" data-i18n="rsvp.form.guest7">7 Guests</option>
-                            <option value="8" data-i18n="rsvp.form.guest8">8 Guests</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="arrivalDate" data-i18n="rsvp.form.arrivalDateLabel">Arrival date to Samui</label>
                         <input type="date" class="form-input" name="arrival_date_samui" id="arrivalDate">
                     </div>
@@ -1155,35 +1142,10 @@
                         <input type="date" class="form-input" name="hotel_checkin_date" id="checkinDate">
                     </div>
                     <div class="form-group">
-                        <label for="kidsAges" data-i18n="rsvp.form.kidsAgesLabel">Kids (and ages)</label>
-                        <input type="text" class="form-input" name="kids_ages" id="kidsAges" data-i18n-placeholder="rsvp.form.kidsAgesPlaceholder" placeholder="e.g., 1 child (age 4)">
-                    </div>
-                    <div class="form-group">
                         <label for="dietaryRequests" data-i18n="rsvp.form.dietaryLabel">Dietary requests</label>
                         <input type="text" class="form-input" name="dietary_requests" id="dietaryRequests" data-i18n-placeholder="rsvp.form.dietaryPlaceholder" placeholder="Vegetarian, allergies, etc.">
                     </div>
-                    <div class="form-group">
-                        <label for="mealSelection" data-i18n="rsvp.form.mealLabel">Meal selection (plated dinner)</label>
-                        <select class="form-input" name="meal_selection" id="mealSelection">
-                            <option value="" data-i18n="rsvp.form.mealSelect">Select a meal</option>
-                            <option value="chicken" data-i18n="rsvp.form.mealChicken">Chicken</option>
-                            <option value="fish" data-i18n="rsvp.form.mealFish">Fish</option>
-                            <option value="vegetarian" data-i18n="rsvp.form.mealVegetarian">Vegetarian</option>
-                            <option value="other" data-i18n="rsvp.form.mealOther">Other / Let us know</option>
-                        </select>
-                    </div>
-                    <div class="form-group full-width">
-                        <label data-i18n="rsvp.form.eventsLabel">RSVP for non-wedding events</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-item"><input type="checkbox" name="events_welcome_drinks" value="yes"> <span data-i18n="rsvp.form.eventsWelcome">Welcome drinks</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_boat_trip" value="yes"> <span data-i18n="rsvp.form.eventsBoat">Boat trip</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_recovery_bbq" value="yes"> <span data-i18n="rsvp.form.eventsBbq">Recovery BBQ</span></label>
-                            <label class="checkbox-item"><input type="checkbox" name="events_other" value="yes"> <span data-i18n="rsvp.form.eventsOther">Other events</span></label>
-                        </div>
-                        <div class="form-helper" data-i18n="rsvp.form.eventsHelper">We’ll share exact times and details closer to the date.</div>
-                    </div>
                 </div>
-                <div id="guestNamesContainer"></div>
                 <div class="form-group">
                     <textarea class="form-input" name="message" data-i18n-placeholder="rsvp.form.message" placeholder="Leave us a message (optional)" rows="4"></textarea>
                 </div>
@@ -2187,43 +2149,6 @@
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) navbar.classList.add('scrolled');
             else navbar.classList.remove('scrolled');
-        });
-
-        // Dynamic Guest Names Input
-        const guestCountSelect = document.getElementById('guestCount');
-        const guestNamesContainer = document.getElementById('guestNamesContainer');
-
-        guestCountSelect.addEventListener('change', function() {
-            const count = parseInt(this.value);
-            const t = translations[currentLang].rsvp.form;
-            guestNamesContainer.innerHTML = '';
-
-            if (count > 0) {
-                const guestNamesGroup = document.createElement('div');
-                guestNamesGroup.className = 'form-group';
-                guestNamesGroup.style.marginTop = '1.5rem';
-
-                const label = document.createElement('label');
-                label.style.color = 'white';
-                label.style.display = 'block';
-                label.style.marginBottom = '0.5rem';
-                label.style.fontSize = '0.95rem';
-                label.textContent = t.namesLabel;
-                guestNamesGroup.appendChild(label);
-
-                for (let i = 1; i <= count; i++) {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.className = 'form-input';
-                    input.name = `guest_${i}_name`;
-                    input.placeholder = `${t.guestName} ${i} ${t.fullName}`;
-                    input.required = true;
-                    input.style.marginBottom = '0.75rem';
-                    guestNamesGroup.appendChild(input);
-                }
-
-                guestNamesContainer.appendChild(guestNamesGroup);
-            }
         });
 
         // RSVP Form Handler
