@@ -283,14 +283,18 @@
         }
 
         section {
-            padding: 6rem 2rem;
-            max-width: 1400px;
+            padding: 5rem 2rem;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-header .section-description {
+            margin-top: 0.5rem;
         }
 
         .section-label {
@@ -344,6 +348,7 @@
             object-fit: cover;
             display: block;
             min-height: 220px;
+            aspect-ratio: 4/3;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
         }
 
@@ -627,9 +632,9 @@
         .must-read-section {
             background: var(--sand);
             border-radius: 32px;
-            margin: 4rem 2rem;
+            margin: 4rem auto;
             padding: 4rem;
-            max-width: none;
+            max-width: 1200px;
         }
 
         .must-read-grid {
@@ -656,9 +661,11 @@
         .must-read-images img {
             width: 100%;
             height: auto;
+            min-height: 140px;
             border-radius: 12px;
             display: block;
             object-fit: cover;
+            aspect-ratio: 4/3;
         }
 
         .details-card {
@@ -688,6 +695,18 @@
 
         .details-card[open] summary::after {
             content: '–';
+        }
+
+        .details-card-inner p {
+            margin: 0.5rem 0;
+            color: rgba(10, 10, 10, 0.75);
+            line-height: 1.6;
+        }
+
+        .details-card-inner p:first-child { margin-top: 1rem; }
+
+        .must-read-dropdown {
+            margin-top: 1rem;
         }
 
         .dress-code-card,
@@ -913,6 +932,7 @@
                 margin: 2rem 1rem;
                 padding: 2.5rem 1.5rem;
                 border-radius: 20px;
+                max-width: none;
             }
             .must-read-grid {
                 grid-template-columns: 1fr;
@@ -1056,9 +1076,9 @@
                     <li data-i18n="mustRead.women.item2">Bring swimsuits if you want to swim later in the evening</li>
                 </ul>
                 <div class="must-read-images">
-                    <img src="womandresscode1.jpg" alt="Women's dress code inspiration 1">
-                    <img src="womandresscode2.jpg" alt="Women's dress code inspiration 2">
-                    <img src="womandresscode3.png" alt="Women's dress code inspiration 3">
+                    <img src="womandresscode1.jpg" alt="Women's dress code inspiration 1" data-fallback="womandresscode1.jpeg womandresscode1.png" loading="eager">
+                    <img src="womandresscode2.jpg" alt="Women's dress code inspiration 2" data-fallback="womandresscode2.jpeg womandresscode2.png" loading="eager">
+                    <img src="womandresscode3.jpg" alt="Women's dress code inspiration 3" data-fallback="womandresscode3.jpeg womandresscode3.png" loading="eager">
                 </div>
             </div>
             <div class="must-read-card">
@@ -1068,21 +1088,25 @@
                     <li data-i18n="mustRead.men.item2">Bottoms: Beige trousers or shorts</li>
                     <li data-i18n="mustRead.men.item3">Jackets and neckties are optional</li>
                 </ul>
-                <details class="details-card">
-                    <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
-                    <p data-i18n="mustRead.flight.text1">If you’re flying from America, we recommend leaving on April 30th.</p>
-                    <p data-i18n="mustRead.flight.text2">Book a return ticket for May 7th.</p>
-                    <p data-i18n="mustRead.flight.text3">You’ll arrive on the island on May 2nd.</p>
-                </details>
             </div>
         </div>
-        <details class="details-card">
+        <details class="details-card must-read-dropdown">
+            <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
+            <div class="details-card-inner">
+                <p data-i18n="mustRead.flight.text1">If you’re flying from America, we recommend leaving on April 30th.</p>
+                <p data-i18n="mustRead.flight.text2">Book a return ticket for May 7th.</p>
+                <p data-i18n="mustRead.flight.text3">You’ll arrive on the island on May 2nd.</p>
+            </div>
+        </details>
+        <details class="details-card must-read-dropdown">
             <summary data-i18n="mustRead.optional.summary">Optional Read: Hotel Recommendations</summary>
-            <p data-i18n="mustRead.optional.text">Recommended hotels near the villa:</p>
-            <ul>
-                <li data-i18n="mustRead.optional.hotel1">SamuiHaus (close to the villa, reasonable)</li>
-                <li data-i18n="mustRead.optional.hotel2">Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)</li>
-            </ul>
+            <div class="details-card-inner">
+                <p data-i18n="mustRead.optional.text">Recommended hotels near the villa:</p>
+                <ul style="margin: 0.75rem 0 0 1.25rem; color: rgba(10,10,10,0.75);">
+                    <li data-i18n="mustRead.optional.hotel1">SamuiHaus (close to the villa, reasonable)</li>
+                    <li data-i18n="mustRead.optional.hotel2">Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)</li>
+                </ul>
+            </div>
         </details>
     </section>
 
@@ -1206,9 +1230,9 @@
             <h2 class="section-title display-font" data-i18n="villaGallery.title">Villa Gallery</h2>
         </div>
         <div class="villa-grid fade-in">
-            <img src="villa1.jpg" alt="Baan Kilee villa view 1">
-            <img src="villa2.jpg" alt="Baan Kilee villa view 2">
-            <img src="villa3.jpg" alt="Baan Kilee villa view 3">
+            <img src="villa1.jpeg" alt="Baan Kilee villa view 1" data-fallback="villa1.jpg villa1.png" loading="eager">
+            <img src="villa2.jpg" alt="Baan Kilee villa view 2" data-fallback="villa2.jpeg villa2.png" loading="eager">
+            <img src="villa3.jpg" alt="Baan Kilee villa view 3" data-fallback="villa3.jpeg villa3.png" loading="eager">
         </div>
     </section>
 
@@ -2363,6 +2387,18 @@
         document.querySelectorAll('.fade-in').forEach(el => {
             el.style.animationPlayState = 'paused';
             observer.observe(el);
+        });
+
+        // Image fallback: try alternate extensions (jpg/jpeg/png) if load fails
+        document.querySelectorAll('img[data-fallback]').forEach(img => {
+            img.addEventListener('error', function() {
+                const list = (this.getAttribute('data-fallback') || '').split(/\s+/).filter(Boolean);
+                const idx = parseInt(this.dataset.fallbackIdx || '0', 10);
+                if (idx < list.length) {
+                    this.src = list[idx];
+                    this.dataset.fallbackIdx = String(idx + 1);
+                }
+            });
         });
 
         // Initialize
