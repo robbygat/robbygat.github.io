@@ -645,6 +645,13 @@
             margin-top: 2.5rem;
         }
 
+        .must-read-note {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: rgba(10, 10, 10, 0.75);
+            font-size: 1rem;
+        }
+
         .must-read-card {
             background: white;
             border-radius: 18px;
@@ -1074,7 +1081,6 @@
                 <h3 class="display-font" data-i18n="mustRead.women.title">Women’s Dress Code</h3>
                 <ul>
                     <li data-i18n="mustRead.women.item1">Light blue dresses</li>
-                    <li data-i18n="mustRead.women.item2">Bring swimsuits if you want to swim later in the evening</li>
                 </ul>
                 <div class="must-read-images">
                     <img src="womandresscode1.jpg" alt="Women's dress code inspiration 1" data-fallback="womandresscode1.jpeg womandresscode1.png" loading="eager">
@@ -1087,10 +1093,11 @@
                 <ul>
                     <li data-i18n="mustRead.men.item1">Tops: White shirts</li>
                     <li data-i18n="mustRead.men.item2">Bottoms: Beige trousers or shorts</li>
-                    <li data-i18n="mustRead.men.item3">Jackets and neckties are optional</li>
+                    <li data-i18n="mustRead.men.item3">Mog others</li>
                 </ul>
             </div>
         </div>
+        <p class="must-read-note" data-i18n="mustRead.note">Bring swimsuits if you want to swim later in the evening. Sandals are recommended.</p>
         <details class="details-card must-read-dropdown">
             <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
             <div class="details-card-inner">
@@ -1107,6 +1114,10 @@
                     <li data-i18n="mustRead.optional.hotel1">SamuiHaus (close to the villa, reasonable)</li>
                     <li data-i18n="mustRead.optional.hotel2">Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)</li>
                 </ul>
+                <div style="margin-top: 1rem;">
+                    <a href="https://maps.app.goo.gl/NvQLytWqQZhVjSrq8" class="btn-view-venue" target="_blank" rel="noopener" data-i18n="mustRead.optional.hotelLink1">SamuiHaus Map</a>
+                    <a href="https://maps.app.goo.gl/A95dgFD4t283d1Eu9" class="btn-view-venue" target="_blank" rel="noopener" style="margin-left: 0.75rem;" data-i18n="mustRead.optional.hotelLink2">Kanok Buri Map</a>
+                </div>
             </div>
         </details>
     </section>
@@ -1416,15 +1427,15 @@
                     description: 'The most important details at a glance.',
                     women: {
                         title: 'Women’s Dress Code',
-                        item1: 'Light blue dresses',
-                        item2: 'Bring swimsuits if you want to swim later in the evening'
+                        item1: 'Light blue dresses'
                     },
                     men: {
                         title: 'Men’s Dress Code',
                         item1: 'Tops: White shirts',
                         item2: 'Bottoms: Beige trousers or shorts',
-                        item3: 'Jackets and neckties are optional'
+                        item3: 'Mog others'
                     },
+                    note: 'Bring swimsuits if you want to swim later in the evening. Sandals are recommended.',
                     flight: {
                         summary: '✈️ Flight Info (Recommended)',
                         text1: 'If you’re flying from America, we recommend leaving on April 30th.',
@@ -1435,7 +1446,9 @@
                         summary: 'Optional Read: Hotel Recommendations',
                         text: 'Recommended hotels near the villa:',
                         hotel1: 'SamuiHaus (close to the villa, reasonable)',
-                        hotel2: 'Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)'
+                        hotel2: 'Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)',
+                        hotelLink1: 'SamuiHaus Map',
+                        hotelLink2: 'Kanok Buri Map'
                     }
                 },
                 dressCode: {
@@ -1632,15 +1645,15 @@
                     description: '大切な情報をまとめました。',
                     women: {
                         title: '女性のドレスコード',
-                        item1: 'ライトブルーのドレス',
-                        item2: '夜に泳ぎたい方は水着をご持参ください'
+                        item1: 'ライトブルーのドレス'
                     },
                     men: {
                         title: '男性のドレスコード',
                         item1: 'トップス：白いシャツ',
                         item2: 'ボトムス：ベージュのパンツまたはショートパンツ',
-                        item3: 'ジャケットとネクタイは任意'
+                        item3: 'Mog others'
                     },
+                    note: '夜に泳ぎたい方は水着をご持参ください。サンダルがおすすめです。',
                     flight: {
                         summary: '✈️ フライト情報（推奨）',
                         text1: 'アメリカ発の場合、4月30日の出発をおすすめします。',
@@ -1651,7 +1664,9 @@
                         summary: '任意で読む：ホテルのおすすめ',
                         text: 'ヴィラ近くのおすすめホテル：',
                         hotel1: 'SamuiHaus（ヴィラ近く・お手頃）',
-                        hotel2: 'Kanok Buri（徒歩15〜20分、4つ星でお手頃）'
+                        hotel2: 'Kanok Buri（徒歩15〜20分、4つ星でお手頃）',
+                        hotelLink1: 'SamuiHaus マップ',
+                        hotelLink2: 'Kanok Buri マップ'
                     }
                 },
                 dressCode: {
@@ -1848,15 +1863,15 @@
                     description: 'สรุปข้อมูลสำคัญไว้ที่นี่',
                     women: {
                         title: 'ชุดแต่งกายผู้หญิง',
-                        item1: 'เดรสสีฟ้าอ่อน',
-                        item2: 'หากอยากว่ายน้ำตอนดึก กรุณานำชุดว่ายน้ำมาด้วย'
+                        item1: 'เดรสสีฟ้าอ่อน'
                     },
                     men: {
                         title: 'ชุดแต่งกายผู้ชาย',
                         item1: 'เสื้อเชิ้ตสีขาว',
                         item2: 'กางเกงสีเบจหรือกางเกงขาสั้น',
-                        item3: 'แจ็กเก็ตและเนกไทเป็นทางเลือก'
+                        item3: 'Mog others'
                     },
+                    note: 'หากอยากว่ายน้ำตอนดึก กรุณานำชุดว่ายน้ำมาด้วย แนะนำให้ใส่รองเท้าแตะ',
                     flight: {
                         summary: '✈️ ข้อมูลเที่ยวบิน (แนะนำ)',
                         text1: 'ถ้าบินมาจากอเมริกา แนะนำให้ออกเดินทางวันที่ 30 เมษายน',
@@ -1867,7 +1882,9 @@
                         summary: 'อ่านเพิ่มเติม: โรงแรมแนะนำ',
                         text: 'โรงแรมแนะนำใกล้วิลล่า:',
                         hotel1: 'SamuiHaus (ใกล้วิลล่า ราคาสมเหตุสมผล)',
-                        hotel2: 'Kanok Buri (เดิน 15–20 นาทีจากวิลล่า 4 ดาว และราคาสมเหตุสมผล)'
+                        hotel2: 'Kanok Buri (เดิน 15–20 นาทีจากวิลล่า 4 ดาว และราคาสมเหตุสมผล)',
+                        hotelLink1: 'แผนที่ SamuiHaus',
+                        hotelLink2: 'แผนที่ Kanok Buri'
                     }
                 },
                 dressCode: {
