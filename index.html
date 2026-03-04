@@ -713,6 +713,35 @@
             font-size: 1rem;
         }
 
+        .quiet-info-section {
+            margin-top: 1.25rem;
+            background: rgba(245, 242, 234, 0.75);
+            border: 1px solid rgba(10, 10, 10, 0.08);
+            border-radius: 18px;
+            padding: 1.5rem 1.75rem;
+        }
+
+        .quiet-info-section h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
+            color: var(--ink);
+        }
+
+        .quiet-info-section p {
+            margin: 0.5rem 0;
+            color: rgba(10, 10, 10, 0.78);
+        }
+
+        .quiet-info-section a {
+            color: var(--ocean);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .quiet-info-section a:hover {
+            text-decoration: underline;
+        }
+
         .must-read-card {
             background: white;
             border-radius: 18px;
@@ -1245,6 +1274,15 @@
                 </div>
             </div>
         </details>
+        <div class="quiet-info-section">
+            <h4 class="display-font" data-i18n="mustRead.arrival.title">Thailand Arrival Information</h4>
+            <p data-i18n="mustRead.arrival.text1">All guests (except Thai nationals) traveling to Thailand are required to complete the online Thailand Digital Arrival Card prior to arrival.</p>
+            <p data-i18n="mustRead.arrival.text2">Please make sure to register before your departure.</p>
+            <p data-i18n="mustRead.arrival.text3">
+                You can complete the form here:
+                👉 <a href="https://tdac.immigration.go.th" target="_blank" rel="noopener">https://tdac.immigration.go.th</a>
+            </p>
+        </div>
     </section>
 
     <section id="rsvp" class="bg-image-section">
@@ -1570,6 +1608,12 @@
                         hotel2: 'Kanok Buri (15–20 min walk to the villa, 4‑star and reasonable)',
                         hotelLink1: 'SamuiHaus Map',
                         hotelLink2: 'Kanok Buri Map'
+                    },
+                    arrival: {
+                        title: 'Thailand Arrival Information',
+                        text1: 'All guests (except Thai nationals) traveling to Thailand are required to complete the online Thailand Digital Arrival Card prior to arrival.',
+                        text2: 'Please make sure to register before your departure.',
+                        text3: 'You can complete the form here:'
                     }
                 },
                 dressCode: {
@@ -1809,6 +1853,12 @@
                         hotel2: 'Kanok Buri（徒歩15〜20分、4つ星でお手頃）',
                         hotelLink1: 'SamuiHaus マップ',
                         hotelLink2: 'Kanok Buri マップ'
+                    },
+                    arrival: {
+                        title: 'タイ入国情報',
+                        text1: 'タイ人以外のすべてのゲストは、タイ到着前にオンラインの Thailand Digital Arrival Card の登録が必要です。',
+                        text2: '出発前に必ず登録をお済ませください。',
+                        text3: 'フォームはこちら：'
                     }
                 },
                 dressCode: {
@@ -2048,6 +2098,12 @@
                         hotel2: 'Kanok Buri (เดิน 15–20 นาทีจากวิลล่า 4 ดาว และราคาสมเหตุสมผล)',
                         hotelLink1: 'แผนที่ SamuiHaus',
                         hotelLink2: 'แผนที่ Kanok Buri'
+                    },
+                    arrival: {
+                        title: 'ข้อมูลการเข้าประเทศไทย',
+                        text1: 'แขกทุกท่าน (ยกเว้นคนไทย) ที่เดินทางเข้าประเทศไทย ต้องกรอกแบบฟอร์ม Thailand Digital Arrival Card ออนไลน์ก่อนเดินทางถึง',
+                        text2: 'กรุณาลงทะเบียนให้เรียบร้อยก่อนออกเดินทาง',
+                        text3: 'กรอกแบบฟอร์มได้ที่:'
                     }
                 },
                 dressCode: {
