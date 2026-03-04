@@ -1187,7 +1187,7 @@
             <div class="must-read-card">
                 <h3 class="display-font" data-i18n="mustRead.women.title">Women’s Dress Code</h3>
                 <ul>
-                    <li data-i18n="mustRead.women.item1">Light blue dresses</li>
+                    <li data-i18n="mustRead.women.item1">Dresses</li>
                     <li data-i18n="mustRead.women.item2">Footwear: Sandals or dress shoes</li>
                 </ul>
                 <div class="must-read-images">
@@ -1212,7 +1212,15 @@
             </div>
         </div>
         <p class="must-read-note" data-i18n="mustRead.note">Bring swimsuits if you want to swim later in the evening. Sandals are recommended.</p>
-        <p class="must-read-note" data-i18n="mustRead.gifts">Gifts are not mandatory. If you kindly insist, cash is welcome, or we can share our home address if you prefer to mail something since we cannot accept physical gifts in another country.</p>
+        <details class="details-card must-read-dropdown">
+            <summary data-i18n="mustRead.giftInfo.title">Gift Information</summary>
+            <div class="details-card-inner">
+                <p data-i18n="mustRead.giftInfo.text1">Your presence is more than enough gift for us. We are truly thankful you are coming from across the world.</p>
+                <p data-i18n="mustRead.giftInfo.text2">In Thai and Japanese culture, we do not ask guests to bring gifts when they have already traveled so far. If you truly insist, cash is welcome, or you may mail something to our home address below.</p>
+                <p><strong data-i18n="mustRead.giftInfo.addressLabel">Home address:</strong></p>
+                <p data-i18n="mustRead.giftInfo.address">Excellent City Tachikawa The Gran 610, 1-7-25 Nishikicho, Tachikawa City, Tokyo 190-0022</p>
+            </div>
+        </details>
         <details class="details-card must-read-dropdown">
             <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
             <div class="details-card-inner">
@@ -1529,7 +1537,7 @@
                     description: 'The most important details at a glance.',
                     women: {
                         title: 'Women’s Dress Code',
-                        item1: 'Light blue dresses',
+                        item1: 'Dresses',
                         item2: 'Footwear: Sandals or dress shoes'
                     },
                     men: {
@@ -1540,7 +1548,13 @@
                         item4: 'Footwear: Sandals or dress shoes'
                     },
                     note: 'Bring swimsuits if you want to swim later in the evening. Sandals are recommended.',
-                    gifts: 'Gifts are not mandatory. If you kindly insist, cash is welcome, or we can share our home address if you prefer to mail something since we cannot accept physical gifts in another country.',
+                    giftInfo: {
+                        title: 'Gift Information',
+                        text1: 'Your presence is more than enough gift for us. We are truly thankful you are coming from across the world.',
+                        text2: 'In Thai and Japanese culture, we do not ask guests to bring gifts when they have already traveled so far. If you truly insist, cash is welcome, or you may mail something to our home address below.',
+                        addressLabel: 'Home address:',
+                        address: 'Excellent City Tachikawa The Gran 610, 1-7-25 Nishikicho, Tachikawa City, Tokyo 190-0022'
+                    },
                     flight: {
                         summary: '✈️ Flight Info (Recommended)',
                         text1: 'If you’re flying from America, we recommend leaving on April 30th.',
@@ -1668,7 +1682,8 @@
                         addGuest: '+ Add another person',
                         additionalPerson: 'Additional person',
                         remove: 'Remove',
-                        optionalEmail: 'Email (optional)',
+                        additionalDietaryLabel: 'Dietary restrictions (optional)',
+                        additionalDietaryPlaceholder: 'Vegetarian, allergies, etc.',
                         guestLabel: 'How many guests will be attending?',
                         selectGuests: 'Select number of guests',
                         guest1: '1 Guest',
@@ -1761,7 +1776,7 @@
                     description: '大切な情報をまとめました。',
                     women: {
                         title: '女性のドレスコード',
-                        item1: 'ライトブルーのドレス',
+                        item1: 'ドレス',
                         item2: '履物：サンダルまたはドレスシューズ'
                     },
                     men: {
@@ -1772,7 +1787,13 @@
                         item4: '履物：サンダルまたはドレスシューズ'
                     },
                     note: '夜に泳ぎたい方は水着をご持参ください。サンダルがおすすめです。',
-                    gifts: 'ギフトは必須ではありません。お気持ちをいただける場合は現金ギフト歓迎です。郵送をご希望の場合は自宅住所をお伝えします（海外では現物ギフトを受け取れないため）。',
+                    giftInfo: {
+                        title: 'ギフトについて',
+                        text1: '皆さまにお越しいただけることが、私たちにとって何よりの贈り物です。世界中から来てくださることに心から感謝しています。',
+                        text2: 'タイや日本の文化では、遠方からお越しいただくゲストに贈り物をお願いすることはしません。どうしてもという場合は現金ギフト歓迎です。郵送をご希望の場合は下記の自宅住所をご利用ください。',
+                        addressLabel: '自宅住所：',
+                        address: '東京都立川市錦町1-7-25 エクセレントシティ立川 ザ・グラン610 〒190-0022'
+                    },
                     flight: {
                         summary: '✈️ フライト情報（推奨）',
                         text1: 'アメリカ発の場合、4月30日の出発をおすすめします。',
@@ -1900,7 +1921,8 @@
                         addGuest: '+ もう1名追加',
                         additionalPerson: '追加のゲスト',
                         remove: '削除',
-                        optionalEmail: 'メール（任意）',
+                        additionalDietaryLabel: '食事制限（任意）',
+                        additionalDietaryPlaceholder: 'ベジタリアン、アレルギーなど',
                         guestLabel: '何名様が出席されますか？',
                         selectGuests: 'ゲスト数を選択',
                         guest1: '1名',
@@ -1993,7 +2015,7 @@
                     description: 'สรุปข้อมูลสำคัญไว้ที่นี่',
                     women: {
                         title: 'ชุดแต่งกายผู้หญิง',
-                        item1: 'เดรสสีฟ้าอ่อน',
+                        item1: 'เดรส',
                         item2: 'รองเท้า: รองเท้าแตะหรือรองเท้าหนัง'
                     },
                     men: {
@@ -2004,7 +2026,13 @@
                         item4: 'รองเท้า: รองเท้าแตะหรือรองเท้าหนัง'
                     },
                     note: 'หากอยากว่ายน้ำตอนดึก กรุณานำชุดว่ายน้ำมาด้วย แนะนำให้ใส่รองเท้าแตะ',
-                    gifts: 'ของขวัญไม่จำเป็น แต่หากต้องการจริง ๆ สามารถให้เป็นเงินสดได้ หรือเราสามารถให้ที่อยู่บ้านเพื่อจัดส่งของขวัญทางไปรษณีย์ เพราะเราไม่สามารถรับของขวัญชิ้นใหญ่ในต่างประเทศได้',
+                    giftInfo: {
+                        title: 'ข้อมูลของขวัญ',
+                        text1: 'แค่คุณเดินทางมาร่วมงานก็เป็นของขวัญที่ดีที่สุดสำหรับเราแล้ว เราซาบซึ้งมากที่คุณมาจากอีกฟากโลก',
+                        text2: 'ตามวัฒนธรรมไทยและญี่ปุ่น เราไม่ขอของขวัญจากแขกที่เดินทางมาไกล หากต้องการจริง ๆ สามารถให้เป็นเงินสดได้ หรือจัดส่งทางไปรษณีย์ตามที่อยู่บ้านด้านล่าง',
+                        addressLabel: 'ที่อยู่บ้าน:',
+                        address: 'Excellent City Tachikawa The Gran 610, 1-7-25 Nishikicho, Tachikawa City, Tokyo 190-0022'
+                    },
                     flight: {
                         summary: '✈️ ข้อมูลเที่ยวบิน (แนะนำ)',
                         text1: 'ถ้าบินมาจากอเมริกา แนะนำให้ออกเดินทางวันที่ 30 เมษายน',
@@ -2132,7 +2160,8 @@
                         addGuest: '+ เพิ่มอีก 1 คน',
                         additionalPerson: 'ผู้เข้าร่วมเพิ่มเติม',
                         remove: 'ลบ',
-                        optionalEmail: 'อีเมล (ไม่บังคับ)',
+                        additionalDietaryLabel: 'ข้อจำกัดด้านอาหาร (ไม่บังคับ)',
+                        additionalDietaryPlaceholder: 'มังสวิรัติ แพ้อาหาร ฯลฯ',
                         guestLabel: 'จะมีแขกกี่คนเข้าร่วม?',
                         selectGuests: 'เลือกจำนวนแขก',
                         guest1: '1 คน',
@@ -2257,8 +2286,8 @@
                         <input type="text" class="form-input" name="extra_${index}_last_name" placeholder="${t.lastNamePlaceholder}" required>
                     </div>
                     <div class="form-group full-width">
-                        <label>${t.optionalEmail}</label>
-                        <input type="email" class="form-input" name="extra_${index}_email" placeholder="${t.optionalEmail}">
+                        <label>${t.additionalDietaryLabel}</label>
+                        <input type="text" class="form-input" name="extra_${index}_dietary" placeholder="${t.additionalDietaryPlaceholder}">
                     </div>
                 </div>
             `;
@@ -2284,12 +2313,12 @@
                 const labels = card.querySelectorAll('label');
                 if (labels[0]) labels[0].textContent = t.firstNameLabel;
                 if (labels[1]) labels[1].textContent = t.lastNameLabel;
-                if (labels[2]) labels[2].textContent = t.optionalEmail;
+                if (labels[2]) labels[2].textContent = t.additionalDietaryLabel;
 
                 const inputs = card.querySelectorAll('input');
                 if (inputs[0]) inputs[0].placeholder = t.firstNamePlaceholder;
                 if (inputs[1]) inputs[1].placeholder = t.lastNamePlaceholder;
-                if (inputs[2]) inputs[2].placeholder = t.optionalEmail;
+                if (inputs[2]) inputs[2].placeholder = t.additionalDietaryPlaceholder;
             });
         }
 
