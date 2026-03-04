@@ -484,6 +484,53 @@
             margin-top: 1.25rem;
         }
 
+        .rsvp-disclaimer {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        .additional-guests-section {
+            margin-top: 0.5rem;
+        }
+
+        .additional-guest-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 1rem;
+            margin-top: 0.85rem;
+        }
+
+        .additional-guest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-remove-guest {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            border-radius: 8px;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .btn-add-guest {
+            margin-top: 0.9rem;
+            background: rgba(255, 255, 255, 0.14);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
         #rsvp .section-header {
             margin-bottom: 2rem;
         }
@@ -1141,6 +1188,7 @@
                 <h3 class="display-font" data-i18n="mustRead.women.title">Women’s Dress Code</h3>
                 <ul>
                     <li data-i18n="mustRead.women.item1">Light blue dresses</li>
+                    <li data-i18n="mustRead.women.item2">Footwear: Sandals or dress shoes</li>
                 </ul>
                 <div class="must-read-images">
                     <img src="womandresscode1.jpg" alt="Women's dress code inspiration 1" data-fallback="womandresscode1.jpeg womandresscode1.png" loading="eager">
@@ -1154,10 +1202,12 @@
                     <li data-i18n="mustRead.men.item1">Tops: White shirts</li>
                     <li data-i18n="mustRead.men.item2">Bottoms: Beige trousers or shorts</li>
                     <li data-i18n="mustRead.men.item3">Mog others</li>
+                    <li data-i18n="mustRead.men.item4">Footwear: Sandals or dress shoes</li>
                 </ul>
             </div>
         </div>
         <p class="must-read-note" data-i18n="mustRead.note">Bring swimsuits if you want to swim later in the evening. Sandals are recommended.</p>
+        <p class="must-read-note" data-i18n="mustRead.gifts">Gifts are not mandatory. If you kindly insist, cash is welcome, or we can share our home address if you prefer to mail something since we cannot accept physical gifts in another country.</p>
         <details class="details-card must-read-dropdown">
             <summary data-i18n="mustRead.flight.summary">✈️ Flight Info (Recommended)</summary>
             <div class="details-card-inner">
@@ -1190,9 +1240,18 @@
                 <p class="section-description" data-i18n="rsvp.description">
                     Your presence would make our special day complete
                 </p>
+                <p class="rsvp-disclaimer" data-i18n="rsvp.disclaimer">Please submit this form once per individual person.</p>
             </div>
             <form id="rsvpForm" action="https://formspree.io/f/xpwyrddp" method="POST">
                 <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName" data-i18n="rsvp.form.firstNameLabel">First name</label>
+                        <input type="text" class="form-input" name="first_name" id="firstName" data-i18n-placeholder="rsvp.form.firstNamePlaceholder" placeholder="First name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" data-i18n="rsvp.form.lastNameLabel">Last name</label>
+                        <input type="text" class="form-input" name="last_name" id="lastName" data-i18n-placeholder="rsvp.form.lastNamePlaceholder" placeholder="Last name" required>
+                    </div>
                     <div class="form-group full-width">
                         <input type="email" class="form-input" name="email" data-i18n-placeholder="rsvp.form.email" placeholder="Your email address" required>
                     </div>
@@ -1212,6 +1271,10 @@
                         <label for="dietaryRequests" data-i18n="rsvp.form.dietaryLabel">Dietary requests</label>
                         <input type="text" class="form-input" name="dietary_requests" id="dietaryRequests" data-i18n-placeholder="rsvp.form.dietaryPlaceholder" placeholder="Vegetarian, allergies, etc.">
                     </div>
+                </div>
+                <div class="additional-guests-section">
+                    <div id="additionalGuests"></div>
+                    <button type="button" id="addGuestBtn" class="btn-add-guest" data-i18n="rsvp.form.addGuest">+ Add another person</button>
                 </div>
                 <div class="form-group message-group">
                     <textarea class="form-input" name="message" data-i18n-placeholder="rsvp.form.message" placeholder="Leave us a message (optional)" rows="4"></textarea>
@@ -1459,15 +1522,18 @@
                     description: 'The most important details at a glance.',
                     women: {
                         title: 'Women’s Dress Code',
-                        item1: 'Light blue dresses'
+                        item1: 'Light blue dresses',
+                        item2: 'Footwear: Sandals or dress shoes'
                     },
                     men: {
                         title: 'Men’s Dress Code',
                         item1: 'Tops: White shirts',
                         item2: 'Bottoms: Beige trousers or shorts',
-                        item3: 'Mog others'
+                        item3: 'Mog others',
+                        item4: 'Footwear: Sandals or dress shoes'
                     },
                     note: 'Bring swimsuits if you want to swim later in the evening. Sandals are recommended.',
+                    gifts: 'Gifts are not mandatory. If you kindly insist, cash is welcome, or we can share our home address if you prefer to mail something since we cannot accept physical gifts in another country.',
                     flight: {
                         summary: '✈️ Flight Info (Recommended)',
                         text1: 'If you’re flying from America, we recommend leaving on April 30th.',
@@ -1581,10 +1647,19 @@
                     label: 'Save Your Seat',
                     title: 'Join Our Celebration',
                     description: 'Your presence would make our special day complete',
+                    disclaimer: 'Please submit this form once per individual person.',
                     mapLink1: 'Map Link 1',
                     mapLink2: 'Map Link 2',
                     form: {
                         email: 'Your email address',
+                        firstNameLabel: 'First name',
+                        firstNamePlaceholder: 'First name',
+                        lastNameLabel: 'Last name',
+                        lastNamePlaceholder: 'Last name',
+                        addGuest: '+ Add another person',
+                        additionalPerson: 'Additional person',
+                        remove: 'Remove',
+                        optionalEmail: 'Email (optional)',
                         guestLabel: 'How many guests will be attending?',
                         selectGuests: 'Select number of guests',
                         guest1: '1 Guest',
@@ -1677,15 +1752,18 @@
                     description: '大切な情報をまとめました。',
                     women: {
                         title: '女性のドレスコード',
-                        item1: 'ライトブルーのドレス'
+                        item1: 'ライトブルーのドレス',
+                        item2: '履物：サンダルまたはドレスシューズ'
                     },
                     men: {
                         title: '男性のドレスコード',
                         item1: 'トップス：白いシャツ',
                         item2: 'ボトムス：ベージュのパンツまたはショートパンツ',
-                        item3: 'Mog others'
+                        item3: 'Mog others',
+                        item4: '履物：サンダルまたはドレスシューズ'
                     },
                     note: '夜に泳ぎたい方は水着をご持参ください。サンダルがおすすめです。',
+                    gifts: 'ギフトは必須ではありません。お気持ちをいただける場合は現金ギフト歓迎です。郵送をご希望の場合は自宅住所をお伝えします（海外では現物ギフトを受け取れないため）。',
                     flight: {
                         summary: '✈️ フライト情報（推奨）',
                         text1: 'アメリカ発の場合、4月30日の出発をおすすめします。',
@@ -1799,10 +1877,19 @@
                     label: '席を予約',
                     title: '私たちのお祝いにご参加ください',
                     description: 'あなたの存在が私たちの特別な日を完璧にします',
+                    disclaimer: 'このフォームはお一人ずつご提出ください。',
                     mapLink1: 'マップリンク 1',
                     mapLink2: 'マップリンク 2',
                     form: {
                         email: 'メールアドレス',
+                        firstNameLabel: '名',
+                        firstNamePlaceholder: '名',
+                        lastNameLabel: '姓',
+                        lastNamePlaceholder: '姓',
+                        addGuest: '+ もう1名追加',
+                        additionalPerson: '追加のゲスト',
+                        remove: '削除',
+                        optionalEmail: 'メール（任意）',
                         guestLabel: '何名様が出席されますか？',
                         selectGuests: 'ゲスト数を選択',
                         guest1: '1名',
@@ -1895,15 +1982,18 @@
                     description: 'สรุปข้อมูลสำคัญไว้ที่นี่',
                     women: {
                         title: 'ชุดแต่งกายผู้หญิง',
-                        item1: 'เดรสสีฟ้าอ่อน'
+                        item1: 'เดรสสีฟ้าอ่อน',
+                        item2: 'รองเท้า: รองเท้าแตะหรือรองเท้าหนัง'
                     },
                     men: {
                         title: 'ชุดแต่งกายผู้ชาย',
                         item1: 'เสื้อเชิ้ตสีขาว',
                         item2: 'กางเกงสีเบจหรือกางเกงขาสั้น',
-                        item3: 'Mog others'
+                        item3: 'Mog others',
+                        item4: 'รองเท้า: รองเท้าแตะหรือรองเท้าหนัง'
                     },
                     note: 'หากอยากว่ายน้ำตอนดึก กรุณานำชุดว่ายน้ำมาด้วย แนะนำให้ใส่รองเท้าแตะ',
+                    gifts: 'ของขวัญไม่จำเป็น แต่หากต้องการจริง ๆ สามารถให้เป็นเงินสดได้ หรือเราสามารถให้ที่อยู่บ้านเพื่อจัดส่งของขวัญทางไปรษณีย์ เพราะเราไม่สามารถรับของขวัญชิ้นใหญ่ในต่างประเทศได้',
                     flight: {
                         summary: '✈️ ข้อมูลเที่ยวบิน (แนะนำ)',
                         text1: 'ถ้าบินมาจากอเมริกา แนะนำให้ออกเดินทางวันที่ 30 เมษายน',
@@ -2017,10 +2107,19 @@
                     label: 'จองที่นั่งของคุณ',
                     title: 'ร่วมฉลองกับเรา',
                     description: 'การมาร่วมงานของคุณจะทำให้วันพิเศษของเราสมบูรณ์แบบ',
+                    disclaimer: 'กรุณากรอกแบบฟอร์มแยกเป็นรายบุคคล',
                     mapLink1: 'ลิงก์แผนที่ 1',
                     mapLink2: 'ลิงก์แผนที่ 2',
                     form: {
                         email: 'ที่อยู่อีเมลของคุณ',
+                        firstNameLabel: 'ชื่อ',
+                        firstNamePlaceholder: 'ชื่อ',
+                        lastNameLabel: 'นามสกุล',
+                        lastNamePlaceholder: 'นามสกุล',
+                        addGuest: '+ เพิ่มอีก 1 คน',
+                        additionalPerson: 'ผู้เข้าร่วมเพิ่มเติม',
+                        remove: 'ลบ',
+                        optionalEmail: 'อีเมล (ไม่บังคับ)',
                         guestLabel: 'จะมีแขกกี่คนเข้าร่วม?',
                         selectGuests: 'เลือกจำนวนแขก',
                         guest1: '1 คน',
@@ -2111,11 +2210,81 @@
             // Update countdown labels
             updateCountdown();
 
+            // Update any dynamically added additional-guest cards
+            updateAdditionalGuestCards();
+
             // Update active button
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
         }
+
+        // Additional RSVP guest cards (+ button)
+        const additionalGuestsContainer = document.getElementById('additionalGuests');
+        const addGuestBtn = document.getElementById('addGuestBtn');
+
+        function buildAdditionalGuestCard(index) {
+            const t = translations[currentLang].rsvp.form;
+            const card = document.createElement('div');
+            card.className = 'additional-guest-card';
+            card.dataset.guestIndex = String(index);
+
+            card.innerHTML = `
+                <div class="additional-guest-header">
+                    <span class="additional-guest-title">${t.additionalPerson} #${index + 1}</span>
+                    <button type="button" class="btn-remove-guest">${t.remove}</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>${t.firstNameLabel}</label>
+                        <input type="text" class="form-input" name="extra_${index}_first_name" placeholder="${t.firstNamePlaceholder}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>${t.lastNameLabel}</label>
+                        <input type="text" class="form-input" name="extra_${index}_last_name" placeholder="${t.lastNamePlaceholder}" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>${t.optionalEmail}</label>
+                        <input type="email" class="form-input" name="extra_${index}_email" placeholder="${t.optionalEmail}">
+                    </div>
+                </div>
+            `;
+
+            card.querySelector('.btn-remove-guest').addEventListener('click', () => {
+                card.remove();
+                updateAdditionalGuestCards();
+            });
+
+            return card;
+        }
+
+        function updateAdditionalGuestCards() {
+            const t = translations[currentLang].rsvp.form;
+            const cards = Array.from(additionalGuestsContainer.querySelectorAll('.additional-guest-card'));
+            cards.forEach((card, idx) => {
+                card.dataset.guestIndex = String(idx + 1);
+                const title = card.querySelector('.additional-guest-title');
+                const removeBtn = card.querySelector('.btn-remove-guest');
+                if (title) title.textContent = `${t.additionalPerson} #${idx + 2}`;
+                if (removeBtn) removeBtn.textContent = t.remove;
+
+                const labels = card.querySelectorAll('label');
+                if (labels[0]) labels[0].textContent = t.firstNameLabel;
+                if (labels[1]) labels[1].textContent = t.lastNameLabel;
+                if (labels[2]) labels[2].textContent = t.optionalEmail;
+
+                const inputs = card.querySelectorAll('input');
+                if (inputs[0]) inputs[0].placeholder = t.firstNamePlaceholder;
+                if (inputs[1]) inputs[1].placeholder = t.lastNamePlaceholder;
+                if (inputs[2]) inputs[2].placeholder = t.optionalEmail;
+            });
+        }
+
+        addGuestBtn.addEventListener('click', () => {
+            const nextIndex = additionalGuestsContainer.querySelectorAll('.additional-guest-card').length + 1;
+            additionalGuestsContainer.appendChild(buildAdditionalGuestCard(nextIndex));
+            updateAdditionalGuestCards();
+        });
 
         function updateActiveHeroName(lang) {
             document.querySelectorAll('.rotating-name').forEach(el => {
