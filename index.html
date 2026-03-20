@@ -343,26 +343,6 @@
             margin-right: auto;
         }
 
-        .wedding-schedule-section {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 0 2rem;
-        }
-
-        .wedding-schedule-card {
-            background: white;
-            border-radius: 18px;
-            padding: 2rem 2.5rem;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
-        }
-
-        .wedding-schedule-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--ink);
-            text-align: center;
-        }
-
         .schedule-list {
             list-style: none;
             padding: 0;
@@ -898,6 +878,11 @@
 
         .details-card-inner p:first-child { margin-top: 1rem; }
 
+        .details-card-inner .schedule-list {
+            margin: 1rem 0 0;
+            padding: 0;
+        }
+
         .must-read-dropdown {
             margin-top: 1rem;
         }
@@ -1324,6 +1309,21 @@
                 </div>
             </div>
         </details>
+        <details class="details-card must-read-dropdown">
+            <summary data-i18n="schedule.title">Wedding Schedule</summary>
+            <div class="details-card-inner">
+                <ul class="schedule-list">
+                    <li><span class="schedule-time">4:00 PM</span> <span data-i18n="schedule.item1">Welcome Drinks (Welcome Area in Villa)</span></li>
+                    <li><span class="schedule-time">4:30 PM</span> <span data-i18n="schedule.item2">Ceremony (Beach / Ceremony Area)</span></li>
+                    <li><span class="schedule-time">5:00 PM</span> <span data-i18n="schedule.item3">Cocktail Hour (Pool / Garden Area)</span></li>
+                    <li><span class="schedule-time">7:00 PM</span> <span data-i18n="schedule.item4">Reception/Dinner (Garden Area)</span></li>
+                    <li><span class="schedule-time">9:00 PM</span> <span data-i18n="schedule.item5">Party 🎉 (Dance Floor/Garden Area/Beach)</span></li>
+                    <li><span class="schedule-time">11:45 PM</span> <span data-i18n="schedule.item6">Party ends</span></li>
+                    <li><span class="schedule-time">12:00 AM</span> <span data-i18n="schedule.item7">Pool Party (swimming & drinks)</span></li>
+                    <li><span class="schedule-time">12:00 AM+</span> <span data-i18n="schedule.item8">After Party (indoor dining & drinks)</span></li>
+                </ul>
+            </div>
+        </details>
         <div class="quiet-info-section">
             <h4 class="display-font" data-i18n="mustRead.arrival.title">Thailand Arrival Information</h4>
             <p data-i18n="mustRead.arrival.text1">All guests (except Thai nationals) traveling to Thailand are required to complete the online Thailand Digital Arrival Card prior to arrival.</p>
@@ -1416,25 +1416,6 @@
                     referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
-        </div>
-    </section>
-
-    <section id="wedding-schedule" class="wedding-schedule-section">
-        <div class="section-header fade-in">
-            <div class="section-label mono-font" data-i18n="schedule.label">Wedding Day</div>
-            <h2 class="section-title display-font" data-i18n="schedule.title">Wedding Schedule</h2>
-        </div>
-        <div class="wedding-schedule-card fade-in">
-            <ul class="schedule-list">
-                <li><span class="schedule-time">4:00 PM</span> <span data-i18n="schedule.item1">Welcome Drinks (Welcome Area in Villa)</span></li>
-                <li><span class="schedule-time">4:30 PM</span> <span data-i18n="schedule.item2">Ceremony (Beach / Ceremony Area)</span></li>
-                <li><span class="schedule-time">5:00 PM</span> <span data-i18n="schedule.item3">Cocktail Hour (Pool / Garden Area)</span></li>
-                <li><span class="schedule-time">7:00 PM</span> <span data-i18n="schedule.item4">Reception/Dinner (Garden Area)</span></li>
-                <li><span class="schedule-time">9:00 PM</span> <span data-i18n="schedule.item5">Party 🎉 (Dance Floor/Garden Area/Beach)</span></li>
-                <li><span class="schedule-time">11:45 PM</span> <span data-i18n="schedule.item6">Party ends</span></li>
-                <li><span class="schedule-time">12:00 AM</span> <span data-i18n="schedule.item7">Pool Party (swimming & drinks)</span></li>
-                <li><span class="schedule-time">12:00 AM+</span> <span data-i18n="schedule.item8">After Party (indoor dining & drinks)</span></li>
-            </ul>
         </div>
     </section>
 
